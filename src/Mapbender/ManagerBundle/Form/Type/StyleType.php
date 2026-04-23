@@ -18,17 +18,17 @@ class StyleType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'required' => true,
-                'label' => 'mb.ogcapifeatures.admin.style.editor.name_label',
+                'label' => 'mb.manager.admin.style.editor.name_label',
                 'attr' => [
-                    'placeholder' => 'mb.ogcapifeatures.admin.style.editor.name_placeholder',
+                    'placeholder' => 'mb.manager.admin.style.editor.name_placeholder',
                 ],
                 'constraints' => [
-                    new NotBlank(message: 'mb.ogcapifeatures.admin.style.name_required'),
+                    new NotBlank(message: 'mb.manager.admin.style.name_required'),
                 ],
             ])
             ->add('style', TextareaType::class, [
                 'required' => false,
-                'label' => 'mb.ogcapifeatures.admin.style.editor.mapbox_style_json',
+                'label' => 'mb.manager.admin.style.editor.mapbox_style_json',
                 'attr' => [
                     'rows' => 24,
                     'id' => 'style',

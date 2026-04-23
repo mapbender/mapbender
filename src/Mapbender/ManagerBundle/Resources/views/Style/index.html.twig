@@ -1,14 +1,14 @@
 {% extends '@MapbenderManager/manager.html.twig' %}
-{%- set title = 'mb.ogcapifeatures.admin.style.manager.title' | trans -%}
+{%- set title = 'mb.manager.admin.style.manager.title' | trans -%}
 
 {% block manager_content %}
     <div class="list-head">
         <div class="row">
             <div class="col-sm-5 col-xs-12 col-12">
                 <div class="content-box content-box-md">
-                    <a href="{{ path('mapbender_manager_style_new') }}" title="{{ 'mb.ogcapifeatures.admin.style.manager.new_style' | trans }}">
+                    <a href="{{ path('mapbender_manager_style_new') }}" title="{{ 'mb.manager.admin.style.manager.new_style' | trans }}">
                         <i class="fas fa-lg fa-plus"></i>
-                        <span>{{ 'mb.ogcapifeatures.admin.style.manager.new_style' | trans }}</span>
+                        <span>{{ 'mb.manager.admin.style.manager.new_style' | trans }}</span>
                     </a>
                 </div>
             </div>
@@ -19,27 +19,27 @@
     <table id="style-list" class="table table-striped table-hover align-middle">
         <thead>
             <tr>
-                <th style="width:50px">{{ 'mb.ogcapifeatures.admin.style.manager.th_id' | trans }}</th>
-                <th style="width:120px">{{ 'mb.ogcapifeatures.admin.style.manager.th_preview' | trans }}</th>
-                <th>{{ 'mb.ogcapifeatures.admin.style.manager.th_name' | trans }}</th>
-                <th style="width:100px">{{ 'mb.ogcapifeatures.admin.style.manager.th_origin' | trans }}</th>
-                <th style="width:80px">{{ 'mb.ogcapifeatures.admin.style.manager.th_source' | trans }}</th>
-                <th style="width:130px">{{ 'mb.ogcapifeatures.admin.style.manager.th_actions' | trans }}</th>
+                <th style="width:50px">{{ 'mb.manager.admin.style.manager.th_id' | trans }}</th>
+                <th style="width:120px">{{ 'mb.manager.admin.style.manager.th_preview' | trans }}</th>
+                <th>{{ 'mb.manager.admin.style.manager.th_name' | trans }}</th>
+                <th style="width:100px">{{ 'mb.manager.admin.style.manager.th_origin' | trans }}</th>
+                <th style="width:80px">{{ 'mb.manager.admin.style.manager.th_source' | trans }}</th>
+                <th style="width:130px">{{ 'mb.manager.admin.style.manager.th_actions' | trans }}</th>
             </tr>
             <tr class="table-light">
                 <td></td>
                 <td></td>
-                <td><input id="filter-name" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.ogcapifeatures.admin.style.manager.filter_name' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.name_tooltip' | trans }}"></td>
+                <td><input id="filter-name" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.manager.admin.style.manager.filter_name' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.name_tooltip' | trans }}"></td>
                 <td>
                     <select id="filter-origin" class="form-select form-select-sm" title="{{ 'mb.ogcapifeatures.admin.filter.origin_tooltip' | trans }}">
-                        <option value="">{{ 'mb.ogcapifeatures.admin.style.manager.filter_all' | trans }}</option>
+                        <option value="">{{ 'mb.manager.admin.style.manager.filter_all' | trans }}</option>
                         <option value="mapbox-json">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</option>
                         <option value="manual">{{ 'mb.ogcapifeatures.admin.filter.origin_manual' | trans }}</option>
                         <option value="ogc_api">{{ 'mb.ogcapifeatures.admin.filter.origin_ogc_api' | trans }}</option>
                         <option value="digitizer">{{ 'mb.ogcapifeatures.admin.filter.origin_digitizer' | trans }}</option>
                     </select>
                 </td>
-                <td><input id="filter-source" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.ogcapifeatures.admin.style.manager.filter_source' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.source_tooltip' | trans }}"></td>
+                <td><input id="filter-source" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.manager.admin.style.manager.filter_source' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.source_tooltip' | trans }}"></td>
                 <td></td>
             </tr>
         </thead>
@@ -51,7 +51,7 @@
                     <td>{{ style.id }}</td>
                     <td>
                         {% if style.multiLayer %}
-                            <span class="text-muted small">{{ 'mb.ogcapifeatures.admin.style.multi_layer_preview' | trans({'%count%': style.layerCount}) }}</span>
+                            <span class="text-muted small">{{ 'mb.manager.admin.style.multi_layer_preview' | trans({'%count%': style.layerCount}) }}</span>
                         {% else %}
                         <div class="d-flex gap-1">
                             <canvas class="style-preview" data-geom="point" data-style="{{ style.style|e('html_attr') }}" width="32" height="32" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
@@ -60,7 +60,7 @@
                         </div>
                         {% endif %}
                     </td>
-                    <td>{{ style.name ?? ('mb.ogcapifeatures.admin.style.manager.fallback_name' | trans({'%id%': style.id})) }}</td>
+                    <td>{{ style.name ?? ('mb.manager.admin.style.manager.fallback_name' | trans({'%id%': style.id})) }}</td>
                     <td>
                         {% if style.sourceType == 'mapbox-json' %}
                             <span class="badge bg-primary">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</span>
@@ -80,25 +80,25 @@
                     <td>
                         <div class="d-flex flex-nowrap gap-1">
                             {% if style.sourceType in ['manual', 'mapbox-json'] %}
-                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_edit' | trans }}"><i class="fas fa-pencil"></i></a>
+                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="{{ 'mb.manager.admin.style.manager.action_edit' | trans }}"><i class="fas fa-pencil"></i></a>
                             {% else %}
-                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_view' | trans }}"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_view', {id: style.id}) }}" title="{{ 'mb.manager.admin.style.manager.action_view' | trans }}"><i class="fas fa-eye"></i></a>
                             {% endif %}
                             <form method="post" action="{{ path('mapbender_manager_style_copy', {id: style.id}) }}" class="d-inline">
                                 <input type="hidden" name="_token" value="{{ csrf_token('style_copy') }}">
-                                <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_copy' | trans }}"><i class="far fa-copy"></i></button>
+                                <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.manager.admin.style.manager.action_copy' | trans }}"><i class="far fa-copy"></i></button>
                             </form>
                             {% if style.sourceType != 'ogc_api' or not style.sourceId %}
-                            <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" class="d-inline" onsubmit="return confirm('{{ 'mb.ogcapifeatures.admin.style.manager.confirm_delete' | trans | e('js') }}');">
+                            <form method="post" action="{{ path('mapbender_manager_style_delete', {id: style.id}) }}" class="d-inline" onsubmit="return confirm('{{ 'mb.manager.admin.style.manager.confirm_delete' | trans | e('js') }}');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('style_delete') }}">
-                                <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.ogcapifeatures.admin.style.manager.action_delete' | trans }}"><i class="far fa-trash-can"></i></button>
+                                <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.manager.admin.style.manager.action_delete' | trans }}"><i class="far fa-trash-can"></i></button>
                             </form>
                             {% endif %}
                         </div>
                     </td>
                 </tr>
             {% else %}
-                <tr><td colspan="6" class="text-muted">{{ 'mb.ogcapifeatures.admin.style.manager.no_styles' | trans }}</td></tr>
+                <tr><td colspan="6" class="text-muted">{{ 'mb.manager.admin.style.manager.no_styles' | trans }}</td></tr>
             {% endfor %}
         </tbody>
     </table>

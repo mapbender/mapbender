@@ -77,7 +77,7 @@ class StyleController extends ApplicationControllerBase
             $this->em->persist($style);
             $this->em->flush();
 
-            $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.saved'));
+            $this->addFlash('success', $this->trans->trans('mb.manager.admin.style.saved'));
             return $this->redirectToRoute('mapbender_manager_style_index');
         }
 
@@ -110,7 +110,7 @@ class StyleController extends ApplicationControllerBase
         if ($form->isSubmitted() && $form->isValid() && $styleJsonValid) {
             $this->em->flush();
 
-            $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.updated'));
+            $this->addFlash('success', $this->trans->trans('mb.manager.admin.style.updated'));
             return $this->redirectToRoute('mapbender_manager_style_index');
         }
 
@@ -153,7 +153,7 @@ class StyleController extends ApplicationControllerBase
         }
 
         $copy = new Style();
-        $copy->setName($style->getName() . ' ' . $this->trans->trans('mb.ogcapifeatures.admin.style.copy_suffix'));
+        $copy->setName($style->getName() . ' ' . $this->trans->trans('mb.manager.admin.style.copy_suffix'));
         $copy->setStyle($style->getStyle());
         $copy->setSourceType('manual');
         $copy->setSourceId(null);
@@ -161,7 +161,7 @@ class StyleController extends ApplicationControllerBase
         $this->em->persist($copy);
         $this->em->flush();
 
-        $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.copied'));
+        $this->addFlash('success', $this->trans->trans('mb.manager.admin.style.copied'));
         return $this->redirectToRoute('mapbender_manager_style_edit', ['id' => $copy->getId()]);
     }
 
@@ -177,13 +177,13 @@ class StyleController extends ApplicationControllerBase
             if ($style->getSourceId()) {
                 $source = $this->em->getRepository(Source::class)->find($style->getSourceId());
                 if ($source) {
-                    $this->addFlash('error', $this->trans->trans('mb.ogcapifeatures.admin.style.cannot_delete_source_style'));
+                    $this->addFlash('error', $this->trans->trans('mb.manager.admin.style.cannot_delete_source_style'));
                     return $this->redirectToRoute('mapbender_manager_style_index');
                 }
             }
             $this->em->remove($style);
             $this->em->flush();
-            $this->addFlash('success', $this->trans->trans('mb.ogcapifeatures.admin.style.deleted'));
+            $this->addFlash('success', $this->trans->trans('mb.manager.admin.style.deleted'));
         }
 
         return $this->redirectToRoute('mapbender_manager_style_index');
@@ -224,7 +224,7 @@ class StyleController extends ApplicationControllerBase
         $raw = (string) $style->getStyle();
         if ('' === trim($raw)) {
             $form->get('style')->addError(new FormError($this->trans->trans(
-                'mb.ogcapifeatures.admin.style.editor.invalid_json',
+                'mb.manager.admin.style.editor.invalid_json',
                 ['error' => 'empty input']
             )));
             return false;
@@ -235,7 +235,7 @@ class StyleController extends ApplicationControllerBase
             return true;
         } catch (\JsonException $e) {
             $form->get('style')->addError(new FormError($this->trans->trans(
-                'mb.ogcapifeatures.admin.style.editor.invalid_json',
+                'mb.manager.admin.style.editor.invalid_json',
                 ['error' => $e->getMessage()]
             )));
             return false;

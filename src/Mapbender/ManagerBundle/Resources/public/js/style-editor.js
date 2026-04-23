@@ -132,7 +132,7 @@ class StyleEditor {
                     feedback.className = 'invalid-feedback';
                     this.styleTextarea.parentElement.appendChild(feedback);
                 }
-                feedback.textContent = Mapbender.trans('mb.ogcapifeatures.admin.style.editor.invalid_json', {error: err.message});
+                feedback.textContent = Mapbender.trans('mb.manager.admin.style.editor.invalid_json', {error: err.message});
                 const posMatch = err.message.match(/position\s+(\d+)/i);
                 if (posMatch) {
                     const errorPos = parseInt(posMatch[1], 10);
@@ -272,7 +272,7 @@ class StyleEditor {
                 this.setJsonToTextarea(parsed);
                 this._finalizeImport('mapbox-json', successEl);
             } catch (err) {
-                this._showWarnings(warningsEl, [Mapbender.trans('mb.ogcapifeatures.admin.style.editor.invalid_json', {error: err.message})]);
+                this._showWarnings(warningsEl, [Mapbender.trans('mb.manager.admin.style.editor.invalid_json', {error: err.message})]);
             }
         };
         reader.readAsText(file);

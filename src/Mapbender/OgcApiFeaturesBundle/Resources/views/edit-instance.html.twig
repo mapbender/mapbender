@@ -64,8 +64,8 @@
             <th>{{ 'mb.ogcapifeatures.admin.layer.selected' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.allow_info' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.info' | trans }}</th>
-            <th>{{ 'mb.ogcapifeatures.admin.style.title' | trans }}</th>
-            <th title="{{ 'mb.ogcapifeatures.admin.style.secondary_tooltip' | trans }}">{{ 'mb.ogcapifeatures.admin.style.secondary_short' | trans }}</th>
+            <th>{{ 'mb.manager.admin.style.title' | trans }}</th>
+            <th title="{{ 'mb.manager.admin.style.secondary_tooltip' | trans }}">{{ 'mb.manager.admin.style.secondary_short' | trans }}</th>
             <th></th>
         </tr>
         </thead>
@@ -109,12 +109,12 @@
                            {% if layer.styleId.vars.value is not empty %}checked{% endif %}>
                 </td>
                 <td>
-                    <span class="badge bg-secondary sec-style-count" title="{{ 'mb.ogcapifeatures.admin.style.secondary_attached' | trans }}" {% if layer.vars.data.secondaryStyleIds|default([])|length == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleIds|default([])|length }}</span>
+                    <span class="badge bg-secondary sec-style-count" title="{{ 'mb.manager.admin.style.secondary_attached' | trans }}" {% if layer.vars.data.secondaryStyleIds|default([])|length == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleIds|default([])|length }}</span>
                 </td>
                 <td>
                     <div class="static-popover-wrap">
                         <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
-                              title="{{ 'mb.ogcapifeatures.admin.style.settings' | trans }}">
+                              title="{{ 'mb.manager.admin.style.settings' | trans }}">
                             <i class="fas fa-ellipsis"></i>
                         </span>
                         <div class="popover-inner-wrap">
@@ -142,12 +142,12 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.label' | trans }}</label></div>
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.admin.style.label' | trans }}</label></div>
                                         <div class="col-sm-9">{{ form_widget(layer.styleId, {'attr': {'data-native-style-id': layer.nativeStyleId.vars.value|default('')}}) }}</div>
                                     </div>
                                     {{ form_widget(layer.nativeStyleId) }}
                                     <div class="row mb-2">
-                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.preview_label' | trans }}</label></div>
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.admin.style.preview_label' | trans }}</label></div>
                                         <div class="col-sm-9">
                                             <div class="d-flex gap-2 layer-preview">
                                                 <canvas width="40" height="40" data-geom="point" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
@@ -160,7 +160,7 @@
                                     <div class="secondary-styles-section">
                                         <div class="d-flex align-items-center mb-2">
                                             <button type="button" class="btn btn-sm btn-outline-secondary -fn-toggle-secondary-styles">
-                                                <i class="fas fa-layer-group"></i> {{ 'mb.ogcapifeatures.admin.style.secondary_styles' | trans }}
+                                                <i class="fas fa-layer-group"></i> {{ 'mb.manager.admin.style.secondary_styles' | trans }}
                                                 <span class="badge bg-secondary ms-1 secondary-count" style="display:none">0</span>
                                                 <i class="fas fa-chevron-down ms-1 toggle-arrow"></i>
                                             </button>
@@ -175,7 +175,7 @@
                                                 </div>
                                             </div>
                                             <div class="row mb-2">
-                                                <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.style.select_label' | trans }}</label></div>
+                                                <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.admin.style.select_label' | trans }}</label></div>
                                                 <div class="col-sm-9">{{ form_widget(layer.secondaryStyleIds) }}</div>
                                             </div>
                                         </div>
@@ -189,7 +189,7 @@
                                     </div>
                                     <div class="text-end mt-2">
                                         <button type="button" class="btn btn-sm btn-primary -fn-confirm-style" data-toggle-target="#{{ _popover_id }}">
-                                            <i class="fas fa-check"></i> {{ 'mb.ogcapifeatures.admin.style.ok' | trans }}
+                                            <i class="fas fa-check"></i> {{ 'mb.manager.admin.style.ok' | trans }}
                                         </button>
                                     </div>
                                 </div>

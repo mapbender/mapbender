@@ -328,8 +328,8 @@ class StyleInstanceEditor {
                 }
             }
             if (nativeId && opt.value === nativeId) {
-                if (!li.textContent.includes(Mapbender.trans('mb.ogcapifeatures.admin.style.native_style'))) {
-                    li.textContent += ' ' + Mapbender.trans('mb.ogcapifeatures.admin.style.native_style');
+                if (!li.textContent.includes(Mapbender.trans('mb.manager.admin.style.native_style'))) {
+                    li.textContent += ' ' + Mapbender.trans('mb.manager.admin.style.native_style');
                 }
                 li.classList.add('native-style');
             }
@@ -353,8 +353,8 @@ class StyleInstanceEditor {
             if (!dropdown) return;
             dropdown.querySelectorAll('.dropdownList .choice').forEach(li => {
                 if (li.dataset.value === nativeId) {
-                    if (!li.textContent.includes(Mapbender.trans('mb.ogcapifeatures.admin.style.native_style'))) {
-                        li.textContent += ' ' + Mapbender.trans('mb.ogcapifeatures.admin.style.native_style');
+                    if (!li.textContent.includes(Mapbender.trans('mb.manager.admin.style.native_style'))) {
+                        li.textContent += ' ' + Mapbender.trans('mb.manager.admin.style.native_style');
                     }
                     li.classList.add('native-style');
                 }
@@ -383,7 +383,7 @@ class StyleInstanceEditor {
         const parts = [];
         if (changed) {
             const savedLabel = this._getSavedLabel(select);
-            parts.push(savedLabel ? Mapbender.trans('mb.ogcapifeatures.admin.style.changed_was', {label: savedLabel}) : Mapbender.trans('mb.ogcapifeatures.admin.style.changed'));
+            parts.push(savedLabel ? Mapbender.trans('mb.manager.admin.style.changed_was', {label: savedLabel}) : Mapbender.trans('mb.manager.admin.style.changed'));
         }
         if (this._isFilterActive) {
             parts.push(this._buildFilterTooltip(true));
@@ -396,7 +396,7 @@ class StyleInstanceEditor {
 
     _getSavedLabel(select) {
         const savedVal = this._savedValues.get(select);
-        if (!savedVal) return Mapbender.trans('mb.ogcapifeatures.admin.style.none');
+        if (!savedVal) return Mapbender.trans('mb.manager.admin.style.none');
         const opts = this._originalOptions.get(select) || [];
         const match = opts.find(o => o.value === savedVal);
         return match ? match.text : savedVal;
@@ -444,7 +444,7 @@ class StyleInstanceEditor {
                 msg.className = 'preview-message text-muted small';
                 previewWrap.appendChild(msg);
             }
-            msg.textContent = Mapbender.trans('mb.ogcapifeatures.admin.style.multi_layer_preview', {count: s.layers.length});
+            msg.textContent = Mapbender.trans('mb.manager.admin.style.multi_layer_preview', {count: s.layers.length});
             msg.style.display = '';
         } else {
             previewWrap.querySelectorAll('canvas').forEach(c => c.style.display = '');

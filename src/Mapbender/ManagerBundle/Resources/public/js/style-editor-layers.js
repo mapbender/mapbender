@@ -179,42 +179,42 @@ class StyleEditorLayers {
         container.innerHTML = '';
         layout = layout || {};
         if (type === 'fill') {
-            container.appendChild(this._createColorRow('fill-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.fill_color'), paint['fill-color'] || '#000000'));
-            container.appendChild(this._createRangeRow('fill-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.fill_opacity'), paint['fill-opacity'] ?? 1, 0, 1, 'any'));
-            container.appendChild(this._createColorRow('fill-outline-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.outline_color'), paint['fill-outline-color'] || ''));
+            container.appendChild(this._createColorRow('fill-color', Mapbender.trans('mb.manager.admin.style.editor.fill_color'), paint['fill-color'] || '#000000'));
+            container.appendChild(this._createRangeRow('fill-opacity', Mapbender.trans('mb.manager.admin.style.editor.fill_opacity'), paint['fill-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createColorRow('fill-outline-color', Mapbender.trans('mb.manager.admin.style.editor.outline_color'), paint['fill-outline-color'] || ''));
         } else if (type === 'line') {
-            container.appendChild(this._createColorRow('line-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.line_color'), paint['line-color'] || '#000000'));
-            container.appendChild(this._createNumberRow('line-width', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.line_width'), this._scalarVal(paint['line-width'], 2), 0, 50, 0.5));
-            container.appendChild(this._createRangeRow('line-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.line_opacity'), paint['line-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createColorRow('line-color', Mapbender.trans('mb.manager.admin.style.editor.line_color'), paint['line-color'] || '#000000'));
+            container.appendChild(this._createNumberRow('line-width', Mapbender.trans('mb.manager.admin.style.editor.line_width'), this._scalarVal(paint['line-width'], 2), 0, 50, 0.5));
+            container.appendChild(this._createRangeRow('line-opacity', Mapbender.trans('mb.manager.admin.style.editor.line_opacity'), paint['line-opacity'] ?? 1, 0, 1, 'any'));
         } else if (type === 'circle') {
-            container.appendChild(this._createNumberRow('circle-radius', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.circle_radius'), paint['circle-radius'] || 5, 0, 50, 1));
-            container.appendChild(this._createColorRow('circle-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.circle_color'), paint['circle-color'] || '#000000'));
-            container.appendChild(this._createRangeRow('circle-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.circle_opacity'), paint['circle-opacity'] ?? 1, 0, 1, 'any'));
-            container.appendChild(this._createColorRow('circle-stroke-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.stroke_color'), paint['circle-stroke-color'] || ''));
-            container.appendChild(this._createNumberRow('circle-stroke-width', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.stroke_width'), paint['circle-stroke-width'] || 0, 0, 10, 0.5));
+            container.appendChild(this._createNumberRow('circle-radius', Mapbender.trans('mb.manager.admin.style.editor.circle_radius'), paint['circle-radius'] || 5, 0, 50, 1));
+            container.appendChild(this._createColorRow('circle-color', Mapbender.trans('mb.manager.admin.style.editor.circle_color'), paint['circle-color'] || '#000000'));
+            container.appendChild(this._createRangeRow('circle-opacity', Mapbender.trans('mb.manager.admin.style.editor.circle_opacity'), paint['circle-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createColorRow('circle-stroke-color', Mapbender.trans('mb.manager.admin.style.editor.stroke_color'), paint['circle-stroke-color'] || ''));
+            container.appendChild(this._createNumberRow('circle-stroke-width', Mapbender.trans('mb.manager.admin.style.editor.stroke_width'), paint['circle-stroke-width'] || 0, 0, 10, 0.5));
         } else if (type === 'symbol') {
             container.appendChild(this._createSymbolControls(layout, paint));
-            container.appendChild(this._createColorRow('text-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.text_color'), paint['text-color'] || '#000000'));
-            container.appendChild(this._createRangeRow('text-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.text_opacity'), paint['text-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createColorRow('text-color', Mapbender.trans('mb.manager.admin.style.editor.text_color'), paint['text-color'] || '#000000'));
+            container.appendChild(this._createRangeRow('text-opacity', Mapbender.trans('mb.manager.admin.style.editor.text_opacity'), paint['text-opacity'] ?? 1, 0, 1, 'any'));
         } else if (type === 'background') {
-            container.appendChild(this._createColorRow('background-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.background_color'), paint['background-color'] || '#000000'));
-            container.appendChild(this._createRangeRow('background-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.background_opacity'), paint['background-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createColorRow('background-color', Mapbender.trans('mb.manager.admin.style.editor.background_color'), paint['background-color'] || '#000000'));
+            container.appendChild(this._createRangeRow('background-opacity', Mapbender.trans('mb.manager.admin.style.editor.background_opacity'), paint['background-opacity'] ?? 1, 0, 1, 'any'));
         } else if (type === 'raster') {
-            container.appendChild(this._createRangeRow('raster-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_opacity'), paint['raster-opacity'] ?? 1, 0, 1, 'any'));
-            container.appendChild(this._createRangeRow('raster-brightness-min', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_brightness_min'), paint['raster-brightness-min'] ?? 0, 0, 1, 'any'));
-            container.appendChild(this._createRangeRow('raster-brightness-max', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_brightness_max'), paint['raster-brightness-max'] ?? 1, 0, 1, 'any'));
-            container.appendChild(this._createRangeRow('raster-contrast', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_contrast'), paint['raster-contrast'] ?? 0, -1, 1, 'any'));
-            container.appendChild(this._createRangeRow('raster-saturation', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.raster_saturation'), paint['raster-saturation'] ?? 0, -1, 1, 'any'));
+            container.appendChild(this._createRangeRow('raster-opacity', Mapbender.trans('mb.manager.admin.style.editor.raster_opacity'), paint['raster-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createRangeRow('raster-brightness-min', Mapbender.trans('mb.manager.admin.style.editor.raster_brightness_min'), paint['raster-brightness-min'] ?? 0, 0, 1, 'any'));
+            container.appendChild(this._createRangeRow('raster-brightness-max', Mapbender.trans('mb.manager.admin.style.editor.raster_brightness_max'), paint['raster-brightness-max'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createRangeRow('raster-contrast', Mapbender.trans('mb.manager.admin.style.editor.raster_contrast'), paint['raster-contrast'] ?? 0, -1, 1, 'any'));
+            container.appendChild(this._createRangeRow('raster-saturation', Mapbender.trans('mb.manager.admin.style.editor.raster_saturation'), paint['raster-saturation'] ?? 0, -1, 1, 'any'));
         } else if (type === 'fill-extrusion') {
-            container.appendChild(this._createColorRow('fill-extrusion-color', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.extrusion_color'), paint['fill-extrusion-color'] || '#000000'));
-            container.appendChild(this._createRangeRow('fill-extrusion-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.extrusion_opacity'), paint['fill-extrusion-opacity'] ?? 1, 0, 1, 'any'));
-            container.appendChild(this._createNumberRow('fill-extrusion-height', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.extrusion_height'), this._scalarVal(paint['fill-extrusion-height'], 0), 0, 10000, 1));
-            container.appendChild(this._createNumberRow('fill-extrusion-base', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.extrusion_base'), this._scalarVal(paint['fill-extrusion-base'], 0), 0, 10000, 1));
+            container.appendChild(this._createColorRow('fill-extrusion-color', Mapbender.trans('mb.manager.admin.style.editor.extrusion_color'), paint['fill-extrusion-color'] || '#000000'));
+            container.appendChild(this._createRangeRow('fill-extrusion-opacity', Mapbender.trans('mb.manager.admin.style.editor.extrusion_opacity'), paint['fill-extrusion-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createNumberRow('fill-extrusion-height', Mapbender.trans('mb.manager.admin.style.editor.extrusion_height'), this._scalarVal(paint['fill-extrusion-height'], 0), 0, 10000, 1));
+            container.appendChild(this._createNumberRow('fill-extrusion-base', Mapbender.trans('mb.manager.admin.style.editor.extrusion_base'), this._scalarVal(paint['fill-extrusion-base'], 0), 0, 10000, 1));
         } else if (type === 'heatmap') {
-            container.appendChild(this._createNumberRow('heatmap-radius', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.heatmap_radius'), this._scalarVal(paint['heatmap-radius'], 30), 1, 200, 1));
-            container.appendChild(this._createRangeRow('heatmap-intensity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.heatmap_intensity'), this._scalarVal(paint['heatmap-intensity'], 1), 0, 10, 'any'));
-            container.appendChild(this._createRangeRow('heatmap-opacity', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.heatmap_opacity'), paint['heatmap-opacity'] ?? 1, 0, 1, 'any'));
-            container.appendChild(this._createNumberRow('heatmap-weight', Mapbender.trans('mb.ogcapifeatures.admin.style.editor.heatmap_weight'), this._scalarVal(paint['heatmap-weight'], 1), 0, 100, 0.1));
+            container.appendChild(this._createNumberRow('heatmap-radius', Mapbender.trans('mb.manager.admin.style.editor.heatmap_radius'), this._scalarVal(paint['heatmap-radius'], 30), 1, 200, 1));
+            container.appendChild(this._createRangeRow('heatmap-intensity', Mapbender.trans('mb.manager.admin.style.editor.heatmap_intensity'), this._scalarVal(paint['heatmap-intensity'], 1), 0, 10, 'any'));
+            container.appendChild(this._createRangeRow('heatmap-opacity', Mapbender.trans('mb.manager.admin.style.editor.heatmap_opacity'), paint['heatmap-opacity'] ?? 1, 0, 1, 'any'));
+            container.appendChild(this._createNumberRow('heatmap-weight', Mapbender.trans('mb.manager.admin.style.editor.heatmap_weight'), this._scalarVal(paint['heatmap-weight'], 1), 0, 100, 0.1));
         } else {
             container.appendChild(document.getElementById('tpl-no-props').content.cloneNode(true));
         }
@@ -384,7 +384,7 @@ class StyleEditorLayers {
         const badge = document.createElement('span');
         badge.className = 'badge bg-warning text-dark ms-1';
         badge.style.fontSize = '0.7em';
-        badge.title = Mapbender.trans('mb.ogcapifeatures.admin.style.editor.complex_value_hint') || 'Editing replaces the original ' + label + ' value';
+        badge.title = Mapbender.trans('mb.manager.admin.style.editor.complex_value_hint') || 'Editing replaces the original ' + label + ' value';
         badge.textContent = label;
         const labelEl = frag.querySelector('label');
         if (labelEl) labelEl.appendChild(badge);
@@ -568,7 +568,7 @@ class StyleEditorLayers {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_polygon'), w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.manager.admin.style.editor.geom_polygon'), w - 8, h - 6);
         } else if (type === 'line') {
             const color = p['line-color'] || '#000000';
             const opacity = p['line-opacity'] ?? 1;
@@ -586,7 +586,7 @@ class StyleEditorLayers {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_line'), w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.manager.admin.style.editor.geom_line'), w - 8, h - 6);
         } else if (type === 'circle') {
             const color = p['circle-color'] || '#000000';
             const opacity = p['circle-opacity'] ?? 1;
@@ -606,7 +606,7 @@ class StyleEditorLayers {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_point'), w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.manager.admin.style.editor.geom_point'), w - 8, h - 6);
         } else if (type === 'symbol') {
             const color = p['text-color'] || '#000000';
             const opacity = p['text-opacity'] ?? 1;
@@ -623,7 +623,7 @@ class StyleEditorLayers {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_symbol'), w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.manager.admin.style.editor.geom_symbol'), w - 8, h - 6);
         } else if (type === 'background') {
             const color = p['background-color'] || '#000000';
             const opacity = p['background-opacity'] ?? 1;
@@ -632,7 +632,7 @@ class StyleEditorLayers {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_background'), w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.manager.admin.style.editor.geom_background'), w - 8, h - 6);
         } else if (type === 'raster') {
             const opacity = p['raster-opacity'] ?? 1;
             // Grid pattern to symbolize raster tiles
@@ -646,7 +646,7 @@ class StyleEditorLayers {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_raster'), w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.manager.admin.style.editor.geom_raster'), w - 8, h - 6);
         } else if (type === 'fill-extrusion') {
             const color = p['fill-extrusion-color'] || '#888888';
             const opacity = p['fill-extrusion-opacity'] ?? 1;
@@ -668,7 +668,7 @@ class StyleEditorLayers {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_extrusion'), w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.manager.admin.style.editor.geom_extrusion'), w - 8, h - 6);
         } else if (type === 'heatmap') {
             const opacity = p['heatmap-opacity'] ?? 1;
             const r = Math.min(this._scalarVal(p['heatmap-radius'], 30), 35);
@@ -685,13 +685,13 @@ class StyleEditorLayers {
             ctx.fillStyle = '#6c757d';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.geom_heatmap'), w - 8, h - 6);
+            ctx.fillText(Mapbender.trans('mb.manager.admin.style.editor.geom_heatmap'), w - 8, h - 6);
         } else {
             ctx.fillStyle = '#adb5bd';
             ctx.font = '12px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(Mapbender.trans('mb.ogcapifeatures.admin.style.editor.unknown_layer', {type: type || 'unknown'}), w / 2, h / 2);
+            ctx.fillText(Mapbender.trans('mb.manager.admin.style.editor.unknown_layer', {type: type || 'unknown'}), w / 2, h / 2);
         }
     }
 

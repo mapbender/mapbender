@@ -84,7 +84,7 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
             ->add('styleId', ChoiceType::class, [
                 'required' => false,
                 'label' => false,
-                'placeholder' => 'mb.ogcapifeatures.admin.style.none',
+                'placeholder' => 'mb.manager.admin.style.none',
                 'choices' => $styleChoices,
                 'attr' => ['class' => 'form-select form-select-sm style-select'],
             ])

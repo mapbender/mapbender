@@ -3,7 +3,7 @@
 
 {% block tab_headers %}
     {{ parent() }}
-    {{- tab_macros.tab_header('Styles', 'mb.ogcapifeatures.admin.style.title') -}}
+    {{- tab_macros.tab_header('Styles', 'mb.manager.admin.style.title') -}}
 {% endblock tab_headers %}
 
 {% block tab_containers %}
@@ -14,8 +14,8 @@
                 <table class="table table-striped table-hover align-middle">
                     <thead>
                         <tr>
-                            <th style="width:50px">{{ 'mb.ogcapifeatures.admin.style.manager.th_id' | trans }}</th>
-                            <th>{{ 'mb.ogcapifeatures.admin.style.manager.th_name' | trans }}</th>
+                            <th style="width:50px">{{ 'mb.manager.admin.style.manager.th_id' | trans }}</th>
+                            <th>{{ 'mb.manager.admin.style.manager.th_name' | trans }}</th>
                             <th>{{ 'mb.ogcapifeatures.admin.source_tab.collection' | trans }}</th>
                             <th style="width:80px">{{ 'mb.ogcapifeatures.admin.source_tab.layers' | trans }}</th>
                         </tr>
