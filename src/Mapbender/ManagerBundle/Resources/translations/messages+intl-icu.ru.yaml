@@ -165,10 +165,10 @@ mb:
         select_label: Выбор
         ok: OK
         native_style: "(исходный стиль)"
-        changed_was: "Изменено (было: %label%)"
+        changed_was: "Изменено (было: {label})"
         changed: Изменено относительно сохранённого значения
         none: "-- нет --"
-        multi_layer_preview: "Многослойный (%count%)"
+        multi_layer_preview: "Многослойный ({count})"
         name_required: Название стиля обязательно.
         saved: Стиль сохранён.
         updated: Стиль обновлён.
@@ -194,10 +194,10 @@ mb:
           action_delete: Удалить
           confirm_delete: Удалить этот стиль?
           no_styles: Стили ещё не настроены.
-          fallback_name: "Стиль #%id%"
+          fallback_name: "Стиль #{id}"
         editor:
-          title_view: "Просмотр стиля #%id%"
-          title_edit: "Редактирование стиля #%id%"
+          title_view: "Просмотр стиля #{id}"
+          title_edit: "Редактирование стиля #{id}"
           title_new: Новый стиль
           name_label: Имя
           name_placeholder: "Введите название стиля..."

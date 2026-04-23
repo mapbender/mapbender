@@ -155,10 +155,10 @@ mb:
         select_label: Вибір
         ok: OK
         native_style: "(рідний стиль)"
-        changed_was: "Змінено (було: %label%)"
+        changed_was: "Змінено (було: {label})"
         changed: Змінено відносно збереженого значення
         none: "-- немає --"
-        multi_layer_preview: "Багатошаровий (%count%)"
+        multi_layer_preview: "Багатошаровий ({count})"
         name_required: Назва стилю обов'язкова.
         saved: Стиль збережено.
         updated: Стиль оновлено.
@@ -184,10 +184,10 @@ mb:
           action_delete: Видалити
           confirm_delete: Видалити цей стиль?
           no_styles: Стилів ще не налаштовано.
-          fallback_name: "Стиль #%id%"
+          fallback_name: "Стиль #{id}"
         editor:
-          title_view: "Перегляд стилю #%id%"
-          title_edit: "Редагування стилю #%id%"
+          title_view: "Перегляд стилю #{id}"
+          title_edit: "Редагування стилю #{id}"
           title_new: Новий стиль
           name_label: Назва
           name_placeholder: "Введіть назву стилю..."

@@ -1,5 +1,5 @@
 {% extends '@MapbenderManager/manager.html.twig' %}
-{%- set title = (readonly|default(false)) ? 'mb.manager.admin.style.editor.title_view' | trans({'%id%': style.id}) : (style.id ? 'mb.manager.admin.style.editor.title_edit' | trans({'%id%': style.id}) : 'mb.manager.admin.style.editor.title_new' | trans) -%}
+{%- set title = (readonly|default(false)) ? 'mb.manager.admin.style.editor.title_view' | trans({id: style.id}) : (style.id ? 'mb.manager.admin.style.editor.title_edit' | trans({id: style.id}) : 'mb.manager.admin.style.editor.title_new' | trans) -%}
 
 {% block css %}
     {{ parent() }}

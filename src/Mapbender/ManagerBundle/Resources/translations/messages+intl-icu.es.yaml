@@ -166,10 +166,10 @@ mb:
         select_label: Seleccionar
         ok: OK
         native_style: "(estilo nativo)"
-        changed_was: "Cambiado (era: %label%)"
+        changed_was: "Cambiado (era: {label})"
         changed: Cambiado respecto al valor guardado
         none: "-- ninguno --"
-        multi_layer_preview: "Multicapa (%count%)"
+        multi_layer_preview: "Multicapa ({count})"
         name_required: El nombre del estilo es obligatorio.
         saved: Estilo guardado.
         updated: Estilo actualizado.
@@ -195,10 +195,10 @@ mb:
           action_delete: Eliminar
           confirm_delete: ¿Eliminar este estilo?
           no_styles: Aún no hay estilos configurados.
-          fallback_name: "Estilo #%id%"
+          fallback_name: "Estilo #{id}"
         editor:
-          title_view: "Ver estilo #%id%"
-          title_edit: "Editar estilo #%id%"
+          title_view: "Ver estilo #{id}"
+          title_edit: "Editar estilo #{id}"
           title_new: Nuevo estilo
           name_label: Nombre
           name_placeholder: "Introducir nombre del estilo..."

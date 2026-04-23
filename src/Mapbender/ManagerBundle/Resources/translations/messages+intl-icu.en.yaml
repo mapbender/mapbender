@@ -170,10 +170,10 @@ mb:
         select_label: Select
         ok: OK
         native_style: "(native style)"
-        changed_was: "Changed (was: %label%)"
+        changed_was: "Changed (was: {label})"
         changed: Changed from saved value
         none: "-- none --"
-        multi_layer_preview: "Multi-layer (%count%)"
+        multi_layer_preview: "Multi-layer ({count})"
         name_required: Style name is required.
         saved: Style saved.
         updated: Style updated.
@@ -199,10 +199,10 @@ mb:
           action_delete: Delete
           confirm_delete: Delete this style?
           no_styles: No styles configured yet.
-          fallback_name: "Style #%id%"
+          fallback_name: "Style #{id}"
         editor:
-          title_view: "View Style #%id%"
-          title_edit: "Edit Style #%id%"
+          title_view: "View Style #{id}"
+          title_edit: "Edit Style #{id}"
           title_new: New Style
           name_label: Name
           name_placeholder: "Enter style name..."

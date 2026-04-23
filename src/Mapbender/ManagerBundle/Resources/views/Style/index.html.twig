@@ -60,7 +60,7 @@
                         </div>
                         {% endif %}
                     </td>
-                    <td>{{ style.name ?? ('mb.manager.admin.style.manager.fallback_name' | trans({'%id%': style.id})) }}</td>
+                    <td>{{ style.name ?? ('mb.manager.admin.style.manager.fallback_name' | trans({id: style.id})) }}</td>
                     <td>
                         {% if style.sourceType == 'mapbox-json' %}
                             <span class="badge bg-primary">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</span>

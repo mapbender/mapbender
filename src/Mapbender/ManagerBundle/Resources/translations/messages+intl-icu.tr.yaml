@@ -110,10 +110,10 @@ mb:
         select_label: Seçim
         ok: OK
         native_style: "(yerel stil)"
-        changed_was: "Değiştirildi (önceki: %label%)"
+        changed_was: "Değiştirildi (önceki: {label})"
         changed: Kayıtlı değerden farklı
         none: "-- yok --"
-        multi_layer_preview: "Çok katmanlı (%count%)"
+        multi_layer_preview: "Çok katmanlı ({count})"
         name_required: Stil adı gereklidir.
         saved: Stil kaydedildi.
         updated: Stil güncellendi.
@@ -139,10 +139,10 @@ mb:
           action_delete: Sil
           confirm_delete: Bu stili silmek istiyor musunuz?
           no_styles: Henüz stil yapılandırılmadı.
-          fallback_name: "Stil #%id%"
+          fallback_name: "Stil #{id}"
         editor:
-          title_view: "Stil #%id% görüntüle"
-          title_edit: "Stil #%id% düzenle"
+          title_view: "Stil #{id} görüntüle"
+          title_edit: "Stil #{id} düzenle"
           title_new: Yeni stil
           name_label: Ad
           name_placeholder: "Stil adını girin..."
