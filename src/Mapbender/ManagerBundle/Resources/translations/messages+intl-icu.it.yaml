@@ -273,6 +273,7 @@ mb:
           font: Carattere
           geom_symbol: Simbolo
           no_editable_properties: Nessuna proprietà di stile modificabile per questo tipo di layer.
+          complex_value_hint: "Questo valore dipende dal livello di zoom. La modifica nell'editor grafico sostituirà il valore per tutti i livelli di zoom. Per modificare senza perdere informazioni, modificare il JSON grezzo nella scheda successiva."
           unknown_layer: "Layer %type%"
           background_color: Colore di sfondo
           background_opacity: Opacità sfondo

@@ -273,6 +273,7 @@ mb:
           font: Schriftart
           geom_symbol: Symbol
           no_editable_properties: Keine editierbaren Darstellungseigenschaften für diesen Layertyp.
+          complex_value_hint: "Dieser Wert ist zoomstufenabhängig. Änderungen im grafischen Editor ersetzen den Wert für alle Zoomstufen. Um Informationen nicht zu verlieren, bearbeiten Sie das Roh-JSON im nächsten Tab."
           unknown_layer: "%type%-Layer"
           background_color: Hintergrundfarbe
           background_opacity: Hintergrund-Deckkraft

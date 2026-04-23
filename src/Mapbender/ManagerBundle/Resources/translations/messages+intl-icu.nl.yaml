@@ -220,6 +220,7 @@ mb:
           font: Lettertype
           geom_symbol: Symbool
           no_editable_properties: Geen bewerkbare stijleigenschappen voor dit laagtype.
+          complex_value_hint: "Deze waarde is afhankelijk van het zoomniveau. Bewerken in de grafische editor vervangt de waarde voor alle zoomniveaus. Om zonder informatieverlies te bewerken, bewerk de ruwe JSON in het volgende tabblad."
           unknown_layer: "%type%-laag"
           background_color: Achtergrondkleur
           background_opacity: Achtergronddekking

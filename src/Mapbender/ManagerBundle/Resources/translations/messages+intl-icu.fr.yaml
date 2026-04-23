@@ -220,6 +220,7 @@ mb:
           font: Police
           geom_symbol: Symbole
           no_editable_properties: Aucune propriété de style modifiable pour ce type de couche.
+          complex_value_hint: "Cette valeur dépend du niveau de zoom. La modification dans l'éditeur graphique remplacera la valeur pour tous les niveaux de zoom. Pour modifier sans perte d'information, éditez le JSON brut dans l'onglet suivant."
           unknown_layer: "Couche %type%"
           background_color: Couleur de fond
           background_opacity: Opacité du fond

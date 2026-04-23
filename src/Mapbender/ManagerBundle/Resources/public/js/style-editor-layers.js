@@ -384,7 +384,7 @@ class StyleEditorLayers {
         const badge = document.createElement('span');
         badge.className = 'badge bg-warning text-dark ms-1';
         badge.style.fontSize = '0.7em';
-        badge.title = Mapbender.trans('mb.manager.admin.style.editor.complex_value_hint') || 'Editing replaces the original ' + label + ' value';
+        badge.title = Mapbender.trans('mb.manager.admin.style.editor.complex_value_hint');
         badge.textContent = label;
         const labelEl = frag.querySelector('label');
         if (labelEl) labelEl.appendChild(badge);

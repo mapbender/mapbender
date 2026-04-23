@@ -275,6 +275,7 @@ mb:
           font: Font
           geom_symbol: Symbol
           no_editable_properties: No editable paint properties for this layer type.
+          complex_value_hint: "This value depends on the zoom level. Editing values in the graphical editor will replace the value for all zoom levels. For editing without losing information, edit the raw JSON in the next tab."
           unknown_layer: "%type% layer"
           background_color: Background Color
           background_opacity: Background Opacity

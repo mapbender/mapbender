@@ -271,6 +271,7 @@ mb:
           font: Fuente
           geom_symbol: Símbolo
           no_editable_properties: No hay propiedades de estilo editables para este tipo de capa.
+          complex_value_hint: "Este valor depende del nivel de zoom. La edición en el editor gráfico reemplazará el valor para todos los niveles de zoom. Para editar sin perder información, edite el JSON sin procesar en la siguiente pestaña."
           unknown_layer: "Capa %type%"
           background_color: Color de fondo
           background_opacity: Opacidad del fondo

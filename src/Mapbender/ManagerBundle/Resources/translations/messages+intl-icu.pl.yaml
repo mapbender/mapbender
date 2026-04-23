@@ -275,6 +275,7 @@ mb:
           font: Czcionka
           geom_symbol: Symbol
           no_editable_properties: Brak edytowalnych właściwości stylu dla tego typu warstwy.
+          complex_value_hint: "Ta wartość zależy od poziomu powiększenia. Edycja w edytorze graficznym zastąpi wartość dla wszystkich poziomów powiększenia. Aby edytować bez utraty informacji, edytuj surowy JSON w następnej karcie."
           unknown_layer: "Warstwa %type%"
           background_color: Kolor tła
           background_opacity: Przezroczystość tła

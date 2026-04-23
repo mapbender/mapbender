@@ -273,6 +273,7 @@ mb:
           font: Fonte
           geom_symbol: Símbolo
           no_editable_properties: Sem propriedades de estilo editáveis para este tipo de camada.
+          complex_value_hint: "Este valor depende do nível de zoom. A edição no editor gráfico substituirá o valor para todos os níveis de zoom. Para editar sem perder informações, edite o JSON bruto na próxima aba."
           unknown_layer: "Camada %type%"
           background_color: Cor de fundo
           background_opacity: Opacidade do fundo

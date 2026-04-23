@@ -215,6 +215,7 @@ mb:
           font: Yazı tipi
           geom_symbol: Sembol
           no_editable_properties: Bu katman türü için düzenlenebilir stil özelliği yok.
+          complex_value_hint: "Bu değer yakınlaştırma düzeyine bağlıdır. Grafik düzenleyicide yapılan değişiklikler tüm yakınlaştırma düzeyleri için değeri değiştirir. Bilgi kaybı olmadan düzenlemek için bir sonraki sekmedeki ham JSON'u düzenleyin."
           unknown_layer: "%type% katmanı"
           background_color: Arka Plan Rengi
           background_opacity: Arka Plan Opaklığı
