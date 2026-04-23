@@ -3,6 +3,15 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -23,20 +32,17 @@ class SearchRouterFormType extends AbstractType
         return str_replace('"', '', $name);
     }
 
-    /**
-     * @inheritdoc
-     */
-    /** Maps legacy Symfony 2 short form type aliases to FQCNs for backward compatibility */
+    /** Maps legacy short form type aliases to FQCNs for backward compatibility */
     private static array $typeAliasMap = [
-        'checkbox'   => \Symfony\Component\Form\Extension\Core\Type\CheckboxType::class,
-        'choice'     => \Symfony\Component\Form\Extension\Core\Type\ChoiceType::class,
-        'collection' => \Symfony\Component\Form\Extension\Core\Type\CollectionType::class,
-        'file'       => \Symfony\Component\Form\Extension\Core\Type\FileType::class,
-        'hidden'     => \Symfony\Component\Form\Extension\Core\Type\HiddenType::class,
-        'integer'    => \Symfony\Component\Form\Extension\Core\Type\IntegerType::class,
-        'number'     => \Symfony\Component\Form\Extension\Core\Type\NumberType::class,
-        'text'       => \Symfony\Component\Form\Extension\Core\Type\TextType::class,
-        'textarea'   => \Symfony\Component\Form\Extension\Core\Type\TextareaType::class,
+        'checkbox'   => CheckboxType::class,
+        'choice'     => ChoiceType::class,
+        'collection' => CollectionType::class,
+        'file'       => FileType::class,
+        'hidden'     => HiddenType::class,
+        'integer'    => IntegerType::class,
+        'number'     => NumberType::class,
+        'text'       => TextType::class,
+        'textarea'   => TextareaType::class,
     ];
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
