@@ -94,7 +94,8 @@ class StyleEditorLayers {
         this._populatePaintControls(paintContainer, layer.type || 'fill', layer.paint || {}, idx, layer.layout || {});
 
         // Remove button
-        item.querySelector('.-fn-remove-layer').dataset.layerIndex = idx;
+        const dataset = item.querySelector('.-fn-remove-layer')?.dataset;
+        if (dataset) dataset.layerIndex = idx;
 
         this.layerAccordion.appendChild(frag);
 

@@ -10,7 +10,7 @@
     <div class="content-box content-box-lg">
     {{ form_start(form, {action: style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new'), attr: readonly|default(false) ? {class: 'style-readonly', novalidate: 'novalidate'} : {novalidate: 'novalidate'}}) }}
         {{ form_widget(form.sourceType, {id: 'sourceType'}) }}
-        {% if readonly|default(false) %}
+        {% if readonly|default(false) and style.sourceType not in ['manual', 'mapbox-json'] %}
         <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
             <i class="fas fa-lock me-2"></i>
             <div>{{ 'mb.manager.admin.style.editor.readonly_notice' | trans }}</div>
@@ -49,11 +49,12 @@
                 <div class="tab-pane fade show active" id="pane-visual" role="tabpanel">
 
                     {# ── Mapbox Layer Editor (shown for Mapbox documents) ── #}
-                    <div id="layers-editor" class="d-none">
+                    <div id="layers-editor" class="d-none"{{ readonly|default(false) ? ' data-readonly="1"' : '' }}>
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="text-muted fw-bold text-uppercase" style="font-size:12px;letter-spacing:0.5px;">
                                 <i class="fas fa-layer-group me-1"></i>{{ 'mb.manager.admin.style.editor.mapbox_layers' | trans }}
                             </span>
+                            {% if not readonly|default(false) %}
                             <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-plus me-1"></i>{{ 'mb.manager.admin.style.editor.add_layer' | trans }}
                             </button>
@@ -63,13 +64,14 @@
                                 <li><a class="dropdown-item -js-add-layer" data-layer-type="circle" href="#"><i class="fas fa-circle me-2"></i>Circle</a></li>
                                 <li><a class="dropdown-item -js-add-layer" data-layer-type="symbol" href="#"><i class="fas fa-font me-2"></i>Symbol</a></li>
                             </ul>
+                            {% endif %}
                         </div>
                         <div id="layer-accordion" class="accordion"></div>
                     </div>
 
                     {# ── Flat Editor (shown for simple style objects) ── #}
                     <div id="flat-editor">
-                    <fieldset>
+                    <fieldset {% if readonly|default(false) %}disabled{% endif %}>
                         <legend><i class="fas fa-fill-drip me-1"></i>{{ 'mb.manager.admin.style.editor.fill' | trans }}</legend>
                         <div class="row">
                             <div class="col-sm-4">
@@ -238,7 +240,9 @@
                     <div class="mb-3">
                         <label for="{{ form.style.vars.id }}" class="form-label fw-bold">{{ 'mb.manager.admin.style.editor.mapbox_style_json' | trans }}</label>
                         {{ form_widget(form.style, {id: 'style', attr: {rows: 24, 'data-collection-id': style.collectionId|default(''), 'data-is-new': isNew|default(false) ? '1' : '0'}}) }}
-                        <div class="form-text text-muted mt-1"><i class="fas fa-circle-info me-1"></i>{{ 'mb.manager.admin.style.editor.json_syntax_only_note' | trans }}</div>
+                        {% if not readonly|default(false) %}
+                            <div class="form-text text-muted mt-1"><i class="fas fa-circle-info me-1"></i>{{ 'mb.manager.admin.style.editor.json_syntax_only_note' | trans }}</div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -295,11 +299,13 @@
                         <canvas class="layer-full-canvas" width="200" height="80"></canvas>
                     </div>
                     <div class="layer-paint-controls"></div>
+                    {% if not readonly|default(false) %}
                     <div class="text-end mt-2">
                         <button type="button" class="btn btn-sm btn-outline-danger -fn-remove-layer">
                             <i class="fas fa-trash-can me-1"></i>{{ 'mb.manager.admin.style.editor.remove_layer' | trans }}
                         </button>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Mapbender\ManagerBundle\Component\Menu\SourceMenu;
+use Mapbender\ManagerBundle\Component\Menu\StyleMenu;
 use Mapbender\ManagerBundle\DependencyInjection\Compiler\FinalizeMenuPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
@@ -37,7 +38,7 @@ class MapbenderManagerBundle extends Bundle
             ->setWeight(20)
         ;
 
-        $styleMenu = MenuItem::create('Styles', 'mapbender_manager_style_index')
+        $styleMenu = StyleMenu::create('Styles', 'mapbender_manager_style_index')
             ->setWeight(25)
         ;
 
