@@ -76,7 +76,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                         'title' => $layer->getTitle(),
                         'collectionId' => $layer->getSourceItem()->getCollectionId(),
                         'minScale' => ($layer->getMinScale() !== null ? $layer->getMinScale() : $sourceInstance->getMinScale()),
-                        'maxScale' => ($layer->getMinScale() !== null ? $layer->getMaxScale() : $sourceInstance->getMaxScale()),
+                        'maxScale' => ($layer->getMaxScale() !== null ? $layer->getMaxScale() : $sourceInstance->getMaxScale()),
                         'featureLimit' => (!empty($layer->getFeatureLimit()) ? $layer->getFeatureLimit() : $sourceInstance->getFeatureLimit()),
                         'metadataUrl' => $this->getMetaDataUrl($sourceInstance, $layer),
                         'bbox' => $layer->getSourceItem()->getBbox(),
