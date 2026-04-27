@@ -1,0 +1,55 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: URL сервісу OGC API Features
+      feature_limit: Макс. об'єктів
+      layers: Колекції
+      layer:
+        title: Заголовок
+        active: Активний
+        min_scale: Мінімальний масштаб
+        max_scale: Максимальний масштаб
+        allow_selected: Дозволити вибір
+        selected: Вибрано
+        info: Інфо
+        allow_info: Дозволити інфо
+        toggle: Розгорнуто
+        allow_toggle: Дозволити розгортання
+      filter:
+        label: Фільтр
+        name_placeholder: "Назва…"
+        all_origins: Усі джерела
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Ручний
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Дж…"
+        apply: Застосувати фільтр
+        reset: Скинути фільтри
+        active: "Активний фільтр —"
+        name_label: "Назва:"
+        origin_label: "Джерело:"
+        source_label: "Джерело:"
+        any: "(будь-яке)"
+        name_tooltip: "Фільтрувати стилі за назвою"
+        origin_tooltip: "Фільтрувати стилі за типом походження (напр. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Фільтрувати стилі за ID джерела"
+      source_tab:
+        collection: Колекція
+        layers: Шари
+        no_styles: Стилі для цього джерела не завантажені.
+        properties: Властивості
+        property_key: Ключ
+        property_title: Назва
+      tooltip:
+        heading: Підказка при наведенні
+        description: "Виберіть, які властивості відображаються у підказці при наведенні на об'єкти на карті."
+        no_properties: "Властивості недоступні. Спробуйте перезавантажити джерело."
+    metadata:
+      title: Заголовок
+      version: Версія
+      description: Опис
+      url: Url
+      attribution: Авторство
+      contact: Контакт

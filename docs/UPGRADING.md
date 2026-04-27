@@ -46,7 +46,6 @@ https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_cla
 
 ### YAML Definitions
 - Source definitions must now use the key "type" instead of "class" to define its type. See [the documentation](sources/sources.md) for details.
-- [SearchRouter] Shorthand form types are now longer allowed. Check [the documentation](https://doc.mapbender.org/en/installation/migration.html#searchrouter) for details and an SQL update command
 
 ## 4.2.5
 When using `MapbenderModel.getSourceById` or `Source.getLayerById`, be aware that both the source id and layer id now may contain

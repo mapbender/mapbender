@@ -154,6 +154,144 @@ mb:
           title: 'Título URL'
         description: Descripción
         template: Plantilla
+      style:
+        title: Estilo
+        secondary_short: Sec.
+        secondary_tooltip: Estilos secundarios asignados a esta capa
+        secondary_attached: Estilos secundarios asignados
+        settings: Ajustes de estilo
+        label: Estilo
+        preview_label: Vista previa
+        secondary_styles: Estilos secundarios
+        select_label: Seleccionar
+        ok: OK
+        native_style: "(estilo nativo)"
+        changed_was: "Cambiado (era: {label})"
+        changed: Cambiado respecto al valor guardado
+        none: "-- ninguno --"
+        multi_layer_preview: "Multicapa ({count})"
+        name_required: El nombre del estilo es obligatorio.
+        saved: Estilo guardado.
+        updated: Estilo actualizado.
+        copied: Estilo copiado.
+        deleted: Estilo eliminado.
+        cannot_delete_source_style: "Este estilo pertenece a una fuente OGC API y no se puede eliminar mientras la fuente exista."
+        copy_suffix: "(Copia)"
+        manager:
+          title: Estilos
+          new_style: Nuevo estilo
+          th_id: ID
+          th_preview: Vista previa
+          th_name: Nombre
+          th_origin: Origen
+          th_source: Fuente
+          th_actions: Acciones
+          filter_name: "Filtrar nombre…"
+          filter_all: Todos
+          filter_source: "ID de fuente…"
+          action_edit: Editar
+          action_view: Ver
+          action_copy: Copiar
+          action_delete: Eliminar
+          confirm_delete: ¿Eliminar este estilo?
+          no_styles: Aún no hay estilos configurados.
+          fallback_name: "Estilo #{id}"
+        editor:
+          title_view: "Ver estilo #{id}"
+          title_edit: "Editar estilo #{id}"
+          title_new: Nuevo estilo
+          name_label: Nombre
+          name_placeholder: "Introducir nombre del estilo..."
+          tab_visual: Editor visual
+          tab_json: Mapbox JSON
+          tab_import: Importar
+          import_overwrite_badge: La importación sobrescribirá el estilo existente
+          mapbox_layers: Capas Mapbox
+          add_layer: Añadir capa
+          fill: Relleno
+          color: Color
+          opacity: Opacidad
+          point_radius: Radio del punto
+          stroke: Trazo
+          width: Ancho
+          line_cap: Terminación de línea
+          cap_round: Redondo
+          cap_square: Cuadrado
+          cap_butt: Plano
+          dash_style: Estilo de guión
+          dash_solid: Sólido
+          dash_dot: Punto
+          dash_dash: Guión
+          dash_long: Guión largo
+          dash_dashdot: Guión-punto
+          dash_longdashdot: Guión largo-punto
+          label_legend: Etiqueta
+          text: Texto
+          font_family: Fuente tipográfica
+          font_size: Tamaño
+          font_weight: Peso
+          weight_regular: Normal
+          weight_bold: Negrita
+          weight_italic: Cursiva
+          font_color: Color de fuente
+          font_opacity: Opacidad de fuente
+          preview_legend: Vista previa
+          geom_point: Punto
+          geom_line: Línea
+          geom_polygon: Polígono
+          mapbox_style_json: "Estilo Mapbox (JSON)"
+          import_caution: Precaución
+          import_overwrite_text: "Este estilo ya contiene datos. La importación <strong>reemplazará todas las configuraciones actuales</strong>. Esto no se puede deshacer."
+          import_legend: Importar definición de estilo
+          import_desc: "Suba un archivo Mapbox Style JSON para completar automáticamente el editor de estilos."
+          import_file: Archivo
+          import_success: "Estilo importado correctamente. Cambie a la pestaña <strong>Editor visual</strong> o <strong>Mapbox JSON</strong> para revisar."
+          save: Guardar
+          back: Volver
+          cancel: Cancelar
+          fill_color: Color de relleno
+          fill_opacity: Opacidad de relleno
+          outline_color: Color de contorno
+          line_color: Color
+          line_width: Ancho
+          line_opacity: Opacidad
+          circle_radius: Radio
+          circle_color: Color
+          circle_opacity: Opacidad
+          stroke_color: Color de trazo
+          stroke_width: Ancho de trazo
+          text_color: Color de texto
+          text_opacity: Opacidad de texto
+          invalid_json: "JSON inválido: %error%"
+          json_syntax_only_note: "Solo se valida la sintaxis JSON, no la corrección semántica del estilo Mapbox."
+          remove_layer: Eliminar capa
+          readonly_notice: "Este estilo proviene de una fuente OGC API y solo se puede visualizar. No es posible realizar cambios."
+          text_field: Campo de texto
+          size: Tamaño
+          font: Fuente
+          geom_symbol: Símbolo
+          no_editable_properties: No hay propiedades de estilo editables para este tipo de capa.
+          complex_value_hint: "Este valor depende del nivel de zoom. La edición en el editor gráfico reemplazará el valor para todos los niveles de zoom. Para editar sin perder información, edite el JSON sin procesar en la siguiente pestaña."
+          unknown_layer: "Capa %type%"
+          background_color: Color de fondo
+          background_opacity: Opacidad del fondo
+          raster_opacity: Opacidad ráster
+          raster_brightness_min: Brillo mín.
+          raster_brightness_max: Brillo máx.
+          raster_contrast: Contraste
+          raster_saturation: Saturación
+          extrusion_color: Color de extrusión
+          extrusion_opacity: Opacidad de extrusión
+          extrusion_height: Altura
+          extrusion_base: Altura base
+          heatmap_radius: Radio
+          heatmap_intensity: Intensidad
+          heatmap_opacity: Opacidad
+          heatmap_weight: Peso
+          geom_background: Fondo
+          geom_raster: Ráster
+          geom_extrusion: Extrusión 3D
+          geom_heatmap: Mapa de calor
     source:
       sources: Fuentes
       serviceurl: 'URL del servicio '
@@ -168,6 +306,7 @@ mb:
       valid: 'La fuente de datos es válida'
       notvalid: 'La fuente de datos no es válida'
       no_source: 'Fuente de datos no disponible'
+      filter_all_types: 'Todos los tipos'
       update: 'Actualizar fuente de datos'
       status:
         ok: 'Fuente de datos OK'

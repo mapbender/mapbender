@@ -156,6 +156,144 @@ mb:
           title: 'URL Titel'
         description: Beschreibung
         template: Vorlage
+      style:
+        title: Style
+        secondary_short: Sek.
+        secondary_tooltip: Sekundäre Styles dieser Ebene
+        secondary_attached: Sekundäre Styles zugewiesen
+        settings: Style-Einstellungen
+        label: Style
+        preview_label: Vorschau
+        secondary_styles: Sekundäre Styles
+        select_label: Auswahl
+        ok: OK
+        native_style: "(nativer Style)"
+        changed_was: "Geändert (war: {label})"
+        changed: Vom gespeicherten Wert abweichend
+        none: "-- kein Style --"
+        multi_layer_preview: "Mehrschichtig ({count})"
+        name_required: Style-Name ist erforderlich.
+        saved: Style gespeichert.
+        updated: Style aktualisiert.
+        copied: Style kopiert.
+        deleted: Style gelöscht.
+        cannot_delete_source_style: "Dieser Style gehört zu einer OGC-API-Quelle und kann nicht gelöscht werden, solange die Quelle existiert."
+        copy_suffix: "(Kopie)"
+        manager:
+          title: Styles
+          new_style: Neuer Style
+          th_id: ID
+          th_preview: Vorschau
+          th_name: Name
+          th_origin: Herkunft
+          th_source: Quelle
+          th_actions: Aktionen
+          filter_name: "Name filtern…"
+          filter_all: Alle
+          filter_source: "Quell-ID…"
+          action_edit: Bearbeiten
+          action_view: Ansehen
+          action_copy: Kopieren
+          action_delete: Löschen
+          confirm_delete: Diesen Style löschen?
+          no_styles: Noch keine Styles konfiguriert.
+          fallback_name: "Style #{id}"
+        editor:
+          title_view: "Style #{id} ansehen"
+          title_edit: "Style #{id} bearbeiten"
+          title_new: Neuer Style
+          name_label: Name
+          name_placeholder: "Style-Name eingeben..."
+          tab_visual: Visueller Editor
+          tab_json: Mapbox JSON
+          tab_import: Import
+          import_overwrite_badge: Import überschreibt vorhandenen Style
+          mapbox_layers: Mapbox-Ebenen
+          add_layer: Ebene hinzufügen
+          fill: Füllung
+          color: Farbe
+          opacity: Deckkraft
+          point_radius: Punktradius
+          stroke: Kontur
+          width: Breite
+          line_cap: Linienende
+          cap_round: Rund
+          cap_square: Quadratisch
+          cap_butt: Stumpf
+          dash_style: Strichelung
+          dash_solid: Durchgezogen
+          dash_dot: Punkt
+          dash_dash: Strich
+          dash_long: Langer Strich
+          dash_dashdot: Strich-Punkt
+          dash_longdashdot: Langer Strich-Punkt
+          label_legend: Beschriftung
+          text: Text
+          font_family: Schriftart
+          font_size: Größe
+          font_weight: Stärke
+          weight_regular: Normal
+          weight_bold: Fett
+          weight_italic: Kursiv
+          font_color: Schriftfarbe
+          font_opacity: Schriftdeckkraft
+          preview_legend: Vorschau
+          geom_point: Punkt
+          geom_line: Linie
+          geom_polygon: Polygon
+          mapbox_style_json: "Mapbox-Style (JSON)"
+          import_caution: Achtung
+          import_overwrite_text: "Dieser Style enthält bereits Daten. Ein Import wird <strong>alle aktuellen Einstellungen ersetzen</strong>. Dies kann nicht rückgängig gemacht werden."
+          import_legend: Style-Definition importieren
+          import_desc: "Laden Sie eine Mapbox-Style-JSON-Datei hoch, um den Style-Editor automatisch zu befüllen."
+          import_file: Datei
+          import_success: "Style erfolgreich importiert. Wechseln Sie zum <strong>Visuellen Editor</strong> oder <strong>Mapbox JSON</strong>-Tab zur Überprüfung."
+          save: Speichern
+          back: Zurück
+          cancel: Abbrechen
+          fill_color: Füllfarbe
+          fill_opacity: Fülldeckkraft
+          outline_color: Umrissfarbe
+          line_color: Farbe
+          line_width: Breite
+          line_opacity: Deckkraft
+          circle_radius: Radius
+          circle_color: Farbe
+          circle_opacity: Deckkraft
+          stroke_color: Konturfarbe
+          stroke_width: Konturbreite
+          text_color: Textfarbe
+          text_opacity: Textdeckkraft
+          invalid_json: "Ungültiges JSON: %error%"
+          json_syntax_only_note: "Es wird nur die JSON-Syntax geprüft, nicht die inhaltliche Gültigkeit des Mapbox-Stils."
+          remove_layer: Ebene entfernen
+          readonly_notice: "Dieser Stil stammt aus einer OGC-API-Quelle und kann nur angezeigt werden. Änderungen sind nicht möglich."
+          text_field: Textfeld
+          size: Größe
+          font: Schriftart
+          geom_symbol: Symbol
+          no_editable_properties: Keine editierbaren Darstellungseigenschaften für diesen Layertyp.
+          complex_value_hint: "Dieser Wert ist zoomstufenabhängig. Änderungen im grafischen Editor ersetzen den Wert für alle Zoomstufen. Um Informationen nicht zu verlieren, bearbeiten Sie das Roh-JSON im nächsten Tab."
+          unknown_layer: "%type%-Layer"
+          background_color: Hintergrundfarbe
+          background_opacity: Hintergrund-Deckkraft
+          raster_opacity: Raster-Deckkraft
+          raster_brightness_min: Helligkeit Min
+          raster_brightness_max: Helligkeit Max
+          raster_contrast: Kontrast
+          raster_saturation: Sättigung
+          extrusion_color: Extrusionsfarbe
+          extrusion_opacity: Extrusions-Deckkraft
+          extrusion_height: Höhe
+          extrusion_base: Basishöhe
+          heatmap_radius: Radius
+          heatmap_intensity: Intensität
+          heatmap_opacity: Deckkraft
+          heatmap_weight: Gewichtung
+          geom_background: Hintergrund
+          geom_raster: Raster
+          geom_extrusion: 3D-Extrusion
+          geom_heatmap: Heatmap
     source:
       sources: Datenquellen
       serviceurl: Dienst-URL
@@ -170,6 +308,7 @@ mb:
       valid: 'Quelle valide'
       notvalid: 'Die Datenquelle ist nicht valide'
       no_source: 'Keine Datenquelle'
+      filter_all_types: 'Alle Datenquellentypen'
       update: 'Datenquelle aktualisieren'
       status:
         ok: 'Datenquelle OK'

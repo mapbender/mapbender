@@ -1,0 +1,446 @@
+mb:
+  application:
+    create:
+      success: 'Aplikacja została utworzona.'
+      failure:
+        create.directory: 'Nie można utworzyć katalogu.'
+    save:
+      success: 'Aplikacja została zapisana.'
+      failure:
+        general: 'Wystąpił błąd podczas zapisywania aplikacji.'
+        create.directory: 'Aplikacja została zaktualizowana, ale nie można utworzyć katalogów aplikacji.'
+    remove:
+      success: 'Aplikacja została usunięta.'
+      failure:
+        general: 'Nie można usunąć aplikacji.'
+  layerset:
+    create:
+      success: 'Zestaw warstw został utworzony.'
+    remove:
+      success: 'Zestaw warstw został usunięty.'
+      failure: 'Nie można usunąć zestawu warstw.'
+  manager:
+    automatic: Automatycznie
+    autoActivate: 'Aktywuj automatycznie'
+    autoOpen: 'Otwórz automatycznie'
+    confirm_form_discard: 'Odrzucić zmiany?'
+    popup_height: 'Wysokość okna dialogowego'
+    popup_width: 'Szerokość okna dialogowego'
+    screentype:
+      label: 'Typ ekranu'
+      choice:
+        all: Dowolny
+        mobile: Mobilny
+        desktop: Desktopowy
+    toolbar:
+      alignment:
+        label: Wyrównanie
+        choice:
+          left: Lewo
+          right: Prawo
+          center: Środek
+      generate_button_menu: 'Generuj menu dla przycisków'
+      menu_label: 'Etykieta menu'
+    visibility: Widoczność
+    element:
+      screentype:
+        mobile: 'Pokaż na ekranach mobilnych'
+        desktop: 'Pokaż na ekranach desktopowych'
+      openInline: 'Otwórz w linii'
+      openInlineHelp: 'W przypadku elementów inline, zawartość jest wyświetlana bezpośrednio w panelu bocznym lub obszarze mapy bez nagłówka.'
+    sidepane:
+      width: Szerokość
+      resizable: 'Zmiana rozmiaru'
+      resizable_help: 'Jeśli zaznaczone, użytkownik może zmienić rozmiar paska bocznego przeciągając jego prawą krawędź.'
+      closed: 'Początkowo zamknięty'
+      align:
+        label: Pozycja
+        choice:
+          left: Lewo
+          right: Prawo
+    application:
+      persistentView: 'Trwały stan mapy'
+      splashscreen: 'Pokaż ekran powitalny'
+    admin:
+      csrf_token_invalid: 'Nieprawidłowy token CSRF.'
+      map:
+        max_extent: 'Maks. zasięg'
+        max_extent.help: 'Obwiednia (min/maks x/y), w której użytkownik może nawigować. Po kliknięciu ikony globu mapa przybliża się do tego zasięgu.'
+        start_extent: 'Zasięg początkowy'
+        start_extent.help: 'Obwiednia (min/maks x/y), która jest początkowo wyświetlana po załadowaniu mapy. Po kliknięciu ikony domu mapa przybliża się do tego zasięgu.'
+        base_dpi: 'Domyślna rozdzielczość [dpi]'
+        base_dpi.help: 'Rozdzielczość dostosowuje się do rozdzielczości ekranu na podstawie skonfigurowanej wartości'
+      element:
+        title: Tytuł
+        type: Typ
+        add: 'Dodaj nowy element do'
+        show_hide: 'Przełącz pokaż/ukryj element'
+        no_element_added: 'Nie dodano żadnego elementu'
+        delete:
+          title: 'Usuń element'
+          confirm: 'Czy na pewno chcesz usunąć element "{element_name}"'
+        anchor:
+          label: Pozycja
+          left-top: 'Lewy górny'
+          left-bottom: 'Lewy dolny'
+          right-top: 'Prawy górny'
+          right-bottom: 'Prawy dolny'
+      zoombar:
+        draggable: Przeciągalny
+      overview:
+        fix: Stały
+      layerset:
+        add: 'Dodaj zestaw warstw'
+        title: Tytuł
+        type: Typ
+        edit: 'Edytuj zestaw warstw'
+        delete:
+          title: 'Usuń zestaw warstw'
+          confirm: 'Czy na pewno chcesz usunąć zestaw warstw o tytule "{layerset_title}"?'
+        id: Id
+      instance:
+        add: 'Dodaj instancję'
+        show_hide: 'Przełącz pokaż/ukryj instancję'
+        edit: 'Edytuj instancję'
+        delete:
+          title: 'Usuń instancję'
+          confirm: 'Czy na pewno chcesz usunąć instancję o tytule "{instance_title}"'
+        no_instance_added: 'Nie dodano żadnej instancji'
+        no_layer_added: 'Nie dodano żadnej warstwy'
+        max_input_vars_exceeded: 'Ustawienie PHP max_input_vars jest zbyt niskie dla liczby warstw w tej instancji.'
+        update_successful: 'Instancja została zaktualizowana.'
+        converted_to_shared: 'Instancja została przekonwertowana na instancję współdzieloną.'
+        security: 'Edytuj prawa dostępu. Jeśli nie ustawiono żadnych praw (szara ikona), każdy z dostępem do aplikacji może zobaczyć źródło danych. Jeśli prawa są ustawione (czerwona ikona), tylko skonfigurowane role mogą zobaczyć źródło danych.'
+      template: Szablon
+      application:
+        view: Widok
+        edit:
+          title: 'Edytuj aplikację'
+          base_data: 'Dane podstawowe'
+        screenshot: Miniatura
+        layouts: Układy
+        layersets: 'Zestawy warstw'
+        custom_css: CSS
+        security:
+          title: Bezpieczeństwo
+          public: 'dostęp publiczny'
+        save: Zapisz
+        cancel: Anuluj
+        view_this: 'Wyświetl tę aplikację'
+        duplicate: 'Duplikuj aplikację'
+        public:
+          on_off: 'Przełącz dostęp publiczny'
+        delete:
+          title: 'Usuń aplikację'
+          confirm: 'Czy na pewno chcesz usunąć aplikację "{application_title}"'
+        no_application: 'Brak dostępnych aplikacji'
+        new:
+          title: 'Nowa aplikacja'
+        create_use: |-
+          Utwórz nową aplikację podając podstawowe informacje, a następnie
+                    użyj trybu edycji, aby dodać elementy i warstwy.
+        btn:
+          create: Utwórz
+          cancel: Anuluj
+        upload:
+          button: 'Wybierz plik'
+          label: 'Nie wybrano pliku'
+        export:
+          addSources: Źródła
+          btn:
+            export: Eksportuj
+        import:
+          addSources: Źródła
+          btn:
+            import: Importuj
+        title: Tytuł
+        url:
+          title: 'Tytuł URL'
+        description: Opis
+        template: Szablon
+      style:
+        title: Styl
+        secondary_short: Dod.
+        secondary_tooltip: Style dodatkowe przypisane do tej warstwy
+        secondary_attached: Style dodatkowe przypisane
+        settings: Ustawienia stylu
+        label: Styl
+        preview_label: Podgląd
+        secondary_styles: Style dodatkowe
+        select_label: Wybór
+        ok: OK
+        native_style: "(styl natywny)"
+        changed_was: "Zmieniono (było: {label})"
+        changed: Zmieniono względem zapisanej wartości
+        none: "-- brak --"
+        multi_layer_preview: "Wielowarstwowy ({count})"
+        name_required: Nazwa stylu jest wymagana.
+        saved: Styl zapisany.
+        updated: Styl zaktualizowany.
+        copied: Styl skopiowany.
+        deleted: Styl usunięty.
+        cannot_delete_source_style: "Ten styl należy do źródła OGC API i nie może zostać usunięty, dopóki źródło istnieje."
+        copy_suffix: "(Kopia)"
+        manager:
+          title: Style
+          new_style: Nowy styl
+          th_id: ID
+          th_preview: Podgląd
+          th_name: Nazwa
+          th_origin: Pochodzenie
+          th_source: Źródło
+          th_actions: Akcje
+          filter_name: "Filtruj nazwę…"
+          filter_all: Wszystkie
+          filter_source: "ID źródła…"
+          action_edit: Edytuj
+          action_view: Podgląd
+          action_copy: Kopiuj
+          action_delete: Usuń
+          confirm_delete: Usunąć ten styl?
+          no_styles: Brak skonfigurowanych styli.
+          fallback_name: "Styl #{id}"
+        editor:
+          title_view: "Podgląd stylu #{id}"
+          title_edit: "Edycja stylu #{id}"
+          title_new: Nowy styl
+          name_label: Nazwa
+          name_placeholder: "Wprowadź nazwę stylu..."
+          tab_visual: Edytor wizualny
+          tab_json: Mapbox JSON
+          tab_import: Import
+          import_overwrite_badge: Import nadpisze istniejący styl
+          mapbox_layers: Warstwy Mapbox
+          add_layer: Dodaj warstwę
+          fill: Wypełnienie
+          color: Kolor
+          opacity: Krycie
+          point_radius: Promień punktu
+          stroke: Obrys
+          width: Szerokość
+          line_cap: Zakończenie linii
+          cap_round: Okrągłe
+          cap_square: Kwadratowe
+          cap_butt: Płaskie
+          dash_style: Styl kreski
+          dash_solid: Ciągły
+          dash_dot: Kropka
+          dash_dash: Kreska
+          dash_long: Długa kreska
+          dash_dashdot: Kreska-kropka
+          dash_longdashdot: Długa kreska-kropka
+          label_legend: Etykieta
+          text: Tekst
+          font_family: Rodzina czcionek
+          font_size: Rozmiar
+          font_weight: Grubość
+          weight_regular: Zwykły
+          weight_bold: Pogrubiony
+          weight_italic: Kursywa
+          font_color: Kolor czcionki
+          font_opacity: Krycie czcionki
+          preview_legend: Podgląd
+          geom_point: Punkt
+          geom_line: Linia
+          geom_polygon: Poligon
+          mapbox_style_json: "Styl Mapbox (JSON)"
+          import_caution: Uwaga
+          import_overwrite_text: "Ten styl już zawiera dane. Import <strong>zastąpi wszystkie bieżące ustawienia</strong>. Tej operacji nie można cofnąć."
+          import_legend: Importuj definicję stylu
+          import_desc: "Prześlij plik Mapbox Style JSON, aby automatycznie wypełnić edytor styli."
+          import_file: Plik
+          import_success: "Styl zaimportowany pomyślnie. Przejdź do zakładki <strong>Edytor wizualny</strong> lub <strong>Mapbox JSON</strong>, aby sprawdzić."
+          save: Zapisz
+          back: Wstecz
+          cancel: Anuluj
+          fill_color: Kolor wypełnienia
+          fill_opacity: Krycie wypełnienia
+          outline_color: Kolor konturu
+          line_color: Kolor
+          line_width: Szerokość
+          line_opacity: Krycie
+          circle_radius: Promień
+          circle_color: Kolor
+          circle_opacity: Krycie
+          stroke_color: Kolor obrysu
+          stroke_width: Szerokość obrysu
+          text_color: Kolor tekstu
+          text_opacity: Krycie tekstu
+          invalid_json: "Nieprawidłowy JSON: %error%"
+          json_syntax_only_note: "Sprawdzana jest tylko składnia JSON, a nie poprawność semantyczna stylu Mapbox."
+          remove_layer: Usuń warstwę
+          readonly_notice: "Ten styl pochodzi ze źródła OGC API i może być tylko przeglądany. Zmiany nie są możliwe."
+          text_field: Pole tekstowe
+          size: Rozmiar
+          font: Czcionka
+          geom_symbol: Symbol
+          no_editable_properties: Brak edytowalnych właściwości stylu dla tego typu warstwy.
+          complex_value_hint: "Ta wartość zależy od poziomu powiększenia. Edycja w edytorze graficznym zastąpi wartość dla wszystkich poziomów powiększenia. Aby edytować bez utraty informacji, edytuj surowy JSON w następnej karcie."
+          unknown_layer: "Warstwa %type%"
+          background_color: Kolor tła
+          background_opacity: Przezroczystość tła
+          raster_opacity: Przezroczystość rastra
+          raster_brightness_min: Jasność Min
+          raster_brightness_max: Jasność Maks
+          raster_contrast: Kontrast
+          raster_saturation: Nasycenie
+          extrusion_color: Kolor ekstruzji
+          extrusion_opacity: Przezroczystość ekstruzji
+          extrusion_height: Wysokość
+          extrusion_base: Wysokość bazowa
+          heatmap_radius: Promień
+          heatmap_intensity: Intensywność
+          heatmap_opacity: Przezroczystość
+          heatmap_weight: Waga
+          geom_background: Tło
+          geom_raster: Raster
+          geom_extrusion: Ekstruzja 3D
+          geom_heatmap: Mapa ciepła
+    source:
+      sources: Źródła
+      serviceurl: 'URL usługi'
+      username: 'Nazwa użytkownika'
+      password: Hasło
+      activate_new_layers: 'Aktywuj nowo dodane warstwy'
+      select_new_layers: 'Zaznacz nowo dodane warstwy'
+      load: Załaduj
+      add: 'Dodaj źródło'
+      show_metadata: 'Pokaż metadane'
+      delete: 'Usuń źródło'
+      valid: 'Źródło prawidłowe'
+      notvalid: 'Źródło nieprawidłowe.'
+      no_source: 'Brak dostępnych źródeł'
+      filter_all_types: 'Wszystkie typy źródeł'
+      update: 'Aktualizuj źródło'
+      status:
+        ok: 'Źródło OK'
+        toupdate: 'Źródło nieaktualne'
+        unreachable: 'Źródło niedostępne'
+      embedded_in_applications: |
+        {count, plural,
+            =0    {To źródło nie jest używane w żadnej aplikacji}
+            one   {To źródło jest używane w jednej aplikacji}
+            few   {To źródło jest używane w # aplikacjach}
+            many  {To źródło jest używane w # aplikacjach}
+            other {To źródło jest używane w # aplikacjach}
+        }
+      added: 'Nowe źródło %type% zostało utworzone'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Ta instancja nie jest używana w żadnej aplikacji}
+              one   {Ta instancja jest używana w jednej aplikacji}
+              few   {Ta instancja jest używana w # aplikacjach}
+              many  {Ta instancja jest używana w # aplikacjach}
+              other {Ta instancja jest używana w # aplikacjach}
+          }
+        convert_to_reusable: 'Konwertuj na instancję współdzieloną'
+        convert_to_bound: 'Konwertuj na instancję powiązaną'
+        converted_to_bound: 'Powiązana kopia instancji współdzielonej została dodana do aplikacji'
+        reusable_assigned_to_application: 'Instancja współdzielona została dodana do aplikacji'
+        create_reusable: 'Utwórz instancję współdzieloną'
+        created_reusable: 'Nowa instancja współdzielona została utworzona'
+        created: 'Nowa instancja została utworzona. Proszę ją edytować.'
+      instancelayer:
+        id: ID
+        id.help: 'Id warstwy instancji w formacie: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: 'Tytuł warstwy'
+        name: 'Nazwa warstwy'
+        active: aktywna
+        minscale: 'Skala min.'
+        maxscale: 'Skala maks.'
+        legend: 'Włącz legendę'
+        allowselecttoc: 'Możliwość wyboru w drzewie warstw'
+        selectedtoc: 'Zaznacz warstwę przy uruchomieniu. Uwaga: Pozostaw to pole zaznaczone, jeśli nie używasz warstw tematycznych'
+        selectedtoc.help: 'Zestaw warstw jest aktywny przy uruchomieniu. Ustawienie powinno być zmieniane tylko wtedy, gdy używane są warstwy tematyczne.'
+        unselectedtoc.help: 'Zestaw warstw jest nieaktywny przy uruchomieniu. Uwaga: Jeśli warstwy tematyczne nie są używane, ten zestaw warstw nie będzie dostępny.'
+        allowreordertoc: 'Zezwól na zmianę kolejności w TOC'
+        allowinfotoc: 'Zezwól na FeatureInfo w TOC'
+        infotoc: 'FeatureInfo w TOC'
+        allowtoggletoc: 'Zezwól na przełączanie w TOC'
+        toggletoc: 'Przełączanie w TOC'
+        moreinfo: 'Więcej informacji'
+        style: Styl
+        legend_help: ' Włącz legendę dla tej warstwy. Uwaga: Działa tylko na warstwach, które udostępniają legendę.'
+      option:
+        title: Tytuł
+        opacity: Przezroczystość
+        basesource: 'Źródło bazowe'
+        proxy: Proxy
+      metadata:
+        metadata: Metadane
+        contact: Kontakt
+        details: Szczegóły
+        layers: Warstwy
+        title: Tytuł
+        version: Wersja
+        originurl: 'URL źródłowy'
+        abstract: Abstrakt
+    contact:
+      person: Osoba
+      organization: Organizacja
+      position: Stanowisko
+      telephone: Telefon
+      facsimile: Faks
+      email: Email
+      address: Adres
+      addresstype: 'Typ adresu'
+      city: Miasto
+      state: Województwo
+      postcode: 'Kod pocztowy'
+      country: Kraj
+    managerbundle:
+      new_application: 'Nowa aplikacja'
+      add_user_group: 'Dodaj użytkowników i grupy'
+      import_application: Import
+      export_application: Eksport
+    components:
+      popup:
+        duplicate_element:
+          title: 'Duplikuj element'
+          confirm: 'Czy na pewno chcesz zduplikować element "{element_name}"'
+        add_element:
+          title: 'Dodaj element'
+        edit_element:
+          title: 'Edytuj element'
+        delete_element:
+          title: 'Potwierdź usunięcie'
+        add_edit_layerset:
+          title_edit: 'Edytuj zestaw warstw'
+          title_add: 'Dodaj zestaw warstw'
+        delete_layerset:
+          title: 'Usuń zestaw warstw'
+        add_instance:
+          title: 'Wybierz źródło'
+        delete_instance:
+          title: 'Potwierdź usunięcie'
+        delete_user_group:
+          title: 'Potwierdź usunięcie'
+          content: 'Na pewno usunąć "%subject%"?'
+    import:
+      application:
+        failed: 'Nie można zaimportować aplikacji'
+    http_connection_error: 'Połączenie nie powiodło się'
+    http_error_response: 'Zdalny serwer odpowiedział komunikatem o błędzie'
+    xml_invalid: 'Nieprawidłowy dokument'
+    xml_malformed: 'To nie jest dokument XML lub ma nieprawidłową strukturę XML'
+  core:
+    admin:
+      button:
+        show_label: 'Pokaż etykietę'
+      element:
+        autostart: Autostart
+      title: Tytuł
+    entity:
+      app:
+        screenshotfile:
+          error: 'Plik jest zbyt duży (%uploadFileSize% bajtów). Dozwolony maksymalny rozmiar to %maxFileSize% bajtów.'
+          format_error: 'Ten format nie jest obsługiwany!'
+          resolution:
+            error: 'Można wybrać tylko pliki graficzne o rozdzielczości %screenshotHeight% x %screenshotWidth% pikseli lub większej. Twój plik ma %uploadWidth% x %uploadHeighth% pikseli.'
+    importjobtype:
+      admin:
+        importfile: 'Plik importu'
+  actions:
+    secureelement: 'Ogranicz dostęp do elementu'
+    securesourceinstance: 'Ogranicz dostęp do źródła danych'

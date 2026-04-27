@@ -24,6 +24,9 @@ mb:
     source:
       singular: Risorsa
       plural: Risorse
+    style:
+      singular: Stile
+      plural: Stili
     layerset:
       singular: 'Layer set'
       plural: 'Layer sets'

@@ -15,4 +15,34 @@ $(function() {
         });
         return false;
     });
+
+    function applyFilters() {
+        var selectedType = $('#filter-source-type').val();
+        var textVal = $.trim($('.listFilterInput[data-filter-target="listFilterServices"]').val());
+        var $items = $('#listFilterServices > li');
+
+        $items.each(function() {
+            var $item = $(this);
+            var visible = true;
+
+            if (selectedType) {
+                var types = selectedType.split(',');
+                var itemType = ($item.find('[data-source-type]').attr('data-source-type') || '').toLowerCase();
+                if (types.indexOf(itemType) === -1) {
+                    visible = false;
+                }
+            }
+
+            if (visible && textVal.length > 0) {
+                if ($item.text().toUpperCase().indexOf(textVal.toUpperCase()) === -1) {
+                    visible = false;
+                }
+            }
+
+            $item.toggle(visible);
+        });
+    }
+
+    $('#filter-source-type').on('change', applyFilters);
+    $(document).on('keyup', '.listFilterInput[data-filter-target="listFilterServices"]', applyFilters);
 });

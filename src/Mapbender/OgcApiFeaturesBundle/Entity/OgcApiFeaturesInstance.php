@@ -52,6 +52,21 @@ class OgcApiFeaturesInstance extends SourceInstance
         $this->layers = new ArrayCollection();
     }
 
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->setId(null);
+            $clonedLayers = new ArrayCollection();
+            foreach ($this->layers as $layer) {
+                $clonedLayer = clone $layer;
+                $clonedLayer->setId(null);
+                $clonedLayer->setSourceInstance($this);
+                $clonedLayers->add($clonedLayer);
+            }
+            $this->layers = $clonedLayers;
+        }
+    }
+
     public function setSource($source): void
     {
         $this->source = $source;
@@ -79,7 +94,7 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this;
     }
 
-    public function setOpacity(int $opacity): self
+    public function setOpacity(int $opacity): static
     {
         $this->opacity = $opacity;
         return $this;
@@ -112,7 +127,7 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->maxScale;
     }
 
-    public function setFeatureLimit(int $featureLimit): self
+    public function setFeatureLimit(int $featureLimit): static
     {
         $this->featureLimit = $featureLimit;
         return $this;
@@ -172,9 +187,10 @@ class OgcApiFeaturesInstance extends SourceInstance
         return $this->featureInfoPropertyMap;
     }
 
-    public function setFeatureInfoPropertyMap(?string $featureInfoPropertyMap): void
+    public function setFeatureInfoPropertyMap(?string $featureInfoPropertyMap): static
     {
         $this->featureInfoPropertyMap = $featureInfoPropertyMap;
+        return $this;
     }
 
     public function getDisplayTitle(): string

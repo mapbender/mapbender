@@ -1,5 +1,28 @@
 {% extends "@MapbenderManager/Repository/instance.html.twig" %}
 
+{% macro filter_controls(prefix) %}
+    <input type="text" class="form-control form-control-sm {{ prefix }}-name" placeholder="{{ 'mb.ogcapifeatures.admin.filter.name_placeholder' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.name_tooltip' | trans }}" style="flex:3">
+    <select class="form-select form-select-sm {{ prefix }}-origin" title="{{ 'mb.ogcapifeatures.admin.filter.origin_tooltip' | trans }}" style="flex:3">
+        <option value="">{{ 'mb.ogcapifeatures.admin.filter.all_origins' | trans }}</option>
+        <option value="mapbox-json">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</option>
+        <option value="manual">{{ 'mb.ogcapifeatures.admin.filter.origin_manual' | trans }}</option>
+        <option value="ogc_api">{{ 'mb.ogcapifeatures.admin.filter.origin_ogc_api' | trans }}</option>
+        <option value="digitizer">{{ 'mb.ogcapifeatures.admin.filter.origin_digitizer' | trans }}</option>
+    </select>
+    <input type="text" class="form-control form-control-sm {{ prefix }}-source" placeholder="{{ 'mb.ogcapifeatures.admin.filter.source_placeholder' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.source_tooltip' | trans }}" style="flex:2">
+    <button type="button" class="btn btn-sm btn-outline-secondary -fn-apply-{{ prefix }}" title="{{ 'mb.ogcapifeatures.admin.filter.apply' | trans }}">
+        <i class="fas fa-filter"></i>
+    </button>
+    <button type="button" class="btn btn-sm btn-outline-danger -fn-reset-{{ prefix }}" title="{{ 'mb.ogcapifeatures.admin.filter.reset' | trans }}">
+        <i class="fas fa-times"></i>
+    </button>
+{% endmacro %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/mapbenderogcapifeatures/css/edit-instance.css') }}">
+{% endblock %}
+
 {% block form_main1 %}
     {{ parent() }}
     {{ form_row(form.featureLimit) }}
@@ -26,7 +49,7 @@
 {% block form_layers %}
     <hr>
     <h4 class="mt-4">{{ 'mb.ogcapifeatures.admin.layers' | trans }}</h4>
-    <table class="table collectionTable">
+    <table class="table collectionTable" data-style-url="{{ path('mapbender_manager_style_json') }}" data-source-id="{{ instance.source.id|default('') }}">
         <thead>
         <tr class="text-center">
             <th></th>
@@ -41,13 +64,17 @@
             <th>{{ 'mb.ogcapifeatures.admin.layer.selected' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.allow_info' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.info' | trans }}</th>
+            <th>{{ 'mb.manager.admin.style.title' | trans }}</th>
+            <th title="{{ 'mb.manager.admin.style.secondary_tooltip' | trans }}">{{ 'mb.manager.admin.style.secondary_short' | trans }}</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         {% for layer in form.layers %}
-            <tr class="text-center">
+            {%- set _popover_id = 'style_popover_' ~ layer.vars.id -%}
+            <tr class="text-center" data-collection-id="{{ layer.vars.data.sourceItem.collectionId }}" data-properties="{{ layer.vars.data.sourceItem.propertyKeys|default([])|json_encode }}" data-property-titles="{{ layer.vars.data.sourceItem.propertyTitles|default({})|json_encode }}">
                 <td>
-                    <i class="fa-solid fa-grip-vertical" style="cursor:pointer"></i>
+                    <i class="fas fa-grip-vertical" style="cursor:pointer"></i>
                     {{ form_widget(layer.priority) }}
                 </td>
                 <td class="titleColumn">
@@ -77,6 +104,99 @@
                 <td class="checkboxColumn">
                     {{ form_widget(layer.info) }}
                 </td>
+                <td>
+                    <input type="checkbox" class="form-check-input style-indicator" disabled readonly
+                           {% if layer.styleId.vars.value is not empty %}checked{% endif %}>
+                </td>
+                <td>
+                    <span class="badge bg-secondary sec-style-count" title="{{ 'mb.manager.admin.style.secondary_attached' | trans }}" {% if layer.vars.data.secondaryStyleIds|default([])|length == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleIds|default([])|length }}</span>
+                </td>
+                <td>
+                    <div class="static-popover-wrap">
+                        <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
+                              title="{{ 'mb.manager.admin.style.settings' | trans }}">
+                            <i class="fas fa-ellipsis"></i>
+                        </span>
+                        <div class="popover-inner-wrap">
+                            <div id="{{ _popover_id }}" class="popover infoMsgBox bs-popover-auto fade">
+                                <div class="popover-arrow"></div>
+                                <div class="popover-body">
+                                    <button type="button" class="btn-close -fn-close-popover" data-toggle-target="#{{ _popover_id }}"
+                                            aria-label="Close"></button>
+                                    {%- set _layer_data = layer.vars.data -%}
+                                    {%- set _display_id = _layer_data.sourceInstance.source.id ~ '-' ~ _layer_data.sourceItem.id ~ '/' ~ _layer_data.sourceInstance.id ~ '-' ~ _layer_data.id -%}
+                                    <div class="row mb-2">
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.source.instancelayer.id' | trans }}</label></div>
+                                        <div class="col-sm-9"><input type="text" class="form-control form-control-sm" readonly value="{{ _display_id }}" title="{{ 'mb.manager.source.instancelayer.id.help' | trans }}"></div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.source.instancelayer.name' | trans }}</label></div>
+                                        <div class="col-sm-9"><input type="text" class="form-control form-control-sm" readonly value="{{ _layer_data.sourceItem.title }}"></div>
+                                    </div>
+                                    <div class="row mb-2 style-filter-row">
+                                        <div class="col-sm-3"><label class="form-label fw-bold text-muted small">{{ 'mb.ogcapifeatures.admin.filter.label' | trans }}</label></div>
+                                        <div class="col-sm-9">
+                                            <div class="d-flex gap-1">
+                                                {{ _self.filter_controls('style-filter') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.admin.style.label' | trans }}</label></div>
+                                        <div class="col-sm-9">{{ form_widget(layer.styleId, {'attr': {'data-native-style-id': layer.nativeStyleId.vars.value|default('')}}) }}</div>
+                                    </div>
+                                    {{ form_widget(layer.nativeStyleId) }}
+                                    <div class="row mb-2">
+                                        <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.admin.style.preview_label' | trans }}</label></div>
+                                        <div class="col-sm-9">
+                                            <div class="d-flex gap-2 layer-preview">
+                                                <canvas width="40" height="40" data-geom="point" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                                                <canvas width="40" height="40" data-geom="line" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                                                <canvas width="40" height="40" data-geom="polygon" style="border:1px solid #dee2e6;border-radius:3px;background:#f8f9fa;"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="secondary-styles-section">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary -fn-toggle-secondary-styles">
+                                                <i class="fas fa-layer-group"></i> {{ 'mb.manager.admin.style.secondary_styles' | trans }}
+                                                <span class="badge bg-secondary ms-1 secondary-count" style="display:none">0</span>
+                                                <i class="fas fa-chevron-down ms-1 toggle-arrow"></i>
+                                            </button>
+                                        </div>
+                                        <div class="secondary-styles-panel" style="display:none">
+                                            <div class="row mb-2 secondary-filter-row">
+                                                <div class="col-sm-3"><label class="form-label text-muted small">{{ 'mb.ogcapifeatures.admin.filter.label' | trans }}</label></div>
+                                                <div class="col-sm-9">
+                                                    <div class="d-flex gap-1">
+                                                        {{ _self.filter_controls('sec-filter') }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-sm-3"><label class="form-label fw-bold">{{ 'mb.manager.admin.style.select_label' | trans }}</label></div>
+                                                <div class="col-sm-9">{{ form_widget(layer.secondaryStyleIds) }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="tooltip-config-section">
+                                        <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}</label>
+                                        <p class="text-muted small mb-1">{{ 'mb.ogcapifeatures.admin.tooltip.description' | trans }}</p>
+                                        {{ form_widget(layer.tooltipPropertyMap) }}
+                                        <div class="tooltip-checkbox-list" data-empty-text="{{ 'mb.ogcapifeatures.admin.tooltip.no_properties' | trans }}"></div>
+                                    </div>
+                                    <div class="text-end mt-2">
+                                        <button type="button" class="btn btn-sm btn-primary -fn-confirm-style" data-toggle-target="#{{ _popover_id }}">
+                                            <i class="fas fa-check"></i> {{ 'mb.manager.admin.style.ok' | trans }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
@@ -85,6 +205,8 @@
 
 {% block js %}
     {{ parent() }}
+    <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
+    <script src="{{ asset('bundles/mapbenderogcapifeatures/js/style-instance-editor.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');

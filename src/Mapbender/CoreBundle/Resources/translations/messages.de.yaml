@@ -24,6 +24,9 @@ mb:
     source:
       singular: Datenquelle
       plural: Datenquellen
+    style:
+      singular: Stil
+      plural: Stile
     layerset:
       singular: Layerset
       plural: Layersets

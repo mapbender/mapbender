@@ -47,7 +47,6 @@ class AssetsController extends AbstractController
     {
         $cacheFile = $this->getCachePath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
-            // @todo: TBD more reasonable criteria of backend / login asset cachability
             $appModificationTs = $this->containerTimestamp;
         } else {
             $source = $this->applicationResolver->getApplicationEntity($slug);

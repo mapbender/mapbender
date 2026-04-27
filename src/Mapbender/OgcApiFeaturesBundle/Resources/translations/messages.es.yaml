@@ -1,0 +1,55 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: URL del servicio OGC API Features
+      feature_limit: Número máx. de objetos
+      layers: Colecciones
+      layer:
+        title: Título
+        active: Activo
+        min_scale: Escala mínima
+        max_scale: Escala máxima
+        allow_selected: Permitir selección
+        selected: Seleccionado
+        info: Info
+        allow_info: Permitir info
+        toggle: Desplegado
+        allow_toggle: Permitir desplegar
+      filter:
+        label: Filtro
+        name_placeholder: "Nombre…"
+        all_origins: Todos los orígenes
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Manual
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Fuente…"
+        apply: Aplicar filtro
+        reset: Restablecer filtros
+        active: "Filtro activo —"
+        name_label: "Nombre:"
+        origin_label: "Origen:"
+        source_label: "Fuente:"
+        any: "(cualquiera)"
+        name_tooltip: "Filtrar estilos por nombre"
+        origin_tooltip: "Filtrar estilos por tipo de origen (p.ej. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Filtrar estilos por el ID de la fuente a la que pertenecen"
+      source_tab:
+        collection: Colección
+        layers: Capas
+        no_styles: No hay estilos cargados para esta fuente.
+        properties: Propiedades
+        property_key: Clave
+        property_title: Título
+      tooltip:
+        heading: Tooltip al pasar el ratón
+        description: "Seleccione qué propiedades se muestran en un tooltip al pasar el ratón sobre las características del mapa."
+        no_properties: "No hay propiedades disponibles. Intente recargar la fuente."
+    metadata:
+      title: Título
+      version: Versión
+      description: Descripción
+      url: Url
+      attribution: Atribución
+      contact: Contacto

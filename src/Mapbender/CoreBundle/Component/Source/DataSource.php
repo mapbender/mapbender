@@ -84,6 +84,14 @@ abstract class DataSource
     }
 
     /**
+     * A Bootstrap color name used for badges representing this source type (e.g. 'primary', 'info', 'success').
+     */
+    public function getAccentColor(): string
+    {
+        return 'secondary';
+    }
+
+    /**
      * If true, Mapbender will not show URLs in the metadata output to
      * prevent leaking internal urls to end users. Will only be called
      * if the parameter `mapbender.show_proxied_service_urls` is false

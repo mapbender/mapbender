@@ -1,0 +1,55 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: OGC API Features Servisi URL'si
+      feature_limit: Maks. nesne sayısı
+      layers: Koleksiyonlar
+      layer:
+        title: Başlık
+        active: Aktif
+        min_scale: Minimum ölçek
+        max_scale: Maksimum ölçek
+        allow_selected: Seçime izin ver
+        selected: Seçili
+        info: Bilgi
+        allow_info: Bilgiye izin ver
+        toggle: Açık
+        allow_toggle: Açmaya izin ver
+      filter:
+        label: Filtre
+        name_placeholder: "Ad…"
+        all_origins: Tüm kaynaklar
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Manuel
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Kaynak…"
+        apply: Filtre uygula
+        reset: Filtreleri sıfırla
+        active: "Aktif filtre —"
+        name_label: "Ad:"
+        origin_label: "Kaynak:"
+        source_label: "Kaynak:"
+        any: "(herhangi)"
+        name_tooltip: "Stilleri ada göre filtrele"
+        origin_tooltip: "Stilleri köken türüne göre filtrele (ör. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Stilleri ait oldukları kaynak kimliğine göre filtrele"
+      source_tab:
+        collection: Koleksiyon
+        layers: Katmanlar
+        no_styles: Bu kaynak için yüklenmiş stil yok.
+        properties: Özellikler
+        property_key: Anahtar
+        property_title: Başlık
+      tooltip:
+        heading: Üzerine gelme ipucu
+        description: "Haritadaki özellikler üzerine gelindiğinde ipucunda gösterilecek özellikleri seçin."
+        no_properties: "Özellik bulunamadı. Kaynağı yeniden yüklemeyi deneyin."
+    metadata:
+      title: Başlık
+      version: Sürüm
+      description: Açıklama
+      url: Url
+      attribution: Atıf
+      contact: İletişim

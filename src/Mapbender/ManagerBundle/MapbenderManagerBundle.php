@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle;
 use Mapbender\ManagerBundle\Component\Menu\MenuItem;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
 use Mapbender\ManagerBundle\Component\Menu\SourceMenu;
+use Mapbender\ManagerBundle\Component\Menu\StyleMenu;
 use Mapbender\ManagerBundle\DependencyInjection\Compiler\FinalizeMenuPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
@@ -37,8 +38,13 @@ class MapbenderManagerBundle extends Bundle
             ->setWeight(20)
         ;
 
+        $styleMenu = StyleMenu::create('Styles', 'mapbender_manager_style_index')
+            ->setWeight(25)
+        ;
+
         $container->addCompilerPass(new RegisterMenuRoutesPass($appMenu));
         $container->addCompilerPass(new RegisterMenuRoutesPass($sourceMenu));
+        $container->addCompilerPass(new RegisterMenuRoutesPass($styleMenu));
 
         // NOTE: TYPE_AFTER_REMOVING is the final phase of the container build.
         // The default TYPE_BEFORE_OPTIMIZATION is the very first phase where passes can be

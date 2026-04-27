@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\ManagerBundle\Component\Exchange\EntityPool;
 use Mapbender\ManagerBundle\Component\Exchange\ImportState;
 use Mapbender\ManagerBundle\Component\ImportHandler;
@@ -31,13 +32,23 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
         $instance = new OgcApiFeaturesInstance();
         $instance->setSource($source);
 
+        // Pre-load styles for this source for auto-assignment
+        $styleMap = $this->getStyleMapForSource($source->getId());
+
         foreach ($source->getLayers() as $layer) {
+            /** @var OgcApiFeaturesLayerSource $layer */
             $instanceLayer = new OgcApiFeaturesInstanceLayer();
             $instanceLayer->setTitle($layer->getTitle());
             $instanceLayer->setSourceInstance($instance);
             $instanceLayer->setSourceItem($layer);
             $instanceLayer->setSelected(true);
             $instanceLayer->setAllowSelected(true);
+            // Auto-assign matching style
+            $collectionId = $layer->getCollectionId();
+            if (isset($styleMap[$collectionId])) {
+                $instanceLayer->setStyleId($styleMap[$collectionId]);
+                $instanceLayer->setNativeStyleId($styleMap[$collectionId]);
+            }
             $instance->addLayer($instanceLayer);
         };
 
@@ -48,6 +59,27 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
         $instance->setAllowToggle(true);
         $instance->setWeight(0);
         return $instance;
+    }
+
+    /**
+     * Returns a map of collectionId => styleId for styles belonging to the given source.
+     */
+    private function getStyleMapForSource(?int $sourceId): array
+    {
+        if (!$sourceId) {
+            return [];
+        }
+        $styles = $this->entityManager->getRepository(Style::class)->findBy([
+            'sourceId' => $sourceId,
+        ]);
+        $map = [];
+        foreach ($styles as $style) {
+            $cid = $style->getCollectionId();
+            if ($cid && !isset($map[$cid])) {
+                $map[$cid] = $style->getId();
+            }
+        }
+        return $map;
     }
 
     public function fromConfig(array $data, string $id): SourceInstance

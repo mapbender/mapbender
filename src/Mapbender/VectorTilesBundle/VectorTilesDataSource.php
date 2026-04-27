@@ -57,6 +57,11 @@ class VectorTilesDataSource extends DataSource
         return VectorTileSource::class;
     }
 
+    public function getAccentColor(): string
+    {
+        return 'warning';
+    }
+
     public function getMetadataBackendTemplate(): ?string
     {
         return '@MapbenderVectorTiles/view.html.twig';

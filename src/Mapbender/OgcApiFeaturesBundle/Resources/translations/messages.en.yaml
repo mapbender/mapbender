@@ -15,6 +15,37 @@ mb:
         allow_info: Allow info
         toggle: Toggle
         allow_toggle: Allow toggle
+      filter:
+        label: Filter
+        name_placeholder: "Name…"
+        all_origins: All origins
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Manual
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Src…"
+        apply: Apply filter
+        reset: Reset filters
+        active: "Active filter —"
+        name_label: "Name:"
+        origin_label: "Origin:"
+        source_label: "Source:"
+        any: "(any)"
+        name_tooltip: "Filter styles by name"
+        origin_tooltip: "Filter styles by their origin type (e.g. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Filter styles by the source ID they belong to"
+      source_tab:
+        collection: Collection
+        layers: Layers
+        no_styles: No styles loaded for this source.
+        properties: Properties
+        property_key: Key
+        property_title: Title
+      tooltip:
+        heading: Hover Tooltip
+        description: "Select which properties are shown in a tooltip when hovering over features on the map."
+        no_properties: "No properties available. Try reloading the source."
     metadata:
       title: Title
       version: Version

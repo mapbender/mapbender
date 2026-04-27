@@ -14,11 +14,13 @@ use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType;
+use Mapbender\CoreBundle\Component\Source\StyleableSourceLoaderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,6 +96,11 @@ class RepositoryController extends ApplicationControllerBase
                 $this->em->flush();
                 $this->em->commit();
 
+                if ($loader instanceof StyleableSourceLoaderInterface) {
+                    $loader->loadStylesForSource($source);
+                    $this->em->flush();
+                }
+
                 $message = $this->translator->trans("mb.manager.source.added");
                 $replacedMessage = str_replace('%type%', $this->translator->trans($dataSource->getLabel(false)), $message);
                 $this->addFlash('success', $replacedMessage);
@@ -149,14 +156,21 @@ class RepositoryController extends ApplicationControllerBase
             'delete' => $this->isGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES),
         ));
         $dataSource = $this->typeDirectory->getSource($source->getType());
-        return $this->render($dataSource->getMetadataBackendTemplate(), array(
+        $viewData = array(
             'source' => $source,
             'applications' => $related,
             'title' => $dataSource->getLabel(true) . ' ' . $source->getTitle(),
             'grants' => $grants,
             // in backend, show all urls
             'secureUrls' => false,
-        ));
+        );
+        $loader = $dataSource->getLoader();
+        if ($loader instanceof StyleableSourceLoaderInterface) {
+            $viewData['styles'] = $this->em->getRepository(Style::class)->findBy([
+                'sourceId' => $source->getId(),
+            ]);
+        }
+        return $this->render($dataSource->getMetadataBackendTemplate(), $viewData);
     }
 
     /**
@@ -210,6 +224,14 @@ class RepositoryController extends ApplicationControllerBase
             $affectedApplication->setUpdated($dtNow);
         }
 
+        // Delete associated styles before removing the source
+        $styles = $this->em->getRepository(Style::class)->findBy([
+            'sourceId' => $source->getId(),
+        ]);
+        foreach ($styles as $style) {
+            $this->em->remove($style);
+        }
+
         $this->em->remove($source);
         $this->em->flush();
         $this->em->commit();
@@ -250,6 +272,11 @@ class RepositoryController extends ApplicationControllerBase
 
                 $this->em->flush();
                 $this->em->commit();
+
+                if ($loader instanceof StyleableSourceLoaderInterface) {
+                    $loader->loadStylesForSource($source);
+                    $this->em->flush();
+                }
 
                 $this->addFlash('success', "Your {$source->getType()} source has been updated");
                 return $this->redirectToRoute("mapbender_manager_repository_view", array(

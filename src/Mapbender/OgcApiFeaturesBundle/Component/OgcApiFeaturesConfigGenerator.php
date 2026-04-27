@@ -2,14 +2,22 @@
 
 namespace Mapbender\OgcApiFeaturesBundle\Component;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
 
 class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
 {
+    public function __construct(
+        protected EntityManagerInterface $em,
+    ) {
+    }
+
     public function getAssets(Application $application, string $type): array
     {
         return match ($type) {
@@ -17,6 +25,9 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                 '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
                 '@MapbenderOgcApiFeaturesBundle/Resources/public/geosource.ogc_api_features.source.js',
                 '@MapbenderOgcApiFeaturesBundle/Resources/public/geosource.ogc_api_features.sourcelayer.js',
+            ],
+            'css' => [
+                '@MapbenderOgcApiFeaturesBundle/Resources/public/css/ogc-api-tooltip.css',
             ],
             default => [],
         };
@@ -56,7 +67,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
 
         foreach (array_reverse($sourceInstance->getLayers()->toArray()) as $layer) {
             if ($layer->getActive()) {
-                $config['children'][] = [
+                $childConfig = [
                     'options' => [
                         // add additional underscore to prevent confusion with rootlayer-ID:
                         // identical rootlayer- and child-ID result in messed up layer tree structure
@@ -65,7 +76,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                         'title' => $layer->getTitle(),
                         'collectionId' => $layer->getSourceItem()->getCollectionId(),
                         'minScale' => ($layer->getMinScale() !== null ? $layer->getMinScale() : $sourceInstance->getMinScale()),
-                        'maxScale' => ($layer->getMinScale() !== null ? $layer->getMaxScale() : $sourceInstance->getMaxScale()),
+                        'maxScale' => ($layer->getMaxScale() !== null ? $layer->getMaxScale() : $sourceInstance->getMaxScale()),
                         'featureLimit' => (!empty($layer->getFeatureLimit()) ? $layer->getFeatureLimit() : $sourceInstance->getFeatureLimit()),
                         'metadataUrl' => $this->getMetaDataUrl($sourceInstance, $layer),
                         'bbox' => $layer->getSourceItem()->getBbox(),
@@ -79,6 +90,22 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                         ],
                     ],
                 ];
+                $availableStyles = $this->buildAvailableStyles($layer);
+                if (!empty($availableStyles)) {
+                    $childConfig['options']['style'] = $availableStyles[0]['name'];
+                    $childConfig['options']['availableStyles'] = $availableStyles;
+                }
+                $tooltipMap = $layer->getTooltipPropertyMap();
+                if ($tooltipMap) {
+                    $childConfig['options']['tooltip'] = [
+                        'propertyMap' => $tooltipMap,
+                    ];
+                }
+                $propertyTitles = $layer->getSourceItem()->getPropertyTitles();
+                if ($propertyTitles) {
+                    $childConfig['options']['propertyTitles'] = $propertyTitles;
+                }
+                $config['children'][] = $childConfig;
             }
         }
 
@@ -93,6 +120,40 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
             }
         }
         return false;
+    }
+
+    protected function buildAvailableStyles(OgcApiFeaturesInstanceLayer $layer): array
+    {
+        $styles = [];
+        $styleIds = [];
+        if ($layer->getStyleId()) {
+            $styleIds[] = $layer->getStyleId();
+        }
+        foreach ($layer->getSecondaryStyleIds() as $secId) {
+            $styleIds[] = (int) $secId;
+        }
+        if (empty($styleIds)) {
+            return $styles;
+        }
+        $styleEntities = $this->em->getRepository(Style::class)->findBy(['id' => $styleIds]);
+        $entityMap = [];
+        foreach ($styleEntities as $entity) {
+            $entityMap[$entity->getId()] = $entity;
+        }
+        foreach ($styleIds as $id) {
+            $styleEntity = $entityMap[$id] ?? null;
+            if ($styleEntity && $styleEntity->getStyle()) {
+                $decoded = json_decode($styleEntity->getStyle(), true);
+                if (is_array($decoded)) {
+                    $styles[] = [
+                        'name' => (string) $styleEntity->getId(),
+                        'title' => $styleEntity->getName(),
+                        'style' => $decoded,
+                    ];
+                }
+            }
+        }
+        return $styles;
     }
 
     protected function getMetaDataUrl($instance, $layer = null): ?string

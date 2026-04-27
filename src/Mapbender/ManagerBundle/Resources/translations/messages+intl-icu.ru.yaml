@@ -153,6 +153,144 @@ mb:
           title: URL
         description: Описание
         template: Шаблон
+      style:
+        title: Стиль
+        secondary_short: Доп.
+        secondary_tooltip: Вторичные стили, прикреплённые к этому слою
+        secondary_attached: Вторичные стили прикреплены
+        settings: Настройки стиля
+        label: Стиль
+        preview_label: Предпросмотр
+        secondary_styles: Вторичные стили
+        select_label: Выбор
+        ok: OK
+        native_style: "(исходный стиль)"
+        changed_was: "Изменено (было: {label})"
+        changed: Изменено относительно сохранённого значения
+        none: "-- нет --"
+        multi_layer_preview: "Многослойный ({count})"
+        name_required: Название стиля обязательно.
+        saved: Стиль сохранён.
+        updated: Стиль обновлён.
+        copied: Стиль скопирован.
+        deleted: Стиль удалён.
+        cannot_delete_source_style: "Этот стиль принадлежит источнику OGC API и не может быть удалён, пока источник существует."
+        copy_suffix: "(Копия)"
+        manager:
+          title: Стили
+          new_style: Новый стиль
+          th_id: ID
+          th_preview: Предпросмотр
+          th_name: Имя
+          th_origin: Источник
+          th_source: Источник данных
+          th_actions: Действия
+          filter_name: "Фильтр имени…"
+          filter_all: Все
+          filter_source: "ID источника…"
+          action_edit: Редактировать
+          action_view: Просмотр
+          action_copy: Копировать
+          action_delete: Удалить
+          confirm_delete: Удалить этот стиль?
+          no_styles: Стили ещё не настроены.
+          fallback_name: "Стиль #{id}"
+        editor:
+          title_view: "Просмотр стиля #{id}"
+          title_edit: "Редактирование стиля #{id}"
+          title_new: Новый стиль
+          name_label: Имя
+          name_placeholder: "Введите название стиля..."
+          tab_visual: Визуальный редактор
+          tab_json: Mapbox JSON
+          tab_import: Импорт
+          import_overwrite_badge: Импорт перезапишет существующий стиль
+          mapbox_layers: Слои Mapbox
+          add_layer: Добавить слой
+          fill: Заливка
+          color: Цвет
+          opacity: Непрозрачность
+          point_radius: Радиус точки
+          stroke: Обводка
+          width: Ширина
+          line_cap: Окончание линии
+          cap_round: Круглое
+          cap_square: Квадратное
+          cap_butt: Плоское
+          dash_style: Стиль штриха
+          dash_solid: Сплошной
+          dash_dot: Точка
+          dash_dash: Штрих
+          dash_long: Длинный штрих
+          dash_dashdot: Штрих-точка
+          dash_longdashdot: Длинный штрих-точка
+          label_legend: Подпись
+          text: Текст
+          font_family: Семейство шрифтов
+          font_size: Размер
+          font_weight: Насыщенность
+          weight_regular: Обычный
+          weight_bold: Полужирный
+          weight_italic: Курсив
+          font_color: Цвет шрифта
+          font_opacity: Непрозрачность шрифта
+          preview_legend: Предпросмотр
+          geom_point: Точка
+          geom_line: Линия
+          geom_polygon: Полигон
+          mapbox_style_json: "Стиль Mapbox (JSON)"
+          import_caution: Внимание
+          import_overwrite_text: "Этот стиль уже содержит данные. Импорт <strong>заменит все текущие настройки</strong>. Это действие нельзя отменить."
+          import_legend: Импортировать описание стиля
+          import_desc: "Загрузите файл Mapbox Style JSON для автоматического заполнения редактора стилей."
+          import_file: Файл
+          import_success: "Стиль успешно импортирован. Перейдите на вкладку <strong>Визуальный редактор</strong> или <strong>Mapbox JSON</strong> для проверки."
+          save: Сохранить
+          back: Назад
+          cancel: Отмена
+          fill_color: Цвет заливки
+          fill_opacity: Непрозрачность заливки
+          outline_color: Цвет контура
+          line_color: Цвет
+          line_width: Ширина
+          line_opacity: Непрозрачность
+          circle_radius: Радиус
+          circle_color: Цвет
+          circle_opacity: Непрозрачность
+          stroke_color: Цвет обводки
+          stroke_width: Ширина обводки
+          text_color: Цвет текста
+          text_opacity: Непрозрачность текста
+          invalid_json: "Некорректный JSON: %error%"
+          json_syntax_only_note: "Проверяется только синтаксис JSON, а не семантическая корректность стиля Mapbox."
+          remove_layer: Удалить слой
+          readonly_notice: "Этот стиль получен из источника OGC API и доступен только для просмотра. Изменения невозможны."
+          text_field: Текстовое поле
+          size: Размер
+          font: Шрифт
+          geom_symbol: Символ
+          no_editable_properties: Нет редактируемых свойств стиля для этого типа слоя.
+          complex_value_hint: "Это значение зависит от уровня масштабирования. Редактирование в графическом редакторе заменит значение для всех уровней масштабирования. Чтобы редактировать без потери информации, отредактируйте необработанный JSON на следующей вкладке."
+          unknown_layer: "Слой %type%"
+          background_color: Цвет фона
+          background_opacity: Прозрачность фона
+          raster_opacity: Прозрачность растра
+          raster_brightness_min: Яркость Мин
+          raster_brightness_max: Яркость Макс
+          raster_contrast: Контраст
+          raster_saturation: Насыщенность
+          extrusion_color: Цвет экструзии
+          extrusion_opacity: Прозрачность экструзии
+          extrusion_height: Высота
+          extrusion_base: Базовая высота
+          heatmap_radius: Радиус
+          heatmap_intensity: Интенсивность
+          heatmap_opacity: Прозрачность
+          heatmap_weight: Вес
+          geom_background: Фон
+          geom_raster: Растр
+          geom_extrusion: 3D-экструзия
+          geom_heatmap: Тепловая карта
     source:
       sources: Источники
       serviceurl: 'Сервис URL'
@@ -167,6 +305,7 @@ mb:
       valid: 'Источник действительный'
       notvalid: 'Источник не действительный'
       no_source: 'Нет доступного источника'
+      filter_all_types: 'Все типы источников'
       update: 'Обновить источник'
       status:
         ok: 'Источник OK'

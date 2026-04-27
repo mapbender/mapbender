@@ -50,10 +50,9 @@ class OgcApiFeaturesSource extends Source
         return $this->version;
     }
 
-    public function setVersion(?string $version): self
+    public function setVersion(?string $version): void
     {
         $this->version = $version;
-        return $this;
     }
 
     public function getAttribution(): ?string
@@ -76,10 +75,9 @@ class OgcApiFeaturesSource extends Source
         return $this->jsonUrl;
     }
 
-    public function setLayers(ArrayCollection $layers): static
+    public function setLayers(ArrayCollection $layers): void
     {
         $this->layers = $layers;
-        return $this;
     }
 
     public function getLayers(): Collection|array
@@ -87,11 +85,10 @@ class OgcApiFeaturesSource extends Source
         return $this->layers;
     }
 
-    public function addLayer(OgcApiFeaturesLayerSource $layer): static
+    public function addLayer(OgcApiFeaturesLayerSource $layer): void
     {
         $layer->setSource($this);
         $this->layers->add($layer);
-        return $this;
     }
 
 }

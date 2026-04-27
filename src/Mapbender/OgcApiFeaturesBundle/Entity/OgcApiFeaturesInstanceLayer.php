@@ -45,6 +45,18 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $priority;
 
+    #[ORM\Column(name: 'style_id', type: 'integer', nullable: true)]
+    protected ?int $styleId = null;
+
+    #[ORM\Column(name: 'native_style_id', type: 'integer', nullable: true)]
+    protected ?int $nativeStyleId = null;
+
+    #[ORM\Column(name: 'secondary_style_ids', type: 'simple_array', nullable: true)]
+    protected ?array $secondaryStyleIds = null;
+
+    #[ORM\Column(name: 'tooltip_property_map', type: 'json', nullable: true)]
+    protected ?array $tooltipPropertyMap = null;
+
     public function setMinScale(?float $value): static
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
@@ -67,7 +79,7 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->maxScale;
     }
 
-    public function setFeatureLimit(int $featureLimit): self
+    public function setFeatureLimit(int $featureLimit): static
     {
         $this->featureLimit = $featureLimit;
         return $this;
@@ -133,7 +145,7 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this->info;
     }
 
-    public function setPriority($priority)
+    public function setPriority($priority): static
     {
         $this->priority = $priority !== null ? intval($priority) : $priority;
         return $this;
@@ -147,5 +159,49 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     public function __toString()
     {
         return (string)$this->getId();
+    }
+
+    public function getStyleId(): ?int
+    {
+        return $this->styleId;
+    }
+
+    public function setStyleId(?int $styleId): static
+    {
+        $this->styleId = $styleId;
+        return $this;
+    }
+
+    public function getNativeStyleId(): ?int
+    {
+        return $this->nativeStyleId;
+    }
+
+    public function setNativeStyleId(?int $nativeStyleId): static
+    {
+        $this->nativeStyleId = $nativeStyleId;
+        return $this;
+    }
+
+    public function getSecondaryStyleIds(): array
+    {
+        return $this->secondaryStyleIds ?? [];
+    }
+
+    public function setSecondaryStyleIds(?array $secondaryStyleIds): static
+    {
+        $this->secondaryStyleIds = $secondaryStyleIds ?: null;
+        return $this;
+    }
+
+    public function getTooltipPropertyMap(): ?array
+    {
+        return $this->tooltipPropertyMap;
+    }
+
+    public function setTooltipPropertyMap(?array $tooltipPropertyMap): static
+    {
+        $this->tooltipPropertyMap = $tooltipPropertyMap;
+        return $this;
     }
 }

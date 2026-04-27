@@ -23,6 +23,9 @@ mb:
     source:
       singular: Джерело
       plural: Джерела
+    style:
+      singular: Стиль
+      plural: Стилі
     layerset:
       singular: Набір шарів
       plural: Набори шарів

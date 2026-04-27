@@ -1,0 +1,55 @@
+mb:
+  ogcapifeatures:
+    admin:
+      json_url: URL naar OGC API Features Service
+      feature_limit: Max. objecten
+      layers: Collecties
+      layer:
+        title: Titel
+        active: Actief
+        min_scale: Minimale schaal
+        max_scale: Maximale schaal
+        allow_selected: Selectie toestaan
+        selected: Geselecteerd
+        info: Info
+        allow_info: Info toestaan
+        toggle: Uitgeklapt
+        allow_toggle: Uitklappen toestaan
+      filter:
+        label: Filter
+        name_placeholder: "Naam…"
+        all_origins: Alle bronnen
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Handmatig
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Bron…"
+        apply: Filter toepassen
+        reset: Filters resetten
+        active: "Actief filter —"
+        name_label: "Naam:"
+        origin_label: "Bron:"
+        source_label: "Bron:"
+        any: "(willekeurig)"
+        name_tooltip: "Stijlen filteren op naam"
+        origin_tooltip: "Stijlen filteren op brontype (bijv. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Stijlen filteren op bron-ID"
+      source_tab:
+        collection: Collectie
+        layers: Lagen
+        no_styles: Geen stijlen geladen voor deze bron.
+        properties: Eigenschappen
+        property_key: Sleutel
+        property_title: Titel
+      tooltip:
+        heading: Hover-tooltip
+        description: "Selecteer welke eigenschappen worden getoond in een tooltip bij het hoveren over objecten op de kaart."
+        no_properties: "Geen eigenschappen beschikbaar. Probeer de bron opnieuw te laden."
+    metadata:
+      title: Titel
+      version: Versie
+      description: Beschrijving
+      url: Url
+      attribution: Naamsvermelding
+      contact: Contact

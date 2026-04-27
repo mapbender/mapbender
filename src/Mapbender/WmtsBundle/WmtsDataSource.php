@@ -63,6 +63,11 @@ class WmtsDataSource extends DataSource
         return WmtsSource::class;
     }
 
+    public function getAccentColor(): string
+    {
+        return 'info';
+    }
+
     public function getMetadataBackendTemplate(): ?string
     {
         return '@MapbenderWmts/Repository/view.html.twig';

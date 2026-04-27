@@ -4,6 +4,8 @@ Security:
 
 Features:
 * [Design] Comprehensive frontend redesign, including several optimisations mobile screens (Layertree: [#PR1766](https://github.com/mapbender/mapbender/pull/1766), [#PR1774](https://github.com/mapbender/mapbender/pull/1774); Simple Search: [#PR1767](https://github.com/mapbender/mapbender/pull/1767); Sketch: [#PR1768](https://github.com/mapbender/mapbender/pull/1768); Data Upload: [#PR1775](https://github.com/mapbender/mapbender/pull/1775); Popup and mobile optimisations: [#PR1782](https://github.com/mapbender/mapbender/pull/1782))
+* [OgcApiFeatures] Add new source OgcApiFeatures with hover tooltips ([#PR1831](https://github.com/mapbender/mapbender/pull/1831), [#PR1832](https://github.com/mapbender/mapbender/pull/1832))
+* [Styles] Add Style manager with visual editor (flat + multi-layer) and Mapbox JSON editor ([#PR1832](https://github.com/mapbender/mapbender/pull/1832))
 * [BatchPrintClient] New batch printing element for creating multiple print frames in a single job ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
 * [ApplicationSwitcher] Enhance application switcher, e.g. to work in popup and allow external applications ([#PR1793](https://github.com/mapbender/mapbender/pull/1793))
 * [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
@@ -11,7 +13,6 @@ Features:
 * [InteractiveHelp] Add new Interactive Help element ([#PR1808](https://github.com/mapbender/mapbender/pull/1808))
 * [HTMLElement] Add 'openInline' flag to provide more flexibility in sidebar and content area ([#PR1814](https://github.com/mapbender/mapbender/pull/1814))
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
-* [OgcApiFeatures] Add new source OgcApiFeatures
 * [SearchRouter] Extend SQLSearchEngine to support multiple search values separated by configurable delimiters ([#PR1836](https://github.com/mapbender/mapbender/pull/1836))
 
 Bugfixes:

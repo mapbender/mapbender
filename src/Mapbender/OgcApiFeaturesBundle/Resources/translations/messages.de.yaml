@@ -15,6 +15,37 @@ mb:
         allow_info: Info erlauben
         toggle: Aufgeklappt
         allow_toggle: Aufklappen erlauben
+      filter:
+        label: Filter
+        name_placeholder: "Name…"
+        all_origins: Alle Ursprünge
+        origin_mapbox_json: Mapbox JSON
+        origin_sld: SLD
+        origin_manual: Manuell
+        origin_ogc_api: OGC API
+        origin_digitizer: Digitizer
+        source_placeholder: "Quelle…"
+        apply: Filter anwenden
+        reset: Filter zurücksetzen
+        active: "Aktiver Filter —"
+        name_label: "Name:"
+        origin_label: "Ursprung:"
+        source_label: "Quelle:"
+        any: "(beliebig)"
+        name_tooltip: "Styles nach Name filtern"
+        origin_tooltip: "Styles nach Herkunftstyp filtern (z.B. Mapbox JSON, SLD, OGC API)"
+        source_tooltip: "Styles nach Quell-ID filtern"
+      source_tab:
+        collection: Collection
+        layers: Layer
+        no_styles: Keine Styles für diese Quelle geladen.
+        properties: Eigenschaften
+        property_key: Schlüssel
+        property_title: Titel
+      tooltip:
+        heading: Hover-Tooltip
+        description: "Wählen Sie, welche Eigenschaften beim Überfahren von Features auf der Karte als Tooltip angezeigt werden."
+        no_properties: "Keine Eigenschaften verfügbar. Versuchen Sie, die Quelle neu zu laden."
     metadata:
       title: Titel
       version: Version

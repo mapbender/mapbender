@@ -6,32 +6,22 @@ namespace Mapbender\ManagerBundle\Component\Menu;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-/**
- * @since v3.0.8.2
- */
 class MenuItem implements \Serializable
 {
-    /** @var string */
-    protected $title;
-    /** @var string|null */
-    protected $route;
     /** @var MenuItem[] */
-    protected $children;
-    /** @var int|null */
-    protected $weight;
-    /** @var bool */
-    protected $current = false;
-    /** @var bool */
-    protected $active = false;
+    protected array $children;
+    protected ?int $weight;
+    protected bool $current = false;
+    protected bool $active = false;
 
     /**
      * @param string $title
      * @param string|null $route
      */
-    public function __construct($title, $route)
+    public function __construct(
+        protected string $title,
+        protected ? string $route)
     {
-        $this->title = $title;
-        $this->route = $route;
         $this->children = array();
     }
 
@@ -57,10 +47,10 @@ class MenuItem implements \Serializable
         return \serialize($this->__serialize());
     }
 
-    public function unserialize($serialized)
+    public function unserialize($data)
     {
-        $data = \unserialize($serialized);
-        $this->__unserialize($data);
+        $unserialized = \unserialize($data);
+        $this->__unserialize($unserialized);
     }
 
     public function __unserialize(array $data)
@@ -77,12 +67,7 @@ class MenuItem implements \Serializable
         }
     }
 
-    /**
-     * @param $title
-     * @param $route
-     * @return static
-     */
-    public static function create($title, $route)
+    public static function create(string $title, ?string $route): self
     {
         return new static($title, $route);
     }

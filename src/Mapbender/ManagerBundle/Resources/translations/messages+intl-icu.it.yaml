@@ -156,6 +156,144 @@ mb:
           title: 'Titolo URL'
         description: Descrizione
         template: Template
+      style:
+        title: Stile
+        secondary_short: Sec.
+        secondary_tooltip: Stili secondari associati a questo livello
+        secondary_attached: Stili secondari associati
+        settings: Impostazioni stile
+        label: Stile
+        preview_label: Anteprima
+        secondary_styles: Stili secondari
+        select_label: Selezione
+        ok: OK
+        native_style: "(stile nativo)"
+        changed_was: "Modificato (era: {label})"
+        changed: Modificato rispetto al valore salvato
+        none: "-- nessuno --"
+        multi_layer_preview: "Multilivello ({count})"
+        name_required: Il nome dello stile è obbligatorio.
+        saved: Stile salvato.
+        updated: Stile aggiornato.
+        copied: Stile copiato.
+        deleted: Stile eliminato.
+        cannot_delete_source_style: "Questo stile appartiene a una sorgente OGC API e non può essere eliminato finché la sorgente esiste."
+        copy_suffix: "(Copia)"
+        manager:
+          title: Stili
+          new_style: Nuovo stile
+          th_id: ID
+          th_preview: Anteprima
+          th_name: Nome
+          th_origin: Origine
+          th_source: Sorgente
+          th_actions: Azioni
+          filter_name: "Filtra nome…"
+          filter_all: Tutti
+          filter_source: "ID sorgente…"
+          action_edit: Modifica
+          action_view: Visualizza
+          action_copy: Copia
+          action_delete: Elimina
+          confirm_delete: Eliminare questo stile?
+          no_styles: Nessuno stile configurato.
+          fallback_name: "Stile #{id}"
+        editor:
+          title_view: "Visualizza stile #{id}"
+          title_edit: "Modifica stile #{id}"
+          title_new: Nuovo stile
+          name_label: Nome
+          name_placeholder: "Inserisci nome dello stile..."
+          tab_visual: Editor visuale
+          tab_json: Mapbox JSON
+          tab_import: Importa
+          import_overwrite_badge: L'importazione sovrascriverà lo stile esistente
+          mapbox_layers: Livelli Mapbox
+          add_layer: Aggiungi livello
+          fill: Riempimento
+          color: Colore
+          opacity: Opacità
+          point_radius: Raggio del punto
+          stroke: Tratto
+          width: Larghezza
+          line_cap: Terminazione linea
+          cap_round: Arrotondato
+          cap_square: Quadrato
+          cap_butt: Piatto
+          dash_style: Stile tratteggio
+          dash_solid: Continuo
+          dash_dot: Punto
+          dash_dash: Trattino
+          dash_long: Trattino lungo
+          dash_dashdot: Trattino-punto
+          dash_longdashdot: Trattino lungo-punto
+          label_legend: Etichetta
+          text: Testo
+          font_family: Famiglia di caratteri
+          font_size: Dimensione
+          font_weight: Peso
+          weight_regular: Normale
+          weight_bold: Grassetto
+          weight_italic: Corsivo
+          font_color: Colore del carattere
+          font_opacity: Opacità del carattere
+          preview_legend: Anteprima
+          geom_point: Punto
+          geom_line: Linea
+          geom_polygon: Poligono
+          mapbox_style_json: "Stile Mapbox (JSON)"
+          import_caution: Attenzione
+          import_overwrite_text: "Questo stile contiene già dati. L'importazione <strong>sostituirà tutte le impostazioni attuali</strong>. Questa azione non può essere annullata."
+          import_legend: Importa definizione stile
+          import_desc: "Carica un file Mapbox Style JSON per popolare automaticamente l'editor di stili."
+          import_file: File
+          import_success: "Stile importato con successo. Passa alla scheda <strong>Editor visuale</strong> o <strong>Mapbox JSON</strong> per verificare."
+          save: Salva
+          back: Indietro
+          cancel: Annulla
+          fill_color: Colore di riempimento
+          fill_opacity: Opacità di riempimento
+          outline_color: Colore contorno
+          line_color: Colore
+          line_width: Larghezza
+          line_opacity: Opacità
+          circle_radius: Raggio
+          circle_color: Colore
+          circle_opacity: Opacità
+          stroke_color: Colore del tratto
+          stroke_width: Larghezza del tratto
+          text_color: Colore del testo
+          text_opacity: Opacità del testo
+          invalid_json: "JSON non valido: %error%"
+          json_syntax_only_note: "Viene verificata solo la sintassi JSON, non la correttezza semantica dello stile Mapbox."
+          remove_layer: Rimuovi livello
+          readonly_notice: "Questo stile proviene da una fonte OGC API e può solo essere visualizzato. Le modifiche non sono possibili."
+          text_field: Campo di testo
+          size: Dimensione
+          font: Carattere
+          geom_symbol: Simbolo
+          no_editable_properties: Nessuna proprietà di stile modificabile per questo tipo di layer.
+          complex_value_hint: "Questo valore dipende dal livello di zoom. La modifica nell'editor grafico sostituirà il valore per tutti i livelli di zoom. Per modificare senza perdere informazioni, modificare il JSON grezzo nella scheda successiva."
+          unknown_layer: "Layer %type%"
+          background_color: Colore di sfondo
+          background_opacity: Opacità sfondo
+          raster_opacity: Opacità raster
+          raster_brightness_min: Luminosità Min
+          raster_brightness_max: Luminosità Max
+          raster_contrast: Contrasto
+          raster_saturation: Saturazione
+          extrusion_color: Colore estrusione
+          extrusion_opacity: Opacità estrusione
+          extrusion_height: Altezza
+          extrusion_base: Altezza base
+          heatmap_radius: Raggio
+          heatmap_intensity: Intensità
+          heatmap_opacity: Opacità
+          heatmap_weight: Peso
+          geom_background: Sfondo
+          geom_raster: Raster
+          geom_extrusion: Estrusione 3D
+          geom_heatmap: Mappa di calore
     source:
       sources: Risorse
       serviceurl: 'URL del Servizio'
@@ -170,6 +308,7 @@ mb:
       valid: 'La risorsa è valida'
       notvalid: 'La risorsa non è valida'
       no_source: 'Nessuna risorsa disponibile'
+      filter_all_types: 'Tutti i tipi'
       update: 'Aggiorna la risorsa'
       status:
         ok: 'Risorsa OK'
