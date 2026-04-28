@@ -14,7 +14,7 @@ Proxy-aware http client for Mapbender.
 Owsproxy evaluates the following single configuration parameter (shown value is the default):
 ```yaml
 # http user agent for outgoing requests (string)
-owsproxy.useragent: OWSProxy3
+owsproxy.user_agent: OWSProxy3
 ```
 
 ## Extension configuration
