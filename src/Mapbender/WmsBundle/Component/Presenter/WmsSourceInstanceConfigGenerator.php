@@ -33,7 +33,9 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         protected UrlProcessor           $urlProcessor,
         protected TokenStorageInterface  $tokenStorage,
         protected EntityManagerInterface $em,
-        protected ?string                $defaultLayerOrder)
+        protected ?string                $defaultLayerOrder,
+        protected string                 $fiIframeSandboxParams,
+    )
     {
     }
 
@@ -103,6 +105,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'ratio' => $ratio,
             'refreshInterval' => $sourceInstance->getRefreshInterval(),
             'layerOrder' => $sourceInstance->getLayerOrder(),
+            'iframeSandboxParams' => $this->fiIframeSandboxParams,
         );
     }
 

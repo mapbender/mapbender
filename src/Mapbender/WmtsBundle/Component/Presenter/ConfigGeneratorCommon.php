@@ -18,6 +18,7 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
 {
     public function __construct(
         protected UrlProcessor $urlProcessor,
+        protected string $fiIframeSandboxParams,
     )
     {
     }
@@ -47,6 +48,7 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
         return array(
             "proxy" => $sourceInstance->getProxy(),
             "opacity" => $sourceInstance->getOpacity() / 100,
+            "iframeSandboxParams" => $this->fiIframeSandboxParams,
         );
     }
 

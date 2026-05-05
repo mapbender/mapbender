@@ -101,7 +101,8 @@
         }
         _formatFeatureInfoResponse(data, mimetype, options) {
             if (mimetype.toLowerCase() === 'text/html') {
-                const $iframe = $('<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads" class="iframe--responsive">');
+                const sandboxParams = this.options.iframeSandboxParams || 'allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads';
+                const $iframe = $('<iframe sandbox="'+ sandboxParams + '" class="iframe--responsive">');
                 $iframe.attr("srcdoc", [options.injectionScript, data].join(''));
                 return $iframe.get();
             } else {

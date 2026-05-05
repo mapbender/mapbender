@@ -1,3 +1,7 @@
+## next bugfix release
+* Fix activating visible layers by name ([#PR1839](https://github.com/mapbender/mapbender/pull/1839))
+* [FeatureInfo] Make sandbox iframe attribute in the feature info dialog configurable using `mapbender.featureinfo.iframe_sandbox_params`  ([#PR1844](https://github.com/mapbender/mapbender/pull/1844))
+
 ## v4.2.5
 Security:
 * [WMS] Always use Tunnel instead of OwsProxy to avoid leaking internal urls ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))
