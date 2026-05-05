@@ -160,9 +160,9 @@
                 if ($firstFocusable.length) {
                     const $activeRadioButton = this.$element.find('input[type="radio"]:checked:visible');
                     if ($activeRadioButton.length) {
-                        $activeRadioButton.focus();
+                        $activeRadioButton.trigger('focus');
                     } else {
-                    $firstFocusable.focus();
+                    $firstFocusable.trigger('focus');
                     }
                 }
             }

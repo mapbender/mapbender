@@ -18,7 +18,7 @@ $(function() {
 
     function applyFilters() {
         var selectedType = $('#filter-source-type').val();
-        var textVal = $.trim($('.listFilterInput[data-filter-target="listFilterServices"]').val());
+        var textVal = ($('.listFilterInput[data-filter-target="listFilterServices"]').val() || '').trim();
         var $items = $('#listFilterServices > li');
 
         $items.each(function() {

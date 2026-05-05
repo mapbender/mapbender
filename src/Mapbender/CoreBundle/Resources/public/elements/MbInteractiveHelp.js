@@ -124,7 +124,7 @@
             // filter out all elements that are not configured in the application or hidden for mobile/desktop:
             chapters = chapters.filter(chapter => {
                 const $el = $('.' + chapter.selector);
-                if ($el.length > 0 && $el.data().hasOwnProperty(chapter.class)) {
+                if ($el.length > 0 && Object.prototype.hasOwnProperty.call($el.data(), chapter.class)) {
                     const hideOnMobile = ($el.hasClass('hide-screentype-mobile') || $el.closest('.element-wrapper').hasClass('hide-screentype-mobile')) && this.isMobile();
                     const hideOnDesktop = ($el.hasClass('hide-screentype-desktop') || $el.closest('.element-wrapper').hasClass('hide-screentype-desktop')) && !this.isMobile();
                     return !hideOnMobile && !hideOnDesktop;
@@ -167,18 +167,18 @@
                 switch (sidePaneType) {
                     case 'tabs':
                         id = $currentElement.closest('.container').attr('id').replace('container', '');
-                        $('.sidePane #tab' + id).click();
+                        $('.sidePane #tab' + id).trigger('click');
                         break;
                     case 'list':
                         id = $currentElement.closest('.container-list-group-item').attr('id').replace('list_group_item_container', '');
-                        $('.sidePane #list_group_item' + id).click();
+                        $('.sidePane #list_group_item' + id).trigger('click');
                         break;
                     default:
-                        $currentElement.closest('.container-accordion').prev().click();
+                        $currentElement.closest('.container-accordion').prev().trigger('click');
                 }
             }
             if (currentChapter.region === 'toolbar') {
-                $currentElement.click();
+                $currentElement.trigger('click');
             }
             this.updatePopover(currentChapter);
             this.currentChapter++;
@@ -328,7 +328,7 @@
                     resolve();
                 };
                 sidePane.addEventListener('transitionend', onTransitionEnd);
-                $('.toggleSideBar').click();
+                $('.toggleSideBar').trigger('click');
             });
         }
 

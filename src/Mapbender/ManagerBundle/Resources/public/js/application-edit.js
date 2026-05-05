@@ -260,14 +260,14 @@ $(function() {
         });
     }
 
-    $(".addElement").bind("click", function(e) {
+    $(".addElement").on("click", function(e) {
         e.preventDefault();
         var regionName = $('.subTitle', $(this).closest('.region')).first().text();
         startElementChooser(regionName, $(this).attr('href'));
         return false;
     });
 
-    $(".editElement").bind("click", function(e) {
+    $(".editElement").on("click", function(e) {
         e.preventDefault();
         startEditElement($(this).attr('data-url'), {});
         return false;
@@ -307,7 +307,7 @@ $(function() {
                         cssClass: 'btn btn-primary btn-sm',
                         type: 'submit',
                         callback: function() {
-                            $("form", $modal).submit();
+                            $("form", $modal).trigger('submit');
                         }
                     },
                     {

@@ -43,12 +43,12 @@
             });
             // Prepare autocompletes
             $('form input[data-autocomplete="on"]', $element).each(
-                $.proxy(widget._setupAutocomplete, widget));
+                widget._setupAutocomplete.bind(widget));
             $('form input[data-autocomplete^="custom:"]', $element).each(
-                $.proxy(widget._setupCustomAutocomplete, widget));
+                widget._setupCustomAutocomplete.bind(widget));
 
             // Listen to changes of search select (switching and forms resetting)
-            routeSelect.on('change', $.proxy(this._selectSearch, this));
+            routeSelect.on('change', this._selectSearch.bind(this));
             $element.on('click', '.search-action-buttons [data-action]', function() {
                 switch ($(this).attr('data-action')) {
                     case ('reset'):
@@ -104,12 +104,12 @@
                     {
                         label: Mapbender.trans('mb.actions.search'),
                         cssClass: 'btn btn-sm btn-primary',
-                        callback: $.proxy(this._search, this)
+                        callback: this._search.bind(this)
                     },
                     {
                         label: Mapbender.trans('mb.actions.reset'),
                         cssClass: 'btn btn-sm btn-light',
-                        callback: $.proxy(this._reset, this)
+                        callback: this._reset.bind(this)
                     }
                 ]
             };
@@ -152,7 +152,7 @@
          * Reset current search form
          */
         _reset() {
-            $('select#search_routes_route', this.$element).change();
+            $('select#search_routes_route', this.$element).trigger('change');
             this.currentFeature = null;
         }
 
@@ -460,7 +460,7 @@
                     $counter.hide();
                 }
 
-                $exportcsv.show().unbind().on('click', () => this._exportCsv(results));
+                $exportcsv.show().off().on('click', () => this._exportCsv(results));
                 $table.show();
             } else {
                 $table.hide();
@@ -580,7 +580,7 @@
             }
             if (uniqueEventNames.length) {
                 const $anchor = $('.search-results', this.$element);
-                $anchor.on(uniqueEventNames.join(' '), 'tbody tr', $.proxy(this._resultCallback, this));
+                $anchor.on(uniqueEventNames.join(' '), 'tbody tr', this._resultCallback.bind(this));
             }
         }
 
@@ -629,7 +629,7 @@
         }
 
         _hideMobile() {
-            $('.mobileClose', $(this.$element).closest('.mobilePane')).click();
+            $('.mobileClose', $(this.$element).closest('.mobilePane')).trigger('click');
         }
 
         onTableHeadClick(e) {

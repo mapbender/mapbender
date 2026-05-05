@@ -17,7 +17,7 @@
             this.setupProjSelection();
             this.setupDropArea();
             this.setupFileUploadForm();
-            $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
+            $(document).on('mbmapsrschanged', self._onSrsChanged.bind(self));
             Mapbender.elementRegistry.markReady(this);
         }
 
@@ -39,7 +39,7 @@
 
         activateByButton(callback, mbButton) {
             super.activateByButton(callback, mbButton);
-            this.popup.$element.find('.fileUploadLink').focus();
+            this.popup.$element.find('.fileUploadLink').trigger('focus');
         }
 
         closeByButton() {
@@ -358,7 +358,7 @@
             if (layer) {
                 this.map.removeLayer(layer);
                 this.$element.find('.filesTable').find(tr).remove();
-                if (this.$element.find('.filesTable').find('tr').length < 2) {
+                if (this.$element.find('.filesTable').find('tr').length < 1) {
                     this.removeTable();
                 }
             }

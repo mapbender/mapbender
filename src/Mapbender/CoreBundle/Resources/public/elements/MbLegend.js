@@ -31,7 +31,7 @@
                 'mbmapsourcelayerremoved'
             ];
 
-            $(document).bind(rerenderOn.join(' '), $.proxy(this.onMapLayerChanges, this));
+            $(document).on(rerenderOn.join(' '), this.onMapLayerChanges.bind(this));
         }
 
         onMapLayerChanges(e) {

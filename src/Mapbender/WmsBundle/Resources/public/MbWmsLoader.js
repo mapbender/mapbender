@@ -79,7 +79,7 @@
             if (form.reportValidity && !form.reportValidity()) return;
             var url = $('input[name="loadWmsUrl"]', this.$element).val();
             if (url === '') {
-                $('input[name="loadWmsUrl"]', this.$element).focus();
+                $('input[name="loadWmsUrl"]', this.$element).trigger('focus');
                 return false;
             }
             var urlObj = new Mapbender.Util.Url(url);

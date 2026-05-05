@@ -310,7 +310,7 @@
         }
 
         _hideMobile() {
-            $('.mobileClose', $(this.$element).closest('.mobilePane')).click();
+            $('.mobileClose', $(this.$element).closest('.mobilePane')).trigger('click');
         }
 
         _tokenize(string) {

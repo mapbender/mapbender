@@ -7,7 +7,7 @@
             if ($firstVisibleButton.length) {
                 // NOTE: toggles active classes and implicitly ends up calling notifyElements
                 // @see initTabContainer
-                $firstVisibleButton.click();
+                $firstVisibleButton.trigger('click');
             }
         }
         var wholeSidePaneVisible = false;
@@ -50,7 +50,7 @@
         var currentPanel = null;
         function setCurrentTab() {
             var panelId = this.id.replace('tab', 'container');
-            var panel = $panels.filter('#' + panelId + ':first').get(0);
+            var panel = $panels.filter('#' + panelId).first().get(0);
             if (panel) {
                 if (currentPanel) {
                     notifyElements(currentPanel, false);
@@ -64,7 +64,7 @@
             }
         }
         // set initial active tab from .active class
-        $('>.tabs >.tab.active:first', this).each(setCurrentTab);
+        $('>.tabs >.tab.active', this).first().each(setCurrentTab);
         // follow further click events
         $('>.tabs', this).on('click', '>.tab[id]', setCurrentTab);
         window.addEventListener('resize', function() {
@@ -82,7 +82,7 @@
         function panelFromHeader($panels, header) {
             var panelId = header && header.id
                 && header.id.replace("accordion", "container");
-            return panelId && $panels.filter('#' + panelId + ':first').get(0);
+            return panelId && $panels.filter('#' + panelId).first().get(0);
         }
 
         // set initial active panel from .active class
@@ -96,7 +96,7 @@
         $headers.attr('tabindex', '0');
         $headers.on('keydown', function(event) {
             if (event.key === 'Enter') {
-                $(this).click();
+                $(this).trigger('click');
             }
         });
         $headers.on('selected', function(e, tabData) {
@@ -130,7 +130,7 @@
         function panelFromHeader($panels, header) {
             var panelId = header && header.id
                 && header.id.replace("list_group_item", "list_group_item_container");
-            return panelId && $panels.filter('#' + panelId + ':first').get(0);
+            return panelId && $panels.filter('#' + panelId).first().get(0);
         }
 
         function getFocusableElements(container) {
@@ -195,7 +195,7 @@
             // Skip if interactive help tour is active
             var isInteractiveHelpActive = $('.popover-interactive-help:visible').length > 0;
             if ($focusable.length && !isInteractiveHelpActive) {
-                $focusable.focus();
+                $focusable.trigger('focus');
             }
         }
 
@@ -221,7 +221,7 @@
                     if ($currentElement[0] === $firstElement[0]) {
                         event.preventDefault();
                         if ($toggleIcon.length) {
-                            $toggleIcon.focus();
+                            $toggleIcon.trigger('focus');
                         }
                     }
                 } else {
@@ -229,9 +229,9 @@
                     if (isLastFocusableElement(container, $currentElement[0])) {
                         event.preventDefault();
                         if ($toggleIcon.length) {
-                            $toggleIcon.focus();
+                            $toggleIcon.trigger('focus');
                         } else {
-                            $firstElement.focus();
+                            $firstElement.trigger('focus');
                         }
                     }
                 }
@@ -246,7 +246,7 @@
                     var $focusableElements = getFocusableElements(container);
                     event.preventDefault();
                     if ($focusableElements.length) {
-                        $focusableElements.last().focus();
+                        $focusableElements.last().trigger('focus');
                     }
                 });
             }
@@ -265,7 +265,7 @@
             if (event.key === 'Enter') {
                 // Store the currently focused element before opening the panel
                 lastFocusedListItem = this;
-                $(this).click();
+                $(this).trigger('click');
             } else if (event.key === 'Tab') {
                 // Tab on last list item should go to toggleSideBar icon
                 var $sidePane = $(this).closest('.sidePane');
@@ -275,11 +275,11 @@
 
                 if (!event.shiftKey && this === $lastHeader[0] && $toggleIcon.length) {
                     event.preventDefault();
-                    $toggleIcon.focus();
+                    $toggleIcon.trigger('focus');
                 } else if (event.shiftKey && this === $headers[0] && $toggleIcon.length) {
                     // Shift+Tab on first list item should go to toggleSideBar icon (wrap around)
                     event.preventDefault();
-                    $toggleIcon.focus();
+                    $toggleIcon.trigger('focus');
                 }
             }
         });
@@ -352,7 +352,7 @@
                 if (event.key === 'Tab' && event.shiftKey) {
                     // Shift+Tab on toggleSideBar -> focus last list item
                     event.preventDefault();
-                    $headers.last().focus();
+                    $headers.last().trigger('focus');
                 }
             });
         }
@@ -404,10 +404,10 @@
 
                 // Try to restore lastFocusedListItem, otherwise focus the corresponding item
                 if (lastFocusedListItem && $(lastFocusedListItem).closest('.list-group').length) {
-                    $(lastFocusedListItem).focus();
+                    $(lastFocusedListItem).trigger('focus');
                     lastFocusedListItem = null;
                 } else if ($correspondingItem.length) {
-                    $correspondingItem.focus();
+                    $correspondingItem.trigger('focus');
                 }
             };
 
@@ -488,13 +488,13 @@
 
             if ($button && $button.length) {
                 // Trigger the corresponding button click first (this will activate the panel)
-                $button.click();
+                $button.trigger('click');
 
                 // Then open the sidepane if it's closed (after a short delay to let the panel activate)
                 var $toggleSideBar = $sidePane.find('.toggleSideBar');
                 if ($toggleSideBar.hasClass('closed')) {
                     setTimeout(function() {
-                        $toggleSideBar.click();
+                        $toggleSideBar.trigger('click');
                     }, 50);
                 }
             }
@@ -505,7 +505,7 @@
             if (e.key === 'Enter') {
                 e.preventDefault();
                 e.stopPropagation();
-                $(this).click();
+                $(this).trigger('click');
             }
         });
 
@@ -580,11 +580,11 @@
                 if (e.shiftKey) {
                     // Shift+Tab on toggle button: go to last icon
                     e.preventDefault();
-                    $icons.last().focus();
+                    $icons.last().trigger('focus');
                 } else {
                     // Tab on toggle button: go to first icon
                     e.preventDefault();
-                    $icons.first().focus();
+                    $icons.first().trigger('focus');
                 }
             }
         } else {
@@ -597,7 +597,7 @@
                     var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
                     var $focusable = $activeContainer.find(focusableSelectors).filter(':visible').not('[disabled]').not('[tabindex="-1"]').last();
                     if ($focusable.length) {
-                        $focusable.focus();
+                        $focusable.trigger('focus');
                     }
                 }
             }
@@ -618,16 +618,16 @@
             // Shift+Tab: go to previous icon or to toggle button (fa-bars/fa-xmark)
             e.preventDefault();
             if (currentIndex > 0) {
-                $icons.eq(currentIndex - 1).focus();
+                $icons.eq(currentIndex - 1).trigger('focus');
             } else {
                 // On first icon, go to toggle button
-                $toggleIcon.focus();
+                $toggleIcon.trigger('focus');
             }
         } else {
             // Tab: go to next icon or to next element outside sidepane
             if (currentIndex < $icons.length - 1) {
                 e.preventDefault();
-                $icons.eq(currentIndex + 1).focus();
+                $icons.eq(currentIndex + 1).trigger('focus');
             }
         }
     });
@@ -655,7 +655,7 @@
         if (e.key === 'Enter') {
             e.preventDefault();
             e.stopPropagation();
-            $(this).click();
+            $(this).trigger('click');
         }
     });
 

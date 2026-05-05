@@ -69,7 +69,7 @@
         _setupButtons() {
             var self = this;
             $('.-fn-copy-clipboard', self.$element).on('click', this._copyToClipboard);
-            $('.center-map', self.$element).on('click', $.proxy(self._centerMap, self));
+            $('.center-map', self.$element).on('click', self._centerMap.bind(self));
 
             if (!self.isPopUpDialog) {
                 var coordinateSearchButton = $('.coordinate-search', this.$element);
@@ -147,11 +147,11 @@
          */
         _setupEventListeners() {
             var self = this;
-            $(document).on('mbmapsrschanged', $.proxy(self._resetFields, self));
+            $(document).on('mbmapsrschanged', self._resetFields.bind(self));
             $('select.srs', this.$element).on('change', function () {
                 self._recalculateDisplayCoordinate($(this).val());
             });
-            $('input.input-coordinate', self.$element).on('change', $.proxy(self._transformCoordinateToMapSrs, self));
+            $('input.input-coordinate', self.$element).on('change', self._transformCoordinateToMapSrs.bind(self));
             this.mbMap.element.on('mbmapclick', function (event, data) {
                 self._mapClick(event, data);
             });
@@ -303,7 +303,7 @@
         }
 
         _areCoordinatesValid(x, y) {
-            if (!$.isNumeric(x) || !$.isNumeric(y)) { return false; }
+            if (!isFinite(x) || !isFinite(y)) { return false; }
             var mapExtentArray = this.mbMap.getModel().getMaxExtentArray();
             return (x >= mapExtentArray[0] && x <= mapExtentArray[2] && y >= mapExtentArray[1] && y <= mapExtentArray[3]);
         }

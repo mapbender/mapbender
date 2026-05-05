@@ -223,7 +223,7 @@ window.Mapbender.MapModelOl4 = (function() {
      */
     setExtent: function(boundsOrCoords) {
         var bounds;
-        if ($.isArray(boundsOrCoords)) {
+        if (Array.isArray(boundsOrCoords)) {
             bounds = boundsOrCoords;
         } else {
             bounds = [

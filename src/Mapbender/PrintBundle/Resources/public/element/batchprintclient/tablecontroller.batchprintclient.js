@@ -224,7 +224,7 @@
             
             // Update frame numbers in table to reflect new order
             $tbody.find('tr').each(function(index) {
-                $(this).find('td:first').text(index + 1);
+                $(this).find('td').first().text(index + 1);
             });
         }
 

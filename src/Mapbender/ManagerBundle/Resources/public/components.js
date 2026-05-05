@@ -50,7 +50,7 @@ $(function() {
         return function (a, b) {
             var valA = $(a).children('td').eq(index).text();
             var valB = $(b).children('td').eq(index).text();
-            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+            return isFinite(valA) && isFinite(valB) ? valA - valB : valA.toString().localeCompare(valB);
         };
     }
 
@@ -58,7 +58,7 @@ $(function() {
     // init filter inputs --------------------------------------------------------------------
     $(document).on("keyup", ".listFilterInput[data-filter-target]", function(){
         var $this = $(this);
-        var val = $.trim($this.val());
+        var val = ($this.val() || '').trim();
         var filterTargetId = $this.attr('data-filter-target');
         var filterScope = filterTargetId && $this.closest('#' + filterTargetId);
         if (filterTargetId && !filterScope.length) {
@@ -325,10 +325,10 @@ $(function() {
                     label: Mapbender.trans('mb.actions.add'),
                     cssClass: 'btn btn-primary btn-sm buttonAdd hidden',
                     callback: function() {
-                        $(".contentItem:first", $modal).removeClass('hidden');
+                        $(".contentItem", $modal).first().removeClass('hidden');
                         if ($(".contentItem", $modal).length > 1) {
                             appendPermissionSubjects($permissionsTable, $('#listFilterPermissionSubjects', $modal));
-                            $(".contentItem:not(.contentItem:first)", $modal).remove();
+                            $(".contentItem", $modal).slice(1).remove();
                         }
                         isModified = true;
                         $(".buttonAdd,.buttonBack", $modal).addClass('hidden');
@@ -339,7 +339,7 @@ $(function() {
                     label: Mapbender.trans('mb.actions.save'),
                     cssClass: 'btn btn-primary btn-sm buttonOk',
                     callback: function() {
-                        $("form", $modal).submit();
+                        $("form", $modal).trigger('submit');
                     }
                 },
                 {
@@ -499,7 +499,7 @@ $(function() {
 
     $(document).on('keydown', '.clickable', function (event) {
         if (event.key === 'Enter') {
-            $(this).click();
+            $(this).trigger('click');
         }
     });
 });
