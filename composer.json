@@ -81,7 +81,8 @@
     },
     "replace": {
         "mapbender/owsproxy": "3.3.*",
-        "mapbender/fom": "*"
+        "mapbender/fom": "*",
+        "components/jquery": "*"
     },
     "autoload": {
         "psr-4": {
