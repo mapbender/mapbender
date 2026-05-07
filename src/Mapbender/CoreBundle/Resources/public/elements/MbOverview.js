@@ -28,7 +28,7 @@
                 // if we start closed, wait with initialization until opened
                 this._initOverview();
             }
-            $('.toggleOverview', this.$element).on('click', $.proxy(this._openClose, this));
+            $('.toggleOverview', this.$element).on('click', this._openClose.bind(this));
             Mapbender.elementRegistry.markReady(this);
         }
 
@@ -40,14 +40,14 @@
             }
 
             this._initAsControl(layers);
-            $(this.mbMap.element).bind('mbmapsrschanged', this._onMbMapSrsChanged.bind(this));
+            $(this.mbMap.element).on('mbmapsrschanged', this._onMbMapSrsChanged.bind(this));
         }
 
         _initAsControl(layers) {
             var viewportId = 'mb-overview-' + this.$element.attr('id') + '-viewport';
             var $viewport = $('.overviewContainer', this.$element);
             $('.toggleOverview', this.$element).on('click', function() {
-                $('button', $viewport).click();
+                $('button', $viewport).trigger('click');
             });
             $viewport.attr('id', viewportId);
             // @see https://github.com/openlayers/openlayers/blob/main/src/ol/control/OverviewMap.js

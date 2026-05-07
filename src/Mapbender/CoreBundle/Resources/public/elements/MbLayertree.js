@@ -50,7 +50,7 @@
         _createTree() {
             this.treeCreated = false;
             var sources = this.model.getSources();
-            var $rootList = $('ul.layers:first', this.$element);
+            var $rootList = $('ul.layers', this.$element).first();
             $rootList.empty();
             for (var i = (sources.length - 1); i > -1; i--) {
                 if (this.options.showBaseSource || !sources[i].isBaseSource) {
@@ -63,7 +63,7 @@
                             $themeNode = this._createThemeNode(source.layerset, themeOptions);
                             $rootList.append($themeNode);
                         }
-                        $('ul.layers:first', $themeNode).append($sourceNode);
+                        $('ul.layers', $themeNode).first().append($sourceNode);
                     } else {
                         $rootList.append($sourceNode);
                     }
@@ -102,13 +102,13 @@
                 self._showMetadata(evt);
             });
             this.$element.on('input', '.layer-filter-input', this._filterLayer.bind(this));
-            $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
-            $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
-            $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
-            $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
-            $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
-            $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
-            $(document).bind('mbmapsourcelayerremoved', $.proxy(this._onSourceLayerRemoved, this));
+            $(document).on('mbmapsourceloadstart', self._onSourceLoadStart.bind(self));
+            $(document).on('mbmapsourceloadend', self._onSourceLoadEnd.bind(self));
+            $(document).on('mbmapsourceloaderror', self._onSourceLoadError.bind(self));
+            $(document).on('mbmapsourceadded', self._onSourceAdded.bind(self));
+            $(document).on('mbmapsourcechanged', self._onSourceChanged.bind(self));
+            $(document).on('mbmapsourceremoved', self._onSourceRemoved.bind(self));
+            $(document).on('mbmapsourcelayerremoved', this._onSourceLayerRemoved.bind(this));
             $(document).on('mb.sourcenodeselectionchanged', function (e, data) {
                 if (data.node instanceof (Mapbender.Layerset)) {
                     self._updateThemeNode(data.node);
@@ -116,7 +116,7 @@
             });
             if (this._mobilePane) {
                 $(this.$element).on('click', '.leaveContainer', function () {
-                    $('.-fn-toggle-selected', this).click();
+                    $('.-fn-toggle-selected', this).trigger('click');
                 });
             }
             this._initLayerStyleEvents();
@@ -171,7 +171,7 @@
             $li.toggleClass('showLeaves', options.opened);
             let title = layerset.getTitle() || '';
             if (options && options.title) title = Mapbender.trans(options.title);
-            $('span.layer-title:first', $li).text(title);
+            $('span.layer-title', $li).first().text(title);
             this._updateFolderState($li);
             this._updateThemeNode(layerset, $li);
             return $li;
@@ -192,7 +192,7 @@
         }
 
         _findThemeNode(layerset) {
-            return $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.$element);
+            return $('ul.layers', this.$element).first().children('li[data-layersetid="' + layerset.id + '"]');
         }
 
         _createLayerNode(layer) {
@@ -237,7 +237,7 @@
                 $childList.remove();
             }
             this._updateLayerDisplay($li, layer);
-            $li.find('.layer-title:first')
+            $li.find('.layer-title').first()
                 .attr('title', layer.options.title)
                 .text(layer.options.title)
             ;
@@ -255,7 +255,7 @@
                 return;
             }
             var $sourceTree = this._createSourceTree(source);
-            var $rootList = $('ul.layers:first', this.$element);
+            var $rootList = $('ul.layers', this.$element).first();
             $rootList.prepend($sourceTree);
             this.reIndent_($rootList, false);
             this._reset();
@@ -541,7 +541,7 @@
                 $match.parent().show();
                 ['subContainer', 'serviceContainer', 'themeContainer'].forEach(containerClass => {
                     const $container = $match.parents('.' + containerClass);
-                    $container.find('.leaveContainer:first').show();
+                    $container.find('.leaveContainer').first().show();
 
                     const isInContainer = $match.parent().parent().hasClass(containerClass);
 
@@ -549,7 +549,7 @@
                         $container.find('ul.layers .leaveContainer').show();
                     }
                     $container.toggleClass('showLeaves', !isInContainer);
-                    $container.find('.-fn-toggle-children:first > i')
+                    $container.find('.-fn-toggle-children').first().find('> i')
                         .toggleClass(this.cssClasses.folderExpanded, !isInContainer)
                         .toggleClass(this.cssClasses.folderCollapsed, isInContainer);
 
@@ -575,7 +575,7 @@
                 return;
             }
 
-            const $leaveContainer = $layerNode.find('.leaveContainer:first');
+            const $leaveContainer = $layerNode.find('.leaveContainer').first();
             $leaveContainer.after($menu);
 
             $menu.find('[data-menu-action]').each((index, el) => {
@@ -783,7 +783,7 @@
                 if (isKeyboardTriggered) {
                     const $firstFocusable = $menu.find('[tabindex="0"]').first();
                     if ($firstFocusable.length) {
-                        $firstFocusable.focus();
+                        $firstFocusable.trigger('focus');
                     }
                 }
 
@@ -1004,7 +1004,7 @@
                         height: !useModal && 600 || null,
                         buttons: []
                     });
-                    metadataPopup.$element.find('button').focus();
+                    metadataPopup.$element.find('button').trigger('focus');
                     if (initTabContainer) {
                         initTabContainer(metadataPopup.$element);
                     }

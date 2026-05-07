@@ -55,7 +55,7 @@
             $input.val(text);
             $input.css({opacity: 0});
             document.body.appendChild($input.get(0));
-            $input.focus();
+            $input.trigger('focus');
             $input.select();
             document.execCommand('copy');
             document.body.removeChild($input.get(0));

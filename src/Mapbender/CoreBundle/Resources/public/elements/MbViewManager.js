@@ -377,7 +377,7 @@
         _apply(settings) {
             const layertreeElement = $('.mb-element-layertree');
             if (layertreeElement.length > 0) {
-                layertreeElement.find('ul.layers:first').empty();
+                layertreeElement.find('ul.layers').first().empty();
             }
             this.mbMap.getModel().sourceTree = [];
             this.mbMap.map.olMap.getAllLayers().forEach(layer => {

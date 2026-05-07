@@ -25,8 +25,8 @@
                 initDropdown.call(this.$select.parent());
             }
             this.$select.on('change', this._switchSrs.bind(this));
-            $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
-            $(document).on('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
+            $(document).on('mbmapsrschanged', self._onSrsChanged.bind(self));
+            $(document).on('mbmapsrsadded', self._onSrsAdded.bind(self));
 
             Mapbender.elementRegistry.markReady(this);
         }

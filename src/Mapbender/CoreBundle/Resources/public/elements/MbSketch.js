@@ -39,9 +39,9 @@
         _setup() {
             var $geomTable = $('.geometry-table', this.$element);
             this.rowTemplate = $('tr', $geomTable).remove().removeClass('hidden');
-            $geomTable.on('click', '.geometry-remove', $.proxy(this._removeFromGeomList, this));
-            $geomTable.on('click', '.geometry-edit', $.proxy(this._modifyFeature, this));
-            $geomTable.on('click', '.geometry-zoom', $.proxy(this._zoomToFeature, this));
+            $geomTable.on('click', '.geometry-remove', this._removeFromGeomList.bind(this));
+            $geomTable.on('click', '.geometry-edit', this._modifyFeature.bind(this));
+            $geomTable.on('click', '.geometry-zoom', this._zoomToFeature.bind(this));
             var self = this;
             $('[data-tool-name]', this.$element).on('click', function() {
                 return self._onToolButtonClick($(this));
@@ -139,13 +139,13 @@
                 $hue.attr('tabindex', 0);
 
                 setTimeout(function() {
-                    $saturation.focus();
+                    $saturation.trigger('focus');
                 }, 0);
 
                 $picker.on('keydown', function(e) {
                     if (e.key === "Escape") {
                         colorpicker.hide();
-                        $button.focus();
+                        $button.trigger('focus');
                         e.stopPropagation();
                     }
                 });
@@ -153,7 +153,7 @@
                 $saturation.on('keydown', function(e) {
                     if (e.key === 'Tab' && e.shiftKey) {
                         colorpicker.hide();
-                        $button.focus();
+                        $button.trigger('focus');
                         e.preventDefault();
                         return;
                     }

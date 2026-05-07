@@ -11,8 +11,8 @@
                 this.$toolBarItem.attr('tabindex', '0');
             }
             $(this.$element)
-                .on('click', $.proxy(this._onClick, this))
-                .on('mbButtonDeactivate', $.proxy(this.deactivate, this))
+                .on('click', this._onClick.bind(this))
+                .on('mbButtonDeactivate', this.deactivate.bind(this))
                 .on('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();

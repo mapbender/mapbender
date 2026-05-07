@@ -17,7 +17,7 @@
 
         _setup() {
             var self = this;
-            this.$select.change($.proxy(this._zoomToScale, this));
+            this.$select.on('change', this._zoomToScale.bind(this));
 
             this._updateScale();
             initDropdown.call(this.$select.parent());

@@ -86,13 +86,13 @@
         }
 
         _initializeEventListeners() {
-            this.olMap.on('singleclick', $.proxy(this._mapClickHandler, this));
+            this.olMap.on('singleclick', this._mapClickHandler.bind(this));
 
             // flush points when srs is changed
-            $(document).on('mbmapsrschanged', $.proxy(this._emptyPoints, this));
+            $(document).on('mbmapsrschanged', this._emptyPoints.bind(this));
 
             // add point on click
-            $('.addPoint', this.$element).click(() => {
+            $('.addPoint', this.$element).on('click', () => {
                 this._addInputField();
             });
 
@@ -102,17 +102,17 @@
             });
 
             // reset route and input on click
-            $('.resetRoute', this.$element).click(() => {
+            $('.resetRoute', this.$element).on('click', () => {
                 this._clearRoute();
             });
 
             // swap points on click
-            $('.swapPoints', this.$element).click(() => {
+            $('.swapPoints', this.$element).on('click', () => {
                 this._flipPoints();
             });
 
             // calculate route button click
-            $('.calculateRoute', this.$element).click(() => {
+            $('.calculateRoute', this.$element).on('click', () => {
                 this._getRoute();
             });
 
@@ -211,7 +211,7 @@
         }
 
         _autoSubmit() {
-            $('.mb-routing-location-points, input[type="radio"]', this.$element).change(() => {
+            $('.mb-routing-location-points, input[type="radio"]', this.$element).on('change', () => {
                 if (this._isInputValid()) {
                     this._getRoute();
                 }
@@ -271,7 +271,7 @@
             const htmlIntermediatePoint = $(this.$element.find('.tplIntermediatePoint').html());
             const lastInputElement = $('.mb-routing-location-points div:last-child', this.$element);
             htmlIntermediatePoint.insertBefore(lastInputElement);
-            htmlIntermediatePoint.find('input').focus();
+            htmlIntermediatePoint.find('input').trigger('focus');
         }
 
         _removeInputWrapper(btn) {
@@ -503,7 +503,7 @@
                 };
                 this._getRevGeocode([p]).then(function(response) {
                     const resultLabel = this._checkResultLabel(coordinates, response);
-                    $(inputEl).val(resultLabel).data('coords', coordinates).change();
+                    $(inputEl).val(resultLabel).data('coords', coordinates).trigger('change');
                 });
                 this._createMarker(inputEl, coordinates);
 
@@ -511,7 +511,7 @@
                 const feature = new ol.Feature({
                     geometry: new ol.geom.Point(coordinates)
                 });
-                $(inputEl).data('coords', coordinates).change();
+                $(inputEl).data('coords', coordinates).trigger('change');
                 this._createMarker(inputEl, feature);
             }
         }
@@ -533,7 +533,7 @@
             let routingPoints = [];
             this._findLocationInputFields().each((idx, element) => {
                 let coords = $(element).data('coords');
-                if ($.trim(coords) === '') {
+                if (('' + (coords || '')).trim() === '') {
                     isValid = false;
                     $(element).addClass('empty');
                 } else {
@@ -713,7 +713,7 @@
                 $tbody.append($tr);
             });
             let $instructionsDiv = $('.mb-routing-instructions', this.$element);
-            let $instructionsTable = $instructionsDiv.children(':first');
+            let $instructionsTable = $instructionsDiv.children().first();
             const maxHeight = ($instructionsDiv.offset().top - $('.mb-routing-info').offset().top);
             $instructionsTable.remove();
             if (!$instructionsTable.length) {

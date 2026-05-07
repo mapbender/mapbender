@@ -81,7 +81,7 @@
             this.createContentContainer();
             this.control = this._createControl();
 
-            $(document).bind('mbmapsrschanged', $.proxy(this._mapSrsChanged, this));
+            $(document).on('mbmapsrschanged', this._mapSrsChanged.bind(this));
 
             Mapbender.elementRegistry.markReady(this);
         }

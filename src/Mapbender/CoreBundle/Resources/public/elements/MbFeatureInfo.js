@@ -47,8 +47,8 @@
                 this._createHighlightControl();
             }
 
-            $(document).bind('mbmapsourcechanged', this._reorderTabs.bind(this));
-            $(document).bind('mbmapsourcesreordered', this._reorderTabs.bind(this));
+            $(document).on('mbmapsourcechanged', this._reorderTabs.bind(this));
+            $(document).on('mbmapsourcesreordered', this._reorderTabs.bind(this));
             if (this.options.printResult) {
                 this.$element.on('mb.shown.tab', '.tab', () => this._checkPrintVisibility());
                 this.$element.on('selected', '.accordion', () => this._checkPrintVisibility());
@@ -224,7 +224,7 @@
             this._removeFeaturesBySourceId(source.id);
             const $container = this.$element.find('.tabContainerAlt,.accordionContainer');
             if (!$container.find('.active').not('.hidden').length) {
-                $container.find('>.tabs .tab, >.accordion').not('hidden').first().click();
+                $container.find('>.tabs .tab, >.accordion').not('hidden').first().trigger('click');
             }
         }
 
@@ -479,7 +479,7 @@
 
             const $container = $('.tabContainerAlt > .tabs, .accordionContainer', this.$element);
             const $tabs = $container.children();
-            const $sortedTabs = $tabs.sort(function(a, b) {
+            const $sortedTabs = Array.from($tabs).sort(function(a, b) {
                 const orderA = sourcesOrderMap[$(a).data('source-id')] ?? Number.MAX_SAFE_INTEGER;
                 const orderB = sourcesOrderMap[$(b).data('source-id')] ?? Number.MAX_SAFE_INTEGER;
                 return orderB - orderA;

@@ -25,7 +25,7 @@
             this.popup.open();
             // request button focus asynchronously to ensure that the popup is fully rendered
             setTimeout(() => {
-                this.popup.$element.find('button').focus();
+                this.popup.$element.find('button').trigger('focus');
             }, 50);
         }
     }
