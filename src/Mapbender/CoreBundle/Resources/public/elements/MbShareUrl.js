@@ -18,7 +18,6 @@
             var self = this;
             this.$element.on('click', 'a.-fn-share-link', function(evt) {
                 var useClipboard = evt.which === 1 && !evt.ctrlKey && !evt.shiftKey;
-                console.log(useClipboard)
                 var url = self._getUrl();
                 // Update href to preempt standard browser actions "open in new tab" / "open in new window"
                 $(this).attr('href', url);
