@@ -68,7 +68,7 @@
         "wheregroup/codemirror": "5.x",
         "wheregroup/doctrine-dbal-shims": "^1.2",
 
-        "components/jquery": "^3.7.1",
+        "npm-asset/jquery": "^4.0",
         "jquery/jquery-ui": "^1.14.1",
         "datatables.net/datatables.net-bs5": "^2.3",
         "twbs/bootstrap": "^5.0",
@@ -106,6 +106,10 @@
                     "reference": "1.14.1"
                 }
             }
+        },
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
         }
     ]
 }
