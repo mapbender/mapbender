@@ -21,6 +21,9 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
         protected string $fiIframeSandboxParams,
     )
     {
+        if (!preg_match('/^[a-zA-Z- ]+$/', $this->fiIframeSandboxParams)) {
+            throw new \InvalidArgumentException("mapbender.featureinfo.iframe_sandbox_params contains invalid characters");
+        }
     }
 
     abstract protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer);
