@@ -6,7 +6,7 @@ Proxy-aware http client for Mapbender.
 * Hash-based request spoofing  protection; only forward requests to target URLs signed / allowed by Mapbender server
 * Configurable proxy client; can reach resources only accessible via another proxy server 
 
-![Sequence diagram](http://plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/mapbender/mapbender/staging/3.3/src/OwsProxy3/communication.puml)
+![Sequence diagram](http://plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/mapbender/mapbender/refs/heads/master/src/OwsProxy3/communication.puml)
 
 # Configuration
 
@@ -14,7 +14,7 @@ Proxy-aware http client for Mapbender.
 Owsproxy evaluates the following single configuration parameter (shown value is the default):
 ```yaml
 # http user agent for outgoing requests (string)
-owsproxy.useragent: OWSProxy3
+owsproxy.user_agent: OWSProxy3
 ```
 
 ## Extension configuration
