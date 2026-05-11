@@ -100,7 +100,11 @@ $darkFontColor: #3f3f3f; // Doesn't do anything; (re)define $textColor instead
 $ciColor2: #4899ba; // Doesn't do anything
 
 :root {
+    // Brand Colors
     --primary: #079ee0;
+    --primary-dark: hsl(198, 100%, 39%);
+
+    // Colors
     --checkbox-checked: var(--primary);
     --checkbox-unchecked: #a0a0a0;
     --border-color: #ddd;
@@ -110,6 +114,11 @@ $ciColor2: #4899ba; // Doesn't do anything
     --background-color: #fff;
     --focus-color: var(--primary);
 
+    // Menus
+    --menu-hover-color: rgba(0, 0, 0, 0.05);
+
     // Toolbar
     --toolbar-text-color: var(--text-color);
+    --toolbar-button-active-background-color: var(--primary);
+    --toolbar-button-active-background-hover-color: var(--primary-dark);
 }

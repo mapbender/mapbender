@@ -2,7 +2,6 @@ $backgroundColor: #fff !default;
 $sidepaneBorderColor: #ccc !default;
 
 $toolBarBackgroundColor: #eee !default;
-$toolBarButtonActiveBackgroundColor: $ciColor !default;
 $toolBarOpacity: 1.0 !default;
 $toolBarBackground: rgba($toolBarBackgroundColor, $toolBarOpacity) !default;
 $toolBarTopBackground: $toolBarBackground !default;
@@ -77,12 +76,20 @@ ul.toolBar, .toolBar > ul {
   vertical-align: middle; // workaround for mismatching effective line heights when mixing .dropdown with better-behaved items
   padding: 5px;
   display: inline-block;
+
+  &.mb-button:hover {
+    background: var(--menu-hover-color);
+  }
 }
 
 .toolBarItemActive {
   // Invert background and foreground
-  background-color: $toolBarButtonActiveBackgroundColor;
+  background-color: var(--toolbar-button-active-background-color);
   color: $toolBarBackgroundColor;
+
+  &.mb-button:hover {
+    background: var(--toolbar-button-active-background-hover-color);
+  }
 }
 
 .toolBarItem + .toolBarItem {

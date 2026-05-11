@@ -4,7 +4,7 @@
     --sidepane-inactive-text-color: var(--text-color-inactive);
     --sidepane-button-color: var(--text-color-button-inactive);
     --sidepane-background-color: rgba(255, 255, 255, 0.9);
-    --sidepane-hover-color: rgba(0, 0, 0, 0.05);
+    --sidepane-hover-color: var(--menu-hover-color);
     --sidepane-active-background-color: rgba(0, 0, 0, 0.02);
     --sidepane-collapsed-width: 3rem;
     --sidepane-padding-left: 1rem;
