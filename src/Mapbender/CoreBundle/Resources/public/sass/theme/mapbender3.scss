@@ -156,8 +156,8 @@ ul.toolBar, .toolBar > ul {
       }
     }
     .toolBarItem {
-      margin: 0.25em;
-      padding: 0.25em;
+      margin: 0.25em 0.5em 0.25em 0.5em;
+      padding: 0.5em;
       display: block;
       .iconBig {
         // emulate ~.fa-fw for neat text alignment
