@@ -20,11 +20,11 @@
     <div{{ tab_macros.tab_content_attributes('Users') }}>{#- #containerUsers -#}
         {% if form.users|length %}
           {% include '@MapbenderManager/fragments/filter-group.html.twig' with {filterTargetId: 'listFilterUsers'} %}
-          <table id="listFilterUsers" class="table">
+          <table id="listFilterUsers" class="table listFilter">
             <thead>
               <tr class="doNotFilter">
                 <th>Name</th>
-                <th class="text-end"><span id="selectedUsersGroups">{{group.users | length}}</span> {{ 'fom.user.group.container.users_of_selected' | trans ({'%users_count%': form.users|length }) }}</th>
+                <th class="text-end"><span class="selectedUsersGroups">{{group.users | length}}</span> {{ 'fom.user.group.container.users_of_selected' | trans ({'%users_count%': form.users|length }) }}</th>
               </tr>
             </thead>
             <tbody>

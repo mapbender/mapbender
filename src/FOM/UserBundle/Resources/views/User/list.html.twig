@@ -19,7 +19,7 @@
         <th></th>
       </tr>
     </thead>
-    <tbody id="listFilterUsers">
+    <tbody id="listFilterUsers" class="listFilter">
       {% for user in users|sort((a,b) => a.username|lower <=> b.username|lower) %}
         <tr class="filterItem">
           <td>
