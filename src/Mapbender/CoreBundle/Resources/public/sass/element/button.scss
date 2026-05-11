@@ -4,7 +4,6 @@ $hoverEffects: true !default;
   cursor: pointer;
   .toolBar & {
     border-radius: 2 * $radius;
-    opacity: $toolBarButtonDefaultOpacity;
     @if $hoverEffects {
       &:hover {
         opacity: $toolBarButtonHoverOpacity;

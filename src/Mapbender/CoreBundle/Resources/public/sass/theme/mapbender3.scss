@@ -40,11 +40,10 @@ $hoverEffects: true !default;
 /* ---------------------------------------------------------- TOOLBAR */
 .toolBarColors, .toolBar {
   background-color: $toolBarBackgroundColor;
-  color: $toolBarFontColor;
+  color: var(--toolbar-text-color);
 }
 
 .toolbar-button-hover-effect {
-  opacity: $toolBarButtonDefaultOpacity;
   @if $hoverEffects {
     &:hover {
       opacity: $toolBarButtonHoverOpacity;
