@@ -50,7 +50,6 @@
       display: block;
     }
     .zoom-level-gap {
-      opacity: $toolBarButtonDefaultOpacity;
       margin-bottom: -1px;
     }
   }
@@ -60,7 +59,7 @@
       height: 2.5em;
       width: auto;
       g {
-        fill: $toolBarFontColor;
+        fill: var(--toolbar-text-color);
       }
       // we only have one icon :)
     }

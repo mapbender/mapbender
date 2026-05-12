@@ -22,13 +22,11 @@ $errorColor:#aa2323; // red
 $lightFontColor:#fff; // white
 
 // Toolbar colors (frontend)
-$toolBarFontColor: #222;
 $toolBarBackgroundColor: #eee;
 $toolBarOpacity: 0.8;
 $toolBarButtonActiveBackgroundColor: $ciColor;
 
 // Default and hover opacity for Button (and Button-like) Elements in toolbars
-$toolBarButtonDefaultOpacity: 0.7;
 $toolBarButtonHoverOpacity: 1.0;
 $toolBarButtonActiveOpacity: $toolBarButtonHoverOpacity;
 
@@ -102,13 +100,25 @@ $darkFontColor: #3f3f3f; // Doesn't do anything; (re)define $textColor instead
 $ciColor2: #4899ba; // Doesn't do anything
 
 :root {
+    // Brand Colors
     --primary: #079ee0;
+    --primary-dark: hsl(198, 100%, 39%);
+
+    // Colors
     --checkbox-checked: var(--primary);
     --checkbox-unchecked: #a0a0a0;
     --border-color: #ddd;
-    --text-color: #222;
+    --text-color: #333;
     --text-color-inactive: #636363;
     --text-color-button-inactive: #747577;
     --background-color: #fff;
     --focus-color: var(--primary);
+
+    // Menus
+    --menu-hover-color: rgba(0, 0, 0, 0.05);
+
+    // Toolbar
+    --toolbar-text-color: var(--text-color);
+    --toolbar-button-active-background-color: var(--primary);
+    --toolbar-button-active-background-hover-color: var(--primary-dark);
 }

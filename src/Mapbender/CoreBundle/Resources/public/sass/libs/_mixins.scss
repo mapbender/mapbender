@@ -45,7 +45,7 @@
   // do not use this; add toolBarColors class to your element, and / or optionally use
   // opacity: $toolBarOpacity
   background-color: $toolBarBackgroundColor;
-  color: $toolBarFontColor;
+  color: var(--toolbar-text-color);
   opacity: $toolBarOpacity;
 }
 @mixin smartphones(){
