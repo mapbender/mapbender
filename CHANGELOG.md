@@ -17,6 +17,7 @@ Features:
 
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
+* [ViewManager] Show date in native format ([#PR1850](https://github.com/mapbender/mapbender/pull/1850))
 
 Other:
 * [Develop] New shared File utility module for geospatial file handling (KML, GeoJSON, GPX, GML) ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
