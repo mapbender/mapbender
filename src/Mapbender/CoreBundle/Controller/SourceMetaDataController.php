@@ -4,10 +4,10 @@
 namespace Mapbender\CoreBundle\Controller;
 
 
-use Doctrine\Common\Collections\Criteria;
+use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
-use Mapbender\CoreBundle\Entity\SourceInstance;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,22 +24,32 @@ use Twig\Environment;
 class SourceMetaDataController
 {
     public function __construct(
-        protected Environment $templateEngine,
-        protected TypeDirectoryService $typeDirectoryService,
-        protected bool $showProxiedServiceUrls
+        protected Environment                $templateEngine,
+        protected TypeDirectoryService       $typeDirectoryService,
+        protected bool                       $showProxiedServiceUrls,
+        private readonly ApplicationResolver $applicationResolver,
+        private Security                     $security,
     )
     {
     }
 
-    #[Route(path: '/application/metadata/{instance}/{layerId}', name: 'mapbender_core_application_metadata', methods: ['GET'])]
-    public function metadataAction(SourceInstance $instance, int|string $layerId,): Response
+    #[Route(path: '/application/{slug}/metadata/{instanceId}/{layerId}', name: 'mapbender_core_application_metadata', methods: ['GET'])]
+    public function metadataAction(int|string $slug, int|string $instanceId, int|string $layerId): Response
     {
-        $layerCriteria = Criteria::create()
-            ->where(Criteria::expr()->eq('id', $layerId))
-        ;
-        $startLayerInstance = $instance->getLayers()->matching($layerCriteria)->first() ?: null;
-        // NOTE: cannot work for Yaml applications because Yaml-applications don't have source instances in the database
-        // @todo: give Yaml applications a proper object repository and make this work
+        $application = $this->applicationResolver->getApplicationEntity($slug);
+        if (!$this->security->isGranted(ResourceDomainApplication::ACTION_VIEW, $application)) {
+            return new Response(null, Response::HTTP_FORBIDDEN);
+        }
+
+        $instance = $application->getSourceInstanceById($instanceId);
+        if (!$instance) {
+            return new Response('Invalid instance id', Response::HTTP_NOT_FOUND);
+        }
+        $startLayerInstance = $instance->getLayerById($layerId);
+        if (!$startLayerInstance) {
+            return new Response('Invalid instance layer id', Response::HTTP_NOT_FOUND);
+        }
+
         $source = $instance->getSource();
         $dataSource = $this->typeDirectoryService->getSource($source->getType());
         $template = $dataSource->getMetadataFrontendTemplate();
