@@ -2,14 +2,14 @@
 <tr data-visibility-group="{{ _is_private ? 'private' : 'public' }}"
     data-id="{{ record.id }}"
     data-title="{{ record.title }}"
-    data-mtime="{{ record.mtime | date(dateFormat) }}">
+    data-mtime="{{ record.mtime | format_date }}">
     <td class="-js-forward-to-apply"><i class="recall-marker fa fas fa-fw fa-angle-double-right"></i></td>
     <td class="name-cell -js-forward-to-apply" title="#{{ record.id }}">{{ record.title }}</td>
     <td class="-js-loadingspinner">
         <i class="fas fa-spinner fa-spin opacity-0"></i>
     </td>
     {%- if showDate -%}
-    <td class="text-nowrap">{{ record.mtime | date(dateFormat) }}</td>
+    <td class="text-nowrap">{{ record.mtime | format_date }}</td>
     {%- endif -%}
     <td class="text-nowrap text-end">
         <a href="#" class="-fn-apply hover-highlight-effect" title="{{ 'mb.core.viewManager.apply' | trans }}">

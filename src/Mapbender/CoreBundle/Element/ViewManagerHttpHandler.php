@@ -91,7 +91,6 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         $vars = array(
             'records' => $this->loadListing($element->getApplication(), $config),
             'showDate' => $config['showDate'],
-            'dateFormat' => $this->getDateFormat($request),
             'grants' => $this->getGrantsVariables($config),
             'row_template' => $this->getRowTemplate(),
         );
@@ -173,7 +172,6 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         $vars = array(
             'record' => $record,
             'showDate' => $config['showDate'],
-            'dateFormat' => $this->getDateFormat($request),
             'grants' => $this->getGrantsVariables($element->getConfiguration()),
         );
         $content = $this->templating->render($this->getRowTemplate(), $vars);
@@ -214,16 +212,6 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         $record->setLayersetStates(json_decode($allValues['layersetStates'], true) ?? []);
         $record->setSourceStates(json_decode($allValues['sourcesStates'], true) ?? []);
         $record->setMtime(new \DateTime());
-    }
-
-    /**
-     * @param Request $request
-     * @return string
-     */
-    protected function getDateFormat(Request $request)
-    {
-        // @todo: locale-dependent format
-        return 'Y-m-d';
     }
 
     /**
