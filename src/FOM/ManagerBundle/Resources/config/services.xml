@@ -3,10 +3,5 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="FOM\ManagerBundle\Routing\AnnotatedRouteControllerLoader"
-                 class="FOM\ManagerBundle\Routing\AnnotatedRouteControllerLoader">
-            <tag name="routing.loader" />
-            <argument>%fom_manager.route_prefix%</argument>
-        </service>
     </services>
 </container>
