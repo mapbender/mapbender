@@ -167,10 +167,6 @@
             <argument>%env(APP_SECRET)%</argument>
         </service>
 
-        <service id="get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer">
-            <tag name="serializer.normalizer" />
-        </service>
-
         <service id="twig.extension.stringloader" class="Twig\Extension\StringLoaderExtension">
             <tag name="twig.extension" />
         </service>
