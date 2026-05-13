@@ -84,7 +84,7 @@ class WmsSource extends HttpParsedSource
     /**
      * @var array A list of supported exception formats
      */
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $exceptionFormats = array();
 
     /**
@@ -126,43 +126,43 @@ class WmsSource extends HttpParsedSource
     /**
      * @var RequestInformation A request information for the GetCapabilities operation
      */
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $getCapabilities = null;
 
     /**
      * @var RequestInformation A request information for the GetMap operation
      */
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $getMap = null;
 
     /**
      * @var RequestInformation A request information for the GetFeatureInfo operation
      */
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $getFeatureInfo = null;
 
     /**
      * @var RequestInformation A request information for the DescribeLayer operation
      */
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $describeLayer = null;
 
     /**
      * @var RequestInformation A request information for the GetLegendGraphic operation
      */
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $getLegendGraphic = null;
 
     /**
      * @var RequestInformation A request information for the GetStyles operation
      */
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $getStyles = null;
 
     /**
      * @var RequestInformation A request information for the PutStyles operation
      */
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $putStyles = null;
 
     /**

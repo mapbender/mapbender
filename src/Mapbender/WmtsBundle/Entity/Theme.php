@@ -37,7 +37,7 @@ class Theme
     #[ORM\Column(type: 'text', nullable: true)]
     protected $abstract;
 
-    #[ORM\Column(type: 'array', nullable: false)] // ;
+    #[ORM\Column(type: 'json', nullable: false)] // ;
     protected $layerrefs;
 
     #[ORM\ManyToOne(targetEntity: Theme::class, inversedBy: 'themes')]

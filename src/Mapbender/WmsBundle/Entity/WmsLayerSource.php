@@ -52,33 +52,33 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     protected $fixedWidth;
     #[ORM\Column(type: 'integer', nullable: true)]
     protected $fixedHeight;
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $latlonBounds;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $boundingBoxes;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $srs;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $styles;
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $scale;
 
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $attribution;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $identifier;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $authority;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $metadataUrl;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $dimension;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $dataUrl;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $featureListUrl;
     /**
      * @var ArrayCollection A list of WMS Layer keywords

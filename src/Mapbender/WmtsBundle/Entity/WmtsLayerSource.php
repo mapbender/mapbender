@@ -36,19 +36,19 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     #[ORM\JoinColumn(name: 'wmtssource', referencedColumnName: 'id')]
     protected $source;
 
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $latlonBounds;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $boundingBoxes;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $styles;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $infoformats;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $tilematrixSetlinks;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -68,7 +68,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @var UrlTemplateType[]
      */
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $resourceUrl;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'sublayer')]

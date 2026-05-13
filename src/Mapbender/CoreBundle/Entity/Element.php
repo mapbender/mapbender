@@ -40,7 +40,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
     /**
      * @var array|null
      */
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $configuration;
 
     /**

@@ -55,16 +55,16 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected $tiled = false;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $dimensions;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $vendorspecifics;
 
     #[ORM\Column(type: 'integer', options: ['default' => 0])]
     protected $buffer = 0;
 
-    #[ORM\Column(type: 'decimal', scale: 2, options: ['default' => '1.25'])]
+    #[ORM\Column(type: 'decimal', precision: 4, scale: 2, options: ['default' => '1.25'])]
     protected $ratio = 1.25;
 
     #[ORM\Column(name: 'refresh_interval', type: 'integer', nullable: true, options: ['default' => null])]

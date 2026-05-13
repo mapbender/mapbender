@@ -44,7 +44,7 @@ class TileMatrixSet implements MutableUrlTarget
     #[ORM\Column(type: 'string', nullable: false)]
     protected $supportedCrs;
 
-    #[ORM\Column(type: 'array', nullable: false)] // ;
+    #[ORM\Column(type: 'json', nullable: false)] // ;
     protected $tilematrices;
 
     public function __construct()
