@@ -4,3 +4,5 @@ mb.core.simplesearch.errors:
   no_configuration_added: 'Si prega di aggiungere almeno una configurazione'
 
 mb.core.map.admin.min_one_layerset: 'Selezionare almeno un layer set.'
+mb.core.map.admin.epsg_invalid_format: "Il sistema di coordinate deve essere nel formato \"EPSG:<cifre>\"."
+mb.core.map.admin.epsg_not_found: "Il sistema di riferimento delle coordinate indicato non è stato trovato nella tabella di riferimento."

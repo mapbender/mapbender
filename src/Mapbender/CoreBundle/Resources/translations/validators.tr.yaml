@@ -1,1 +1,3 @@
 mb.core.map.admin.min_one_layerset: 'Lütfen en az bir katman seti seçin.'
+mb.core.map.admin.epsg_invalid_format: "Koordinat sistemi \"EPSG:<rakamlar>\" formatında olmalıdır."
+mb.core.map.admin.epsg_not_found: "Belirtilen koordinat referans sistemi referans tablosunda bulunamadı."

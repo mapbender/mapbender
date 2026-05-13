@@ -2,3 +2,5 @@ html.invalid: 'HTML містить помилку!'
 twig.invalid: 'TWIG містить помилку!'
 
 mb.core.map.admin.min_one_layerset: 'Будь ласка, виберіть принаймні один набір шарів.'
+mb.core.map.admin.epsg_invalid_format: "Система координат повинна бути у форматі \"EPSG:<цифри>\"."
+mb.core.map.admin.epsg_not_found: "Вказану систему координат не знайдено в довідковій таблиці."
