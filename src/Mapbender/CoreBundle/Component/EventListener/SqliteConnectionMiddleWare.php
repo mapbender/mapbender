@@ -19,7 +19,7 @@ class SqliteConnectionMiddleWare extends AbstractDriverMiddleware
         $connection = parent::connect($params);
 
         if (!$this->listener->skipForeignKeys) {
-            $platform = $this->getDatabasePlatform();
+            $platform = $this->getDatabasePlatform($connection);
             if ($platform instanceof SqlitePlatform) {
                 $this->enableForeignKeys($connection);
             }
