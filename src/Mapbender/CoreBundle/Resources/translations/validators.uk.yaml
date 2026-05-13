@@ -1,2 +1,4 @@
 html.invalid: 'HTML містить помилку!'
 twig.invalid: 'TWIG містить помилку!'
+
+mb.core.map.admin.min_one_layerset: 'Будь ласка, виберіть принаймні один набір шарів.'

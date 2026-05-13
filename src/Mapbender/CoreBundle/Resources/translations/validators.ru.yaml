@@ -2,3 +2,5 @@ mb.core.simplesearch.errors:
   invalid_query_format: 'Указанный формат запроса не содержит временного текста. Смотрите примечание!'
   invalid_epsg_code: 'Введенный текст не является действительным EPSG-Кодом. Введите код в формате EPSG:1234.'
   no_configuration_added: 'Пожалуйста, добавьте хотя бы одну конфигурацию.'
+
+mb.core.map.admin.min_one_layerset: 'Пожалуйста, выберите хотя бы один набор слоёв.'
