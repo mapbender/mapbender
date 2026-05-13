@@ -7,11 +7,14 @@ use Mapbender\CoreBundle\Validator\Constraints\ValidSrs;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Positive;
+use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MapAdminType extends AbstractType implements DataTransformerInterface
@@ -53,9 +56,13 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                     'class' => 'input inputWrapper choiceExpandedSortable',
                 ),
             ))
-            ->add('tileSize', NumberType::class, array(
+            ->add('tileSize', IntegerType::class, array(
                 'required' => false,
                 'label' => 'mb.core.map.admin.tilesize',
+                'constraints' => [
+                    new Type("integer"),
+                    new Positive(),
+                ],
             ))
             ->add('srs', TextType::class, array(
                 'label' => 'mb.core.map.admin.srs',
@@ -64,9 +71,13 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                     new ValidSrs(),
                 ],
             ))
-            ->add('base_dpi', NumberType::class, $this->createInlineHelpText([
+            ->add('base_dpi', IntegerType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.admin.map.base_dpi',
                 'help' => 'mb.manager.admin.map.base_dpi.help',
+                'constraints' => [
+                    new Type("integer"),
+                    new Positive(),
+                ],
             ], $this->trans))
             ->add('extent_max', ExtentType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.admin.map.max_extent',

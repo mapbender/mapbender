@@ -19,6 +19,7 @@ class ValidSrsValidator extends ConstraintValidator
         $value = trim($value);
         if (!preg_match('/^EPSG:\d+$/', $value)) {
             $this->context->addViolation('mb.core.map.admin.epsg_invalid_format');
+            return;
         }
 
         $srs = $this->em->getRepository(SRS::class)->findOneBy(array("name" => $value));
