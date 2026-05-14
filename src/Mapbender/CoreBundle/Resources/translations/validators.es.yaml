@@ -6,3 +6,4 @@ mb.core.simplesearch.errors:
 mb.core.map.admin.min_one_layerset: 'Por favor, seleccione al menos un conjunto de capas.'
 mb.core.map.admin.epsg_invalid_format: "El sistema de coordenadas debe estar en el formato \"EPSG:<dígitos>\"."
 mb.core.map.admin.epsg_not_found: "El sistema de referencia de coordenadas indicado no se encontró en la tabla de referencia."
+mb.core.map.admin.invalid_integer: "Solo se permiten valores enteros."

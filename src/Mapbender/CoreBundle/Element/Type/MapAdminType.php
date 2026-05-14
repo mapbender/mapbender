@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Mapbender\CoreBundle\Form\Type\ExtentType;
+use Mapbender\CoreBundle\Validator\Constraints\IntegerList;
 use Mapbender\CoreBundle\Validator\Constraints\ValidSrs;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -94,10 +95,17 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
             ->add('scales', TextType::class, array(
                 'label' => 'mb.core.map.admin.scales',
                 'required' => true,
+                'constraints' => [
+                    new NotBlank(),
+                    new IntegerList(),
+                ]
             ))
             ->add('otherSrs', TextType::class, array(
                 'label' => 'mb.core.map.admin.othersrs',
                 'required' => false,
+                'constraints' => [
+                    new ValidSrs(multiple: true),
+                ]
             ))
         ;
     }

@@ -6,3 +6,4 @@ mb.core.simplesearch.errors:
 mb.core.map.admin.min_one_layerset: 'Пожалуйста, выберите хотя бы один набор слоёв.'
 mb.core.map.admin.epsg_invalid_format: "Система координат должна быть в формате \"EPSG:<цифры>\"."
 mb.core.map.admin.epsg_not_found: "Указанная система координат не найдена в справочной таблице."
+mb.core.map.admin.invalid_integer: "Допускаются только целочисленные значения."

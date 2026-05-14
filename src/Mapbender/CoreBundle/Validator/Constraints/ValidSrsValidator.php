@@ -16,15 +16,19 @@ class ValidSrsValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint): void
     {
         if ($value === null) return;
-        $value = trim($value);
-        if (!preg_match('/^EPSG:\d+$/', $value)) {
-            $this->context->addViolation('mb.core.map.admin.epsg_invalid_format');
-            return;
-        }
+        /** @var ValidSrs $constraint */
+        $values = $constraint->multiple ? explode(',', $value) : [$value];
+        foreach($values as $value) {
+            $value = trim($value);
+            if (!preg_match('/^EPSG:\d+$/', $value)) {
+                $this->context->addViolation('mb.core.map.admin.epsg_invalid_format');
+                continue;
+            }
 
-        $srs = $this->em->getRepository(SRS::class)->findOneBy(array("name" => $value));
-        if (!$srs) {
-            $this->context->addViolation('mb.core.map.admin.epsg_not_found');
+            $srs = $this->em->getRepository(SRS::class)->findOneBy(array("name" => $value));
+            if (!$srs) {
+                $this->context->addViolation('mb.core.map.admin.epsg_not_found');
+            }
         }
     }
 }

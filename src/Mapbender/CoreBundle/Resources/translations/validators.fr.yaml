@@ -1,3 +1,4 @@
 mb.core.map.admin.min_one_layerset: 'Veuillez sélectionner au moins un ensemble de couches.'
 mb.core.map.admin.epsg_invalid_format: "Le système de coordonnées doit être au format \"EPSG:<chiffres>\"."
 mb.core.map.admin.epsg_not_found: "Le système de référence de coordonnées indiqué n'a pas été trouvé dans la table de référence."
+mb.core.map.admin.invalid_integer: "Seules les valeurs entières sont autorisées."
