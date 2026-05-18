@@ -66,15 +66,64 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
         $source->setVersion($version);
         $source->setAttribution($json['attribution'] ?? '');
 
-        foreach ($json['collections'] as $collection) {
+        $this->syncLayers($source, $json['collections'] ?? [], $baseUrl);
+    }
+
+    private function syncLayers(OgcApiFeaturesSource $source, array $collections, string $baseUrl): void
+    {
+        $existingByCollectionId = $this->deduplicateAndIndexLayers($source);
+
+        $activeCollectionIds = [];
+        foreach ($collections as $collection) {
+            $collectionId = $collection['id'];
+            $activeCollectionIds[] = $collectionId;
             $bbox = !(empty($collection['extent']['spatial']['bbox'][0])) ? $collection['extent']['spatial']['bbox'][0] : null;
-            $layer = new OgcApiFeaturesLayerSource();
-            $layer->setTitle($collection['title'] ?? '');
-            $layer->setCollectionId($collection['id']);
-            $layer->setBbox($bbox);
-            $layer->setProperties($this->discoverCollectionProperties($baseUrl, $collection['id']));
-            $source->addLayer($layer);
+            $properties = $this->discoverCollectionProperties($baseUrl, $collectionId);
+
+            if (isset($existingByCollectionId[$collectionId])) {
+                $layer = $existingByCollectionId[$collectionId];
+                $layer->setTitle($collection['title'] ?? '');
+                $layer->setBbox($bbox);
+                $layer->setProperties($properties);
+            } else {
+                $layer = new OgcApiFeaturesLayerSource();
+                $layer->setCollectionId($collectionId);
+                $layer->setTitle($collection['title'] ?? '');
+                $layer->setBbox($bbox);
+                $layer->setProperties($properties);
+                $source->addLayer($layer);
+            }
         }
+
+        $activeSet = array_flip($activeCollectionIds);
+        foreach ($source->getLayers()->toArray() as $layer) {
+            /** @var OgcApiFeaturesLayerSource $layer */
+            if (!isset($activeSet[$layer->getCollectionId()])) {
+                $source->getLayers()->removeElement($layer);
+                $this->em->remove($layer);
+            }
+        }
+    }
+
+    private function deduplicateAndIndexLayers(OgcApiFeaturesSource $source): array
+    {
+        $grouped = [];
+        foreach ($source->getLayers()->toArray() as $layer) {
+            /** @var OgcApiFeaturesLayerSource $layer */
+            $grouped[$layer->getCollectionId()][] = $layer;
+        }
+
+        $index = [];
+        foreach ($grouped as $collectionId => $layers) {
+            usort($layers, static fn($a, $b) => ($a->getId() ?? \PHP_INT_MAX) <=> ($b->getId() ?? \PHP_INT_MAX));
+            $index[$collectionId] = $layers[0];
+            for ($i = 1, $c = count($layers); $i < $c; $i++) {
+                $source->getLayers()->removeElement($layers[$i]);
+                $this->em->remove($layers[$i]);
+            }
+        }
+
+        return $index;
     }
 
     private function discoverCollectionProperties(string $baseUrl, string $collectionId): ?array
@@ -140,9 +189,14 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
     {
         /** @var OgcApiFeaturesSource $source */
         $baseUrl = rtrim($source->getJsonUrl(), '/');
+        $processedCollectionIds = [];
         foreach ($source->getLayers() as $layer) {
             /** @var OgcApiFeaturesLayerSource $layer */
             $collectionId = $layer->getCollectionId();
+            if (in_array($collectionId, $processedCollectionIds, true)) {
+                continue;
+            }
+            $processedCollectionIds[] = $collectionId;
             $stylesUrl = $baseUrl . '/collections/' . urlencode($collectionId) . '/styles?f=json';
             try {
                 $response = $this->httpTransport->getUrl($stylesUrl);
@@ -160,10 +214,37 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
                     }
                     $this->fetchAndSaveStyle($source, $collectionId, $styleInfo, $mbsLink);
                 }
-            } catch (\Throwable $e) {
-                // Skip collections where style endpoint is not available
+            } catch (\Throwable) {
                 continue;
             }
+        }
+        $this->removeOrphanStyles($source, $processedCollectionIds);
+    }
+
+    private function removeOrphanStyles(OgcApiFeaturesSource $source, array $activeCollectionIds): void
+    {
+        if ($source->getId() === null) {
+            return;
+        }
+        if (empty($activeCollectionIds)) {
+            $orphans = $this->em->getRepository(Style::class)->findBy([
+                'sourceType' => 'ogc_api',
+                'sourceId' => $source->getId(),
+            ]);
+        } else {
+            $orphans = $this->em->getRepository(Style::class)
+                ->createQueryBuilder('s')
+                ->where('s.sourceType = :type')
+                ->andWhere('s.sourceId = :sourceId')
+                ->andWhere('s.collectionId NOT IN (:collectionIds)')
+                ->setParameter('type', 'ogc_api')
+                ->setParameter('sourceId', $source->getId())
+                ->setParameter('collectionIds', $activeCollectionIds)
+                ->getQuery()
+                ->getResult();
+        }
+        foreach ($orphans as $orphan) {
+            $this->em->remove($orphan);
         }
     }
 
@@ -237,7 +318,6 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
             $remoteStyleName = $styleInfo['title'] ?? $styleInfo['id'] ?? 'style';
             $styleName = $sourceTitle . ' - ' . $layerTitle . ' - ' . $remoteStyleName;
 
-            // Look up existing style for this source + collection + style name to avoid duplicates on reload
             $style = $this->em->getRepository(Style::class)->findOneBy([
                 'sourceType' => 'ogc_api',
                 'sourceId' => $source->getId(),
@@ -256,7 +336,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
             $style->setStyle($mbsContent);
 
             $this->em->persist($style);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // Skip if style cannot be fetched
         }
     }
