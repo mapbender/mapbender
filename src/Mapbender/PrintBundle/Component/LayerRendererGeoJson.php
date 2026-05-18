@@ -61,7 +61,100 @@ class LayerRendererGeoJson extends LayerRenderer
             $layerDef['features'] = $layerDef['geometries'];
         }
         foreach ($layerDef['features'] as $feature) {
+            if (!$this->featureIntersectsExtent($feature, $extent)) {
+                continue;
+            }
             $this->drawFeature($canvas, $feature);
+        }
+    }
+
+    /**
+     * Check if a feature's bounding box intersects the render extent.
+     */
+    protected function featureIntersectsExtent(array $feature, Box $extent): bool
+    {
+        if (empty($feature['coordinates'])) {
+            return true; // no coordinates to check, render anyway
+        }
+        $bbox = $this->computeFeatureBbox($feature['coordinates'], $feature['type'] ?? '');
+        if ($bbox === null) {
+            return true; // could not compute, render anyway
+        }
+        // Standard bbox intersection test
+        return $bbox[0] <= $extent->right && $bbox[2] >= $extent->left
+            && $bbox[1] <= $extent->top && $bbox[3] >= $extent->bottom;
+    }
+
+    /**
+     * Compute [minX, minY, maxX, maxY] bounding box from GeoJSON coordinates.
+     */
+    protected function computeFeatureBbox(array $coordinates, string $type): ?array
+    {
+        $minX = PHP_FLOAT_MAX;
+        $minY = PHP_FLOAT_MAX;
+        $maxX = -PHP_FLOAT_MAX;
+        $maxY = -PHP_FLOAT_MAX;
+        $found = false;
+
+        foreach ($this->iterateCoordinates($coordinates, $type) as [$x, $y]) {
+            $found = true;
+            if ($x < $minX) $minX = $x;
+            if ($x > $maxX) $maxX = $x;
+            if ($y < $minY) $minY = $y;
+            if ($y > $maxY) $maxY = $y;
+        }
+        return $found ? [$minX, $minY, $maxX, $maxY] : null;
+    }
+
+    /**
+     * Yields [x, y] pairs from GeoJSON coordinates array based on geometry type.
+     */
+    protected function iterateCoordinates(array $coordinates, string $type): \Generator
+    {
+        switch (strtolower($type)) {
+            case 'point':
+                if (count($coordinates) >= 2) {
+                    yield [$coordinates[0], $coordinates[1]];
+                }
+                break;
+            case 'multipoint':
+            case 'linestring':
+                foreach ($coordinates as $coord) {
+                    if (is_array($coord) && count($coord) >= 2) {
+                        yield [$coord[0], $coord[1]];
+                    }
+                }
+                break;
+            case 'multilinestring':
+            case 'polygon':
+                foreach ($coordinates as $ring) {
+                    if (is_array($ring)) {
+                        foreach ($ring as $coord) {
+                            if (is_array($coord) && count($coord) >= 2) {
+                                yield [$coord[0], $coord[1]];
+                            }
+                        }
+                    }
+                }
+                break;
+            case 'multipolygon':
+                foreach ($coordinates as $polygon) {
+                    if (is_array($polygon)) {
+                        foreach ($polygon as $ring) {
+                            if (is_array($ring)) {
+                                foreach ($ring as $coord) {
+                                    if (is_array($coord) && count($coord) >= 2) {
+                                        yield [$coord[0], $coord[1]];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            default:
+                // Unknown type — yield nothing, caller will render anyway
+                break;
         }
     }
 
