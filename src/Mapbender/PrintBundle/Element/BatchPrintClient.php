@@ -6,7 +6,6 @@ use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\PrintBundle\Component\Plugin\PrintQueuePlugin;
 use Mapbender\PrintBundle\Element\Type\BatchPrintClientAdminType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -123,14 +122,13 @@ class BatchPrintClient extends PrintClient
     public function handleRequest(Element $element, Request $request): Response
     {
         $action = $request->attributes->get('action');
-        $configuration = $element->getConfiguration();
-        
+
         switch ($action) {
             case PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE:
-                return $this->handleMultiFrameQueue($request, $configuration, $element);
+                return $this->handleMultiFrameQueue($request, $element);
                 
             case 'print':
-                return $this->handleMultiFrameDirect($request, $configuration, $element);
+                return $this->handleMultiFrameDirect($request, $element);
                 
             default:
                 // For all other actions, use parent implementation
@@ -139,23 +137,41 @@ class BatchPrintClient extends PrintClient
     }
 
     /**
-     * Prepare multiframe print data from request
-     * 
+     * Decodes the batch 'data' parameter from the request into an array of frame definitions.
+     * Handles both JSON-encoded strings and plain arrays, and guards against null/invalid values.
+     *
      * @param Request $request
-     * @param array $configuration
+     * @return array<int, array>
+     */
+    protected function extractBatchFrames(Request $request): array
+    {
+        $raw = $request->get('data');
+        if (is_string($raw)) {
+            $decoded = json_decode($raw, true);
+        } elseif (is_array($raw)) {
+            $decoded = $raw;
+        } else {
+            $decoded = [];
+        }
+        return is_array($decoded) ? array_values(array_filter($decoded, 'is_array')) : [];
+    }
+
+    /**
+     * Prepare multiframe print data from request
+     *
+     * @param Request $request
+     * @param Element $element
      * @return array Array of prepared job data for each frame
      */
-    private function prepareMultiPrintData(Request $request, array $configuration): array
+    private function prepareMultiPrintData(Request $request, Element $element): array
     {
-        $multiFrameJobDataArr = [];
-        $formData = $this->extractRequestData($request);
-        $jobData = $request->get("data");
-        $jobData = json_decode($jobData, true);
+        $frames = $this->extractBatchFrames($request);
+        $requestWithoutFrames = $request->duplicate(null, array_diff_key($request->request->all(), ['data' => null]));
+        $formData = $this->extractRequestData($requestWithoutFrames);
 
-        foreach ($jobData as $frameData) {
-            $data = array_merge($formData, $frameData);
-            $frameResult = $this->preparePrintData($data, $configuration);
-            $multiFrameJobDataArr[] = $frameResult;
+        $multiFrameJobDataArr = [];
+        foreach ($frames as $frameData) {
+            $multiFrameJobDataArr[] = $this->preparePrintData(array_merge($formData, $frameData), $element);
         }
 
         return $multiFrameJobDataArr;
@@ -163,16 +179,15 @@ class BatchPrintClient extends PrintClient
 
     /**
      * Prepare multiframe job data wrapper - shared logic for both queue and direct processing
-     * 
+     *
      * @param Request $request
-     * @param array $configuration
      * @param Element $element
      * @return array Job data wrapper structure
      */
-    private function prepareMultiFrameJobData(Request $request, array $configuration, Element $element): array
+    private function prepareMultiFrameJobData(Request $request, Element $element): array
     {
         // Prepare multiframe data
-        $multiFrameJobDataArr = $this->prepareMultiPrintData($request, $configuration);
+        $multiFrameJobDataArr = $this->prepareMultiPrintData($request, $element);
         
         // Create wrapper structure - PrintService will detect multiFrame flag
         $jobDataWrapper = [
@@ -191,41 +206,35 @@ class BatchPrintClient extends PrintClient
 
     /**
      * Handle multi-frame queue processing
-     * 
+     *
      * @param Request $request
-     * @param array $configuration
      * @param Element $element
-     * @return Response JSON response with job ID
+     * @return Response
      */
-    private function handleMultiFrameQueue(Request $request, array $configuration, Element $element): Response
+    private function handleMultiFrameQueue(Request $request, Element $element): Response
     {
-        // Prepare multiframe job data wrapper using shared logic
-        $jobDataWrapper = $this->prepareMultiFrameJobData($request, $configuration, $element);
+        $jobDataWrapper = $this->prepareMultiFrameJobData($request, $element);
         
-        // Use queue plugin to capture the job ID
         /** @var PrintQueuePlugin $queuePlugin */
         $queuePlugin = $this->pluginRegistry->getPlugin('print-queue');
-        $jobId = $queuePlugin->putJob($jobDataWrapper, $this->generateFilename($element));
+        $queuePlugin->putJob($jobDataWrapper, $this->generateFilename($element));
         
-        // Return JSON response with job ID
-        return new JsonResponse(['success' => true, 'jobId' => $jobId]);
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 
     /**
      * Handle multi-frame direct print processing (non-queued)
-     * 
+     *
      * @param Request $request
-     * @param array $configuration
      * @param Element $element
-     * @return Response PDF response
+     * @return Response
      */
-    private function handleMultiFrameDirect(Request $request, array $configuration, Element $element): Response
+    private function handleMultiFrameDirect(Request $request, Element $element): Response
     {
-        // Prepare multiframe job data
-        $jobDataWrapper = $this->prepareMultiFrameJobData($request, $configuration, $element);
+        $jobDataWrapper = $this->prepareMultiFrameJobData($request, $element);
         
         // Use print service directly instead of queue
-        $pdfContent = $this->printService->dumpPrint($jobDataWrapper, true); // multiFrame = true
+        $pdfContent = $this->printService->dumpPrint($jobDataWrapper);
         
         // Return PDF response directly
         $filename = $this->generateFilename($element);
