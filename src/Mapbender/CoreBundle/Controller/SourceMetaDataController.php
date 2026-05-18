@@ -52,6 +52,10 @@ class SourceMetaDataController
 
         $source = $instance->getSource();
         $dataSource = $this->typeDirectoryService->getSource($source->getType());
+        $loader = $dataSource->getLoader();
+        if (!$loader->hasPersistedMetadata($application, $source)) {
+            $source = $loader->loadSource($source);
+        }
         $template = $dataSource->getMetadataFrontendTemplate();
         if (!$template) {
             throw new NotFoundHttpException();
