@@ -324,6 +324,9 @@
             <tag name="doctrine.middleware" />
             <tag name="kernel.event_listener" event="console.command" />
         </service>
+        <service id="mapbender.oracle_session_init" class="Mapbender\CoreBundle\Component\EventListener\OnDemandOracleSessionInit">
+            <tag name="doctrine.middleware" />
+        </service>
         <service id="Mapbender\CoreBundle\Component\SQLSearchEngine" class="Mapbender\CoreBundle\Component\SQLSearchEngine" public="true">
             <argument type="service" id="logger" />
             <argument type="service" id="doctrine" />
