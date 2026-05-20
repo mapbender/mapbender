@@ -121,4 +121,15 @@ $ciColor2: #4899ba; // Doesn't do anything
     --toolbar-text-color: var(--text-color);
     --toolbar-button-active-background-color: var(--primary);
     --toolbar-button-active-background-hover-color: var(--primary-dark);
+
+    // Buttons
+    --button-white-foreground: var(--text-color);
+    --button-white-background: var(--background-color);
+    --button-white-background-hover: #f7f7fa;
+
+    // Radii
+    --radius-sm: 2px;
+    --radius-md: 3px;
+    --radius-lg: 5px;
+    --radius-full: calc(infinity * 1px);
 }

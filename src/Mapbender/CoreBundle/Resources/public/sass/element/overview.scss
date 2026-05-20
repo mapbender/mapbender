@@ -6,8 +6,18 @@ $panelBorderColor: #888 !default;
 
   .toggleOverview {
     position: absolute;
-    padding: 3px;
-    border-radius: 3px;
+    padding: 5px;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+    width: 33.4px;
+    height: 33.4px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    &.closed {
+      border-radius: var(--radius-md);
+    }
   }
 
   .olMap, .ol-overviewmap-map {
@@ -56,8 +66,8 @@ $panelBorderColor: #888 !default;
     right: -2.25em;
   }
   .anchored-element-wrap-rb & .toggleOverview {
-    bottom: 0;
-    left: -2.25em;
+    bottom: 1px;
+    left: -2.55em;
   }
   .anchored-element-wrap-lb & .toggleOverview {
     bottom: 0;
