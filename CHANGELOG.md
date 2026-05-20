@@ -9,6 +9,7 @@ Features:
 * [BatchPrintClient] New batch printing element for creating multiple print frames in a single job ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
 * [ApplicationSwitcher] Enhance application switcher, e.g. to work in popup and allow external applications ([#PR1793](https://github.com/mapbender/mapbender/pull/1793))
 * [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
+* [Map] Improve form validation in backend ([#PR1851](https://github.com/mapbender/mapbender/pull/1851))
 * [SearchRouter] Extend SQLSearchEngine with support for dates, numbers and greater/lower than operators ([#PR1796](https://github.com/mapbender/mapbender/pull/1796))
 * [InteractiveHelp] Add new Interactive Help element ([#PR1808](https://github.com/mapbender/mapbender/pull/1808))
 * [HTMLElement] Add 'openInline' flag to provide more flexibility in sidebar and content area ([#PR1814](https://github.com/mapbender/mapbender/pull/1814))

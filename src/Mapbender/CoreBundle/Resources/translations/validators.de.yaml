@@ -4,3 +4,8 @@ mb.core.simplesearch.errors:
   invalid_query_format: 'Das angegebene Query Format enthält keine Platzhalter. Hilfetext beachten!'
   invalid_epsg_code: 'Der eingegebene Text ist kein gültiger EPSG-Code. Geben Sie den Code im Format EPSG:1234 ein'
   no_configuration_added: 'Bitte fügen Sie mindestens eine Konfiguration hinzu'
+
+mb.core.map.admin.min_one_layerset: 'Bitte wählen Sie mindestens ein Layerset aus.'
+mb.core.map.admin.epsg_invalid_format: "Das Koordinatensystem muss im Format \"EPSG:<Ziffern>\" angegeben werden."
+mb.core.map.admin.epsg_not_found: "Das angegebene Koordinatenreferenzsystem wurde nicht in der Referenztabelle gefunden."
+mb.core.map.admin.invalid_integer: "Es sind nur ganzzahlige Werte erlaubt."

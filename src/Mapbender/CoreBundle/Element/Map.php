@@ -10,6 +10,7 @@ use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\ValidatableConfigurationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\ValidationFailedException;
+use Mapbender\CoreBundle\Element\Type\MapAdminType;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SRS;
 use Mapbender\ManagerBundle\Component\Mapper;
@@ -149,8 +150,7 @@ class Map extends AbstractElementService
      */
     public function getClientConfiguration(Element $element)
     {
-        // Remove nulls, readd defaults
-        // @todo: prevent saving invalid empty values via form constraints
+        // Remove nulls, readd defaults (only for yaml-based apps, for db-based apps validation is done using form constraints)
         $conf = \array_filter($element->getConfiguration(), function ($v) {
             return $v !== null;
         });
@@ -165,7 +165,7 @@ class Map extends AbstractElementService
      */
     public static function getType()
     {
-        return 'Mapbender\CoreBundle\Element\Type\MapAdminType';
+        return MapAdminType::class;
     }
 
     /**

@@ -5,6 +5,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 
 class LayersetAdminType extends AbstractType
 {
@@ -32,6 +33,12 @@ class LayersetAdminType extends AbstractType
                 }
                 return $choices;
             },
+            'constraints' => array(
+                new Count(
+                    min: 1,
+                    minMessage: 'mb.core.map.admin.min_one_layerset',
+                ),
+            ),
         ));
     }
 }

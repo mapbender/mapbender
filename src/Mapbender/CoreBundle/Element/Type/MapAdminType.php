@@ -3,13 +3,19 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Mapbender\CoreBundle\Form\Type\ExtentType;
+use Mapbender\CoreBundle\Validator\Constraints\IntegerList;
+use Mapbender\CoreBundle\Validator\Constraints\ValidSrs;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Positive;
+use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MapAdminType extends AbstractType implements DataTransformerInterface
@@ -41,7 +47,7 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
     {
         $builder->addModelTransformer($this);
         $builder
-            ->add('layersets', 'Mapbender\CoreBundle\Element\Type\LayersetAdminType', array(
+            ->add('layersets', LayersetAdminType::class, array(
                 'application' => $options['application'],
                 'required' => true,
                 'label' => 'mb.core.map.admin.layersets',
@@ -51,16 +57,28 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                     'class' => 'input inputWrapper choiceExpandedSortable',
                 ),
             ))
-            ->add('tileSize', NumberType::class, array(
+            ->add('tileSize', IntegerType::class, array(
                 'required' => false,
                 'label' => 'mb.core.map.admin.tilesize',
+                'constraints' => [
+                    new Type("integer"),
+                    new Positive(),
+                ],
             ))
             ->add('srs', TextType::class, array(
                 'label' => 'mb.core.map.admin.srs',
+                'constraints' => [
+                    new NotBlank(),
+                    new ValidSrs(),
+                ],
             ))
-            ->add('base_dpi', NumberType::class, $this->createInlineHelpText([
+            ->add('base_dpi', IntegerType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.admin.map.base_dpi',
                 'help' => 'mb.manager.admin.map.base_dpi.help',
+                'constraints' => [
+                    new Type("integer"),
+                    new Positive(),
+                ],
             ], $this->trans))
             ->add('extent_max', ExtentType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.admin.map.max_extent',
@@ -77,10 +95,17 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
             ->add('scales', TextType::class, array(
                 'label' => 'mb.core.map.admin.scales',
                 'required' => true,
+                'constraints' => [
+                    new NotBlank(),
+                    new IntegerList(),
+                ]
             ))
             ->add('otherSrs', TextType::class, array(
                 'label' => 'mb.core.map.admin.othersrs',
                 'required' => false,
+                'constraints' => [
+                    new ValidSrs(multiple: true),
+                ]
             ))
         ;
     }
