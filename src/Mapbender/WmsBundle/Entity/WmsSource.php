@@ -576,11 +576,11 @@ class WmsSource extends HttpParsedSource
     /**
      * Get getCapabilities
      *
-     * @return RequestInformation
+     * @return RequestInformation|null
      */
-    public function getGetCapabilities()
+    public function getGetCapabilities(): ?RequestInformation
     {
-        return $this->getCapabilities;
+        return $this->hydrateRequestInformation($this->getCapabilities);
     }
 
     /**
@@ -598,11 +598,11 @@ class WmsSource extends HttpParsedSource
     /**
      * Get getMap
      *
-     * @return RequestInformation
+     * @return RequestInformation|null
      */
-    public function getGetMap()
+    public function getGetMap(): ?RequestInformation
     {
-        return $this->getMap;
+        return $this->hydrateRequestInformation($this->getMap);
     }
 
     /**
@@ -620,11 +620,11 @@ class WmsSource extends HttpParsedSource
     /**
      * Get getFeatureInfo
      *
-     * @return RequestInformation
+     * @return RequestInformation|null
      */
-    public function getGetFeatureInfo()
+    public function getGetFeatureInfo(): ?RequestInformation
     {
-        return $this->getFeatureInfo;
+        return $this->hydrateRequestInformation($this->getFeatureInfo);
     }
 
     /**
@@ -642,11 +642,11 @@ class WmsSource extends HttpParsedSource
     /**
      * Get describeLayer
      *
-     * @return RequestInformation
+     * @return RequestInformation|null
      */
-    public function getDescribeLayer()
+    public function getDescribeLayer(): ?RequestInformation
     {
-        return $this->describeLayer;
+        return $this->hydrateRequestInformation($this->describeLayer);
     }
 
     /**
@@ -664,11 +664,11 @@ class WmsSource extends HttpParsedSource
     /**
      * Get getLegendGraphic
      *
-     * @return RequestInformation
+     * @return RequestInformation|null
      */
-    public function getGetLegendGraphic()
+    public function getGetLegendGraphic(): ?RequestInformation
     {
-        return $this->getLegendGraphic;
+        return $this->hydrateRequestInformation($this->getLegendGraphic);
     }
 
     /**
@@ -686,11 +686,11 @@ class WmsSource extends HttpParsedSource
     /**
      * Get getStyles
      *
-     * @return RequestInformation
+     * @return RequestInformation|null
      */
-    public function getGetStyles()
+    public function getGetStyles(): ?RequestInformation
     {
-        return $this->getStyles;
+        return $this->hydrateRequestInformation($this->getStyles);
     }
 
     /**
@@ -708,11 +708,11 @@ class WmsSource extends HttpParsedSource
     /**
      * Get putStyles
      *
-     * @return RequestInformation
+     * @return RequestInformation|null
      */
-    public function getPutStyles()
+    public function getPutStyles(): ?RequestInformation
     {
-        return $this->putStyles;
+        return $this->hydrateRequestInformation($this->putStyles);
     }
 
     /**
@@ -854,6 +854,23 @@ class WmsSource extends HttpParsedSource
             $dimensions[] = DimensionInst::fromDimension($dimension);
         }
         return $dimensions;
+    }
+
+    /**
+     * Ensures that a JSON column value that Doctrine/DBAL 4 may return as a plain array
+     * is converted back into a RequestInformation object.
+     *
+     * @param RequestInformation|array<string, mixed>|null $value
+     */
+    private function hydrateRequestInformation(RequestInformation|array|null $value): ?RequestInformation
+    {
+        if ($value === null) {
+            return null;
+        }
+        if (is_array($value)) {
+            return RequestInformation::fromArray($value);
+        }
+        return $value;
     }
 
     public function getInternalUrl(Request $request): ?string

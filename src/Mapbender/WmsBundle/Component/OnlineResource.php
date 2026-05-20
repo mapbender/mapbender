@@ -77,4 +77,17 @@ class OnlineResource implements MutableUrlTarget
         $this->setHref($transformer->process($this->getHref()));
     }
 
+    /**
+     * Reconstruct from a plain array (e.g. after JSON column hydration by Doctrine/DBAL 4).
+     *
+     * @param array<string, mixed>|null $data
+     * @return static|null
+     */
+    public static function fromArray(?array $data): ?static
+    {
+        if ($data === null) {
+            return null;
+        }
+        return new static($data['format'] ?? null, $data['href'] ?? null);
+    }
 }

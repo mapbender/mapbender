@@ -559,6 +559,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         ;
         foreach ($allLayers as $layer) {
             /** @var WmsInstanceLayerArray $layer */
+            $layer = $this->hydrateLayerArrayData($layer);
             $pid = $layer['parentId'];
             if (!array_key_exists($pid, $this->preloadedLayersByParent)) {
                 $this->preloadedLayersByParent[$pid] = [];
@@ -634,4 +635,30 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             $this->preloadedLayersById[$array['id']] = $array;
         }
     }
+
+    /**
+     * Converts the raw array data returned by Doctrine HYDRATE_ARRAY (for JSON columns)
+     * into proper value objects, so the rest of the generator can call object methods on them.
+     *
+     * @param WmsInstanceLayerArray $layer
+     * @return WmsInstanceLayerArray
+     */
+    private function hydrateLayerArrayData(array $layer): array
+    {
+        if (is_array($layer['lsLatLonBounds'])) {
+            $layer['lsLatLonBounds'] = BoundingBox::create($layer['lsLatLonBounds']);
+        }
+        if (is_array($layer['lsScale'])) {
+            $layer['lsScale'] = MinMax::fromArray($layer['lsScale']);
+        }
+        if (is_array($layer['lsStyles'])) {
+            $layer['lsStyles'] = array_map(
+                static fn($s) => is_array($s) ? Style::fromArray($s) : $s,
+                $layer['lsStyles']
+            );
+        }
+        return $layer;
+    }
 }
+
+
