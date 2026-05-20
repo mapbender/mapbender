@@ -69,7 +69,7 @@ $layer-slider-bar-height: 5px;
 .layer-menu {
   color: var(--primary);
   position: static;
-  border-radius: $radius;
+  border-radius: var(--radius-md);
 
   .text-end {
     font-size: 1.2rem;

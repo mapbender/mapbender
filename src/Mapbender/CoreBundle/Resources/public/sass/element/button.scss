@@ -3,7 +3,7 @@ $hoverEffects: true !default;
 .mb-button {
   cursor: pointer;
   .toolBar & {
-    border-radius: 2 * $radius;
+    border-radius: var(--radius-lg);
     @if $hoverEffects {
       &:hover {
         opacity: $toolBarButtonHoverOpacity;

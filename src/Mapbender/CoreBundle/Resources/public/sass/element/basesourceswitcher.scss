@@ -65,16 +65,16 @@ $panelBorderColor: #888 !default;
       border-bottom-width: 0;
       &:last-child {
         border-bottom-width: 1px;
-        border-bottom-left-radius: $radius;
-        border-bottom-right-radius: $radius;
+        border-bottom-left-radius: var(--radius-md);
+        border-bottom-right-radius: var(--radius-md);
       }
     }
     .basesourcegroup, > .basesourcesetswitch {
       &:first-child {
-        border-top-left-radius: $radius;
+        border-top-left-radius: var(--radius-md);
       }
       &:last-child{
-        border-top-right-radius: $radius;
+        border-top-right-radius: var(--radius-md);
       }
     }
   }
