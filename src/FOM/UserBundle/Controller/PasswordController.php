@@ -92,9 +92,14 @@ class PasswordController extends AbstractEmailProcessController
                 'username' => $searchValue,
             ));
             if (!$user) {
-                $user = $userRepository->findOneBy(array(
-                    'email' => $searchValue,
-                ));
+                $queryBuilder = $userRepository->createQueryBuilder('u');
+                $users = $queryBuilder
+                    ->where('LOWER(u.email) = LOWER(:email)')
+                    ->setParameter('email', $searchValue)
+                    ->setMaxResults(1)
+                    ->getQuery()
+                    ->getResult();
+                $user = $users[0] ?? null;
             }
             if ($user) {
                 $em = $this->getEntityManager();
