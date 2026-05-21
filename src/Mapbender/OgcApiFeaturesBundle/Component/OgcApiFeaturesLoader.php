@@ -116,8 +116,12 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
         $index = [];
         foreach ($grouped as $collectionId => $layers) {
             usort($layers, static fn($a, $b) => ($a->getId() ?? \PHP_INT_MAX) <=> ($b->getId() ?? \PHP_INT_MAX));
-            $index[$collectionId] = $layers[0];
+            $kept = $layers[0];
+            $index[$collectionId] = $kept;
             for ($i = 1, $c = count($layers); $i < $c; $i++) {
+                foreach ($layers[$i]->getInstanceLayers() as $instanceLayer) {
+                    $instanceLayer->setSourceItem($kept);
+                }
                 $source->getLayers()->removeElement($layers[$i]);
                 $this->em->remove($layers[$i]);
             }

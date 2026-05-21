@@ -108,4 +108,9 @@ class OgcApiFeaturesLayerSource extends SourceItem
     {
         return $this->source;
     }
+
+    public function getInstanceLayers(): Collection
+    {
+        return $this->instanceLayers;
+    }
 }
