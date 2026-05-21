@@ -159,7 +159,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             "maxScale" => $this->getInheritedScale('maxScale', $layer),
             "bbox" => $this->getLayerBboxConfiguration($layer),
             "treeOptions" => $this->getTreeOptionsLayerConfig($layer),
-            "metadataUrl" => $this->getMetadataUrl($instance, $layer),
+            "metadataUrl" => $this->getMetadataUrl($application, $instance, $layer),
             "availableStyles" => $styles,
         );
         $configuration += array_filter(array(
@@ -171,21 +171,19 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     /**
      * @param WmsInstanceLayerArray $instanceLayer
      */
-    protected function getMetadataUrl(WmsInstance $instance, array $instanceLayer): ?string
+    protected function getMetadataUrl(Application $application, WmsInstance $instance, array $instanceLayer): ?string
     {
         // no metadata for unpersisted instances (WmsLoader)
         if (!$instanceLayer['id']) {
             return null;
         }
-        $layerset = $instance->getLayerset();
-        if ($layerset && $layerset->getApplication() && !$layerset->getApplication()->isDbBased()) {
-            return null;
-        }
         $router = $this->urlProcessor->getRouter();
-        return $router->generate('mapbender_core_application_metadata', array(
-            'instance' => $instance,
+        return $router->generate('mapbender_core_application_metadata', [
+            'slug' => $application->getSlug(),
+            'instanceId' => $instance->getId(),
             'layerId' => $instanceLayer['id'],
-        ));
+            'layerName' => $instanceLayer['lsName'],
+        ]);
     }
 
     /**

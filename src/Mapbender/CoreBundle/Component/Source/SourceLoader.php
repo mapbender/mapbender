@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Component\Source;
 
 
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Source;
 
 /**
@@ -40,5 +41,14 @@ abstract class SourceLoader
     public function getRefreshModel(Source $source): mixed
     {
         return $source;
+    }
+
+    /**
+     * Determines if @see loadSource is called before called reading metadata.
+     * If there is persisted metadata (method returns true), loadSource won't be called
+     */
+    public function hasPersistedMetadata(Application $application, Source $source): bool
+    {
+        return true;
     }
 }
