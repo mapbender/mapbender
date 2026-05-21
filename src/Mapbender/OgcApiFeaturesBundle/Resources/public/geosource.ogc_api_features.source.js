@@ -103,24 +103,50 @@ class OgcApiSource extends Mapbender.Source {
                 stroke: stroke,
             }),
         };
-        // Add label if defined
-        if (s.label) {
-            const text = new ol.style.Text({
-                text: s.label,
-                font: (s.fontSize || '12') + 'px ' + (s.fontFamily || 'Arial, Helvetica, sans-serif'),
-                fill: new ol.style.Fill({ color: s.fontColor || '#000000' }),
-            });
-            Object.values(styles).forEach(st => st.setText(text));
-        }
-
         styles.MultiPoint = styles.Point;
         styles.MultiLineString = styles.LineString;
         styles.MultiPolygon = styles.Polygon;
         styles.GeometryCollection = styles.Polygon;
 
+        if (!s.label) {
+            return (feature) => styles[feature.getGeometry()?.getType()] || styles.Polygon;
+        }
+
+        const labelTemplate = s.label;
+        const textBaseOptions = {
+            font: (s.fontSize || '12') + 'px ' + (s.fontFamily || 'Arial, Helvetica, sans-serif'),
+            fill: new ol.style.Fill({ color: s.fontColor || '#000000' }),
+        };
+
+        if (!/\$\{[^}]+\}/.test(labelTemplate)) {
+            // Static label — attach once to each base style
+            const text = new ol.style.Text({ ...textBaseOptions, text: labelTemplate });
+            Object.values(styles).forEach(st => st.setText(text));
+            return (feature) => styles[feature.getGeometry()?.getType()] || styles.Polygon;
+        }
+
+        // Dynamic label — resolve ${property} placeholders per feature at render time
+        const styleCache = new Map();
         return (feature) => {
-            const geomType = feature.getGeometry()?.getType();
-            return styles[geomType] || styles.Polygon;
+            const geomType = feature.getGeometry()?.getType() || 'Polygon';
+            const base = styles[geomType] || styles.Polygon;
+            const props = feature.getProperties();
+            const resolved = labelTemplate.replace(/\$\{([^}]+)\}/g, (_, key) => {
+                const val = props[key];
+                return val != null ? String(val) : '';
+            });
+            const cacheKey = geomType + '\x00' + resolved;
+            let style = styleCache.get(cacheKey);
+            if (!style) {
+                style = new ol.style.Style({
+                    image: base.getImage(),
+                    fill: base.getFill(),
+                    stroke: base.getStroke(),
+                    text: new ol.style.Text({ ...textBaseOptions, text: resolved }),
+                });
+                styleCache.set(cacheKey, style);
+            }
+            return style;
         };
     }
 
