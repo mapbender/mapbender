@@ -9,6 +9,7 @@ Features:
 * [BatchPrintClient] New batch printing element for creating multiple print frames in a single job ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
 * [ApplicationSwitcher] Enhance application switcher, e.g. to work in popup and allow external applications ([#PR1793](https://github.com/mapbender/mapbender/pull/1793))
 * [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
+* [Map] Improve form validation in backend ([#PR1851](https://github.com/mapbender/mapbender/pull/1851))
 * [SearchRouter] Extend SQLSearchEngine with support for dates, numbers and greater/lower than operators ([#PR1796](https://github.com/mapbender/mapbender/pull/1796))
 * [InteractiveHelp] Add new Interactive Help element ([#PR1808](https://github.com/mapbender/mapbender/pull/1808))
 * [HTMLElement] Add 'openInline' flag to provide more flexibility in sidebar and content area ([#PR1814](https://github.com/mapbender/mapbender/pull/1814))
@@ -17,10 +18,12 @@ Features:
 
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
+* [ViewManager] Show date in native format ([#PR1850](https://github.com/mapbender/mapbender/pull/1850))
 
 Other:
 * [Develop] New shared File utility module for geospatial file handling (KML, GeoJSON, GPX, GML) ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
 * In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
+* Changed default login-backdrop image ([PR#1845](https://github.com/mapbender/mapbender/pull/1845))
 
 ## v4.2.5
 Security:

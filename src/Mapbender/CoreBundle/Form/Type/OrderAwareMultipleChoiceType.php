@@ -64,14 +64,10 @@ class OrderAwareMultipleChoiceType extends ChoiceType
         $form = $event->getForm();
         $data = $event->getData();
 
-        // Since the type always use mapper an empty array will not be
-        // considered as empty in Form::submit(), we need to evaluate
-        // empty data here so its value is submitted to sub forms
+        // When no choices are submitted, treat as empty array
+        // to allow validation constraints (e.g. Count) to detect empty submissions
         if (null === $data) {
-            $data = $form->getConfig()->getEmptyData();
-            if ($data instanceof \Closure) {
-                $data = $data($form, $form->getData());
-            }
+            $data = array();
         }
 
         // Convert the submitted data to a string, if scalar, before
@@ -102,7 +98,7 @@ class OrderAwareMultipleChoiceType extends ChoiceType
         if (\count($unknownValues) > 0) {
             throw new TransformationFailedException(sprintf('The choices "%s" do not exist in the choice list.', implode('", "', array_keys($unknownValues))));
         }
-        // Reorder checbox-type form children to match submitted data order
+        // Reorder checkbox-type form children to match submitted data order
         // This prevents another re-destruction pass of data order in the default data mapper
         /** @see \Symfony\Component\Form\Extension\Core\DataMapper\CheckboxListMapper */
         foreach ($formChildMap as $checkboxValue => $checkbox) {
@@ -110,8 +106,16 @@ class OrderAwareMultipleChoiceType extends ChoiceType
                 $form->remove($checkbox->getName());
             }
         }
+        // Re-add selected checkboxes first (in submitted order)
         foreach ($reconstructedCheckboxes as $checkbox) {
             $form->add($checkbox);
+        }
+        // Re-add remaining (unselected) checkboxes so the mapper can properly
+        // determine that they are unchecked, instead of falling back to model data
+        foreach ($formChildMap as $checkboxValue => $checkbox) {
+            if ($checkboxValue != '' && !isset($reconstructedData[$checkbox->getName()])) {
+                $form->add($checkbox);
+            }
         }
         $event->setData($reconstructedData);
     }

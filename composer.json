@@ -50,7 +50,10 @@
         "symfony/web-profiler-bundle": "^7.4",
         "symfony/yaml": "^7.4",
 
-        "twig/twig": "^3.6",
+        "twig/twig": "^3.24",
+        "twig/extra-bundle": "^3.24",
+        "twig/intl-extra": "^3.24",
+
         "doctrine/orm": "^3.6",
         "doctrine/dbal": "^4.4",
         "doctrine/persistence": "^4.2",

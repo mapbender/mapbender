@@ -24,7 +24,7 @@ $textColor: $darkFontColor !default;
   .mb-element-scaleline {
     text-align: center;
     .scaleBorder {
-      border-color: $toolBarFontColor;
+      border-color: var(--toolbar-text-color);
     }
   }
 }
