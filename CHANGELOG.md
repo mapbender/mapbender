@@ -2,6 +2,7 @@
 * Do not show "abort" error message ([#PR1855](https://github.com/mapbender/mapbender/pull/1855))
 * Fix activating visible layers by name ([#PR1839](https://github.com/mapbender/mapbender/pull/1839))
 * [FeatureInfo] Make sandbox iframe attribute in the feature info dialog configurable using `mapbender.featureinfo.iframe_sandbox_params`  ([#PR1844](https://github.com/mapbender/mapbender/pull/1844))
+* [Forgot password] make check for email case-insensitive ([#PR1856](https://github.com/mapbender/mapbender/pull/1856))
 
 ## v4.2.5
 Security:
