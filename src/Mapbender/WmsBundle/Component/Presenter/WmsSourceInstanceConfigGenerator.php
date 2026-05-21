@@ -182,6 +182,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'slug' => $application->getSlug(),
             'instanceId' => $instance->getId(),
             'layerId' => $instanceLayer['id'],
+            'layerName' => $instanceLayer['lsName'],
         ]);
     }
 
