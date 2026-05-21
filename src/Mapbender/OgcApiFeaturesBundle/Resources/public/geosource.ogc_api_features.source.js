@@ -126,19 +126,27 @@ class OgcApiSource extends Mapbender.Source {
         }
 
         // Dynamic label — resolve ${property} placeholders per feature at render time
+        const styleCache = new Map();
         return (feature) => {
-            const base = styles[feature.getGeometry()?.getType()] || styles.Polygon;
+            const geomType = feature.getGeometry()?.getType() || 'Polygon';
+            const base = styles[geomType] || styles.Polygon;
             const props = feature.getProperties();
             const resolved = labelTemplate.replace(/\$\{([^}]+)\}/g, (_, key) => {
                 const val = props[key];
                 return val != null ? String(val) : '';
             });
-            return new ol.style.Style({
-                image: base.getImage(),
-                fill: base.getFill(),
-                stroke: base.getStroke(),
-                text: new ol.style.Text({ ...textBaseOptions, text: resolved }),
-            });
+            const cacheKey = geomType + '\x00' + resolved;
+            let style = styleCache.get(cacheKey);
+            if (!style) {
+                style = new ol.style.Style({
+                    image: base.getImage(),
+                    fill: base.getFill(),
+                    stroke: base.getStroke(),
+                    text: new ol.style.Text({ ...textBaseOptions, text: resolved }),
+                });
+                styleCache.set(cacheKey, style);
+            }
+            return style;
         };
     }
 
