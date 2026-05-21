@@ -1,6 +1,6 @@
     <div class="overviewContainer" style="height: {{ height ~ 'px' }};"></div>
     {%- if show_toggle -%}
     <div class="toggleOverview collapse-toggle">
-        <i class="fas {{ closed ? 'fa-map' : 'fa-chevron-right' }}"></i>
+        <i></i> {# fa-chevron-right, fa-chevron-left or fa-map, set in MbOverview.js::_updateIcon #}
     </div>
     {%- endif -%}

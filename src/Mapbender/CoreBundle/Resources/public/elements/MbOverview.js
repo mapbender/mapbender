@@ -4,6 +4,11 @@
         constructor(configuration, $element) {
             super(configuration, $element);
 
+            this.$button = this.$element.find('.toggleOverview');
+            this.$toggleIcon = this.$button.find('i');
+            this.isLeftAligned = this.$element.closest('.anchored-element-wrap-lb').length > 0
+                || this.$element.closest('.anchored-element-wrap-lt').length > 0;
+
             this._updateIcon();
             var lsId = this.options.layerset;
             var layerset = Mapbender.layersets.filter(function(x) {
@@ -132,12 +137,10 @@
         _updateIcon() {
             const isClosed = this.$element.hasClass('closed');
 
-            const $button = $('.toggleOverview', this.$element);
-            $button.toggleClass('closed', isClosed);
-
-            const $icon = $('.fas', $button);
-            $icon.toggleClass('fa-map', isClosed);
-            $icon.toggleClass('fa-chevron-right', !isClosed);
+            this.$button.toggleClass('closed', isClosed);
+            this.$toggleIcon.toggleClass('far fa-map', isClosed);
+            const iconClass = this.isLeftAligned ? 'fa-chevron-left' : 'fa-chevron-right';
+            this.$toggleIcon.toggleClass('fas ' + iconClass, !isClosed);
         }
 
         _onMbMapSrsChanged(event, data) {
