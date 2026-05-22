@@ -1,9 +1,5 @@
 @import "modules/jqueryui_minimal";
 
-$darkFontColor: #3f3f3f !default;
-$textColor: $darkFontColor !default;
-$backgroundColor: #fff !default;
-
 * {
     box-sizing: border-box;
 }
@@ -13,11 +9,11 @@ html, body{
   margin:0;
   padding:0;
   font:{
-    family: $fontFamily;
-    size: $fontSize;
+    family: var(--font-family);
+    size: var(--font-size);
   }
-  color: $textColor;
-  background-color: $backgroundColor;
+  color: var(--text-color);
+  background-color: var(--background-color);
 }
 
 // @todo: Resolve conflicts of these extra list and heading rules with Bootstrap and

@@ -1,12 +1,8 @@
 /* Backend styles include used by main backend and login */
 $textColor: #333 !default;
 
-:root {
-    --primary: #079ee0;
-    --text: #202020;
-    --btn-hover: #1A709E;
-    --content-background: #FFFFFF;
-}
+// CSS custom properties are defined in libs/_variables.scss :root block
+// Backend-specific overrides can be added in manager/variables.scss
 
 @import "modules/base";
 @import "modules/text";
@@ -105,7 +101,7 @@ div.contentTitle {
     display: inline-block;
   }
   .filter-group .dropdown {
-    font-size: $fontSize;
+    font-size: var(--font-size);
     width: auto;
     .dropdownValue {
       white-space: nowrap;

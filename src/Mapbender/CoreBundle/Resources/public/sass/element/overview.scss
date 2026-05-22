@@ -1,5 +1,3 @@
-$panelBorderColor: #888 !default;
-
 .mb-element-overview {
   --size-close-button: 28px;
 
@@ -32,7 +30,7 @@ $panelBorderColor: #888 !default;
     background-color: white;
     transition: all .2s linear;
     .ol-viewport, .olMapViewport {
-      border: 1px solid $panelBorderColor;
+      border: 1px solid var(--panel-border-color);
     }
     .olMapViewport {
       > div {
@@ -89,7 +87,7 @@ $panelBorderColor: #888 !default;
 .olControlOverviewMapExtentRectangle, .ol-overviewmap-box {
   overflow: hidden;
   cursor: move;
-  border: 2px solid $firstColor;
+  border: 2px solid var(--primary);
 }
 
 .olControlOverviewMapRectReplacement {

@@ -1,6 +1,8 @@
 $backgroundColor: #fff;
 
 @import "libs/mixins";
+// Emit CSS custom properties — after _variables.scss and manager/variables.scss have been loaded
+@import "libs/css_custom_properties";
 @import 'bundles/mapbendermanager/sass/manager/manager.scss';
 
 .login-wrapper, .justify-v {

@@ -1,7 +1,3 @@
-$panelBorderColor: #b9BABC !default;
-$popupBorderColor: $panelBorderColor !default;
-$backgroundColor: #fff !default;
-$popupBackgroundColor: $backgroundColor !default;
 $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be adjusted in mapbender.popup.js
 
 .popupHead {
@@ -15,8 +11,8 @@ $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be
   }
 
   &.draggable{cursor:move;}
-  margin:0 $space $space $space;
-  padding: $space 0 $space/2 0;
+  margin:0 var(--space) var(--space) var(--space);
+  padding: var(--space) 0 calc(var(--space) / 2) 0;
 
   .popupIcon {
     color: var(--primary);
@@ -47,7 +43,7 @@ $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be
   }
   .popup-body {
     flex: 1 1 auto;     // expand / shrink as required, initially fit content
-    padding: 0 $space;  // pad left and right, equal to footer lr padding / header lr margin
+    padding: 0 var(--space);  // pad left and right, equal to footer lr padding / header lr margin
     &.popupScroll {
         // min-height: 200px;  // avoid squishing scrollable content too far vertically
       .popupContent {
@@ -56,12 +52,12 @@ $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be
     }
     .popupContent {
       padding: 0;   // we already have our padding on the wrapping .popup-body
-      margin-bottom: $space;
+      margin-bottom: var(--space);
     }
   }
 
   .footer {
-    padding: $space;
+    padding: var(--space);
   }
 }
 
@@ -107,17 +103,17 @@ $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be
   }
   &.fom-popup {
     min-height: 250px;
-    width: $popupModalWidth;
-    padding-bottom:$space;
+    width: var(--popup-modal-width);
+    padding-bottom: var(--space);
   }
   z-index: 100; // Same as .ui-front
-  background-color: $popupBackgroundColor;
-  border: 1px solid $popupBorderColor;
+  background-color: var(--popup-background);
+  border: 1px solid var(--popup-border-color);
   border-bottom-width: 1px;
 }
 
 .popupContainer.modal {
-    padding: $space*2.5;
+    padding: calc(var(--space) * 2.5);
     display: block;
     .popup {
       margin: 0 auto;

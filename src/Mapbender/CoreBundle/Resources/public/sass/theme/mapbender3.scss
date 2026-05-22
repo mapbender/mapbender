@@ -10,6 +10,16 @@ $toolBarBorderColor: $sidepaneBorderColor !default;
 $desktopBreakpointWidth: 1200px !default;
 $hoverEffects: true !default;
 
+// Emit CSS custom properties — MUST come after all SCSS variable overrides
+@import "libs/css_custom_properties";
+
+// Theme-specific CSS custom properties (toolbar composites)
+:root {
+    --toolbar-top-background: #{$toolBarTopBackground};
+    --toolbar-bottom-background: #{$toolBarBottomBackground};
+    --toolbar-border-color: #{$toolBarBorderColor};
+}
+
 @import "modules/base";
 @import "modules/layout";
 @import "modules/popup";
@@ -33,19 +43,19 @@ $hoverEffects: true !default;
 }
 
 .linkButton {
-  &:hover, &:active{color:$ciColor;};
+  &:hover, &:active{color: var(--primary);};
 }
 
 /* ---------------------------------------------------------- TOOLBAR */
 .toolBarColors, .toolBar {
-  background-color: $toolBarBackgroundColor;
+  background-color: var(--toolbar-background);
   color: var(--toolbar-text-color);
 }
 
 .toolbar-button-hover-effect {
   @if $hoverEffects {
     &:hover {
-      opacity: $toolBarButtonHoverOpacity;
+      opacity: var(--toolbar-button-hover-opacity);
     }
   }
 }
@@ -85,7 +95,7 @@ ul.toolBar, .toolBar > ul {
 .toolBarItemActive {
   // Invert background and foreground
   background-color: var(--toolbar-button-active-background-color);
-  color: $toolBarBackgroundColor;
+  color: var(--toolbar-background);
 
   &.mb-button:hover {
     background: var(--toolbar-button-active-background-hover-color);
@@ -100,16 +110,16 @@ ul.toolBar, .toolBar > ul {
   z-index: 4;
   user-select: none;
 
-  padding:$space/4 $space/2 $space/4 $space/2;
-  border-color: $toolBarBorderColor;
+  padding: calc(var(--space) / 4) calc(var(--space) / 2);
+  border-color: var(--toolbar-border-color);
 
   &.top {
-    background: $toolBarTopBackground;
+    background: var(--toolbar-top-background);
     border-bottom-width: 1px;
     border-bottom-style: solid;
   }
   &.bottom {
-    background: $toolBarBottomBackground;
+    background: var(--toolbar-bottom-background);
     .dropdownList{
       bottom: 100%;   // to "drop up"
     }
@@ -179,7 +189,7 @@ ul.toolBar, .toolBar > ul {
     .dropdown-menu {
       display: block;
       border: none;
-      background: $toolBarTopBackground;
+      background: var(--toolbar-top-background);
       position: fixed;
       right: 0;
       left: auto;
@@ -209,13 +219,17 @@ ul.toolBar, .toolBar > ul {
 }
 
 .metadataDialog{
+  background-color: var(--metadata-background);
+  border-color: var(--metadata-border-color);
   .popupContent {
     height: 100%;
+    background-color: var(--metadata-background);
     .contentItem {
       height: 100%;
     }
   }
   .content-toggle-container {
+    border-color: var(--metadata-border-color);
     &.closed >.content-toggle-target {
       display: none;
     }
@@ -225,9 +239,12 @@ ul.toolBar, .toolBar > ul {
     }
     >.content-toggle i {
       line-height: inherit;
+      color: var(--metadata-section-toggle-color);
     }
   }
   .popupHead{
+    background-color: var(--metadata-header-background);
+    color: var(--metadata-header-text);
     border-bottom: none;
   }
   .container {
@@ -254,6 +271,9 @@ ul.toolBar, .toolBar > ul {
   td {
     overflow-wrap: anywhere;
   }
+  table, th, td {
+    border-color: var(--metadata-border-color);
+  }
 }
 
 
@@ -276,7 +296,6 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 }
 
 .toggleOverview.collapse-toggle {
-  $buttonTextColor: $lightFontColor !default;
   background: var(--button-white-background);
   color: var(--button-white-foreground);
   cursor: pointer;
@@ -356,18 +375,18 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     margin-top: 0.5rem;
   }
   &.anchored-element-wrap-lt, &.anchored-element-wrap-lb {
-    left: $space * 2;
+    left: calc(var(--space) * 2);
     text-align: left;
   }
   &.anchored-element-wrap-rt, &.anchored-element-wrap-rb {
-    right: $space * 2;
+    right: calc(var(--space) * 2);
     text-align: right;
   }
   &.anchored-element-wrap-lt, &.anchored-element-wrap-rt {
-    top: $space * 2;
+    top: calc(var(--space) * 2);
   }
   &.anchored-element-wrap-lb, &.anchored-element-wrap-rb {
-    bottom: $space;
+    bottom: var(--space);
   }
 }
 
@@ -387,11 +406,11 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 }
 
 .toolPane{
- background-color: $backgroundColor;
+ background-color: var(--background-color);
 }
 
 .mb-element-zoombar .rotation{
-   background-color: $backgroundColor;
+   background-color: var(--background-color);
 }
 
 .element-icon-wrapper {
