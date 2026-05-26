@@ -4,7 +4,7 @@
 namespace Mapbender\ManagerBundle\Component\Exchange;
 
 
-use Doctrine\Common\Util\ClassUtils;
+use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 
 class ObjectIdentityPool
@@ -70,7 +70,7 @@ class ObjectIdentityPool
     protected function getTrackingKey($className, $identifier)
     {
         $identifier = $this->normalizeIdentifier($identifier);
-        return ClassUtils::getRealClass($className) . '#' . serialize($identifier);
+        return DoctrineClassUtil::getRealClass($className) . '#' . serialize($identifier);
     }
 
     protected function normalizeIdentifier($identifierIn)
