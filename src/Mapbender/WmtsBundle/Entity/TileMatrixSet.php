@@ -157,7 +157,24 @@ class TileMatrixSet implements MutableUrlTarget
      */
     public function getTilematrices()
     {
-        return $this->tilematrices;
+        $result = [];
+        foreach ($this->tilematrices ?? [] as $item) {
+            if ($item instanceof TileMatrix) {
+                $result[] = $item;
+            } elseif (is_array($item)) {
+                $tm = new TileMatrix();
+                $tm->setIdentifier($item['identifier'] ?? null);
+                if (isset($item['scaledenominator'])) $tm->setScaledenominator($item['scaledenominator']);
+                if (isset($item['href'])) $tm->setHref($item['href']);
+                if (isset($item['topleftcorner'])) $tm->setTopleftcorner($item['topleftcorner']);
+                if (isset($item['tilewidth'])) $tm->setTilewidth($item['tilewidth']);
+                if (isset($item['tileheight'])) $tm->setTileheight($item['tileheight']);
+                if (isset($item['matrixwidth'])) $tm->setMatrixwidth($item['matrixwidth']);
+                if (isset($item['matrixheight'])) $tm->setMatrixheight($item['matrixheight']);
+                $result[] = $tm;
+            }
+        }
+        return $result;
     }
 
     /**

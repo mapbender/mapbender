@@ -140,8 +140,20 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
         if (!$this->vendorspecifics) {
             $this->vendorspecifics = array();
         }
-
-        return $this->vendorspecifics;
+        $result = [];
+        foreach ($this->vendorspecifics as $item) {
+            if ($item instanceof VendorSpecific) {
+                $result[] = $item;
+            } elseif (is_array($item)) {
+                $vs = new VendorSpecific();
+                $vs->setName($item['name'] ?? null);
+                $vs->setDefault($item['default'] ?? null);
+                $vs->setHidden($item['hidden'] ?? false);
+                $vs->setVstype($item['vstype'] ?? null);
+                $result[] = $vs;
+            }
+        }
+        return $result;
     }
 
     /**
