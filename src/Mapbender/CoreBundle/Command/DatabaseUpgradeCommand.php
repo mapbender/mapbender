@@ -221,10 +221,6 @@ class DatabaseUpgradeCommand extends Command
             'mb_wmts_wmtssource'              => ['getTile', 'getFeatureInfo'],
         ];
 
-        // Columns where only the DC2Type comment needs to be cleared (type is already correct in the schema)
-        $commentOnlyColumns = [
-            'mb_ogc_api_features_instancelayer' => ['secondary_style_ids'],
-        ];
 
         if ($platform instanceof PostgreSQLPlatform) {
             $migrated = 0;
@@ -257,14 +253,6 @@ class DatabaseUpgradeCommand extends Command
                     );
                     $connection->executeQuery("COMMENT ON COLUMN \"$table\".\"$colDb\" IS ''");
                     $migrated++;
-                }
-            }
-
-            // Clear residual DC2Type comments on columns that are already the correct type
-            foreach ($commentOnlyColumns as $table => $columns) {
-                foreach ($columns as $column) {
-                    $colDb = strtolower($column);
-                    $connection->executeQuery("COMMENT ON COLUMN \"$table\".\"$colDb\" IS ''");
                 }
             }
 
@@ -310,11 +298,34 @@ class DatabaseUpgradeCommand extends Command
             }
 
         } elseif ($platform instanceof SqlitePlatform) {
-            // SQLite uses dynamic typing, ALTER COLUMN TYPE is not supported.
-            // No schema changes are needed for JSON compatibility.
-            // Note: existing data stored as PHP-serialized strings (from Doctrine 'array' type)
-            // would need manual data conversion if it exists.
-            $output->writeln("SQLite: no schema type changes required (dynamic typing). All columns already compatible.");
+            // SQLite uses dynamic typing, so ALTER COLUMN TYPE is not supported and not needed.
+            // However, existing data may still be stored as PHP-serialized strings (from the old
+            // Doctrine 'array'/'object' type), which Doctrine 4 can no longer decode as JSON.
+            // Convert the data in-place: the column stays TEXT, but its content becomes valid JSON.
+            $converted = 0;
+            foreach ($jsonMigrations as $table => $columns) {
+                foreach ($columns as $column) {
+                    $colDb = strtolower($column);
+                    // Check whether the table exists (schema may differ between installations)
+                    $tableExists = $connection->executeQuery(
+                        "SELECT name FROM sqlite_master WHERE type='table' AND name=:table",
+                        ['table' => $table]
+                    )->fetchOne();
+                    if (!$tableExists) {
+                        continue;
+                    }
+                    $dataConverted = $this->convertPhpSerializedColumnToJson($connection, $table, $colDb, $output);
+                    if ($dataConverted > 0) {
+                        $output->writeln("  Converted $dataConverted PHP-serialized value(s) in $table.$column to JSON");
+                        $converted += $dataConverted;
+                    }
+                }
+            }
+            if ($converted > 0) {
+                $output->writeln("SQLite: converted $converted value(s) from PHP-serialized to JSON.");
+            } else {
+                $output->writeln("SQLite: all column data was already up to date.");
+            }
 
         } else {
             $output->writeln("Unsupported platform. Please manually migrate array/object columns to JSON type.");
@@ -340,6 +351,9 @@ class DatabaseUpgradeCommand extends Command
 
         $converted = 0;
         foreach ($rows as $row) {
+            // Normalize keys to lowercase to handle databases (e.g. SQLite) that preserve
+            // the original schema casing in result sets regardless of the query casing.
+            $row = array_change_key_case($row, CASE_LOWER);
             $value = $row[$column];
             if (!$this->isPhpSerialized($value)) {
                 continue;
@@ -349,11 +363,19 @@ class DatabaseUpgradeCommand extends Command
                 $output->writeln("  WARNING: Could not unserialize value in $table.$column for id={$row['id']}, skipping row");
                 continue;
             }
-            $json = json_encode($unserialized, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            $connection->executeQuery(
-                "UPDATE \"$table\" SET \"$column\" = :json WHERE id = :id",
-                ['json' => $json, 'id' => $row['id']]
-            );
+            // Store PHP null as database NULL rather than the JSON string 'null'
+            if ($unserialized === null) {
+                $connection->executeQuery(
+                    "UPDATE \"$table\" SET \"$column\" = NULL WHERE id = :id",
+                    ['id' => $row['id']]
+                );
+            } else {
+                $json = json_encode($unserialized, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $connection->executeQuery(
+                    "UPDATE \"$table\" SET \"$column\" = :json WHERE id = :id",
+                    ['json' => $json, 'id' => $row['id']]
+                );
+            }
             $converted++;
         }
 
