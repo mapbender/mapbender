@@ -73,8 +73,7 @@
         </service>
         <service id="Mapbender\CoreBundle\Controller\ConfigController"
                  class="Mapbender\CoreBundle\Controller\ConfigController"
-                 public="true"
-                 lazy="true">
+                 public="true">
             <argument type="service" id="mapbender.application.resolver" />
             <argument type="service" id="mapbender.presenter.application.config.service" />
             <argument type="service" id="mapbender.presenter.application.cache" />
