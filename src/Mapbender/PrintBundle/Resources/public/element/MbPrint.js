@@ -99,10 +99,20 @@
         }
 
         /**
-         * do not show print extent preview in actual print
+         * Filter features for print: exclude the print frame polygon itself
+         * and any features outside the print frame extent (spatial filter).
          */
         filterFeatures(features) {
-            return features.filter(f => f !== this.feature);
+            if (!this.feature || !this.feature.getGeometry()) {
+                return features.filter(f => f !== this.feature);
+            }
+            var frameExtent = this.feature.getGeometry().getExtent();
+            return features.filter(f => {
+                if (f === this.feature) return false;
+                var geom = f.getGeometry();
+                if (!geom) return false;
+                return geom.intersectsExtent(frameExtent);
+            });
         }
 
         closeByButton() {
