@@ -142,10 +142,10 @@ class BatchPrintClient extends PrintClient
      * Prepare multiframe print data from request
      * 
      * @param Request $request
-     * @param array $configuration
+     * @param Element $element
      * @return array Array of prepared job data for each frame
      */
-    private function prepareMultiPrintData(Request $request, array $configuration): array
+    private function prepareMultiPrintData(Request $request, Element $element): array
     {
         $multiFrameJobDataArr = [];
         $formData = $this->extractRequestData($request);
@@ -154,7 +154,7 @@ class BatchPrintClient extends PrintClient
 
         foreach ($jobData as $frameData) {
             $data = array_merge($formData, $frameData);
-            $frameResult = $this->preparePrintData($data, $configuration);
+            $frameResult = $this->preparePrintData($data, $element);
             $multiFrameJobDataArr[] = $frameResult;
         }
 
@@ -172,8 +172,8 @@ class BatchPrintClient extends PrintClient
     private function prepareMultiFrameJobData(Request $request, array $configuration, Element $element): array
     {
         // Prepare multiframe data
-        $multiFrameJobDataArr = $this->prepareMultiPrintData($request, $configuration);
-        
+        $multiFrameJobDataArr = $this->prepareMultiPrintData($request, $element);
+
         // Create wrapper structure - PrintService will detect multiFrame flag
         $jobDataWrapper = [
             'frames' => $multiFrameJobDataArr,
@@ -205,10 +205,9 @@ class BatchPrintClient extends PrintClient
         // Use queue plugin to capture the job ID
         /** @var PrintQueuePlugin $queuePlugin */
         $queuePlugin = $this->pluginRegistry->getPlugin('print-queue');
-        $jobId = $queuePlugin->putJob($jobDataWrapper, $this->generateFilename($element));
-        
-        // Return JSON response with job ID
-        return new JsonResponse(['success' => true, 'jobId' => $jobId]);
+        $queuePlugin->putJob($jobDataWrapper, $this->generateFilename($element));
+
+        return new JsonResponse(['success' => true]);
     }
 
     /**

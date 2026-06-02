@@ -167,10 +167,6 @@
             <argument>%env(APP_SECRET)%</argument>
         </service>
 
-        <service id="get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer">
-            <tag name="serializer.normalizer" />
-        </service>
-
         <service id="twig.extension.stringloader" class="Twig\Extension\StringLoaderExtension">
             <tag name="twig.extension" />
         </service>
@@ -332,6 +328,9 @@
         <service id="mapbender.sqlite_connection_listener" class="%mapbender.sqlite_connection_listener.class%">
             <tag name="doctrine.middleware" />
             <tag name="kernel.event_listener" event="console.command" />
+        </service>
+        <service id="mapbender.oracle_session_init" class="Mapbender\CoreBundle\Component\EventListener\OnDemandOracleSessionInit">
+            <tag name="doctrine.middleware" />
         </service>
         <service id="Mapbender\CoreBundle\Component\SQLSearchEngine" class="Mapbender\CoreBundle\Component\SQLSearchEngine" public="true">
             <argument type="service" id="logger" />

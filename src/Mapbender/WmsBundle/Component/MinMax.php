@@ -74,4 +74,18 @@ class MinMax
         $this->max = $value === null ? null : floatval($value);
         return $this;
     }
+
+    /**
+     * Reconstruct from a plain array (e.g. after JSON column hydration by Doctrine/DBAL 4).
+     *
+     * @param array<string, mixed>|null $data
+     * @return static|null
+     */
+    public static function fromArray(?array $data): ?static
+    {
+        if ($data === null) {
+            return null;
+        }
+        return new static($data['min'] ?? null, $data['max'] ?? null);
+    }
 }

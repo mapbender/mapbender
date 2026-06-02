@@ -52,33 +52,33 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     protected $fixedWidth;
     #[ORM\Column(type: 'integer', nullable: true)]
     protected $fixedHeight;
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $latlonBounds;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $boundingBoxes;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $srs;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $styles;
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $scale;
 
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $attribution;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $identifier;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $authority;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $metadataUrl;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $dimension;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $dataUrl;
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $featureListUrl;
     /**
      * @var ArrayCollection A list of WMS Layer keywords
@@ -368,15 +368,18 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
 
     /**
      * @param bool $inherit
-     * @return BoundingBox
+     * @return BoundingBox|null
      */
     public function getLatlonBounds($inherit = false)
     {
-        if ($inherit && $this->latlonBounds === null && $this->getParent() !== null) {
-            return $this->getParent()->getLatlonBounds($inherit);
-        } else {
-            return $this->latlonBounds;
+        $value = $this->latlonBounds;
+        if (is_array($value)) {
+            $value = BoundingBox::create($value);
         }
+        if ($inherit && $value === null && $this->getParent() !== null) {
+            return $this->getParent()->getLatlonBounds($inherit);
+        }
+        return $value;
     }
 
     /**
@@ -479,14 +482,20 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function getStyles($inherit = false)
     {
+        $rawStyles = $this->styles ?? [];
+        $ownStyles = array_map(
+            static fn($s) => is_array($s) ? Style::fromArray($s) : $s,
+            $rawStyles
+        );
+
         if (!$inherit || $this->getParent() === null) {
-            return $this->styles;
+            return $ownStyles;
         }
 
         /** @var Style[] $styles */
         $styles = array_values($this->getParent()->getStyles(true) ?? []);
         // ignore title&name combinations that are present both in the parent and in the child
-        foreach ($this->styles as $childStyle) {
+        foreach ($ownStyles as $childStyle) {
             /** @var Style $childStyle */
             foreach ($styles as $parentStyle) {
                 if ($parentStyle->getTitle() === $childStyle->getTitle()
@@ -514,10 +523,13 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     /**
      * Get scale
      *
-     * @return MinMax
+     * @return MinMax|null
      */
-    public function getScale()
+    public function getScale(): ?MinMax
     {
+        if (is_array($this->scale)) {
+            return MinMax::fromArray($this->scale);
+        }
         return $this->scale;
     }
 

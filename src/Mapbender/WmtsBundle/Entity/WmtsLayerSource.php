@@ -36,19 +36,19 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     #[ORM\JoinColumn(name: 'wmtssource', referencedColumnName: 'id')]
     protected $source;
 
-    #[ORM\Column(type: 'object', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $latlonBounds;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $boundingBoxes;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $styles;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $infoformats;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $tilematrixSetlinks;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -68,7 +68,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @var UrlTemplateType[]
      */
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $resourceUrl;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'sublayer')]
@@ -148,10 +148,13 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     }
 
     /**
-     * @return BoundingBox
+     * @return BoundingBox|null
      */
     public function getLatlonBounds()
     {
+        if (is_array($this->latlonBounds)) {
+            return BoundingBox::create($this->latlonBounds);
+        }
         return $this->latlonBounds;
     }
 
@@ -178,7 +181,15 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      */
     public function getBoundingBoxes()
     {
-        return $this->boundingBoxes;
+        $result = [];
+        foreach ($this->boundingBoxes ?? [] as $item) {
+            if ($item instanceof BoundingBox) {
+                $result[] = $item;
+            } elseif (is_array($item)) {
+                $result[] = BoundingBox::create($item);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -206,7 +217,26 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      */
     public function getStyles()
     {
-        return $this->styles;
+        $result = [];
+        foreach ($this->styles ?? [] as $item) {
+            if ($item instanceof Style) {
+                $result[] = $item;
+            } elseif (is_array($item)) {
+                $style = new Style();
+                $style->setIsDefault($item['isDefault'] ?? null);
+                $style->setTitle($item['title'] ?? null);
+                $style->setAbstract($item['abstract'] ?? null);
+                $style->setIdentifier($item['identifier'] ?? null);
+                if (!empty($item['legendurl']) && is_array($item['legendurl'])) {
+                    $legendUrl = new LegendUrl();
+                    $legendUrl->setFormat($item['legendurl']['format'] ?? null);
+                    $legendUrl->setHref($item['legendurl']['href'] ?? null);
+                    $style->setLegendurl($legendUrl);
+                }
+                $result[] = $style;
+            }
+        }
+        return $result;
     }
 
 
@@ -243,7 +273,18 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      */
     public function getTilematrixSetlinks()
     {
-        return $this->tilematrixSetlinks;
+        $result = [];
+        foreach ($this->tilematrixSetlinks ?? [] as $item) {
+            if ($item instanceof TileMatrixSetLink) {
+                $result[] = $item;
+            } elseif (is_array($item)) {
+                $link = new TileMatrixSetLink();
+                $link->setTileMatrixSet($item['tileMatrixSet'] ?? null);
+                $link->setTileMatrixSetLimits($item['tileMatrixSetLimits'] ?? null);
+                $result[] = $link;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -315,7 +356,20 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      */
     public function getResourceUrl()
     {
-        return $this->resourceUrl;
+        $result = [];
+        foreach ($this->resourceUrl ?? [] as $item) {
+            if ($item instanceof UrlTemplateType) {
+                $result[] = $item;
+            } elseif (is_array($item)) {
+                $ru = new UrlTemplateType();
+                $ru->setFormat($item['format'] ?? null);
+                $ru->setResourceType($item['resourceType'] ?? null);
+                $ru->setTemplate($item['template'] ?? null);
+                $ru->setExtension($item['extension'] ?? null);
+                $result[] = $ru;
+            }
+        }
+        return $result;
     }
 
     public function getParent(): ?self
@@ -340,7 +394,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     public function getTileResources()
     {
         $matches = array();
-        foreach ($this->resourceUrl as $ru) {
+        foreach ($this->getResourceUrl() as $ru) {
             if ($ru->getResourceType() === 'tile') {
                 $matches[] = $ru;
             }

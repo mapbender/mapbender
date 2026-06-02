@@ -3,7 +3,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Util\ClassUtils;
+use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -25,7 +25,6 @@ class ExportHandler extends ExchangeHandler
     {
         gc_enable();
         parent::__construct($em);
-        $em->getConnection()->getConfiguration()->setSQLLogger(null);
     }
 
     /**
@@ -222,7 +221,7 @@ class ExportHandler extends ExchangeHandler
         return array_merge(
             array(
                 self::KEY_CLASS => array(
-                    ClassUtils::getClass($object),
+                    DoctrineClassUtil::getRealClass($object),
                 )
             ),
             $params
