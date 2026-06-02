@@ -277,9 +277,12 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 
 .toggleOverview.collapse-toggle {
   $buttonTextColor: $lightFontColor !default;
-  background: $buttonFirstColor;
-  color: $buttonTextColor;
+  background: var(--button-white-background);
+  color: var(--button-white-foreground);
   cursor: pointer;
+  &:hover {
+    background: var(--button-white-background-hover);
+  }
 }
 
 // Filter Element visibility by "screenType"

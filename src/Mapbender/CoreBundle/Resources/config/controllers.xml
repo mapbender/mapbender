@@ -105,6 +105,9 @@
             <argument type="service" id="twig" />
             <argument type="service" id="mapbender.source.typedirectory.service" />
             <argument>%mapbender.show_proxied_service_urls%</argument>
+            <argument type="service" id="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
+            <argument type="service" id="security.helper" />
+
         </service>
         <service id="Mapbender\CoreBundle\Controller\CoordinatesUtilityController"
                  class="Mapbender\CoreBundle\Controller\CoordinatesUtilityController"

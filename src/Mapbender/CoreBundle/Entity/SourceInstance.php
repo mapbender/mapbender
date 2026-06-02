@@ -112,7 +112,7 @@ abstract class SourceInstance extends SourceInstanceAssignment implements YamlDe
     /**
      * Sets base source
      *
-     * @param  boolean $baseSource
+     * @param boolean $baseSource
      * @return $this
      */
     public function setBasesource($baseSource)
@@ -174,12 +174,21 @@ abstract class SourceInstance extends SourceInstanceAssignment implements YamlDe
     abstract public function getDisplayTitle(): string;
 
 
-
     /**
      * @return string
      */
     public function __toString()
     {
         return (string)$this->getId();
+    }
+
+    public function getLayerById(int|string $layerId): ?SourceInstanceItem
+    {
+        foreach ($this->getLayers() as $layerInstance) {
+            if ($layerInstance->getId() == $layerId) {
+                return $layerInstance;
+            }
+        }
+        return null;
     }
 }

@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\HttpSourceLoader;
 use Mapbender\CoreBundle\Component\Source\SourceLoaderSettings;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
@@ -306,5 +307,10 @@ class Importer extends HttpSourceLoader
             $offset += $this->assignLayerPriorities($child, $value + $offset);
         }
         return $offset;
+    }
+
+    public function hasPersistedMetadata(Application $application, Source $source): bool
+    {
+        return $application->isDbBased();
     }
 }

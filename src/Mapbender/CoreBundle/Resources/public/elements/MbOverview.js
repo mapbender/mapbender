@@ -4,7 +4,12 @@
         constructor(configuration, $element) {
             super(configuration, $element);
 
-            this._updateToggleIcon();
+            this.$button = this.$element.find('.toggleOverview');
+            this.$toggleIcon = this.$button.find('i');
+            this.isLeftAligned = this.$element.closest('.anchored-element-wrap-lb').length > 0
+                || this.$element.closest('.anchored-element-wrap-lt').length > 0;
+
+            this._updateIcon();
             var lsId = this.options.layerset;
             var layerset = Mapbender.layersets.filter(function(x) {
                 return ('' + lsId) === ('' + x.id);
@@ -114,7 +119,7 @@
             var self = this;
             this.$element.toggleClass('closed')
             var newState = !this.$element.hasClass('closed');
-            this._updateToggleIcon();
+            this._updateIcon();
             if (newState) {
                 window.setTimeout(function() {
                     if (!self.overview) {
@@ -129,11 +134,13 @@
             }
         }
 
-        _updateToggleIcon() {
-            var state = !this.$element.hasClass('closed');
-            var $icon = $('.toggleOverview i.fa', this.$element);
-            $icon.toggleClass('fa-plus', !state);
-            $icon.toggleClass('fa-minus', state);
+        _updateIcon() {
+            const isClosed = this.$element.hasClass('closed');
+
+            this.$button.toggleClass('closed', isClosed);
+            this.$toggleIcon.toggleClass('far fa-map', isClosed);
+            const iconClass = this.isLeftAligned ? 'fa-chevron-left' : 'fa-chevron-right';
+            this.$toggleIcon.toggleClass('fas ' + iconClass, !isClosed);
         }
 
         _onMbMapSrsChanged(event, data) {
