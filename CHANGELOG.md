@@ -1,4 +1,10 @@
 ## next feature release
+Breaking changes (for details on migration process see [UPGRADING.md]):
+* PHP 8.2 is now the minimum supported PHP version
+* Symfony updated to version 7.4 LTS
+* Doctrine DBAL updated to version 4.4
+* Doctrine ORM updated to version 3.6
+
 Security:
 * Allow custom permissions for source instances ([#PR1812](https://github.com/mapbender/mapbender/pull/1812), [#PR1825](https://github.com/mapbender/mapbender/pull/1825))
 
