@@ -57,6 +57,15 @@ $buttonFirstColor: $ciColor;
 
 The values are compiled into `:root { --primary: #e84d00; … }` automatically.
 
+### SCSS variable chaining
+
+When a SCSS variable references another via a SCSS function or interpolation
+(e.g., `$foo: darken($bar, 10%)`), and you remove or replace `$bar`, the dependent
+variable `$foo` silently falls back to its `!default` value from `_variables.scss`.
+
+Before removing a variable from your SCSS variables file, scan it for dependents
+that reference it. Verify that any fallback values are acceptable.
+
 ---
 
 ## 3. File-level variable declarations (action may be required)
