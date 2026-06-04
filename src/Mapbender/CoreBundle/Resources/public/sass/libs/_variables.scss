@@ -117,7 +117,8 @@ $menuBackgroundOpacity: 0.5 !default;
 
 // ==========================================================================
 // CSS Custom Properties are emitted via libs/_css_custom_properties.scss,
-// which is imported from theme entry files (mapbender3.scss, manager.scss)
+// which is imported from theme entry files (e.g. theme/mapbender3.scss, manager/applications.scss, manager/login.scss)
 // AFTER all template-specific variable overrides have been applied.
 // This ensures the :root block uses final SCSS variable values.
+// ==========================================================================
 // ==========================================================================
