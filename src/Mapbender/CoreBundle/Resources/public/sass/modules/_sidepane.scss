@@ -1,4 +1,4 @@
-// CSS custom properties for sidepane are defined in libs/_variables.scss :root block
+// CSS custom properties for sidepane are emitted by libs/_css_custom_properties.scss (:root block)
 
 .sidePane {
     color: var(--sidepane-text-color);
