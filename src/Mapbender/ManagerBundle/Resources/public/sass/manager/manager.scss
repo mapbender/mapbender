@@ -322,20 +322,20 @@ footer {
 .btn-primary {
   --bs-btn-bg: var(--primary);
   --bs-btn-border-color: var(--primary);
-  --bs-btn-hover-bg: var(--btn-hover);
-  --bs-btn-hover-border-color: var(--btn-hover);
-  --bs-btn-active-bg: var(--btn-hover);
-  --bs-btn-active-border-color: var(--btn-hover);
+  --bs-btn-hover-bg: var(--primary-dark);
+  --bs-btn-hover-border-color: var(--primary-dark);
+  --bs-btn-active-bg: var(--primary-dark);
+  --bs-btn-active-border-color: var(--primary-dark);
 }
 
 .btn-outline-primary {
-    --bs-btn-color: var(--text);
+    --bs-btn-color: var(--text-color);
     --bs-btn-border-color: #cecece;
-    --bs-btn-bg: var(--content-background);
-    --bs-btn-hover-color: var(--content-background);
-    --bs-btn-hover-border-color: var(--btn-hover);
-    --bs-btn-hover-bg: var(--btn-hover);
-    --bs-btn-active-color: var(--content-background);
+    --bs-btn-bg: white;
+    --bs-btn-hover-color: white;
+    --bs-btn-hover-border-color: var(--primary-dark);
+    --bs-btn-hover-bg: var(--primary-dark);
+    --bs-btn-active-color: white;
     --bs-btn-active-border-color: var(--primary);
     --bs-btn-active-bg: var(--primary);
 }
