@@ -304,7 +304,7 @@ overridden at runtime via `:root {}`.
 | `--input-background` | `$inputBackgroundColor` |
 | `--input-foreground` | `$inputForegroundColor` |
 | `--input-border-color` | *(hardcoded)* |
-| `--input-focus-border-color` | *(derived: `var(--primary)`)* |
+| `--input-focus-border-color` | `$inputFocusBorderColor` |
 | `--input-disabled-fg` | *(derived: `color-mix(--input-foreground, white 40%)`)* |
 | `--slider-handle-background` | `$sliderHandleBackgroundColor` |
 | `--slider-handle-border` | `$sliderHandleBorderColor` |
