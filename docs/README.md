@@ -21,7 +21,6 @@ Welcome to the Mapbender Development Documentation! This documentation is intend
 - [Security](security/security.md)
 - [Styleguides](style/)
 - [Testing](workflows/testing.md)
-- [Theme tokens](getting_started/theme_tokens.md)
 - [Translation](workflows/translation.md)
 - [Upgrading Guide](UPGRADING.md)
 
