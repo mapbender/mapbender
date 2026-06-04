@@ -223,7 +223,7 @@ overridden at runtime via `:root {}`.
 | `--toolbar-text-color` | *(derived: `var(--text-color)`)* |
 | `--toolbar-button-hover-opacity` | `$toolBarButtonHoverOpacity` |
 | `--toolbar-button-active-opacity` | `$toolBarButtonActiveOpacity` |
-| `--toolbar-button-active-background-color` | *(derived: `var(--primary)`)* |
+| `--toolbar-button-active-background-color` | `$toolBarButtonActiveBackgroundColor` |
 | `--toolbar-button-active-background-hover-color` | *(derived: `var(--primary-dark)`)* |
 
 ### Buttons (primary)
@@ -307,8 +307,8 @@ overridden at runtime via `:root {}`.
 | `--input-focus-border-color` | *(derived: `var(--primary)`)* |
 | `--input-disabled-fg` | *(derived: `color-mix(--input-foreground, white 40%)`)* |
 | `--slider-handle-background` | `$sliderHandleBackgroundColor` |
-| `--slider-handle-border` | *(derived: `color-mix(--slider-handle-background, black 20%)`)* |
-| `--slider-handle-text` | *(derived: `var(--light-text-color)`)* |
+| `--slider-handle-border` | `$sliderHandleBorderColor` |
+| `--slider-handle-text` | `$sliderHandleTextColor` |
 
 ### Popup / dialog
 

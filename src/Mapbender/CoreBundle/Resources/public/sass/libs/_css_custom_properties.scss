@@ -65,7 +65,7 @@
     --toolbar-text-color: var(--text-color);
     --toolbar-button-hover-opacity: #{$toolBarButtonHoverOpacity};
     --toolbar-button-active-opacity: #{$toolBarButtonActiveOpacity};
-    --toolbar-button-active-background-color: var(--primary);
+    --toolbar-button-active-background-color: #{$toolBarButtonActiveBackgroundColor};
     --toolbar-button-active-background-hover-color: var(--primary-dark);
 
     // ---- Buttons (primary) ----
@@ -127,8 +127,8 @@
     --input-focus-border-color: var(--primary);
     --input-disabled-fg: color-mix(in srgb, var(--input-foreground), white 40%);
     --slider-handle-background: #{$sliderHandleBackgroundColor};
-    --slider-handle-border: color-mix(in srgb, var(--slider-handle-background), black 20%);
-    --slider-handle-text: var(--light-text-color);
+    --slider-handle-border: #{$sliderHandleBorderColor};
+    --slider-handle-text: #{$sliderHandleTextColor};
 
     // ---- Popup / Dialog ----
     --popup-background: var(--background-color);
