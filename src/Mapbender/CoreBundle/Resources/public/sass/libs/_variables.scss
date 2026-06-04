@@ -89,7 +89,6 @@ $inputForegroundColor: #858585 !default;
 $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 // @deprecated Override --slider-handle-background CSS variable instead
 $sliderHandleBackgroundColor: #a3a3a3 !default;
-$sliderHandleBackgroundColor: #a3a3a3 !default;
 // @deprecated Override --slider-handle-border CSS variable instead
 $sliderHandleBorderColor: darken($sliderHandleBackgroundColor, 20%) !default;
 // @deprecated Override --slider-handle-text CSS variable instead
