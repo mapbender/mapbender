@@ -331,11 +331,11 @@ footer {
 .btn-outline-primary {
     --bs-btn-color: var(--text-color);
     --bs-btn-border-color: #cecece;
-    --bs-btn-bg: white;
-    --bs-btn-hover-color: white;
+    --bs-btn-bg: var(--button-white-background);
+    --bs-btn-hover-color: var(--light-text-color);
     --bs-btn-hover-border-color: var(--primary-dark);
     --bs-btn-hover-bg: var(--primary-dark);
-    --bs-btn-active-color: white;
+    --bs-btn-active-color: var(--light-text-color);
     --bs-btn-active-border-color: var(--primary);
     --bs-btn-active-bg: var(--primary);
 }
