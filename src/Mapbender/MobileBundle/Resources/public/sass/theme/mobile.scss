@@ -9,6 +9,10 @@ $toolBarBorderColor: rgba($ciColor, 0.6) !default;
 // Mobile-specific CSS custom properties
 :root {
     --toolbar-border-color: #{$toolBarBorderColor};
+    // Override slider handle colors: mobile uses $textColor/#333 for text and
+    // $buttonBorderColor/$toolBarFontColor for the border instead of core defaults.
+    --slider-handle-text: #{$textColor};
+    --slider-handle-border: #{$buttonBorderColor};
 }
 
 /* ------------------------------------------------------------- TABCONTAINER */
