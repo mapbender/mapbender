@@ -19,7 +19,7 @@ The fixed order is:
 
 ```
 1. getSassVariablesAssets() files   ← SCSS variable overrides
-2. app custom CSS variables
+2. SCSS variable assignments extracted from app custom CSS (only `$var: ...` statements)
 3. theme entry (fullscreen/mobile/mapbender3.scss)
      └─ @import "libs/css_custom_properties"   ← emits :root {} from SCSS vars
      └─ @import element and module SCSS
