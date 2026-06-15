@@ -33,7 +33,7 @@ class OgcApiFeaturesDataSource extends DataSource
 
     public function getLabel(bool $compact = false): string
     {
-        return $compact ? 'OGC-Features' : 'OGC API Features';
+        return $compact ? 'OGC-Features' : 'OGC API - Features';
     }
 
     public function getConfigGenerator(): SourceInstanceConfigGenerator

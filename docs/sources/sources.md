@@ -10,7 +10,7 @@ A data source describes the content that is displayed on a map. The core mapbend
 | Tile Map Service (TMS)                           | tms              |
 | Web Map Service Time (WMS-T)                     | wms              |
 | Vector Tiles using the Mapbox Vector Tile format | vector_tiles     |
-| OGC API Features                                 | ocg_api_features |
+| OGC API - Features                               | ocg_api_features |
 
 This tutorial describes how to create a new source that can be configured in the backoffice and displayed in the frontend.
 

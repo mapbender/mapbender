@@ -61,7 +61,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
 
         $baseUrl = str_replace('/collections', '', $url);
         $source->setJsonUrl($baseUrl);
-        $source->setTitle($json['title'] ?? 'Ogc Api Features Source');
+        $source->setTitle($json['title'] ?? 'OGC API - Features Source');
         $source->setDescription($json['description'] ?? '');
         $source->setVersion($version);
         $source->setAttribution($json['attribution'] ?? '');

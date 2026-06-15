@@ -1,7 +1,7 @@
 mb:
   ogcapifeatures:
     admin:
-      json_url: OGC API Features Servisi URL'si
+      json_url: OGC API - Features Servisi URL'si
       feature_limit: Maks. nesne sayısı
       layers: Koleksiyonlar
       layer:
