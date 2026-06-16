@@ -93,7 +93,7 @@
         font-size: 1rem;
         padding: 0 var(--sidepane-padding-right) 0 var(--sidepane-padding-left);
         margin-bottom: 0.5rem;
-        padding-right: 40px;
+        padding-right: var(--sidepane-closer-security-padding);
     }
 
     .accordion-cell, .list-group-item-content {
@@ -142,9 +142,13 @@
     padding-top: 16px;
     height: 100%;
 
-    > .auto-scroll-v {
-        // Grow "unstyled" sidepane vertically to avoid clipping misc popover markup
+    > .unstyled {
         height: 100%;
+        padding: var(--sidepane-padding-y) var(--sidepane-padding-right) var(--sidepane-padding-y) var(--sidepane-padding-left);
+
+        .mb-element {
+            margin-bottom: 15px;
+        }
     }
 }
 
