@@ -235,11 +235,16 @@
                 default:
                     // do nothing
             }
-            this.calculatePopoverPosition(currentChapter);
+            await this.calculatePopoverPosition(currentChapter);
         }
 
-        calculatePopoverPosition(currentChapter) {
-            const rect = document.getElementById(currentChapter.id).getBoundingClientRect();
+        async calculatePopoverPosition(currentChapter) {
+            const targetElement = document.getElementById(currentChapter.id);
+            if (!targetElement) {
+                return;
+            }
+            await this.waitForRunningTransitions(targetElement);
+            const rect = targetElement.getBoundingClientRect();
             let top, left, position;
             switch (currentChapter.region) {
                 case 'footer':
@@ -283,6 +288,31 @@
                 'top': top + 'px',
                 'left': left + 'px'
             });
+        }
+
+        async waitForRunningTransitions(targetElement) {
+            // check for API support
+            if (typeof targetElement.getAnimations !== 'function') return [];
+
+            const elementsToCheck = [];
+            let current = targetElement;
+            // Parent transitions can move children, so include the ancestor chain.
+            while (current && current !== document.body) {
+                elementsToCheck.push(current);
+                current = current.parentElement;
+            }
+
+            const runningAnimations = elementsToCheck.flatMap((element) => {
+                return element.getAnimations().filter((animation) => {
+                    return animation.playState === 'running' || animation.playState === 'pending';
+                });
+            });
+
+            if (!runningAnimations.length) {
+                return;
+            }
+
+            await Promise.allSettled(runningAnimations.map((animation) => animation.finished));
         }
 
         stopTour() {
