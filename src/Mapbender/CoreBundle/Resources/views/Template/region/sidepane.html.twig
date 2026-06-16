@@ -26,9 +26,7 @@
             {%- set element = element_info.element -%}
             {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
             <li id="tab{{loop.index}}" class="{{ ('tab' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
-              <div class="hidden">
                 {{element_icon | raw }}
-              </div>
               {{ element.title | trans }}
             </li>
           {%- endfor -%}
