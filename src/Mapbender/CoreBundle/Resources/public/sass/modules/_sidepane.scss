@@ -6,6 +6,7 @@
     height: 100%;
     overflow: visible;
     width: 350px;
+    max-width: 100vw;
     position: absolute;
     z-index: 3;
 
@@ -27,9 +28,10 @@
         border-left: 1px solid var(--sidepane-border-color);
 
         .sidePane--collapsed {
-            left: 0.5rem;
+            right: 0.5rem;
 
             &.closed {
+                right: initial;
                 left: calc(-1 * var(--sidepane-collapsed-width));
             }
         }
@@ -45,6 +47,7 @@
             width: 3px;
             height: 100%;
             cursor: ew-resize;
+            z-index: 10;
         }
 
         &.left::after {
@@ -90,14 +93,7 @@
         font-size: 1rem;
         padding: 0 var(--sidepane-padding-right) 0 var(--sidepane-padding-left);
         margin-bottom: 0.5rem;
-
-        .sidePane.left & {
-            padding-right: 40px;
-        }
-
-        .sidePane.right & {
-            padding-left: 40px;
-        }
+        padding-right: 40px;
     }
 
     .accordion-cell, .list-group-item-content {
