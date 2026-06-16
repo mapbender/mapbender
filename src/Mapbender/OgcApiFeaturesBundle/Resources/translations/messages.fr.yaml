@@ -1,7 +1,7 @@
 mb:
   ogcapifeatures:
     admin:
-      json_url: URL du service OGC API Features
+      json_url: URL du service OGC API - Features
       feature_limit: Nombre max. d'objets
       layers: Collections
       layer:
