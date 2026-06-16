@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Command;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\OraclePlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
@@ -39,9 +40,10 @@ class DatabaseUpgradeCommand extends Command
      * @param OutputInterface $output
      * @return int|null|void
      */
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        // converts PHP-serialized data to JSON and adjusts column types
+        $this->updateArrayToJsonTypes($input, $output);
         $this->updateMapElementConfigs($input, $output);
         $this->updateDoctrineTypes($input, $output);
         $this->updateButtonTypes($input, $output);
@@ -113,9 +115,9 @@ class DatabaseUpgradeCommand extends Command
         $connection = $this->em->getConnection();
         $output->writeln("Checking for outdated doctrine column definitions ...");
 
-        $platform = $connection->getDriver()->getDatabasePlatform();
+        $platform = $connection->getDatabasePlatform();
         // for postgresql we can update all fields at once, including fields from custom tables
-        if ($platform instanceof PostgreSqlPlatform) {
+        if ($platform instanceof PostgreSQLPlatform) {
             $result = $connection->executeQuery("SELECT isc.table_name, isc.column_name FROM information_schema.columns isc "
                 . "WHERE pg_catalog.col_description(format('%s.%s',isc.table_schema,isc.table_name)::regclass::oid,isc.ordinal_position) = '(DC2Type:json_array)';");
             $oldJsonArrays = $result->fetchAllAssociative();
@@ -182,5 +184,230 @@ class DatabaseUpgradeCommand extends Command
         $this->em->flush();
     }
 
-}
+    /**
+     * Migrates columns that used the Doctrine 'array'/'object' type to the 'json' type (required for DBAL 4).
+     * For each affected column, existing PHP-serialized data is converted to JSON before the column type is altered.
+     */
+    protected function updateArrayToJsonTypes(InputInterface $input, OutputInterface $output): void
+    {
+        $connection = $this->em->getConnection();
+        $output->writeln("Migrating array/object typed columns to JSON (DBAL 4 compatibility) ...");
 
+        $platform = $connection->getDatabasePlatform();
+
+        // Columns to migrate from Doctrine 'array'/'object' type to JSON
+        // format: tableName => [columnName, ...]
+        $jsonMigrations = [
+            'mb_core_application'             => ['extra_assets'],
+            'mb_core_element'                 => ['configuration'],
+            'mb_core_regionproperties'        => ['properties'],
+            'mb_core_viewmanager_state'       => ['layerset_states', 'source_states'],
+            'mb_wms_wmsinstance'              => ['dimensions', 'vendorspecifics'],
+            'mb_wms_wmslayersource'           => [
+                'latlonBounds', 'boundingBoxes', 'srs', 'styles', 'scale',
+                'attribution', 'identifier', 'authority', 'metadataUrl',
+                'dimension', 'dataUrl', 'featureListUrl',
+            ],
+            'mb_wms_wmssource'                => [
+                'exceptionFormats', 'getCapabilities', 'getMap', 'getFeatureInfo',
+                'describeLayer', 'getLegendGraphic', 'getStyles', 'putStyles',
+            ],
+            'mb_wmts_theme'                   => ['layerrefs'],
+            'mb_wmts_tilematrixset'           => ['tilematrices'],
+            'mb_wmts_wmtslayersource'         => [
+                'latlonBounds', 'boundingBoxes', 'styles', 'infoformats',
+                'tilematrixSetlinks', 'resourceUrl',
+            ],
+            'mb_wmts_wmtssource'              => ['getTile', 'getFeatureInfo'],
+        ];
+
+
+        if ($platform instanceof PostgreSQLPlatform) {
+            $migrated = 0;
+
+            foreach ($jsonMigrations as $table => $columns) {
+                foreach ($columns as $column) {
+                    // PostgreSQL folds unquoted identifiers to lowercase; use lowercase for all lookups and SQL
+                    $colDb = strtolower($column);
+                    $currentType = $this->getColumnDataType($connection, $table, $colDb);
+                    if ($currentType === null) {
+                        $output->writeln("  Skipping $table.$column (column not found in schema)");
+                        continue;
+                    }
+                    if (in_array($currentType, ['json', 'jsonb'], true)) {
+                        // Already JSON — just ensure the DC2Type comment is cleared
+                        $connection->executeQuery("COMMENT ON COLUMN \"$table\".\"$colDb\" IS ''");
+                        continue;
+                    }
+
+                    // Convert rows that still contain PHP-serialized data to valid JSON before ALTER
+                    $dataConverted = $this->convertPhpSerializedColumnToJson($connection, $table, $colDb, $output);
+                    if ($dataConverted > 0) {
+                        $output->writeln("  Converted $dataConverted PHP-serialized value(s) in $table.$column to JSON");
+                    }
+
+                    $output->writeln("  Migrating $table.$column ($currentType -> JSON)");
+                    // NULLIF handles empty strings; ::json performs the cast
+                    $connection->executeQuery(
+                        "ALTER TABLE \"$table\" ALTER \"$colDb\" TYPE JSON USING NULLIF(\"$colDb\", '')::json"
+                    );
+                    $connection->executeQuery("COMMENT ON COLUMN \"$table\".\"$colDb\" IS ''");
+                    $migrated++;
+                }
+            }
+
+            if ($migrated > 0) {
+                $output->writeln("Migrated $migrated columns.");
+            } else {
+                $output->writeln("All columns were already up to date.");
+            }
+
+        } elseif ($platform instanceof MySQLPlatform) {
+            // MySQL: MODIFY column to JSON; check current type to stay idempotent
+            $migrated = 0;
+
+            foreach ($jsonMigrations as $table => $columns) {
+                foreach ($columns as $column) {
+                    try {
+                        $result = $connection->executeQuery(
+                            "SELECT DATA_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = :table AND COLUMN_NAME = :column AND TABLE_SCHEMA = DATABASE()",
+                            ['table' => $table, 'column' => $column]
+                        );
+                        $currentType = $result->fetchOne();
+                        if ($currentType === 'json') {
+                            continue;
+                        }
+                        // Convert PHP-serialized data before altering the column
+                        $dataConverted = $this->convertPhpSerializedColumnToJson($connection, $table, $column, $output);
+                        if ($dataConverted > 0) {
+                            $output->writeln("  Converted $dataConverted PHP-serialized value(s) in $table.$column to JSON");
+                        }
+                        $output->writeln("  Migrating $table.$column to JSON");
+                        $connection->executeQuery("ALTER TABLE `$table` MODIFY `$column` JSON COMMENT '(DC2Type:json)'");
+                        $migrated++;
+                    } catch (\Exception $e) {
+                        $output->writeln("  Could not migrate $table.$column: " . $e->getMessage());
+                    }
+                }
+            }
+
+            if ($migrated > 0) {
+                $output->writeln("Migrated $migrated columns.");
+            } else {
+                $output->writeln("All columns were already up to date.");
+            }
+
+        } elseif ($platform instanceof SqlitePlatform) {
+            // SQLite uses dynamic typing, so ALTER COLUMN TYPE is not supported and not needed.
+            // However, existing data may still be stored as PHP-serialized strings (from the old
+            // Doctrine 'array'/'object' type), which Doctrine 4 can no longer decode as JSON.
+            // Convert the data in-place: the column stays TEXT, but its content becomes valid JSON.
+            $converted = 0;
+            foreach ($jsonMigrations as $table => $columns) {
+                foreach ($columns as $column) {
+                    $colDb = strtolower($column);
+                    // Check whether the table exists (schema may differ between installations)
+                    $tableExists = $connection->executeQuery(
+                        "SELECT name FROM sqlite_master WHERE type='table' AND name=:table",
+                        ['table' => $table]
+                    )->fetchOne();
+                    if (!$tableExists) {
+                        continue;
+                    }
+                    $dataConverted = $this->convertPhpSerializedColumnToJson($connection, $table, $colDb, $output);
+                    if ($dataConverted > 0) {
+                        $output->writeln("  Converted $dataConverted PHP-serialized value(s) in $table.$column to JSON");
+                        $converted += $dataConverted;
+                    }
+                }
+            }
+            if ($converted > 0) {
+                $output->writeln("SQLite: converted $converted value(s) from PHP-serialized to JSON.");
+            } else {
+                $output->writeln("SQLite: all column data was already up to date.");
+            }
+
+        } else {
+            $output->writeln("Unsupported platform. Please manually migrate array/object columns to JSON type.");
+        }
+    }
+
+    /**
+     * For a given table column, reads all rows that still contain PHP-serialized data,
+     * unserializes them in PHP, re-encodes them as JSON and writes them back to the database.
+     * This must be done before altering the column type to JSON.
+     * Returns the number of rows that were converted.
+     */
+    private function convertPhpSerializedColumnToJson(
+        Connection $connection,
+        string $table,
+        string $column,
+        OutputInterface $output
+    ): int {
+        $result = $connection->executeQuery(
+            "SELECT id, \"$column\" FROM \"$table\" WHERE \"$column\" IS NOT NULL AND \"$column\" != ''"
+        );
+        $rows = $result->fetchAllAssociative();
+
+        $converted = 0;
+        foreach ($rows as $row) {
+            // Normalize keys to lowercase to handle databases (e.g. SQLite) that preserve
+            // the original schema casing in result sets regardless of the query casing.
+            $row = array_change_key_case($row, CASE_LOWER);
+            $value = $row[$column];
+            if (!$this->isPhpSerialized($value)) {
+                continue;
+            }
+            $unserialized = @unserialize($value);
+            if ($unserialized === false && $value !== 'b:0;') {
+                $output->writeln("  WARNING: Could not unserialize value in $table.$column for id={$row['id']}, skipping row");
+                continue;
+            }
+            // Store PHP null as database NULL rather than the JSON string 'null'
+            if ($unserialized === null) {
+                $connection->executeQuery(
+                    "UPDATE \"$table\" SET \"$column\" = NULL WHERE id = :id",
+                    ['id' => $row['id']]
+                );
+            } else {
+                $json = json_encode($unserialized, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $connection->executeQuery(
+                    "UPDATE \"$table\" SET \"$column\" = :json WHERE id = :id",
+                    ['json' => $json, 'id' => $row['id']]
+                );
+            }
+            $converted++;
+        }
+
+        return $converted;
+    }
+
+    /**
+     * Returns true if the given string appears to be PHP-serialized data (produced by serialize()).
+     * PHP serialization uses prefixes like a: (array), O: (object), s: (string), i: (int), etc.
+     * Special case: serialize(null) produces 'N;' (no colon, just semicolon).
+     */
+    private function isPhpSerialized(string $value): bool
+    {
+        // serialize(null) === 'N;'  — no colon, must be checked explicitly
+        if ($value === 'N;') {
+            return true;
+        }
+        // All other PHP-serialized types use "type_char:..." format
+        return (bool) preg_match('/^[abiCdOrsS]:/', $value);
+    }
+
+    /**
+     * Returns the data_type of a column from information_schema, or null if the column does not exist.
+     * Works for PostgreSQL and MySQL.
+     */
+    private function getColumnDataType(Connection $connection, string $table, string $column): ?string
+    {
+        $result = $connection->executeQuery(
+            "SELECT data_type FROM information_schema.columns WHERE table_name = :table AND column_name = :column",
+            ['table' => $table, 'column' => $column]
+        );
+        $row = $result->fetchAssociative();
+        return $row ? $row['data_type'] : null;
+    }
+}

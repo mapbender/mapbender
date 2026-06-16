@@ -61,13 +61,13 @@ class ViewManagerState
     /**
      * @var mixed[]
      */
-    #[ORM\Column(name: 'layerset_states', type: 'array')]
+    #[ORM\Column(name: 'layerset_states', type: 'json')]
     protected $layersetStates;
 
     /**
      * @var mixed[]
      */
-    #[ORM\Column(name: 'source_states', type: 'array')]
+    #[ORM\Column(name: 'source_states', type: 'json')]
     protected $sourceStates;
 
     public function __construct()

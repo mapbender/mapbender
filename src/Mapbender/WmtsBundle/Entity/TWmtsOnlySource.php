@@ -130,6 +130,9 @@ trait TWmtsOnlySource
      */
     public function getGetTile()
     {
+        if (is_array($this->getTile)) {
+            return RequestInformation::fromArray($this->getTile);
+        }
         return $this->getTile;
     }
 
@@ -146,6 +149,9 @@ trait TWmtsOnlySource
      */
     public function getGetFeatureInfo()
     {
+        if (is_array($this->getFeatureInfo)) {
+            return RequestInformation::fromArray($this->getFeatureInfo);
+        }
         return $this->getFeatureInfo;
     }
 

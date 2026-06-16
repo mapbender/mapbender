@@ -41,7 +41,7 @@
         </service>
         <service id="Mapbender\ManagerBundle\Controller\LayersetController"
                  class="Mapbender\ManagerBundle\Controller\LayersetController"
-                 public="true" lazy="true">
+                 public="true">
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <tag name="container.service_subscriber" />
             <call method="setContainer">

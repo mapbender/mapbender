@@ -22,10 +22,10 @@ class AnnotatedRouteControllerLoader extends FrameworkAttributeRouteControllerLo
      * FOM\ManagerBundle\Configuration\Route,
      * this adds the configured prefix.
      */
-    protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method, $annot)
+    protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method, object $attr): void
     {
-        parent::configureRoute($route, $class, $method, $annot);
-        if(is_a($annot, ManagerRoute::class)) {
+        parent::configureRoute($route, $class, $method, $attr);
+        if(is_a($attr, ManagerRoute::class)) {
             $route->setPath($this->prefix . $route->getPath());
         }
     }

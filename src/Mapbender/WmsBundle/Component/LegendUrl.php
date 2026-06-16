@@ -95,4 +95,20 @@ class LegendUrl
         return $this->height;
     }
 
+    /**
+     * Reconstruct from a plain array (e.g. after JSON column hydration by Doctrine/DBAL 4).
+     *
+     * @param array<string, mixed>|null $data
+     * @return static|null
+     */
+    public static function fromArray(?array $data): ?static
+    {
+        if ($data === null) {
+            return null;
+        }
+        $onlineResource = isset($data['onlineResource'])
+            ? OnlineResource::fromArray($data['onlineResource'])
+            : null;
+        return new static($onlineResource, $data['width'] ?? null, $data['height'] ?? null);
+    }
 }
