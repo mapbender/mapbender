@@ -43,68 +43,60 @@
 
 
     {% elseif region_props.name == 'accordion' %}
-      <div class="accordionContainer list-group">
-          {%- for element_info in _visible -%}
-              {%- set element = element_info.element -%}
-              {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
-                  <div class="sidePane__inline-element">
-                      <div>
-                          {{ element_info.content | raw }}
-                      </div>
-                  </div>
-              {% endif %}
-          {%- endfor -%}
-        {%- for element_info in _visible -%}
-          {%- set element = element_info.element -%}
-          {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
-              {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
-              <div id="accordion{{loop.index}}" class="element-title {{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
-                  {% if element_icon %}
-                    <span class="element-icon-wrapper">{{element_icon | raw }}</span>
-                  {% endif %}
-                   {{ element.title | trans }}
-              </div>
-              <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
-                  <div class="accordion-cell">
-                      {{ element_info.content | raw }}
-                  </div>
-              </div>
-            {% endif %}
-        {%- endfor -%}
-      </div>
+        <div class="accordionContainer list-group">
+            {%- for element_info in _visible -%}
+                {%- set element = element_info.element -%}
+                {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
+                    <div class="sidePane__inline-element">
+                        <div>
+                            {{ element_info.content | raw }}
+                        </div>
+                    </div>
+                {% else %}
+                    {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
+                    <div id="accordion{{ loop.index }}" class="element-title {{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
+                        {% if element_icon %}
+                            <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
+                        {% endif %}
+                        {{ element.title | trans }}
+                    </div>
+                    <div id="container{{ loop.index }}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
+                        <div class="accordion-cell">
+                            {{ element_info.content | raw }}
+                        </div>
+                    </div>
+                {% endif %}
+            {%- endfor -%}
+        </div>
 
 
     {% elseif region_props.name == 'list' %}
         <div class="listContainer">
-              {%- for element_info in _visible -%}
-                    {%- set element = element_info.element -%}
-                    {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
-                      <div class="sidePane__inline-element">
-                          <div>
-                              {{ element_info.content | raw }}
-                          </div>
-                      </div>
-                    {% endif %}
-                {%- endfor -%}
-                {%- for element_info in _visible -%}
-                    {%- set element = element_info.element -%}
-                    {% if element.configuration.openInline is not defined or element.configuration.openInline != 1 %}
-                      {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
-                      <div id="list_group_item{{loop.index}}" class="element-title list-group-item {{ element_visibility_class(element) | trim }}">
-                          {% if element_icon %}
-                              <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
-                          {% endif %}
-                          {{ element.title | trans }}
-                      </div>
-                    {% endif %}
-                {%- endfor -%}
+            {%- for element_info in _visible -%}
+                {%- set element = element_info.element -%}
+                {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
+                    <div class="sidePane__inline-element">
+                        <div>
+                            {{ element_info.content | raw }}
+                        </div>
+                    </div>
+                {% else %}
+                    {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
+                    <div id="list_group_item{{ loop.index }}" class="element-title list-group-item {{ element_visibility_class(element) | trim }}">
+                        {% if element_icon %}
+                            <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
+                        {% endif %}
+                        {{ element.title | trans }}
+                    </div>
+                {% endif %}
+            {%- endfor -%}
         </div>
         {%- for element_info in _visible -%}
             {%- set element = element_info.element -%}
             {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
             <div id="list_group_item_container{{loop.index}}" class="container-list-group-item">
                 <div class="list-group-item-header">
-                    <button class="list-back-btn{% if 'right' in region_class %}d-flex justify-content-end{% endif %}" type="button">
+                    <button class="list-back-btn" type="button">
                         <i class="fa-solid fa-angle-left iconBig"></i>
                         <span>{{ return_text | trans}}</span>
                     </button>
