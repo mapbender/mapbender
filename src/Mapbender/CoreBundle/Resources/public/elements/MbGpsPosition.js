@@ -35,6 +35,9 @@
         }
 
         _setup() {
+            this.stack = [];
+            this.observer = null;
+            this.firstPosition = false;
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
             if (this.options.autoStart === true) {
                 this.activate();
