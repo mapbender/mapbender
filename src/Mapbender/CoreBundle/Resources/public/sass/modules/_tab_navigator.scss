@@ -12,15 +12,15 @@
       padding: 0;
       white-space: normal;
       &.ui-state-active > a {
-        background-color: $buttonFirstActiveColor;
+        background-color: var(--button-active-background);
         z-index: 1;
         position: relative;
       }
       @extend .buttonCore;
-      font-size: $buttonFontSize;
+      font-size: var(--button-font-size);
       > a {
         @extend .buttonColors;
-        padding: ($space/4) ($space/2);
+        padding: calc(var(--space) / 4) calc(var(--space) / 2);
         // undo Bootstrap .nav-tabs>li>a border rules
         // @todo: if we don't want Bootstrap rules, do not add Bootstrap classes
         border: none;

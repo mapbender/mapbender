@@ -29,7 +29,7 @@
     }
 
   .btn-group {
-    margin-bottom: $space / 2;
+    margin-bottom: calc(var(--space) / 2);
   }
   .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
     text-decoration: none;

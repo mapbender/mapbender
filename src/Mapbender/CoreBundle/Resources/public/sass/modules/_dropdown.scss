@@ -38,8 +38,8 @@ select.numeric {
     display: block;
     cursor: default;
     margin: 0;
-    color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
-    background-color: $inputForegroundColor;
+    color: color-mix(in srgb, var(--input-background), var(--input-foreground) 10%);
+    background-color: var(--input-foreground);
   }
 
   ul {
@@ -58,7 +58,7 @@ select.numeric {
   font-weight: 400;
   color: var(--bs-body-color);
   &:not(.nested-group):hover {
-    background-color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
+    background-color: color-mix(in srgb, var(--input-background), var(--input-foreground) 10%);
   }
 }
 
@@ -98,6 +98,6 @@ select.numeric {
 .dropdown[disabled] {
 
     .dropdownValue {
-        background-color: mix($inputBackgroundColor, $inputForegroundColor, 90%);
+        background-color: color-mix(in srgb, var(--input-background), var(--input-foreground) 10%);
     }
 }

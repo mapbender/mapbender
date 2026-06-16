@@ -54,7 +54,7 @@
     .button-close {
         z-index: 2;
         margin-right: 2.8rem;
-        background-color: $backgroundColor;
+        background-color: var(--background-color);
         padding: 0;
 
         &:last-child {
@@ -65,7 +65,7 @@
     .dropdown:not(.bs-dropdown) {
         margin-left: 0;
         border: 1px solid #dee2e6;
-        background: $backgroundColor;
+        background: var(--background-color);
         text-align: left;
         display: table-cell;
         width: auto;

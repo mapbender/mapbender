@@ -1,0 +1,158 @@
+// ==========================================================================
+// CSS Custom Properties — single source of truth for runtime theming
+// ==========================================================================
+//
+// This file MUST be imported AFTER all SCSS variable overrides have been
+// applied (template variables, customer variables). The :root block uses
+// #{$var} interpolation, so SCSS variables must have their final values
+// at import time.
+//
+// Import order:
+//   1. libs/_variables.scss        (SCSS defaults with !default)
+//   2. template/xxx_variables.scss (template overrides)
+//   3. customer custom_variables   (customer overrides)
+//   4. THIS FILE                   (emits CSS custom properties)
+//   5. modules, theme files        (consume CSS vars)
+//
+// To override at runtime, redefine values in your own :root {} block.
+
+:root {
+    // ---- Typography ----
+    --font-family: #{$fontFamily};
+    --font-size: #{$fontSize};
+
+    // ---- Brand ----
+    --primary: #{$ciColor};
+    --primary-dark: color-mix(in srgb, var(--primary), black 20%);
+
+    // ---- Text ----
+    --text-color: #{$textColor};
+    --text-color-inactive: #636363;
+    --text-color-button-inactive: #747577;
+    --light-text-color: #{$lightFontColor};
+
+    // ---- Layout ----
+    --space: #{$space};
+    --popup-modal-width: #{$popupModalWidth};
+
+    // ---- Backgrounds ----
+    --background-color: #{$backgroundColor};
+
+    // ---- Borders ----
+    --border-color: #ddd;
+    --panel-border-color: #{$panelBorderColor};
+
+    // ---- Error ----
+    --error-color: #{$errorColor};
+
+    // ---- Focus ----
+    --focus-color: var(--primary);
+
+    // ---- Checkboxes ----
+    --checkbox-checked: var(--primary);
+    --checkbox-unchecked: #a0a0a0;
+    --checkbox-bg: transparent;
+    --checkbox-active-bg: transparent;
+
+    // ---- Menus ----
+    --menu-hover-color: rgba(0, 0, 0, 0.05);
+    --menu-background: #{$menuBackgroundColor};
+    --menu-background-opacity: #{$menuBackgroundOpacity};
+
+    // ---- Toolbar ----
+    --toolbar-background: #{$toolBarBackgroundColor};
+    --toolbar-opacity: #{$toolBarOpacity};
+    --toolbar-text-color: var(--text-color);
+    --toolbar-button-hover-opacity: #{$toolBarButtonHoverOpacity};
+    --toolbar-button-active-opacity: #{$toolBarButtonActiveOpacity};
+    --toolbar-button-active-background-color: #{$toolBarButtonActiveBackgroundColor};
+    --toolbar-button-active-background-hover-color: var(--primary-dark);
+
+    // ---- Buttons (primary) ----
+    --button-font-size: #{$buttonFontSize};
+    --button-background: #{$buttonFirstColor};
+    --button-text: #{$buttonTextColor};
+    --button-border: #{$buttonBorderColor};
+    --button-hover-background: #{$buttonHoverColor};
+    --button-hover-text: #{$buttonHoverTextColor};
+    --button-active-background: #{$buttonFirstActiveColor};
+    --button-active-text: #{$buttonActiveTextColor};
+    --button-focus-shadow: #{$buttonFirstActiveColor};
+
+    // ---- Buttons (white / outlined) ----
+    --button-white-foreground: var(--text-color);
+    --button-white-background: var(--background-color);
+    --button-white-background-hover: #f7f7fa;
+
+    // ---- Buttons (critical / danger) ----
+    --button-critical-background: #{$buttonCriticalFirstColor};
+    --button-critical-text: #{$buttonCriticalTextColor};
+    --button-critical-border: #{$buttonCriticalBorderColor};
+    --button-critical-hover-background: #{$buttonCriticalHoverColor};
+    --button-critical-hover-text: #{$buttonCriticalHoverTextColor};
+
+    // ---- Accordion ----
+    --accordion-font-size: #{$accordionFontSize};
+    --accordion-background: #{$accordionBackgroundColor};
+    --accordion-text: #{$accordionTextColor};
+    --accordion-active-background: #{$accordionActiveBackgroundColor};
+    --accordion-active-text: #{$accordionActiveTextColor};
+    --accordion-hover-background: #{$accordionHoverBackgroundColor};
+
+    // ---- Sidepane buttons ----
+    --sidepane-button-font-size: #{$sidepaneButtonFontSize};
+    --sidepane-button-background: #{$sidepaneButtonBackgroundColor};
+    --sidepane-button-text: #{$sidepaneButtonTextColor};
+    --sidepane-button-border: #{$sidepaneButtonBorderColor};
+    --sidepane-button-hover: #{$sidepaneButtonHoverColor};
+    --sidepane-button-active-text: #{$sidepaneButtonActiveTextColor};
+    --sidepane-button-active-background: #{$sidepaneButtonActiveBackgroundColor};
+
+    // ---- Sidepane ----
+    --sidepane-border-color: var(--border-color);
+    --sidepane-text-color: var(--text-color);
+    --sidepane-inactive-text-color: var(--text-color-inactive);
+    --sidepane-button-color: var(--text-color);
+    --sidepane-background-color: rgba(255, 255, 255, 0.9);
+    --sidepane-hover-color: var(--menu-hover-color);
+    --sidepane-active-background-color: rgba(0, 0, 0, 0.02);
+    --sidepane-collapsed-width: 3.4rem;
+    --sidepane-padding-left: 1rem;
+    --sidepane-padding-right: 1rem;
+    --sidepane-padding-y: 1rem;
+
+    // ---- Inputs ----
+    --input-background: #{$inputBackgroundColor};
+    --input-foreground: #{$inputForegroundColor};
+    --input-border-color: transparent;
+    --input-focus-border-color: #{$inputFocusBorderColor};
+    --input-disabled-fg: color-mix(in srgb, var(--input-foreground), white 40%);
+    --slider-handle-background: #{$sliderHandleBackgroundColor};
+    --slider-handle-border: #{$sliderHandleBorderColor};
+    --slider-handle-text: #{$sliderHandleTextColor};
+
+    // ---- Popup / Dialog ----
+    --popup-background: var(--background-color);
+    --popup-border-color: var(--panel-border-color);
+
+    // ---- Metadata Dialog ----
+    --metadata-background: var(--popup-background);
+    --metadata-border-color: var(--popup-border-color);
+    --metadata-heading-color: var(--text-color);
+    --metadata-section-toggle-color: var(--primary);
+    --metadata-header-background: var(--button-active-background);
+    --metadata-header-text: var(--button-active-text);
+
+    // ---- Layertree ----
+    --layertree-indent: 1.6em;
+    --layertree-row-padding: 0;
+    --layertree-checkbox-bg: var(--checkbox-bg);
+    --layertree-checkbox-active-bg: var(--checkbox-active-bg);
+    --tabcontainer-accordion-spacing: 15px;
+
+    // ---- Radii ----
+    --radius-sm: 2px;
+    --radius-md: 3px;
+    --radius-lg: 5px;
+    --radius-circle: 9999px;
+}

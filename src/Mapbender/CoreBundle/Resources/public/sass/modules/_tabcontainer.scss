@@ -1,31 +1,9 @@
 /** Frontend only */
-/**
-  Amend potentially undefined variables, if included directly from older template that doesn't define them.
-  See libs/_variables.scss for full set.
- */
-
-$accordionFontSize: 100% !default;
-$accordionBackgroundColor: $buttonFirstColor !default;
-$accordionTextColor: $lightFontColor !default;
-$accordionActiveBackgroundColor: darken($buttonFirstColor, 10%) !default;
-$accordionActiveTextColor: $lightFontColor !default;
-$accordionHoverBackgroundColor: darken($buttonFirstColor, 5%) !default;
-
-$sidepaneButtonFontSize: 100% !default;
-$sidepaneButtonTextColor: $lightFontColor !default;
-$sidepaneButtonBackgroundColor: $buttonFirstColor !default;
-$sidepaneButtonBorderColor: darken($buttonSecondColor, 5%) !default;
-$sidepaneButtonHoverColor: darken($buttonFirstColor, 5%) !default;
-$sidepaneButtonActiveTextColor: $lightFontColor !default;
-$sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
-
-$panelBorderColor: #888 !default;
-
 $hoverEffects: true !default;
 
 .tabContainer{
   .tab, .container {
-    border: 1px solid $panelBorderColor;
+    border: 1px solid var(--panel-border-color);
   }
   .tab{
     background-color: #fff;   // Must be opaque
@@ -120,15 +98,15 @@ $hoverEffects: true !default;
   .tab {
     @extend .buttonCore;
     display: inline-block;
-    font-size: $sidepaneButtonFontSize;
+    font-size: var(--sidepane-button-font-size);
     padding: 0.25em 10px;
     margin: 0 0.25em 0.1em 0;
-    color: $sidepaneButtonTextColor;
-    background-color: $sidepaneButtonBackgroundColor;
+    color: var(--sidepane-button-text);
+    background-color: var(--sidepane-button-background);
 
     &.active{
       cursor:default;
-      color: $sidepaneButtonActiveTextColor;
+      color: var(--sidepane-button-active-text);
       border-bottom: 3px solid var(--primary);
       margin-bottom: -2px;
     }
@@ -139,7 +117,7 @@ $hoverEffects: true !default;
     }
     @if $hoverEffects {
       &:hover:not(.active) {
-        background-color: $sidepaneButtonHoverColor;
+        background-color: var(--sidepane-button-hover);
       }
     }
   }
@@ -160,27 +138,27 @@ $hoverEffects: true !default;
     cursor: pointer;
     padding: 5px 0.5em;
     font-weight: 600;
-    font-size: $accordionFontSize;
-    color: $accordionTextColor;
-    background-color: $accordionBackgroundColor;
+    font-size: var(--accordion-font-size);
+    color: var(--accordion-text);
+    background-color: var(--accordion-background);
 
     &.active {
-        color: $accordionActiveTextColor;
-        background-color: $accordionActiveBackgroundColor;
+        color: var(--accordion-active-text);
+        background-color: var(--accordion-active-background);
     }
 
     @if $hoverEffects {
         &:hover:not(.active) {
-            background-color: $accordionHoverBackgroundColor;
+            background-color: var(--accordion-hover-background);
         }
     }
   .container-accordion {
     .accordion-cell {
-      padding-top: $space / 2;
+      padding-top: calc(var(--space) / 2);
     }
   }
   // spacing between consecutive content blocks
   .container-accordion + .accordion {
-    margin-top: 15px;
+    margin-top: var(--tabcontainer-accordion-spacing);
   }
 }

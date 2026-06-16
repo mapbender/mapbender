@@ -43,10 +43,10 @@
 // frontend
 @mixin frontendContainerStyle() {
   // do not use this; add toolBarColors class to your element, and / or optionally use
-  // opacity: $toolBarOpacity
-  background-color: $toolBarBackgroundColor;
+  // opacity: var(--toolbar-opacity)
+  background-color: var(--toolbar-background);
   color: var(--toolbar-text-color);
-  opacity: $toolBarOpacity;
+  opacity: var(--toolbar-opacity);
 }
 @mixin smartphones(){
   @media only screen

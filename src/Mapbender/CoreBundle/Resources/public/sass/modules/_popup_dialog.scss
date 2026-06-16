@@ -12,7 +12,7 @@
   }
 
   .ui-dialog-titlebar {
-    background-color: $buttonFirstActiveColor;
+    background-color: var(--button-active-background);
     padding-top: 7px;
     padding-bottom: 6px;
     position: relative;
