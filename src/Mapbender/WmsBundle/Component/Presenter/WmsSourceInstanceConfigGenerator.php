@@ -33,8 +33,13 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         protected UrlProcessor           $urlProcessor,
         protected TokenStorageInterface  $tokenStorage,
         protected EntityManagerInterface $em,
-        protected ?string                $defaultLayerOrder)
+        protected ?string                $defaultLayerOrder,
+        protected string                 $fiIframeSandboxParams,
+    )
     {
+        if (!preg_match('/^[a-zA-Z- ]+$/', $this->fiIframeSandboxParams)) {
+            throw new \InvalidArgumentException("mapbender.featureinfo.iframe_sandbox_params contains invalid characters");
+        }
     }
 
     /**
@@ -103,6 +108,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'ratio' => $ratio,
             'refreshInterval' => $sourceInstance->getRefreshInterval(),
             'layerOrder' => $sourceInstance->getLayerOrder(),
+            'iframeSandboxParams' => $this->fiIframeSandboxParams,
         );
     }
 

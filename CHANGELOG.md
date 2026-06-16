@@ -32,6 +32,15 @@ Other:
 * In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
 * Changed default login-backdrop image ([PR#1845](https://github.com/mapbender/mapbender/pull/1845))
 
+## v4.2.6
+Features:
+* [FeatureInfo] Make sandbox iframe attribute in the feature info dialog configurable using mapbender.featureinfo.iframe_sandbox_params ([#PR1844](https://github.com/mapbender/mapbender/pull/1844))
+* [Forgot password] make check for email case-insensitive ([#PR1856](https://github.com/mapbender/mapbender/pull/1856))
+
+Bugfixes:
+* Do not show "abort" error message ([#PR1855](https://github.com/mapbender/mapbender/pull/1855))
+* Fix activating visible layers by name ([#PR1839](https://github.com/mapbender/mapbender/pull/1839))
+
 ## v4.2.5
 Security:
 * [WMS] Always use Tunnel instead of OwsProxy to avoid leaking internal urls ([#PR1817](https://github.com/mapbender/mapbender/pull/1817))

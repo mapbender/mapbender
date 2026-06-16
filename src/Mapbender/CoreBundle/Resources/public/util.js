@@ -27,6 +27,11 @@ Mapbender.confirm = function (message) {
  * @param {string} [errorMessage] - Optional. Message shown to the user for non 403/404 errors.
  */
 Mapbender.handleAjaxError = function (error, retry, errorMessage) {
+    if (error.status === 0) {
+        // status 0 means the request is aborted which is not an error
+        // (e.g. a autocomplete search is cancelled when the next character is entered)
+        return;
+    }
     if (error.status !== 403 && error.status !== 404) {
         // For non-403 and 404 errors don't offer a reload and retry button, just forward to Mapbender.error
         return Mapbender.error(errorMessage || error.responseText || error.statusText || '');
