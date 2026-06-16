@@ -42,6 +42,7 @@
 
     {% elseif region_props.name == 'accordion' %}
         <div class="accordionContainer list-group">
+            {%- set firstAccordion = true -%}
             {%- for element_info in _visible -%}
                 {%- set element = element_info.element -%}
                 {% if element.configuration.openInline is defined and element.configuration.openInline == 1 %}
@@ -51,14 +52,16 @@
                         </div>
                     </div>
                 {% else %}
+                    {%- set isActive = firstAccordion -%}
+                    {%- set firstAccordion = false -%}
                     {%- set element_icon = find_icon(element, 'js-mb-icon') -%}
-                    <div id="accordion{{ loop.index }}" class="element-title {{ ('accordion' ~ (loop.first ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
+                    <div id="accordion{{ loop.index }}" class="element-title {{ ('accordion' ~ (isActive ? ' active' : '') ~ ' ' ~ element_visibility_class(element)) | trim }}">
                         {% if element_icon %}
                             <span class="element-icon-wrapper">{{ element_icon | raw }}</span>
                         {% endif %}
                         {{ element.title | trans }}
                     </div>
-                    <div id="container{{ loop.index }}" class="container-accordion{% if loop.first %} active{% endif %}" tabindex="-1">
+                    <div id="container{{ loop.index }}" class="container-accordion{% if isActive %} active{% endif %}" tabindex="-1">
                         <div class="accordion-cell">
                             {{ element_info.content | raw }}
                         </div>
