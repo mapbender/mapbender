@@ -119,7 +119,7 @@
                     if (result) {
                         this.showingSources.push(source);
                         this.showResponseContent_(source, result);
-                        this.activateByButton();
+                        this.activateOnResult();
                     } else {
                         this._removeContent(source);
                     }
@@ -171,7 +171,7 @@
             };
         }
 
-        activateByButton(callback, mbButton) {
+        activateOnResult() {
             if (this.highlightLayer && this.startedNewRequest) {
                 this.highlightLayer.getSource().clear();
                 this.startedNewRequest = false;
@@ -184,11 +184,15 @@
 
             if (!this.isPopup) return; // sidepane mode
 
-            super.activateByButton(callback, mbButton);
+            super.activateByButton();
         }
 
-        closeByButton() {
-            if (this.options.deactivateOnClose) {
+        activateByButton(callback) {
+            this.activate(callback);
+        }
+
+        closeByButton(callback) {
+            if (callback || this.options.deactivateOnClose) {
                 this.deactivate();
             } else {
                 super.closeByButton();
