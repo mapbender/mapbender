@@ -104,11 +104,11 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
                 if (empty($appConfig['url'])) {
                     $appConfig['url'] = $this->router->generate('mapbender_core_application_application', ['slug' => $slug]);
                 }
-                if (empty($appConfig['imgUrl'])) {
-                    $appConfig['imgUrl'] = false;
+                if (empty($appConfig['img_url'])) {
+                    $appConfig['img_url'] = false;
                     $imgPath = '/uploads/' . $slug . '/' . $application->getScreenshot();
                     if (@\is_file($this->rootDir . '/public' . $imgPath)) {
-                        $appConfig['imgUrl'] = $this->router->getContext()->getBaseUrl() . $imgPath;
+                        $appConfig['img_url'] = $this->router->getContext()->getBaseUrl() . $imgPath;
                     }
                 }
                 $preparedAppConfig[$group][$slug] = $appConfig;
@@ -132,7 +132,7 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
                     'title' => null,
                     'description' => null,
                     'url' => null,
-                    'imgUrl' => null,
+                    'img_url' => null,
                     'group' => null,
                 ];
             }

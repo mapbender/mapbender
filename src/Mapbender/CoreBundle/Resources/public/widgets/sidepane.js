@@ -91,13 +91,16 @@ $(function () {
     window.addEventListener("resize", constrainSize, false);
 
     $(document).on('pointerdown', '.sidePane.resizable', function (e) {
-        if ((sidePaneLeft && sidePaneWidth() - e.offsetX < BORDER_SIZE) || (!sidePaneLeft && e.offsetX < BORDER_SIZE)) {
+        const paneRect = this.getBoundingClientRect();
+        const offsetX = e.clientX - paneRect.left;
+
+        if ((sidePaneLeft && sidePaneWidth() - offsetX < BORDER_SIZE) || (!sidePaneLeft && offsetX < BORDER_SIZE)) {
             pointerPosition = e.x;
             $("body").addClass("prevent-selection");
             document.addEventListener("pointermove", resize);
         }
 
-        $(document).one('pointercancel pointerup', function (e) {
+        $(document).one('pointercancel pointerup', function () {
             document.removeEventListener("pointermove", resize);
             $("body").removeClass("prevent-selection");
         });

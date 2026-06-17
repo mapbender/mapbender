@@ -6,6 +6,7 @@
     height: 100%;
     overflow: visible;
     width: 350px;
+    max-width: 100vw;
     position: absolute;
     z-index: 3;
 
@@ -27,9 +28,10 @@
         border-left: 1px solid var(--sidepane-border-color);
 
         .sidePane--collapsed {
-            left: 0.5rem;
+            right: 0.5rem;
 
             &.closed {
+                right: initial;
                 left: calc(-1 * var(--sidepane-collapsed-width));
             }
         }
@@ -45,6 +47,7 @@
             width: 3px;
             height: 100%;
             cursor: ew-resize;
+            z-index: 10;
         }
 
         &.left::after {
@@ -62,11 +65,15 @@
         font-size: 1.4rem;
         position: absolute;
         top: 0;
-        background: var(--sidepane-background-color);
         z-index: 10;
         color: var(--sidepane-button-color);
 
+        &:hover {
+            background: var(--sidepane-hover-color);
+        }
+
         &.closed {
+            background: var(--sidepane-background-color);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -90,14 +97,7 @@
         font-size: 1rem;
         padding: 0 var(--sidepane-padding-right) 0 var(--sidepane-padding-left);
         margin-bottom: 0.5rem;
-
-        .sidePane.left & {
-            padding-right: 40px;
-        }
-
-        .sidePane.right & {
-            padding-left: 40px;
-        }
+        padding-right: var(--sidepane-closer-security-padding);
     }
 
     .accordion-cell, .list-group-item-content {
@@ -146,9 +146,13 @@
     padding-top: 16px;
     height: 100%;
 
-    > .auto-scroll-v {
-        // Grow "unstyled" sidepane vertically to avoid clipping misc popover markup
+    > .unstyled {
         height: 100%;
+        padding: var(--sidepane-padding-y) var(--sidepane-padding-right) var(--sidepane-padding-y) var(--sidepane-padding-left);
+
+        .mb-element {
+            margin-bottom: 15px;
+        }
     }
 }
 
@@ -157,9 +161,35 @@
     height: 100%;
     transform: translateX(0);
     transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
 
     &.list-shifted {
         transform: translateX(-100%);
+    }
+}
+
+.list-back-btn {
+    padding: var(--sidepane-padding-y) var(--sidepane-padding-right) var(--sidepane-padding-y) var(--sidepane-padding-left);
+    background: none;
+    border: none;
+    color: var(--sidepane-inactive-text-color);
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+
+    i {
+        margin-right: 8px;
+    }
+
+    &:hover {
+        color: var(--sidepane-text-color);
+    }
+
+    &:focus {
+        outline-offset: -2px;
     }
 }
 
@@ -182,34 +212,6 @@
         transform: translateX(-100%);
         opacity: 1;
         pointer-events: all;
-    }
-
-    .list-group-item-header {
-
-        .list-back-btn {
-            padding: var(--sidepane-padding-y) var(--sidepane-padding-right) var(--sidepane-padding-y) var(--sidepane-padding-left);
-            background: none;
-            border: none;
-            color: var(--sidepane-inactive-text-color);
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-
-            i {
-                margin-right: 8px;
-            }
-
-            &:hover {
-                color: var(--sidepane-text-color);
-            }
-
-            &:focus {
-                outline-offset: -2px;
-            }
-        }
     }
 
     .list-group-item-cell {

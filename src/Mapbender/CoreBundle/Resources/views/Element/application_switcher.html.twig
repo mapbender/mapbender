@@ -23,8 +23,8 @@
                 <li class="list-item">
                     <a href="{{ app.url }}"{% if app.description is defined and app.description %} title="{{ app.description }}"{% endif %}>
                         <div class="list-content">
-                            {% if app.imgUrl is defined and app.imgUrl != false %}
-                            <img src="{{ app.imgUrl }}" alt="{{ app.title }}">
+                            {% if app.img_url is defined and app.img_url != false %}
+                            <img src="{{ app.img_url }}" alt="{{ app.title }}">
                             {% else %}
                                 <img class="bg-light" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAA
                                     ACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABfElEQVR4
