@@ -59,7 +59,13 @@
     
     {# Frame tracking table #}
     <div class="form-group no-gutters frame-table -fn-frame-table">
-        <h4>{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
+        <div>
+            <h4>{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
+            <div class="frame-table-buttons">
+                <i class="fa far fa-trash-can clickable hover-highlight-effect -fn-delete-all-frames" 
+                   title="{{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}"></i>
+            </div>
+        </div>
         <div class="frame-table-empty-state -fn-frame-table-empty">
             <p>{{ 'mb.print.printclient.batchprint.tracking.empty' | trans }}</p>
         </div>
@@ -72,8 +78,7 @@
                         <th>{{ 'mb.print.printclient.batchprint.tracking.template' | trans }}</th>
                         <th>{{ 'mb.print.printclient.batchprint.tracking.quality' | trans }}</th>
                         <th>{{ 'mb.print.printclient.batchprint.tracking.rotation' | trans }}</th>
-                        <th><i class="fa far fa-trash-can clickable hover-highlight-effect -fn-delete-all-frames"
-                               title="{{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}"></i></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>

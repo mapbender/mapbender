@@ -155,13 +155,29 @@
     margin-top: 15px;
     margin-bottom: 20px;
 
-    h4 {
-      margin: 0 0 10px 0;
-      font-size: 13px;
+    > div:first-of-type {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+
+      h4 {
+        margin: 0;
+        font-size: 13px;
+      }
     }
 
     .frame-table-buttons {
-      display: none; // unused, kept for safety
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      display: none; // Hide by default until frames are added
+      margin-right: 10px;
+      
+      .fa-trash-can {
+        cursor: pointer;
+        font-size: 16px;
+      }
     }
 
     // Empty state styling
@@ -197,13 +213,6 @@
 
         &:last-child {
           text-align: right;
-
-          // Delete-all icon in header
-          .-fn-delete-all-frames {
-            cursor: pointer;
-            font-size: 14px;
-            display: none; // hidden until frames exist
-          }
         }
       }
 
