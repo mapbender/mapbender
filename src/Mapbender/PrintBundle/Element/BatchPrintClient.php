@@ -233,7 +233,11 @@ class BatchPrintClient extends PrintClient
     private function handleMultiFrameDirect(Request $request, Element $element): Response
     {
         $jobDataWrapper = $this->prepareMultiFrameJobData($request, $element);
-        
+
+        if (empty($jobDataWrapper['frames'])) {
+            return new Response('No valid frame definitions provided.', Response::HTTP_BAD_REQUEST);
+        }
+
         // Use print service directly instead of queue
         $pdfContent = $this->printService->dumpPrint($jobDataWrapper);
         
