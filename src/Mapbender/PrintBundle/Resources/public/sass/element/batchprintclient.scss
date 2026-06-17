@@ -139,8 +139,7 @@
   }
 
   // Shared button styling for all button groups
-  .geofile-button-wrapper,
-  .frame-table .frame-table-buttons {
+  .geofile-button-wrapper {
     button {
       white-space: nowrap;
       padding: 4px 12px;
@@ -156,29 +155,13 @@
     margin-top: 15px;
     margin-bottom: 20px;
 
-    > div:first-of-type {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-
-      h4 {
-        margin: 0;
-        font-size: 13px;
-      }
+    h4 {
+      margin: 0 0 10px 0;
+      font-size: 13px;
     }
 
     .frame-table-buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      display: none; // Hide by default until frames are added
-      margin-right: 10px; // Move trash icon slightly to the left
-      
-      .fa-trash-can {
-        cursor: pointer;
-        font-size: 16px;
-      }
+      display: none; // unused, kept for safety
     }
 
     // Empty state styling
@@ -214,6 +197,13 @@
 
         &:last-child {
           text-align: right;
+
+          // Delete-all icon in header
+          .-fn-delete-all-frames {
+            cursor: pointer;
+            font-size: 14px;
+            display: none; // hidden until frames exist
+          }
         }
       }
 
