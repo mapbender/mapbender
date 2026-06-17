@@ -18,8 +18,10 @@
 
 :root {
     // ---- Typography ----
-    --font-family: #{$fontFamily};
-    --font-size: #{$fontSize};
+    --font-family: #{if($fontFamily, $fontFamily, sans-serif)};
+    --font-size: #{if($fontSize, $fontSize, 13px)};
+    --font-weight: normal;
+    --font-style: normal;
 
     // ---- Brand ----
     --primary: #{$ciColor};
