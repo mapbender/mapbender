@@ -219,7 +219,7 @@
                 this.openDropdownMenu();
             }
             if (currentChapter.region === 'sidepane' && this.sidePaneIsClosed()) {
-                await this.openSidePane();
+                await this.toggleSidePane(true);
             }
             const anchor = currentChapter.element.options.anchor;
             switch (true) {
@@ -234,6 +234,14 @@
                     break;
                 default:
                 // do nothing
+            }
+
+            // close sidepane if a positioned content element would be overlayed by the sidepane
+            if (!this.sidePaneIsClosed() && (
+                (currentChapter.region === 'content' && this.sidePanePosition() === 'right') ||
+                (currentChapter.region === 'content-left' && this.sidePanePosition() === 'left')
+            )) {
+                await this.toggleSidePane(false);
             }
             await this.calculatePopoverPosition(currentChapter);
         }
@@ -358,19 +366,48 @@
             }
         }
 
-        openSidePane() {
+        toggleSidePane(open) {
             return new Promise((resolve) => {
                 const sidePane = $('.sidePane')[0];
-                if (!this.sidePaneIsClosed()) {
+                const isDesiredState = () => this.sidePaneIsClosed() === !open;
+                if (!sidePane || isDesiredState()) {
                     resolve();
                     return;
                 }
-                const onTransitionEnd = () => {
-                    sidePane.removeEventListener('transitionend', onTransitionEnd);
-                    resolve();
+
+                let done = false;
+                const finish = () => {
+                    if (done) return;
+                    done = true;
+                    sidePane.removeEventListener('transitionend', onTransitionEnd, true);
+                    sidePane.removeEventListener('animationend', onTransitionEnd, true);
+                    window.clearTimeout(timeoutId);
+                    // Ensure measurements happen after class/layout updates are applied.
+                    window.requestAnimationFrame(resolve);
                 };
-                sidePane.addEventListener('transitionend', onTransitionEnd);
+
+                const onTransitionEnd = (event) => {
+                    if (sidePane.contains(event.target)) {
+                        finish();
+                    }
+                };
+
+                sidePane.addEventListener('transitionend', onTransitionEnd, true);
+                sidePane.addEventListener('animationend', onTransitionEnd, true);
+
+                // Some close paths do not emit transitionend on .sidePane. Poll for state as fallback.
+                const startedAt = performance.now();
+                const pollState = () => {
+                    if (isDesiredState() || performance.now() - startedAt > 1000) {
+                        finish();
+                        return;
+                    }
+                    window.requestAnimationFrame(pollState);
+                };
+
+                const timeoutId = window.setTimeout(finish, 1000);
                 $('.toggleSideBar').trigger('click');
+                pollState();
             });
         }
 
@@ -434,3 +471,6 @@
     window.Mapbender.Element = window.Mapbender.Element || {};
     window.Mapbender.Element.MbInteractiveHelp = MbInteractiveHelp;
 })();
+
+
+
