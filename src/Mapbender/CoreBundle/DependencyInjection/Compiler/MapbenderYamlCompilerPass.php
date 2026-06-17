@@ -36,11 +36,17 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
      */
     public function process(ContainerBuilder $container): void
     {
-        $sourcePaths = $container->getParameterBag()->resolveValue('%mapbender.yaml_application_dirs%');
         $this->setStrictElementConfigs($container->getParameterBag()->resolveValue('%mapbender.strict.static_app.element_configuration%'));
-        foreach ($sourcePaths as $path) {
+        $applicationPaths = $container->getParameterBag()->resolveValue('%mapbender.yaml_application_dirs%');
+        foreach ($applicationPaths as $path) {
             if (\is_dir($path)) {
                 $this->loadYamlApplications($container, $path);
+            }
+        }
+        $stylePaths = $container->getParameterBag()->resolveValue('%mapbender.yaml_style_dirs%');
+        foreach ($stylePaths as $path) {
+            if (\is_dir($path)) {
+                $this->loadYamlStyles($container, $path);
             }
         }
     }
@@ -69,7 +75,6 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     /**
      * Load YAML applications from path
      *
-     *
      * @param ContainerBuilder $container
      * @param string $path Application directory path
      */
@@ -96,6 +101,34 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     }
 
     /**
+     * Load YAML styles from path
+     *
+     * @param ContainerBuilder $container
+     * @param string $path Style directory path
+     */
+    protected function loadYamlStyles($container, $path)
+    {
+        $finder = new Finder();
+        $finder
+            ->in($path)
+            ->files()
+            ->name(['*.yml', '*.yaml'])
+        ;
+        $styles = array();
+
+        foreach ($finder as $file) {
+            $fileData = Yaml::parse(file_get_contents($file->getRealPath()));
+            if (!empty($fileData['parameters']['styles'])) {
+                foreach ($fileData['parameters']['styles'] as $key => $styleDefinition) {
+                    $styles[$key] = $this->prepareStyleConfig($styleDefinition, $key, $file->getRealPath());
+                }
+            }
+        }
+        $container->addResource(new DirectoryResource($path));
+        $this->addStyles($container, $styles);
+    }
+
+    /**
      * @param ContainerBuilder $container
      * @param array[][] $applications
      */
@@ -106,6 +139,64 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
             $applicationCollection = array_replace($applicationCollection, $applications);
             $container->setParameter('applications', $applicationCollection);
         }
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param array[] $styles
+     */
+    protected function addStyles($container, $styles)
+    {
+        if ($styles) {
+            $styleCollection = $container->getParameter('styles');
+            $styleCollection = array_replace($styleCollection, $styles);
+            $container->setParameter('styles', $styleCollection);
+        }
+    }
+
+    /**
+     * Validate the shape of a single YAML style definition. Fails fast with the
+     * offending file and key so configuration errors are easy to locate instead
+     * of surfacing as a late TypeError when the style list is rendered.
+     *
+     * @param mixed $definition
+     * @param int|string $key
+     * @param string $filename
+     * @return array
+     */
+    protected function prepareStyleConfig($definition, $key, $filename)
+    {
+        if (!\is_array($definition)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid YAML style "%s" in %s: definition must be a mapping, got %s.',
+                $key,
+                $filename,
+                \gettype($definition)
+            ));
+        }
+        if (\array_key_exists('style', $definition)
+            && !\is_array($definition['style'])
+            && !\is_string($definition['style'])
+        ) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid YAML style "%s" in %s: "style" must be a mapping or a JSON string.',
+                $key,
+                $filename
+            ));
+        }
+        if (isset($definition['style']) && \is_string($definition['style'])) {
+            try {
+                json_decode($definition['style'], true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid YAML style "%s" in %s: "style" is not valid JSON (%s).',
+                    $key,
+                    $filename,
+                    $e->getMessage()
+                ));
+            }
+        }
+        return $definition;
     }
 
     /**

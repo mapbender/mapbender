@@ -145,6 +145,7 @@ mb:
           confirm_delete: Deze stijl verwijderen?
           no_styles: Nog geen stijlen geconfigureerd.
           fallback_name: "Stijl #{id}"
+          yaml_readonly: "Gedefinieerd in YAML-configuratie (alleen-lezen)"
         editor:
           title_view: "Stijl #{id} bekijken"
           title_edit: "Stijl #{id} bewerken"
@@ -215,6 +216,7 @@ mb:
           json_syntax_only_note: "Alleen de JSON-syntaxis wordt gecontroleerd, niet de inhoudelijke juistheid van de Mapbox-stijl."
           remove_layer: Laag verwijderen
           readonly_notice: "Deze stijl is afkomstig van een OGC-API-bron en kan alleen worden bekeken. Wijzigingen zijn niet mogelijk."
+          yaml_readonly_notice: "Deze stijl is gedefinieerd in de YAML-configuratie en kan alleen worden bekeken. Wijzigingen moeten worden aangebracht in het configuratiebestand."
           text_field: Tekstveld
           size: Grootte
           font: Lettertype
