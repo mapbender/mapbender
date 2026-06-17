@@ -4,8 +4,13 @@ $(function () {
             this.$element = $(element);
             this.$switchButton = this.$element.find(".toggleSideBar");
             this.element = this.$element[0];
-            this.isLeft = this.$element.hasClass('left');
             this.pointerPosition = 0;
+            this.isLeft = this.$element.hasClass('left');
+            // potentially directly overridden in setupInitialState
+            this.isOpen = true;
+            this.isAnimating = false;
+            this.pendingRejects = [];
+            this.pendingResolves = [];
 
             this.BORDER_SIZE = 'ontouchstart' in document ? 12 : 6;
             // if you want to customize the max/min size use custom css (min-width/max-width on .sidePane.resizable),
@@ -17,22 +22,55 @@ $(function () {
             this.setupEvents();
         }
 
-        toggle() {
-            var wasOpen = !this.$element.hasClass('closed');
-            var animation = {};
-            var align = this.$element.hasClass('right') ? 'right' : 'left';
-            if (wasOpen) {
-                animation[align] = "-" + this.$element.outerWidth(true) + "px";
-            } else {
-                animation[align] = "0px";
+        async toggle() {
+            return await this.setOpen(!this.isOpen);
+        }
+
+        setOpen(open) {
+            if (open === this.isOpen && !this.isAnimating) {
+                return Promise.resolve();
+            }
+            if (open === this.isOpen && this.isAnimating) {
+                return new Promise((resolve, reject) => {
+                    this.pendingResolves.push(resolve);
+                    this.pendingRejects.push(reject);
+                });
             }
 
-            this.$element.addClass('animating');
-            this.$element.animate(animation, {
-                duration: 300,
-                complete: () => {
-                    this.$element.removeClass('animating').toggleClass('closed', wasOpen);
+            // stop current animations if applicable
+            this.$element.stop(true);
+            for (const reject of this.pendingRejects) {
+                reject();
+            }
+            this.pendingRejects = [];
+
+            return new Promise((resolve, reject) => {
+                const wasOpen = this.isOpen;
+                this.isOpen = open;
+                this.isAnimating = true;
+                this.pendingRejects.push(reject);
+                this.pendingResolves.push(reject);
+
+                var animation = {};
+                var align = this.isLeft ? 'left' : 'right';
+                if (wasOpen) {
+                    animation[align] = "-" + this.$element.outerWidth(true) + "px";
+                } else {
+                    animation[align] = "0px";
                 }
+
+                this.$element.addClass('animating');
+                this.$element.animate(animation, {
+                    duration: 300,
+                    complete: () => {
+                        this.$element.removeClass('animating').toggleClass('closed', wasOpen);
+                        for(const _resolve of this.pendingResolves) {
+                            _resolve();
+                        }
+                        this.pendingResolves = [];
+                        this.pendingRejects = [];
+                    }
+                });
             });
         };
 
@@ -62,6 +100,7 @@ $(function () {
         setupInitialState() {
             // TOGGLE SIDEPANE FUNCTIONALITY
             if (this.$element.hasClass('closed')) {
+                this.isOpen = false;
                 if (this.$element.hasClass("right")) {
                     this.$element.css({right: (this.$element.outerWidth(true) * -1) + "px"});
                 } else {

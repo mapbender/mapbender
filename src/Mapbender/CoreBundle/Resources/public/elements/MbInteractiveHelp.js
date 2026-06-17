@@ -218,15 +218,15 @@
             if (currentChapter.region === 'toolbar' && this.isDropdownMenu() && this.dropdownMenuIsClosed()) {
                 this.openDropdownMenu();
             }
-            if (currentChapter.region === 'sidepane' && this.sidePaneIsClosed()) {
-                await this.toggleSidePane(true);
+            if (currentChapter.region === 'sidepane') {
+                await Mapbender.sidePane.setOpen(true);
             }
             const anchor = currentChapter.element.options.anchor;
             switch (true) {
                 case currentChapter.region === 'content' && anchor.startsWith('left'):
                     currentChapter.region = currentChapter.region + '-left';
                     break;
-                case currentChapter.region === 'sidepane' && this.sidePanePosition() === 'right':
+                case currentChapter.region === 'sidepane' && !Mapbender.sidePane.isLeft:
                     currentChapter.region = currentChapter.region + '-right';
                     break;
                 case currentChapter.region === 'sidepane' && this.isMobile():
@@ -237,11 +237,11 @@
             }
 
             // close sidepane if a positioned content element would be overlayed by the sidepane
-            if (!this.sidePaneIsClosed() && (
-                (currentChapter.region === 'content' && this.sidePanePosition() === 'right') ||
-                (currentChapter.region === 'content-left' && this.sidePanePosition() === 'left')
+            if (!Mapbender.sidePane.isOpen && (
+                (currentChapter.region === 'content' && !Mapbender.sidePane.isLeft) ||
+                (currentChapter.region === 'content-left' && Mapbender.sidePane.isLeft)
             )) {
-                await this.toggleSidePane(false);
+                await Mapbender.sidePane.setOpen(false);
             }
             await this.calculatePopoverPosition(currentChapter);
         }
@@ -349,10 +349,6 @@
             return ($('.sidePane').hasClass('right')) ? 'right' : 'left';
         }
 
-        sidePaneIsClosed() {
-            return $('.sidePane').hasClass('closed');
-        }
-
         sidePaneType() {
             const $sidePane = $('.sidePane .sideContent > :first-child');
             if ($sidePane.hasClass('tabContainerAlt')) {
@@ -364,51 +360,6 @@
             } else { // unformatted sidepane
                 return 'list';
             }
-        }
-
-        toggleSidePane(open) {
-            return new Promise((resolve) => {
-                const sidePane = $('.sidePane')[0];
-                const isDesiredState = () => this.sidePaneIsClosed() === !open;
-                if (!sidePane || isDesiredState()) {
-                    resolve();
-                    return;
-                }
-
-                let done = false;
-                const finish = () => {
-                    if (done) return;
-                    done = true;
-                    sidePane.removeEventListener('transitionend', onTransitionEnd, true);
-                    sidePane.removeEventListener('animationend', onTransitionEnd, true);
-                    window.clearTimeout(timeoutId);
-                    // Ensure measurements happen after class/layout updates are applied.
-                    window.requestAnimationFrame(resolve);
-                };
-
-                const onTransitionEnd = (event) => {
-                    if (sidePane.contains(event.target)) {
-                        finish();
-                    }
-                };
-
-                sidePane.addEventListener('transitionend', onTransitionEnd, true);
-                sidePane.addEventListener('animationend', onTransitionEnd, true);
-
-                // Some close paths do not emit transitionend on .sidePane. Poll for state as fallback.
-                const startedAt = performance.now();
-                const pollState = () => {
-                    if (isDesiredState() || performance.now() - startedAt > 1000) {
-                        finish();
-                        return;
-                    }
-                    window.requestAnimationFrame(pollState);
-                };
-
-                const timeoutId = window.setTimeout(finish, 1000);
-                $('.toggleSideBar').trigger('click');
-                pollState();
-            });
         }
 
         isDropdownMenu() {
