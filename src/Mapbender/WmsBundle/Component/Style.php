@@ -126,4 +126,25 @@ class Style implements MutableUrlTarget
             $this->getLegendUrl()->setOnlineResource($onlineResource);
         }
     }
+
+    /**
+     * Reconstruct from a plain array (e.g. after JSON column hydration by Doctrine/DBAL 4).
+     *
+     * @param array<string, mixed>|null $data
+     * @return static|null
+     */
+    public static function fromArray(?array $data): ?static
+    {
+        if ($data === null) {
+            return null;
+        }
+        $style = new static();
+        $style->name     = $data['name']     ?? '';
+        $style->title    = $data['title']    ?? '';
+        $style->abstract = $data['abstract'] ?? '';
+        $style->legendUrl = isset($data['legendUrl'])
+            ? LegendUrl::fromArray($data['legendUrl'])
+            : null;
+        return $style;
+    }
 }

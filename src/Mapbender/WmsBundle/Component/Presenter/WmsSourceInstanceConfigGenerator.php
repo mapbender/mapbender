@@ -33,8 +33,13 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         protected UrlProcessor           $urlProcessor,
         protected TokenStorageInterface  $tokenStorage,
         protected EntityManagerInterface $em,
-        protected ?string                $defaultLayerOrder)
+        protected ?string                $defaultLayerOrder,
+        protected string                 $fiIframeSandboxParams,
+    )
     {
+        if (!preg_match('/^[a-zA-Z- ]+$/', $this->fiIframeSandboxParams)) {
+            throw new \InvalidArgumentException("mapbender.featureinfo.iframe_sandbox_params contains invalid characters");
+        }
     }
 
     /**
@@ -103,6 +108,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'ratio' => $ratio,
             'refreshInterval' => $sourceInstance->getRefreshInterval(),
             'layerOrder' => $sourceInstance->getLayerOrder(),
+            'iframeSandboxParams' => $this->fiIframeSandboxParams,
         );
     }
 
@@ -159,7 +165,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             "maxScale" => $this->getInheritedScale('maxScale', $layer),
             "bbox" => $this->getLayerBboxConfiguration($layer),
             "treeOptions" => $this->getTreeOptionsLayerConfig($layer),
-            "metadataUrl" => $this->getMetadataUrl($instance, $layer),
+            "metadataUrl" => $this->getMetadataUrl($application, $instance, $layer),
             "availableStyles" => $styles,
         );
         $configuration += array_filter(array(
@@ -171,21 +177,19 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     /**
      * @param WmsInstanceLayerArray $instanceLayer
      */
-    protected function getMetadataUrl(WmsInstance $instance, array $instanceLayer): ?string
+    protected function getMetadataUrl(Application $application, WmsInstance $instance, array $instanceLayer): ?string
     {
         // no metadata for unpersisted instances (WmsLoader)
         if (!$instanceLayer['id']) {
             return null;
         }
-        $layerset = $instance->getLayerset();
-        if ($layerset && $layerset->getApplication() && !$layerset->getApplication()->isDbBased()) {
-            return null;
-        }
         $router = $this->urlProcessor->getRouter();
-        return $router->generate('mapbender_core_application_metadata', array(
-            'instance' => $instance,
+        return $router->generate('mapbender_core_application_metadata', [
+            'slug' => $application->getSlug(),
+            'instanceId' => $instance->getId(),
             'layerId' => $instanceLayer['id'],
-        ));
+            'layerName' => $instanceLayer['lsName'],
+        ]);
     }
 
     /**
@@ -559,6 +563,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         ;
         foreach ($allLayers as $layer) {
             /** @var WmsInstanceLayerArray $layer */
+            $layer = $this->hydrateLayerArrayData($layer);
             $pid = $layer['parentId'];
             if (!array_key_exists($pid, $this->preloadedLayersByParent)) {
                 $this->preloadedLayersByParent[$pid] = [];
@@ -634,4 +639,30 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             $this->preloadedLayersById[$array['id']] = $array;
         }
     }
+
+    /**
+     * Converts the raw array data returned by Doctrine HYDRATE_ARRAY (for JSON columns)
+     * into proper value objects, so the rest of the generator can call object methods on them.
+     *
+     * @param WmsInstanceLayerArray $layer
+     * @return WmsInstanceLayerArray
+     */
+    private function hydrateLayerArrayData(array $layer): array
+    {
+        if (is_array($layer['lsLatLonBounds'])) {
+            $layer['lsLatLonBounds'] = BoundingBox::create($layer['lsLatLonBounds']);
+        }
+        if (is_array($layer['lsScale'])) {
+            $layer['lsScale'] = MinMax::fromArray($layer['lsScale']);
+        }
+        if (is_array($layer['lsStyles'])) {
+            $layer['lsStyles'] = array_map(
+                static fn($s) => is_array($s) ? Style::fromArray($s) : $s,
+                $layer['lsStyles']
+            );
+        }
+        return $layer;
+    }
 }
+
+

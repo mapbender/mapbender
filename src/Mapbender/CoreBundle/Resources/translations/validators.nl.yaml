@@ -1,0 +1,4 @@
+mb.core.map.admin.min_one_layerset: 'Selecteer ten minste één lagenset.'
+mb.core.map.admin.epsg_invalid_format: "Het coördinatensysteem moet in het formaat \"EPSG:<cijfers>\" zijn."
+mb.core.map.admin.epsg_not_found: "Het opgegeven coördinatenreferentiesysteem is niet gevonden in de referentietabel."
+mb.core.map.admin.invalid_integer: "Alleen gehele getallen zijn toegestaan."

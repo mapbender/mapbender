@@ -1,8 +1,3 @@
-$backgroundColor: #fff !default;
-$darkFontColor: #3f3f3f !default;
-$textColor: $darkFontColor !default;
-$panelBorderColor: #888 !default;
-
 .mb-element-basesourceswitcher {
   .basesourcegroup, .basesourcesetswitch {
     cursor: pointer;
@@ -29,12 +24,12 @@ $panelBorderColor: #888 !default;
       padding: 5px;
     }
     .basesourcegroup, .basesourcesetswitch {
-      background-color: mix($backgroundColor, $textColor, 80%);
+      background-color: color-mix(in srgb, var(--background-color), var(--text-color) 20%);
       &:hover, &[data-state="active"]{
-        background-color: $backgroundColor;
+        background-color: var(--background-color);
       }
       transition: all .2s ease-in-out;
-      border:solid 1px $panelBorderColor;
+      border:solid 1px var(--panel-border-color);
     }
     .basesourcegroup, > .basesourcesetswitch {
       display: inline-block;
@@ -65,16 +60,16 @@ $panelBorderColor: #888 !default;
       border-bottom-width: 0;
       &:last-child {
         border-bottom-width: 1px;
-        border-bottom-left-radius: $radius;
-        border-bottom-right-radius: $radius;
+        border-bottom-left-radius: var(--radius-md);
+        border-bottom-right-radius: var(--radius-md);
       }
     }
     .basesourcegroup, > .basesourcesetswitch {
       &:first-child {
-        border-top-left-radius: $radius;
+        border-top-left-radius: var(--radius-md);
       }
       &:last-child{
-        border-top-right-radius: $radius;
+        border-top-right-radius: var(--radius-md);
       }
     }
   }
@@ -85,7 +80,7 @@ $panelBorderColor: #888 !default;
     }
   }
   .anchored-element-wrap & {
-    background-color: $backgroundColor;
+    background-color: var(--background-color);
     font-size: 1.6rem;
     border-radius: 3px;
     padding: 5px;

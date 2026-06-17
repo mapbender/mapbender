@@ -95,7 +95,7 @@ class Application implements YamlDefinedPermissionEntity
     #[ORM\Column(type: 'string', length: 256, nullable: true)]
     protected $screenshot;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $extra_assets;
 
     #[ORM\Column(type: 'datetime')]

@@ -1,9 +1,3 @@
-$panelBorderColor: #888 !default;
-$darkFontColor: #3f3f3f !default;
-$textColor: $darkFontColor !default;
-$menuBackgroundColor: #ebefef !default;
-$menuBackgroundOpacity: 0.5 !default;
-
 .mb-element-layertree{
   user-select: none;
   .leave {
@@ -11,7 +5,10 @@ $menuBackgroundOpacity: 0.5 !default;
     position: relative;
   }
   .leave .leave, .themeContainer .leave {
-    margin-left: 1.6em;
+    margin-left: var(--layertree-indent);
+  }
+  .leaveContainer {
+    padding: var(--layertree-row-padding);
   }
   .disabled {
     opacity: 0.4;
@@ -51,7 +48,7 @@ $menuBackgroundOpacity: 0.5 !default;
     display: none;
   }
   .error-icon-wrapper, .leave.state-error .layer-title {
-    color: $errorColor;
+    color: var(--error-color);
   }
 
   .disabled-placeholder {
@@ -61,7 +58,7 @@ $menuBackgroundOpacity: 0.5 !default;
   }
 
   .layer-highlight {
-    color: $ciColor;
+    color: var(--primary);
   }
 }
 
@@ -69,7 +66,7 @@ $layer-slider-bar-height: 5px;
 .layer-menu {
   color: var(--primary);
   position: static;
-  border-radius: $radius;
+  border-radius: var(--radius-md);
 
   .text-end {
     font-size: 1.2rem;
@@ -84,7 +81,7 @@ $layer-slider-bar-height: 5px;
   }
 
   .layer-opacity-title {
-    color: $textColor;
+    color: var(--text-color);
   }
 
   .layer-opacity-container {
@@ -93,7 +90,7 @@ $layer-slider-bar-height: 5px;
   }
 
   .layer-opacity-value {
-    color: $textColor;
+    color: var(--text-color);
     font-size: 0.9rem;
     font-family: inherit;
     min-width: 35px;
@@ -136,9 +133,12 @@ $layer-slider-bar-height: 5px;
 
 .-fn-toggle-selected, .-fn-toggle-dimension {
   color: var(--checkbox-unchecked);
+  background-color: var(--layertree-checkbox-bg);
+  border-radius: var(--radius-sm);
 
     &.active {
         color: var(--checkbox-checked);
+        background-color: var(--layertree-checkbox-active-bg);
     }
   font-size: 1.4em;
   display: flex;
@@ -155,7 +155,7 @@ $layer-slider-bar-height: 5px;
 }
 
 .layer-styles {
-    color: $textColor;
+    color: var(--text-color);
     .form-select{
         font-size: 0.85em;
     }
@@ -180,7 +180,7 @@ $layer-slider-bar-height: 5px;
         left: -100vw; // Extends to the sideContent margin
         right: -2rem;
         bottom: var(--menu-background-bottom, 1rem); // Dynamic value
-        background: rgba($menuBackgroundColor, $menuBackgroundOpacity);
+        background: color-mix(in srgb, var(--menu-background) calc(var(--menu-background-opacity) * 100%), transparent);
         z-index: -1;
         pointer-events: none;
     }

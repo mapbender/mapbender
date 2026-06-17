@@ -3,14 +3,14 @@ $hoverEffects: true !default;
 .mb-button {
   cursor: pointer;
   .toolBar & {
-    border-radius: 2 * $radius;
+    border-radius: var(--radius-lg);
     @if $hoverEffects {
       &:hover {
-        opacity: $toolBarButtonHoverOpacity;
+        opacity: var(--toolbar-button-hover-opacity);
       }
     }
     &.toolBarItemActive {
-      opacity: $toolBarButtonActiveOpacity;
+      opacity: var(--toolbar-button-active-opacity);
     }
     .iconBig + * {
       margin-left: 0.25em;

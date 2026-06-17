@@ -1,7 +1,7 @@
 mb:
   ogcapifeatures:
     admin:
-      json_url: URL сервісу OGC API Features
+      json_url: URL сервісу OGC API - Features
       feature_limit: Макс. об'єктів
       layers: Колекції
       layer:

@@ -1,20 +1,36 @@
-$panelBorderColor: #888 !default;
-
 .mb-element-overview {
+  --size-close-button: 28px;
+
   user-select: none;
   position: relative; // For .toggleOverview absolute
 
   .toggleOverview {
     position: absolute;
-    padding: 3px;
-    border-radius: 3px;
+    padding: 5px;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+    width: var(--size-close-button);
+    height: var(--size-close-button);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .anchored-element-wrap-lt &, .anchored-element-wrap-lb & {
+        border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    &.closed {
+      border-radius: var(--radius-md);
+      width: 33.4px;
+      height: 33.4px;
+    }
   }
 
   .olMap, .ol-overviewmap-map {
     background-color: white;
     transition: all .2s linear;
     .ol-viewport, .olMapViewport {
-      border: 1px solid $panelBorderColor;
+      border: 1px solid var(--panel-border-color);
     }
     .olMapViewport {
       > div {
@@ -49,19 +65,19 @@ $panelBorderColor: #888 !default;
   }
   .anchored-element-wrap-rt  & .toggleOverview {
     top: 0;
-    left: -2.25em;
+    left: calc(-1 * var(--size-close-button));
   }
   .anchored-element-wrap-lt & .toggleOverview {
     top: 0;
-    right: -2.25em;
+    right: calc(-1 * var(--size-close-button));
   }
   .anchored-element-wrap-rb & .toggleOverview {
-    bottom: 0;
-    left: -2.25em;
+    bottom: 1px;
+    left: calc(-1 * var(--size-close-button));
   }
   .anchored-element-wrap-lb & .toggleOverview {
     bottom: 0;
-    right: -2.25em;
+    right: calc(-1 * var(--size-close-button));
   }
   .anchored-element-wrap-lb &, .anchored-element-wrap-rb & {
     vertical-align: bottom;
@@ -71,7 +87,7 @@ $panelBorderColor: #888 !default;
 .olControlOverviewMapExtentRectangle, .ol-overviewmap-box {
   overflow: hidden;
   cursor: move;
-  border: 2px solid $firstColor;
+  border: 2px solid var(--primary);
 }
 
 .olControlOverviewMapRectReplacement {

@@ -1,4 +1,10 @@
 ## next feature release
+Breaking changes (for details on migration process see [UPGRADING.md]):
+* PHP 8.2 is now the minimum supported PHP version
+* Symfony updated to version 7.4 LTS
+* Doctrine DBAL updated to version 4.4
+* Doctrine ORM updated to version 3.6
+
 Security:
 * Allow custom permissions for source instances ([#PR1812](https://github.com/mapbender/mapbender/pull/1812), [#PR1825](https://github.com/mapbender/mapbender/pull/1825))
 
@@ -9,11 +15,13 @@ Features:
 * [BatchPrintClient] New batch printing element for creating multiple print frames in a single job ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
 * [ApplicationSwitcher] Enhance application switcher, e.g. to work in popup and allow external applications ([#PR1793](https://github.com/mapbender/mapbender/pull/1793))
 * [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
+* [Map] Improve form validation in backend ([#PR1851](https://github.com/mapbender/mapbender/pull/1851))
 * [SearchRouter] Extend SQLSearchEngine with support for dates, numbers and greater/lower than operators ([#PR1796](https://github.com/mapbender/mapbender/pull/1796))
 * [InteractiveHelp] Add new Interactive Help element ([#PR1808](https://github.com/mapbender/mapbender/pull/1808))
 * [HTMLElement] Add 'openInline' flag to provide more flexibility in sidebar and content area ([#PR1814](https://github.com/mapbender/mapbender/pull/1814))
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
 * [SearchRouter] Extend SQLSearchEngine to support multiple search values separated by configurable delimiters ([#PR1836](https://github.com/mapbender/mapbender/pull/1836))
+* [LayerTree] Also show metadata for YAML applications ([#PR1849](https://github.com/mapbender/mapbender/pull/1849))
 
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
@@ -23,6 +31,15 @@ Other:
 * [Develop] New shared File utility module for geospatial file handling (KML, GeoJSON, GPX, GML) ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
 * In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
 * Changed default login-backdrop image ([PR#1845](https://github.com/mapbender/mapbender/pull/1845))
+
+## v4.2.6
+Features:
+* [FeatureInfo] Make sandbox iframe attribute in the feature info dialog configurable using mapbender.featureinfo.iframe_sandbox_params ([#PR1844](https://github.com/mapbender/mapbender/pull/1844))
+* [Forgot password] make check for email case-insensitive ([#PR1856](https://github.com/mapbender/mapbender/pull/1856))
+
+Bugfixes:
+* Do not show "abort" error message ([#PR1855](https://github.com/mapbender/mapbender/pull/1855))
+* Fix activating visible layers by name ([#PR1839](https://github.com/mapbender/mapbender/pull/1839))
 
 ## v4.2.5
 Security:

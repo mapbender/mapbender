@@ -8,7 +8,6 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
-use Wheregroup\DoctrineDbalShims\DependencyInjection\Compiler\PassIndex;
 
 /**
  * Mapbender base kernel
@@ -45,9 +44,6 @@ class BaseKernel extends Kernel
     protected function buildContainer(): ContainerBuilder
     {
         $container = parent::buildContainer();
-        if (\class_exists(PassIndex::class)) {
-            PassIndex::autoRegisterAll($container);
-        }
 
         $streamEnv = \getenv('MB_LOG_STREAM');
         if ($streamEnv && $streamEnv !== 'off' && $streamEnv !== 'false') {

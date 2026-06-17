@@ -21,6 +21,22 @@ class RequestInformation implements MutableUrlTarget
     public $httpPost;
 
     /**
+     * Reconstruct a RequestInformation object from a plain array (e.g. after JSON column hydration by Doctrine/DBAL 4).
+     *
+     * @param array<string, mixed> $data
+     * @return static
+     */
+    public static function fromArray(array $array): static
+    {
+        $instance = new static();
+        $instance->setHttpGetKvp($array['httpGetKvp'] ?? null);
+        $instance->setHttpGetRestful($array['httpGetRestful'] ?? null);
+        $instance->setHttpPost($array['httpPost'] ?? null);
+        return $instance;
+    }
+
+
+    /**
      * @return string|null
      */
     public function getHttpGetRestful()

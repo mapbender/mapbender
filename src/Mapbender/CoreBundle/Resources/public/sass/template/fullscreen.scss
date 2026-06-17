@@ -60,15 +60,14 @@ body {
   }
 
   .btn {
-    $mainColor: #6FB536;
     border-radius: 0;
     font-size: 11px;
     padding: 4px 9px;
     border-color: #538E24;
-    background-color: $mainColor;
+    background-color: #6FB536;
     color: #ffffff;
     &:hover, &:focus {
-      background-color: darken($mainColor, 10%);
+      background-color: color-mix(in srgb, #6FB536, black 10%);
     }
   }
 
@@ -168,11 +167,11 @@ body {
 }
 
 .toolPane{
- background-color: $backgroundColor;
+ background-color: var(--background-color);
 }
 
 .mb-element-zoombar .rotation{
-   background-color: $backgroundColor;
+   background-color: var(--background-color);
 }
 
 .notifyjs-wrapper .buttons {

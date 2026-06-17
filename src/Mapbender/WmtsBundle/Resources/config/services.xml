@@ -25,6 +25,7 @@
 
 		<service id="mapbender.source.wmts.config_generator" class="Mapbender\WmtsBundle\Component\Presenter\ConfigGeneratorWmts">
 			<argument type="service" id="mapbender.source.url_processor.service" />
+            <argument>%mapbender.featureinfo.iframe_sandbox_params%</argument>
 		</service>
 		<service id="mapbender.source.wmts.instance_factory"
 				 class="Mapbender\WmtsBundle\Component\InstanceFactoryWmts"
@@ -49,6 +50,7 @@
 		</service>
 		<service id="mapbender.source.tms.config_generator" class="Mapbender\WmtsBundle\Component\Presenter\ConfigGeneratorTms">
 			<argument type="service" id="mapbender.source.url_processor.service" />
+			<argument>%mapbender.featureinfo.iframe_sandbox_params%</argument>
 		</service>
 		<service id="mapbender.source.tms.instance_factory"
 				 class="Mapbender\WmtsBundle\Component\InstanceFactoryTms"

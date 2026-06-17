@@ -20,7 +20,7 @@ h4, .h4 {
 .form-label.required:after,
 .col-form-label.required:after {
   content: "*";
-  color: #aa2323;;
+  color: var(--error-color);
 }
 
 @media (max-width: 768px) {

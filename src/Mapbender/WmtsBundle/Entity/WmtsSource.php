@@ -18,6 +18,12 @@ class WmtsSource extends HttpTileSource
      */
     use TWmtsOnlySource;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    public $getTile = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    public $getFeatureInfo = null;
+
     public function __construct()
     {
         parent::__construct();

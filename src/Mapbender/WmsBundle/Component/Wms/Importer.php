@@ -14,8 +14,10 @@ use Mapbender\CoreBundle\Component\Source\HttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\HttpSourceLoader;
 use Mapbender\CoreBundle\Component\Source\SourceLoaderSettings;
 use Mapbender\CoreBundle\Component\XmlValidatorService;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
@@ -95,7 +97,7 @@ class Importer extends HttpSourceLoader
     {
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
-        $classMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($target));
+        $classMeta = $this->entityManager->getClassMetadata(DoctrineClassUtil::getRealClass($target));
         EntityUtil::copyEntityFields($target, $reloaded, $classMeta, false);
 
         $contact = clone $reloaded->getContact();
@@ -229,7 +231,7 @@ class Importer extends HttpSourceLoader
         $newRoot = new WmsInstanceLayer();
         $newRoot->populateFromSource($instance, $source->getRootlayer(), $settings);
 
-        $instanceLayerMeta = $this->entityManager->getClassMetadata(ClassUtils::getClass($newRoot));
+        $instanceLayerMeta = $this->entityManager->getClassMetadata(DoctrineClassUtil::getRealClass($newRoot));
 
         // Salvage / copy previously configured instance layer properties
         foreach ($instance->getLayers() as $newInstanceLayer) {
@@ -305,5 +307,10 @@ class Importer extends HttpSourceLoader
             $offset += $this->assignLayerPriorities($child, $value + $offset);
         }
         return $offset;
+    }
+
+    public function hasPersistedMetadata(Application $application, Source $source): bool
+    {
+        return $application->isDbBased();
     }
 }

@@ -4,14 +4,6 @@
   See libs/_variables.scss for full set.
  */
 $buttonFontSize: 100% !default;
-$buttonTextColor: $lightFontColor !default;
-$buttonBorderColor: darken($buttonSecondColor, 5%) !default;
-$buttonHoverColor: darken($buttonFirstColor, 5%) !default;
-$buttonHoverTextColor: $buttonTextColor !default;
-$buttonCriticalTextColor: $lightFontColor !default;
-$buttonCriticalBorderColor: darken($buttonCriticalSecondColor, 5%) !default;
-$buttonCriticalHoverColor: darken($buttonCriticalFirstColor, 5%) !default;
-$buttonCriticalHoverTextColor: $buttonCriticalTextColor !default;
 $hoverEffects: true !default;
 
 .button, .buttonCore, .linkButton {
@@ -26,7 +18,7 @@ $hoverEffects: true !default;
   display: inline-block;
 }
 .button{
-  padding:($space/4) ($space/2);
+  padding: calc(var(--space) / 4) calc(var(--space) / 2);
   line-height: 1;
   margin:0;
   text-decoration: none;
@@ -35,29 +27,29 @@ $hoverEffects: true !default;
   border-style: solid;
 
   &:focus {
-    box-shadow: 0 0 5px $buttonFirstActiveColor;
+    box-shadow: 0 0 5px var(--button-focus-shadow);
   }
 }
 .button, .buttonColors {
-  color: $buttonTextColor;
-  background-color:$buttonFirstColor;
-  border-color: $buttonBorderColor;
+  color: var(--button-text);
+  background-color: var(--button-background);
+  border-color: var(--button-border);
   @if $hoverEffects {
     &:hover {
-      color: $buttonHoverTextColor;
-      background-color: $buttonHoverColor;
+      color: var(--button-hover-text);
+      background-color: var(--button-hover-background);
     }
   }
 }
 
 .button.critical, .buttonColorsCritical {
-  color: $buttonCriticalTextColor;
-  background-color:$buttonCriticalFirstColor;
-  border-color: $buttonCriticalBorderColor;
+  color: var(--button-critical-text);
+  background-color: var(--button-critical-background);
+  border-color: var(--button-critical-border);
   @if $hoverEffects {
     &:hover {
-      color: $buttonCriticalHoverTextColor;
-      background-color: $buttonCriticalHoverColor;
+      color: var(--button-critical-hover-text);
+      background-color: var(--button-critical-hover-background);
     }
   }
 }

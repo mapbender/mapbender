@@ -3,36 +3,43 @@
 namespace Mapbender\CoreBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
 
 class ExtentType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('0', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('0', NumberType::class, array(
                 'label' => 'min x',
-                'attr' => array(
-                    'placeholder' => 'min x',
-                ),
+                'html5' => false,
+                'constraints' => [
+                    new NotBlank(),
+                ]
             ))
-            ->add('1', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('1', NumberType::class, array(
                 'label' => 'min y',
-                'attr' => array(
-                    'placeholder' => 'min y',
-                ),
+                'html5' => false,
+                'constraints' => [
+                    new NotBlank(),
+                ]
             ))
-            ->add('2', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('2', NumberType::class, array(
                 'label' => 'max x',
-                'attr' => array(
-                    'placeholder' => 'max x',
-                ),
+                'html5' => false,
+                'constraints' => [
+                    new NotBlank(),
+                ]
             ))
-            ->add('3', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('3', NumberType::class, array(
                 'label' => 'max y',
-                'attr' => array(
-                    'placeholder' => 'max y',
-                ),
+                'html5' => false,
+                'constraints' => [
+                    new NotBlank(),
+                ]
             ))
         ;
     }

@@ -6,6 +6,15 @@ $toolBarBorderColor: rgba($ciColor, 0.6) !default;
 @import "libs/normalize";
 @import "theme/mapbender3";
 
+// Mobile-specific CSS custom properties
+:root {
+    --toolbar-border-color: #{$toolBarBorderColor};
+    // Override slider handle colors: mobile uses $textColor/#333 for text and
+    // $buttonBorderColor/$toolBarFontColor for the border instead of core defaults.
+    --slider-handle-text: #{$textColor};
+    --slider-handle-border: #{$buttonBorderColor};
+}
+
 /* ------------------------------------------------------------- TABCONTAINER */
 .tabContainer {
   font-size: 75%;
@@ -25,7 +34,7 @@ $toolBarBorderColor: rgba($ciColor, 0.6) !default;
   }
 
   &.bottom {
-    border-top: 3px solid $toolBarBorderColor;
+    border-top: 3px solid var(--toolbar-border-color);
   }
 }
 /* --------------------------------------------------------------- MOBILEPANE */
@@ -42,7 +51,7 @@ $toolBarBorderColor: rgba($ciColor, 0.6) !default;
   .contentTitle {
     flex: 0;
     font-size: 132%;
-    border-bottom: solid 3px $ciColor;
+    border-bottom: solid 3px var(--primary);
   }
   position: relative;
   transition: all .3s ease-in-out;
@@ -57,11 +66,11 @@ $toolBarBorderColor: rgba($ciColor, 0.6) !default;
   flex: 1;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  padding: $space $space 0 $space;
+  padding: var(--space) var(--space) 0 var(--space);
 }
 
 .mobilePane .contentTitle {
-    margin: $space $space 0 $space;
+    margin: var(--space) var(--space) 0 var(--space);
 }
 
 body.mobile-template {

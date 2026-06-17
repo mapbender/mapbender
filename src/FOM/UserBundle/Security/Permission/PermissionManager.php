@@ -9,6 +9,7 @@ use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\Permission;
 use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Form\Type\PermissionListType;
+use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
@@ -306,7 +307,7 @@ class PermissionManager extends Voter
      */
     public function copyPermissions(mixed $sourceResource, mixed $targetResource, bool $allowClassMismatch = false): void
     {
-        if (!$allowClassMismatch && ClassUtils::getClass($sourceResource) !== ClassUtils::getClass($targetResource)) {
+        if (!$allowClassMismatch && DoctrineClassUtil::getRealClass($sourceResource) !== DoctrineClassUtil::getRealClass($targetResource)) {
             throw new \InvalidArgumentException("source and target resource must be of the same type");
         }
         $resourceDomain = $this->findResourceDomainFor($sourceResource, throwIfNotFound: true);

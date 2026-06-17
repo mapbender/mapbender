@@ -1,124 +1,126 @@
+// ==========================================================================
+// Mapbender CSS & SCSS Variables
+// ==========================================================================
+//
+// MIGRATION NOTE: SCSS variables are deprecated for theming purposes.
+// Use CSS custom properties (--var-name) instead for runtime overrides.
+// SCSS variables remain as compile-time defaults that feed into CSS vars.
+// Client projects should override CSS variables in :root or component scope.
+
 //------------------------------------------------------------------font
 $fontFamily: "Open Sans", "Calluna Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-$fontSize:13px;
+$fontSize: 13px;
 
-$ciColor: #279ddc; // Mapbender blue
-
-// Colors applied on body / normal content containers (sidepane, popups, mobile pane)
-$textColor: #333;
-$backgroundColor: #fff;
-$panelBorderColor: #888;
-
-//-----------------------------------------------------------------other
+//-----------------------------------------------------------------layout
 $space: 20px;
-$radius: 3px;
 $popupModalWidth: 600px;
 $desktopBreakpointWidth: 1200px;
 
-//----------------------------------------------------------------colors
-$firstColor:#404040; // dark gray
-$errorColor:#aa2323; // red
+//------------------------------------------------------------------colors
+// @deprecated Override --primary CSS variable instead
+$ciColor: #279ddc !default;
 
-$lightFontColor:#fff; // white
+// @deprecated Override --text-color CSS variable instead
+$textColor: #333 !default;
 
-// Toolbar colors (frontend)
-$toolBarBackgroundColor: #eee;
-$toolBarOpacity: 0.8;
-$toolBarButtonActiveBackgroundColor: $ciColor;
+// @deprecated Override --background-color CSS variable instead
+$backgroundColor: #fff !default;
 
-// Default and hover opacity for Button (and Button-like) Elements in toolbars
-$toolBarButtonHoverOpacity: 1.0;
-$toolBarButtonActiveOpacity: $toolBarButtonHoverOpacity;
+// @deprecated Override --border-color or --panel-border-color CSS variable instead
+$panelBorderColor: #888 !default;
 
+// @deprecated Override --error-color CSS variable instead
+$errorColor: #aa2323 !default;
 
-// Button colors
-$buttonCriticalFirstColor: #d36565;
-$buttonCriticalSecondColor: #b23a3a;
-$buttonFirstColor: $ciColor;
-$buttonSecondColor: $ciColor;
-$buttonTextColor: $lightFontColor;
-$buttonBorderColor: $ciColor;
-$buttonHoverColor: $ciColor;
-$buttonHoverTextColor: $buttonTextColor;
-$buttonFirstActiveColor: darken($ciColor, 10%); // Mapbender blue darkended
-$buttonActiveTextColor: $buttonTextColor;
-$buttonCriticalTextColor: $lightFontColor;
-$buttonCriticalHoverTextColor: $buttonCriticalTextColor;
-$buttonCriticalBorderColor: #9f3434;
-$buttonCriticalHoverColor: #cd5151;
+// @deprecated Override --primary CSS variable instead
+$firstColor: $ciColor !default;
 
-// Button sizing
-$buttonFontSize: 100%;
+// @deprecated Override --light-text-color CSS variable instead
+$lightFontColor: #fff !default;
 
-// Form inputs
-$inputBackgroundColor: #f9f9f9;
-$inputForegroundColor: #858585;
+//--------------------------------------------------------------toolbar
+// @deprecated Override --toolbar-background CSS variable instead
+$toolBarBackgroundColor: #eee !default;
+// @deprecated Override --toolbar-opacity CSS variable instead
+$toolBarOpacity: 0.8 !default;
+// @deprecated Override --toolbar-button-active-background-color CSS variable instead
+$toolBarButtonActiveBackgroundColor: $ciColor !default;
 
-$sliderHandleBackgroundColor: #a3a3a3;
+// Toolbar button opacity (hover/active) — kept as SCSS, not color-relevant
+$toolBarButtonHoverOpacity: 1.0 !default;
+$toolBarButtonActiveOpacity: $toolBarButtonHoverOpacity !default;
 
-$accordionFontSize: 100%;
-$accordionBackgroundColor: $buttonFirstColor;
-$accordionTextColor: $lightFontColor;
-$accordionActiveBackgroundColor: darken($buttonFirstColor, 10%);
-$accordionActiveTextColor: $accordionTextColor;
-$accordionHoverBackgroundColor: darken($buttonFirstColor, 5%);
+//---------------------------------------------------------------buttons
+// @deprecated Override --button-critical-background CSS variable instead
+$buttonCriticalFirstColor: #d36565 !default;
+$buttonCriticalSecondColor: #b23a3a !default;
 
-// Header buttons in type "buttons" sidepane
-$sidepaneButtonFontSize: $buttonFontSize;
-$sidepaneButtonTextColor: $buttonTextColor;
-$sidepaneButtonBackgroundColor: $buttonFirstColor;
-$sidepaneButtonBorderColor: $buttonBorderColor;
-$sidepaneButtonHoverColor: $buttonHoverColor;
-$sidepaneButtonActiveTextColor: $buttonTextColor;
-$sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor;
+// @deprecated Override --button-background CSS variable instead
+$buttonFirstColor: $ciColor !default;
+$buttonSecondColor: $ciColor !default;
+// @deprecated Override --button-text CSS variable instead
+$buttonTextColor: $lightFontColor !default;
+// @deprecated Override --button-border CSS variable instead
+$buttonBorderColor: $ciColor !default;
+// @deprecated Override --button-hover-background CSS variable instead
+$buttonHoverColor: $ciColor !default;
+// @deprecated Override --button-hover-text CSS variable instead
+$buttonHoverTextColor: $buttonTextColor !default;
+// @deprecated Override --button-active-background CSS variable instead
+$buttonFirstActiveColor: darken($ciColor, 10%) !default;
+// @deprecated Override --button-active-text CSS variable instead
+$buttonActiveTextColor: $buttonTextColor !default;
+// @deprecated Override --button-critical-text CSS variable instead
+$buttonCriticalTextColor: $lightFontColor !default;
+$buttonCriticalHoverTextColor: $buttonCriticalTextColor !default;
+// @deprecated Override --button-critical-border CSS variable instead
+$buttonCriticalBorderColor: #9f3434 !default;
+// @deprecated Override --button-critical-hover-background CSS variable instead
+$buttonCriticalHoverColor: #cd5151 !default;
 
+$buttonFontSize: 100% !default;
 
-// Legacy variables
-$lineHeight: 21px;  // Doesn't do anything
-$uiFontSize: 11px;  // Doesn't do anything
-$elementPopupWidth: $popupModalWidth; // Doesn't do anything
-$elementPopupBodyWidth: $elementPopupWidth - ($space * 3); // Doesn't do anything
-$popupMaxHeight:370px;  // Doesn't do anything
-$inputHeight:28px;  // Doesn't do anything
-$contentColor:#f9f9f9; // Doesn't do anything
-$secondColor:#858585; // Doesn't do anything
-$middleFontColor:#707070; // Doesn't do anything
-$thirdColor:#a2a2a2;  // Doesn't do anything
-$selectColor: #F7F79A;  // Doesn't do anything
-$mandatoryColor: #DCAF18;  // Doesn't do anything
-$warnFontColor: #B4AD2D;  // Doesn't do anything
-$errorFontColor: #E12F2F;  // Doesn't do anything
-$hintColor: #2375a8; // Doesn't do anything
-$noticeColor: #22a522; // Doesn't do anything
-$warningColor: #cece2a; // Doesn't do anything
-$containerBorderRadius: 5px !default;  // Doesn't do anything
-$elementBorderRadius: $containerBorderRadius - 2px; // Doesn't do anything
-$rootPath:  "bundles/mapbendercore/"; // Doesn't do anything
-$imageBasePath: $rootPath + "image"; // Doesn't do anything
-$iconBasePath: $rootPath + "fonts"; // Doesn't do anything
-$darkFontColor: #3f3f3f; // Doesn't do anything; (re)define $textColor instead
-$ciColor2: #4899ba; // Doesn't do anything
+//--------------------------------------------------------------inputs
+// @deprecated Override --input-background CSS variable instead
+$inputBackgroundColor: #f9f9f9 !default;
+// @deprecated Override --input-foreground CSS variable instead
+$inputForegroundColor: #858585 !default;
+// @deprecated Override --input-focus-border-color CSS variable instead
+$inputFocusBorderColor: lighten($ciColor, 20%) !default;
+// @deprecated Override --slider-handle-background CSS variable instead
+$sliderHandleBackgroundColor: #a3a3a3 !default;
+// @deprecated Override --slider-handle-border CSS variable instead
+$sliderHandleBorderColor: darken($sliderHandleBackgroundColor, 20%) !default;
+// @deprecated Override --slider-handle-text CSS variable instead
+$sliderHandleTextColor: $lightFontColor !default;
 
-:root {
-    // Brand Colors
-    --primary: #079ee0;
-    --primary-dark: hsl(198, 100%, 39%);
+//-----------------------------------------------------------accordions
+$accordionFontSize: 100% !default;
+// @deprecated Override --accordion-background CSS variable instead
+$accordionBackgroundColor: $buttonFirstColor !default;
+// @deprecated Override --accordion-text CSS variable instead
+$accordionTextColor: $lightFontColor !default;
+$accordionActiveBackgroundColor: darken($buttonFirstColor, 10%) !default;
+$accordionActiveTextColor: $accordionTextColor !default;
+$accordionHoverBackgroundColor: darken($buttonFirstColor, 5%) !default;
 
-    // Colors
-    --checkbox-checked: var(--primary);
-    --checkbox-unchecked: #a0a0a0;
-    --border-color: #ddd;
-    --text-color: #333;
-    --text-color-inactive: #636363;
-    --text-color-button-inactive: #747577;
-    --background-color: #fff;
-    --focus-color: var(--primary);
+//-----------------------------------------------------sidepane buttons
+$sidepaneButtonFontSize: $buttonFontSize !default;
+$sidepaneButtonTextColor: $buttonTextColor !default;
+$sidepaneButtonBackgroundColor: $buttonFirstColor !default;
+$sidepaneButtonBorderColor: $buttonBorderColor !default;
+$sidepaneButtonHoverColor: $buttonHoverColor !default;
+$sidepaneButtonActiveTextColor: $buttonTextColor !default;
+$sidepaneButtonActiveBackgroundColor: $buttonFirstActiveColor !default;
 
-    // Menus
-    --menu-hover-color: rgba(0, 0, 0, 0.05);
+// @deprecated Override --menu-background CSS variable instead
+$menuBackgroundColor: #ebefef !default;
+$menuBackgroundOpacity: 0.5 !default;
 
-    // Toolbar
-    --toolbar-text-color: var(--text-color);
-    --toolbar-button-active-background-color: var(--primary);
-    --toolbar-button-active-background-hover-color: var(--primary-dark);
-}
+// ==========================================================================
+// CSS Custom Properties are emitted via libs/_css_custom_properties.scss,
+// which is imported from theme entry files (e.g. theme/mapbender3.scss, manager/applications.scss, manager/login.scss)
+// AFTER all template-specific variable overrides have been applied.
+// This ensures the :root block uses final SCSS variable values.
+// ==========================================================================
+// ==========================================================================

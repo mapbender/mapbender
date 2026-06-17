@@ -1,11 +1,7 @@
-$thirdColor: #a2a2a2 !default;
-$inputBorderColor: lighten($thirdColor, 15%) !default;
-$inputFocusBorderColor: lighten($ciColor, 20%) !default;
-
 .input,
 .dropdown:not(.bs-dropdown) .dropdownValue,
 .dropdownList {
-  color: $inputForegroundColor;
+  color: var(--input-foreground);
   background-color: #fff;
   border: solid 1px #EEE9E9;
 }
@@ -13,7 +9,7 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 .input:focus, .input:active,
 .dropdown:not(.bs-dropdown):has(select:focus) .dropdownValue,
 .dropdown:not(.bs-dropdown):has(select:active) .dropdownValue {
-    border:solid 1px $inputFocusBorderColor;
+    border: solid 1px var(--input-focus-border-color);
     box-shadow: 0 0 0 .25rem rgba(13,110,253,.25);
 }
 
@@ -21,7 +17,7 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
     border-radius: 6px;
     padding: 8px;
     margin: -10px;
-    border: 2px solid $ciColor;
+    border: 2px solid var(--primary);
 }
 
 .input, .inputWrapper select {
@@ -30,7 +26,7 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 
 .input, input, select, .select {
     &[disabled], &[readonly] {
-        color: lighten($inputForegroundColor, 40%);
+        color: var(--input-disabled-fg);
         background-color: var(--bs-secondary-bg);
         opacity: 1;
         pointer-events: none;
@@ -43,7 +39,7 @@ $inputFocusBorderColor: lighten($ciColor, 20%) !default;
 }
 
 select[readonly] + .dropdownValue {
-    color: lighten($inputForegroundColor, 40%) !important;
+    color: var(--input-disabled-fg) !important;
     background-color: var(--bs-secondary-bg) !important;
 }
 
@@ -57,7 +53,7 @@ textarea.form-control {
 .input, .inputWrapper select {
   &:focus{
     outline:none;
-    border-color: $inputFocusBorderColor;
+    border-color: var(--input-focus-border-color);
   }
 }
 

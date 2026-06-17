@@ -4,10 +4,10 @@
 namespace Mapbender\ManagerBundle\Component\Exchange;
 
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\MappingException;
+use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
 
 class EntityHelper extends AbstractObjectHelper
 {
@@ -24,7 +24,7 @@ class EntityHelper extends AbstractObjectHelper
     public function __construct(ClassMetadata $classMeta, $className)
     {
         $this->classMeta = $classMeta;
-        parent::__construct(ClassUtils::getRealClass($className));
+        parent::__construct(DoctrineClassUtil::getRealClass($className));
     }
 
     /**

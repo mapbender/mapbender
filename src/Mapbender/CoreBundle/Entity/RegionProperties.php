@@ -38,7 +38,7 @@ class RegionProperties
      * @var array $properties The region properties
      */
     #[Assert\NotBlank]
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $properties;
 
     /**

@@ -1,7 +1,7 @@
 {%- block blocklist_main -%}
     {%- set list_id = list_id | default('listFilter0') -%}
     {%- if items -%}
-    <ul id="{{ list_id }}" class="listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
+    <ul id="{{ list_id }}" class="listFilter listFilterBoxes{{ (' ' ~ (list_class | default(''))) | trim(' ', 'right') }}">
       {%- for item in items -%}
         <li class="filterItem content-box content-box-lg">
         {% block boxlist_item_content -%}
