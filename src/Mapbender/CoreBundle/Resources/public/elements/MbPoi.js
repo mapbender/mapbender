@@ -58,7 +58,7 @@
             if (this.gpsElement) {
                 options.buttons.unshift({
                     label: Mapbender.trans('mb.core.poi.popup.btn.position'),
-                    cssClass: 'btn btn-primary btn-sm',
+                    cssClass: 'btn btn-sm btn-primary',
                     callback: () => {
                         self.gpsElement.mbGpsPosition('getGPSPosition', (lonLat) => {
                             self._updatePoi(lonLat.lon, lonLat.lat);
