@@ -1,109 +1,125 @@
 $(function () {
-    const $switchButton = $(".toggleSideBar");
-    const $sidePane = $switchButton.closest("div.sidePane");
-    const sidePane = $sidePane[0];
-    const sidePaneLeft = $sidePane.hasClass('left');
+    class SidePane {
+        constructor(element) {
+            this.$element = $(element);
+            this.$switchButton = this.$element.find(".toggleSideBar");
+            this.element = this.$element[0];
+            this.isLeft = this.$element.hasClass('left');
+            this.pointerPosition = 0;
 
-    let pointerPosition = 0;
-    const BORDER_SIZE = 'ontouchstart' in document ? 12 : 6;
-    // if you want to customize the max/min size use custom css (min-width/max-width on .sidePane.resizable),
-    const MAX_SIZE_WINDOW_PERCENTAGE = 0.95;
-    const MIN_SIZE_PX = 120;
+            this.BORDER_SIZE = 'ontouchstart' in document ? 12 : 6;
+            // if you want to customize the max/min size use custom css (min-width/max-width on .sidePane.resizable),
+            this.MAX_SIZE_WINDOW_PERCENTAGE = 0.95;
+            this.MIN_SIZE_PX = 120;
 
-    // TOGGLE SIDEPANE FUNCTIONALITY
-    if ($sidePane.hasClass('closed')) {
-        if ($sidePane.hasClass("right")) {
-            $sidePane.css({right: ($sidePane.outerWidth(true) * -1) + "px"});
-        } else {
-            $sidePane.css({left: ($sidePane.outerWidth(true) * -1) + "px"});
-        }
-    }
 
-    $switchButton.on('click', function () {
-        var wasOpen = !$sidePane.hasClass('closed');
-        var animation = {};
-        var align = $sidePane.hasClass('right') ? 'right' : 'left';
-        if (wasOpen) {
-            animation[align] = "-" + $sidePane.outerWidth(true) + "px";
-        } else {
-            animation[align] = "0px";
+            this.setupInitialState();
+            this.setupEvents();
         }
 
-        $sidePane.addClass('animating');
-        $sidePane.animate(animation, {
-            duration: 300,
-            complete: function () {
-                $sidePane.removeClass('animating').toggleClass('closed', wasOpen);
+        toggle() {
+            var wasOpen = !this.$element.hasClass('closed');
+            var animation = {};
+            var align = this.$element.hasClass('right') ? 'right' : 'left';
+            if (wasOpen) {
+                animation[align] = "-" + this.$element.outerWidth(true) + "px";
+            } else {
+                animation[align] = "0px";
             }
-        });
-    });
 
-    // RESIZE SIDEPANE FUNCTIONALITY
-    const sidePaneWidth = function () {
-        return parseInt(getComputedStyle(sidePane, '').width);
-    }
+            this.$element.addClass('animating');
+            this.$element.animate(animation, {
+                duration: 300,
+                complete: () => {
+                    this.$element.removeClass('animating').toggleClass('closed', wasOpen);
+                }
+            });
+        };
 
-    const resize = function (e) {
-        if (e.buttons === 0) {
-            // catch pointer released outside the window
-            document.removeEventListener("pointermove", resize, false);
-            return;
+        setupEvents() {
+            this.$switchButton.on('click', () => this.toggle());
+
+            $(document).on('pointerdown', '.sidePane.resizable', (e) => {
+                const paneRect = e.target.getBoundingClientRect();
+                const offsetX = e.clientX - paneRect.left;
+
+                if ((this.isLeft && this.sidePaneWidth() - offsetX < this.BORDER_SIZE) || (!this.isLeft && offsetX < this.BORDER_SIZE)) {
+                    this.pointerPosition = e.x;
+                    $("body").addClass("prevent-selection");
+                    document.addEventListener("pointermove", this.resize.bind(this));
+                }
+
+                $(document).one('pointercancel pointerup', () => {
+                    document.removeEventListener("pointermove", this.resize.bind(this));
+                    $("body").removeClass("prevent-selection");
+                });
+            });
+
+            // make sure sidebar is resizable even when making the window smaller
+            window.addEventListener("resize", this.constrainSize, false);
         }
 
-        // some touch devices do not expose e.x in pointerdown, so use the first pointermove event as reference
-        if (pointerPosition === undefined) {
-            pointerPosition = e.x;
-            return;
-        }
-
-        const dx = pointerPosition - e.x;
-        pointerPosition = e.x;
-        let calculatedWidth = sidePaneWidth() + (sidePaneLeft ? -1 : 1) * dx;
-
-        // make sure sidepane does not become unreasonably big or small
-        if (calculatedWidth > Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE)) {
-            const overflow = calculatedWidth - Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE);
-            calculatedWidth -= overflow;
-            pointerPosition -= overflow;
-        }
-
-        if (calculatedWidth < MIN_SIZE_PX) {
-            const underflow = MIN_SIZE_PX - calculatedWidth;
-            calculatedWidth += underflow;
-            pointerPosition += underflow;
-        }
-
-        sidePane.style.width = calculatedWidth + "px";
-    }
-
-    const constrainSize = function () {
-        if (!sidePane) return;
-        const allowedWidth = Math.floor(window.innerWidth * MAX_SIZE_WINDOW_PERCENTAGE);
-        if (sidePaneWidth() > allowedWidth) {
-            sidePane.style.width = allowedWidth + "px";
-            if (sidePane.style.left) {
-                sidePane.style.left = "-" + allowedWidth + "px";
+        setupInitialState() {
+            // TOGGLE SIDEPANE FUNCTIONALITY
+            if (this.$element.hasClass('closed')) {
+                if (this.$element.hasClass("right")) {
+                    this.$element.css({right: (this.$element.outerWidth(true) * -1) + "px"});
+                } else {
+                    this.$element.css({left: (this.$element.outerWidth(true) * -1) + "px"});
+                }
             }
         }
-    }
 
-    // make sure sidebar is resizable even when making the window smaller
-    window.addEventListener("resize", constrainSize, false);
-
-    $(document).on('pointerdown', '.sidePane.resizable', function (e) {
-        const paneRect = this.getBoundingClientRect();
-        const offsetX = e.clientX - paneRect.left;
-
-        if ((sidePaneLeft && sidePaneWidth() - offsetX < BORDER_SIZE) || (!sidePaneLeft && offsetX < BORDER_SIZE)) {
-            pointerPosition = e.x;
-            $("body").addClass("prevent-selection");
-            document.addEventListener("pointermove", resize);
+        // RESIZE SIDEPANE FUNCTIONALITY
+        sidePaneWidth() {
+            return parseInt(getComputedStyle(this.element, '').width);
         }
 
-        $(document).one('pointercancel pointerup', function () {
-            document.removeEventListener("pointermove", resize);
-            $("body").removeClass("prevent-selection");
-        });
-    });
+        resize(e) {
+            if (e.buttons === 0) {
+                // catch pointer released outside the window
+                document.removeEventListener("pointermove", this.resize.bind(this), false);
+                return;
+            }
+
+            // some touch devices do not expose e.x in pointerdown, so use the first pointermove event as reference
+            if (this.pointerPosition === undefined) {
+                this.pointerPosition = e.x;
+                return;
+            }
+
+            const dx = this.pointerPosition - e.x;
+            this.pointerPosition = e.x;
+            let calculatedWidth = this.sidePaneWidth() + (this.isLeft ? -1 : 1) * dx;
+
+            // make sure sidepane does not become unreasonably big or small
+            if (calculatedWidth > Math.floor(window.innerWidth * this.MAX_SIZE_WINDOW_PERCENTAGE)) {
+                const overflow = calculatedWidth - Math.floor(window.innerWidth * this.MAX_SIZE_WINDOW_PERCENTAGE);
+                calculatedWidth -= overflow;
+                this.pointerPosition -= overflow;
+            }
+
+            if (calculatedWidth < this.MIN_SIZE_PX) {
+                const underflow = this.MIN_SIZE_PX - calculatedWidth;
+                calculatedWidth += underflow;
+                this.pointerPosition += underflow;
+            }
+
+            this.element.style.width = calculatedWidth + "px";
+        }
+
+        constrainSize() {
+            if (!this.element) return;
+            const allowedWidth = Math.floor(window.innerWidth * this.MAX_SIZE_WINDOW_PERCENTAGE);
+            if (this.sidePaneWidth() > allowedWidth) {
+                this.element.style.width = allowedWidth + "px";
+                if (this.element.style.left) {
+                    this.element.style.left = "-" + allowedWidth + "px";
+                }
+            }
+        }
+    }
+
+    window.Mapbender.sidePane = new SidePane($('.sidePane'));
 
 });
