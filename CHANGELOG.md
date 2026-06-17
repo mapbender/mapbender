@@ -1,4 +1,10 @@
 ## next feature release
+Breaking changes (for details on migration process see [UPGRADING.md]):
+* PHP 8.2 is now the minimum supported PHP version
+* Symfony updated to version 7.4 LTS
+* Doctrine DBAL updated to version 4.4
+* Doctrine ORM updated to version 3.6
+
 Security:
 * Allow custom permissions for source instances ([#PR1812](https://github.com/mapbender/mapbender/pull/1812), [#PR1825](https://github.com/mapbender/mapbender/pull/1825))
 
@@ -25,6 +31,15 @@ Other:
 * [Develop] New shared File utility module for geospatial file handling (KML, GeoJSON, GPX, GML) ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
 * In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
 * Changed default login-backdrop image ([PR#1845](https://github.com/mapbender/mapbender/pull/1845))
+
+## v4.2.6
+Features:
+* [FeatureInfo] Make sandbox iframe attribute in the feature info dialog configurable using mapbender.featureinfo.iframe_sandbox_params ([#PR1844](https://github.com/mapbender/mapbender/pull/1844))
+* [Forgot password] make check for email case-insensitive ([#PR1856](https://github.com/mapbender/mapbender/pull/1856))
+
+Bugfixes:
+* Do not show "abort" error message ([#PR1855](https://github.com/mapbender/mapbender/pull/1855))
+* Fix activating visible layers by name ([#PR1839](https://github.com/mapbender/mapbender/pull/1839))
 
 ## v4.2.5
 Security:

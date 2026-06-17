@@ -23,6 +23,7 @@ class SourceTwigExtension extends AbstractExtension
     {
         return [
             new TwigFilter('source_label', [$this, 'getSourceLabel']),
+            new TwigFilter('source_label_long', [$this, 'getSourceLabelLong']),
             new TwigFilter('source_accent_color', [$this, 'getSourceAccentColor']),
         ];
     }
@@ -31,6 +32,12 @@ class SourceTwigExtension extends AbstractExtension
     {
         $source = $this->typeDirectoryService->getSource($type);
         return $source->getLabel(true);
+    }
+
+    function getSourceLabelLong(string $type): ?string
+    {
+        $source = $this->typeDirectoryService->getSource($type);
+        return $source->getLabel(false);
     }
 
     function getSourceAccentColor(string $type): string

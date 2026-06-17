@@ -55,16 +55,16 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected $tiled = false;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $dimensions;
 
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $vendorspecifics;
 
     #[ORM\Column(type: 'integer', options: ['default' => 0])]
     protected $buffer = 0;
 
-    #[ORM\Column(type: 'decimal', scale: 2, options: ['default' => '1.25'])]
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2, options: ['default' => '1.25'])]
     protected $ratio = 1.25;
 
     #[ORM\Column(name: 'refresh_interval', type: 'integer', nullable: true, options: ['default' => null])]
@@ -140,8 +140,20 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
         if (!$this->vendorspecifics) {
             $this->vendorspecifics = array();
         }
-
-        return $this->vendorspecifics;
+        $result = [];
+        foreach ($this->vendorspecifics as $item) {
+            if ($item instanceof VendorSpecific) {
+                $result[] = $item;
+            } elseif (is_array($item)) {
+                $vs = new VendorSpecific();
+                $vs->setName($item['name'] ?? null);
+                $vs->setDefault($item['default'] ?? null);
+                $vs->setHidden($item['hidden'] ?? false);
+                $vs->setVstype($item['vstype'] ?? null);
+                $result[] = $vs;
+            }
+        }
+        return $result;
     }
 
     /**

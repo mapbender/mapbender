@@ -1,7 +1,7 @@
 mb:
   ogcapifeatures:
     admin:
-      json_url: Link zu OGC API Features Service
+      json_url: Link zum OGC API - Features Service
       feature_limit: Max.-Anzahl Features
       layers: Collections
       layer:
@@ -44,7 +44,7 @@ mb:
         property_title: Titel
       tooltip:
         heading: Hover-Tooltip
-        description: "Wählen Sie, welche Eigenschaften beim Überfahren von Features auf der Karte als Tooltip angezeigt werden."
+        description: "Wählen Sie, welche Eigenschaften beim Überfahren von Features auf der Karte als Tooltip angezeigt werden sollen."
         no_properties: "Keine Eigenschaften verfügbar. Versuchen Sie, die Quelle neu zu laden."
     metadata:
       title: Titel

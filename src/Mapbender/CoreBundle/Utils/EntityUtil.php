@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Utils;
 
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Mapbender\Component\StringUtil;
@@ -48,13 +47,10 @@ class EntityUtil
      */
     public static function getRealClass($entity)
     {
-        $objClass = "";
-        if (is_object($entity)) {
-            $objClass = ClassUtils::getClass($entity);
-        } elseif (is_string($entity)) {
-            $objClass = ClassUtils::getRealClass($entity);
+        if (is_object($entity) || is_string($entity)) {
+            return DoctrineClassUtil::getRealClass($entity);
         }
-        return $objClass;
+        return '';
     }
 
     /**

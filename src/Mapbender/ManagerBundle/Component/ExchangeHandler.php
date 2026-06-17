@@ -2,7 +2,7 @@
 
 namespace Mapbender\ManagerBundle\Component;
 
-use Doctrine\Common\Util\ClassUtils;
+use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -50,7 +50,7 @@ abstract class ExchangeHandler
      */
     protected function checkClassList($className, $list)
     {
-        $className = ClassUtils::getRealClass($className);
+        $className = DoctrineClassUtil::getRealClass($className);
         foreach ($list as $listName) {
             if (is_a($className, $listName, true)) {
                 return true;

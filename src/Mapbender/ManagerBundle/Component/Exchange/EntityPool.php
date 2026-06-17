@@ -4,7 +4,7 @@
 namespace Mapbender\ManagerBundle\Component\Exchange;
 
 
-use Doctrine\Common\Util\ClassUtils;
+use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
 use Mapbender\ManagerBundle\Component\Mapper;
 
 /**
@@ -23,7 +23,7 @@ class EntityPool extends ObjectIdentityPool implements Mapper
      */
     public function add($entity, $identifier, $allowReplace = false)
     {
-        $className = ClassUtils::getClass($entity);
+        $className = DoctrineClassUtil::getRealClass($entity);
         return $this->addEntry($className, $identifier, $entity, $allowReplace);
     }
 
@@ -47,7 +47,7 @@ class EntityPool extends ObjectIdentityPool implements Mapper
         );
         $entity = $this->get($className, $identValues);
         if (!$entity && $isSuperClass) {
-            $realBaseClass = ClassUtils::getRealClass($className);
+            $realBaseClass = DoctrineClassUtil::getRealClass($className);
             foreach ($this->uniqueClassNames as $uniqueClass) {
                 if (class_exists($uniqueClass) && is_a($uniqueClass, $realBaseClass, true)) {
                     if ($entity = $this->get($uniqueClass, $identValues)) {

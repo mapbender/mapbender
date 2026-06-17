@@ -50,7 +50,7 @@
                         cssClass: 'btn btn-sm btn-primary',
                         attrDataTest: 'mb-poi-btn-add',
                         callback: () => {
-                            self._sendPoi(this.$element);
+                            self._sendPoi();
                         }
                     }
                 ]
@@ -118,8 +118,8 @@
             this.poiMarkerLayer.show();
         }
 
-        _sendPoi(content) {
-            const label = $('textarea', content).val();
+        _sendPoi() {
+             const label = this.popup.$element.find('textarea').val();
 
             if(!this.poi) {
                 return;

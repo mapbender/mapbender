@@ -3,10 +3,15 @@
 ## next feature release
 
 ### Update database
-Update your entities to the latest version by executing the following command
+Update your entities to the latest version.
+
+Important: Execute the following commands in the specified order to upgrade. First, make a backup of your database!
+
 ```bash
-bin/console doctrine:schema:update --complete --force
+bin/console mapbender:database:upgrade
+bin/console doctrine:schema:update --force
 ```
+
 :warning: If you update from Mapbender 3, read the upgrading guide for version 4.0 first!
 
 ### Design

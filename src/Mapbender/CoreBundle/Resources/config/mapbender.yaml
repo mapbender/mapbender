@@ -36,3 +36,6 @@ parameters:
 
     mapbender.show_proxied_service_urls: false
 
+    # sandbox iframe attribute in the feature info dialog, see https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#sandbox for options
+    mapbender.featureinfo.iframe_sandbox_params: 'allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads'
+

@@ -4,7 +4,7 @@
       <tr>
           <th>{{ 'mb.manager.admin.element.type' | trans }}:</th>
           <td>
-              <span class="badge bg-{{ source.type | source_accent_color }}">{{ source.type | source_label }}{% if source.version is defined and source.version %} {{ source.version }}{% endif %}</span>
+              <span class="badge bg-{{ source.type | source_accent_color }}">{{ source.type | source_label_long }}{% if source.version is defined and source.version %} {{ source.version }}{% endif %}</span>
           </td>
       </tr>
       {% if source.displayUrl %}
