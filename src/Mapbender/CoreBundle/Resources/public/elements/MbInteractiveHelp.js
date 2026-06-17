@@ -1,4 +1,4 @@
-(function() {
+(function () {
     class MbInteractiveHelp extends MapbenderElement {
         constructor(configuration, $element) {
             super(configuration, $element);
@@ -233,7 +233,7 @@
                     currentChapter.region = currentChapter.region + '-mobile';
                     break;
                 default:
-                    // do nothing
+                // do nothing
             }
             await this.calculatePopoverPosition(currentChapter);
         }
@@ -292,7 +292,7 @@
 
         async waitForRunningTransitions(targetElement) {
             // check for API support
-            if (typeof targetElement.getAnimations !== 'function') return [];
+            if (typeof targetElement.getAnimations !== 'function') return;
 
             const elementsToCheck = [];
             let current = targetElement;
@@ -304,7 +304,16 @@
 
             const runningAnimations = elementsToCheck.flatMap((element) => {
                 return element.getAnimations().filter((animation) => {
-                    return animation.playState === 'running' || animation.playState === 'pending';
+                    if (animation.playState !== 'running' && animation.playState !== 'pending') {
+                        return false;
+                    }
+                    // Ignore infinite / non-terminating animations (e.g. spinners) which would block forever.
+                    const effect = animation.effect;
+                    if (!effect || typeof effect.getComputedTiming !== 'function') {
+                        return false;
+                    }
+                    const {endTime} = effect.getComputedTiming();
+                    return Number.isFinite(endTime);
                 });
             });
 
@@ -312,7 +321,10 @@
                 return;
             }
 
-            await Promise.allSettled(runningAnimations.map((animation) => animation.finished));
+            await Promise.race([
+                Promise.allSettled(runningAnimations.map((animation) => animation.finished)),
+                new Promise((resolve) => setTimeout(resolve, 1000))
+            ]);
         }
 
         stopTour() {
@@ -380,7 +392,7 @@
 
         focusPopover() {
             const $p = this.popover;
-            $p.attr({ tabindex: '-1', role: 'dialog' });
+            $p.attr({tabindex: '-1', role: 'dialog'});
             const getFocusables = () => $p
                 .find('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')
                 .filter(':visible');
