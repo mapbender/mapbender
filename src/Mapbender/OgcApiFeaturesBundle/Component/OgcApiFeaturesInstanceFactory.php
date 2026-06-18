@@ -100,7 +100,7 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
         if ($instanceFeatureLimit !== null) {
             $instance->setFeatureLimit((int)$instanceFeatureLimit);
         }
-        $instance->setBasesource(isset($data['isBaseSource']) ? (bool)$data['isBaseSource'] : false);
+        $instance->setBasesource($data['basesource'] ?? $data['isBaseSource'] ?? false);
         $featureInfoPropertyMap = isset($data['featureInfoPropertyMap']) ? json_encode($data['featureInfoPropertyMap']) : null;
         $instance->setFeatureInfoPropertyMap($featureInfoPropertyMap);
 
