@@ -490,7 +490,8 @@
         _updateChildrenState($layer, newState) {
             $layer.children('.layers').children('.leave').each((index, child) => {
                 const $child = $(child);
-                const $childToggle = $child.children('.leaveContainer').children('.-fn-toggle-selected');
+                const $childToggle = $child.children('.leaveContainer').children('.-fn-toggle-selected:not(.disabled)');
+                if (!$childToggle.length) return;
                 this.updateIconVisual_($childToggle, newState, null);
                 this.model.controlLayer($child.data('layer'), newState);
             });
