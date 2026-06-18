@@ -120,6 +120,9 @@ class StyleEditorLayers {
             $(item).find('.-js-colorpicker').on('changeColor', onLayerChange);
         } catch(e) {}
 
+        // Re-apply after colorpicker init, which may have set inline styles that override the class
+        item.querySelectorAll('[data-layer-prop]').forEach(el => this._markIfEmpty(el));
+
         item.querySelector('.-fn-remove-layer')?.addEventListener('click', () => {
             item.remove();
             this.syncLayersToJson();
@@ -172,6 +175,10 @@ class StyleEditorLayers {
             const vp = input.closest('.row')?.querySelector('.layer-range-preview');
             if (vp) vp.textContent = parseFloat(input.value).toFixed(2);
         });
+
+        this.layerAccordion.querySelectorAll('[data-layer-prop]').forEach(input => {
+            this._markIfEmpty(input);
+        });
     }
 
     // ── Paint control builders (DOM-based, using <template> elements) ──
@@ -188,11 +195,11 @@ class StyleEditorLayers {
             container.appendChild(this._createNumberRow('line-width', Mapbender.trans('mb.manager.admin.style.editor.line_width'), this._scalarVal(paint['line-width'], 2), 0, 50, 0.5));
             container.appendChild(this._createRangeRow('line-opacity', Mapbender.trans('mb.manager.admin.style.editor.line_opacity'), paint['line-opacity'] ?? 1, 0, 1, 'any'));
         } else if (type === 'circle') {
-            container.appendChild(this._createNumberRow('circle-radius', Mapbender.trans('mb.manager.admin.style.editor.circle_radius'), paint['circle-radius'] || 5, 0, 50, 1));
+            container.appendChild(this._createNumberRow('circle-radius', Mapbender.trans('mb.manager.admin.style.editor.circle_radius'), paint['circle-radius'] ?? 5, 0, 50, 1));
             container.appendChild(this._createColorRow('circle-color', Mapbender.trans('mb.manager.admin.style.editor.circle_color'), paint['circle-color'] || '#000000'));
             container.appendChild(this._createRangeRow('circle-opacity', Mapbender.trans('mb.manager.admin.style.editor.circle_opacity'), paint['circle-opacity'] ?? 1, 0, 1, 'any'));
             container.appendChild(this._createColorRow('circle-stroke-color', Mapbender.trans('mb.manager.admin.style.editor.stroke_color'), paint['circle-stroke-color'] || ''));
-            container.appendChild(this._createNumberRow('circle-stroke-width', Mapbender.trans('mb.manager.admin.style.editor.stroke_width'), paint['circle-stroke-width'] || 0, 0, 10, 0.5));
+            container.appendChild(this._createNumberRow('circle-stroke-width', Mapbender.trans('mb.manager.admin.style.editor.stroke_width'), paint['circle-stroke-width'] ?? 0, 0, 10, 0.5));
         } else if (type === 'symbol') {
             container.appendChild(this._createSymbolControls(layout, paint));
             container.appendChild(this._createColorRow('text-color', Mapbender.trans('mb.manager.admin.style.editor.text_color'), paint['text-color'] || '#000000'));
@@ -221,6 +228,16 @@ class StyleEditorLayers {
         }
     }
 
+    _markIfEmpty(input) {
+        if (input.value === '' || input.value === null || input.value === undefined) {
+            input.style.backgroundColor = '#fff0f0';
+            input.style.borderColor = '#f5a0a0';
+        } else {
+            input.style.backgroundColor = '';
+            input.style.borderColor = '';
+        }
+    }
+
     _createColorRow(prop, label, value) {
         const frag = document.getElementById('tpl-color-row').content.cloneNode(true);
         frag.querySelector('label').textContent = label;
@@ -237,6 +254,8 @@ class StyleEditorLayers {
         } else {
             input.value = value;
         }
+        this._markIfEmpty(input);
+        input.addEventListener('input', () => this._markIfEmpty(input));
         return frag;
     }
 
@@ -261,7 +280,16 @@ class StyleEditorLayers {
         input.min = min;
         input.max = max;
         input.step = step;
-        input.value = value;
+        if (typeof value === 'object' && value !== null) {
+            // Complex value – try to evaluate as pure arithmetic, else show empty
+            const resolved = this._evalExpression(value);
+            input.value = resolved !== null ? resolved : '';
+            this._addComplexBadge(frag, value);
+        } else {
+            input.value = value;
+        }
+        this._markIfEmpty(input);
+        input.addEventListener('input', () => this._markIfEmpty(input));
         return frag;
     }
 
@@ -396,6 +424,8 @@ class StyleEditorLayers {
             return val ?? '';
         }
         if (Array.isArray(val)) {
+            const resolved = this._evalExpression(val);
+            if (resolved !== null) return resolved;
             return JSON.stringify(val);
         }
         if (val.stops && val.stops[0]) {
@@ -408,6 +438,27 @@ class StyleEditorLayers {
         if (typeof val === 'number') return val;
         if (typeof val === 'object' && val?.stops) return val.stops[0]?.[1] || fallback;
         return fallback;
+    }
+
+    /**
+     * Evaluate simple arithmetic Mapbox expressions composed of literal numbers.
+     * Returns the numeric result, or null if the expression is not pure arithmetic.
+     */
+    _evalExpression(expr) {
+        if (typeof expr === 'number') return expr;
+        if (!Array.isArray(expr) || expr.length < 2) return null;
+        const op = expr[0];
+        if (!['+', '-', '*', '/', '%'].includes(op)) return null;
+        const operands = expr.slice(1).map(v => this._evalExpression(v));
+        if (operands.some(v => v === null || !isFinite(v))) return null;
+        switch (op) {
+            case '+': return operands.reduce((a, b) => a + b, 0);
+            case '-': return operands.length === 1 ? -operands[0] : operands.reduce((a, b) => a - b);
+            case '*': return operands.reduce((a, b) => a * b, 1);
+            case '/': return operands.length === 2 && operands[1] !== 0 ? operands[0] / operands[1] : null;
+            case '%': return operands.length === 2 && operands[1] !== 0 ? operands[0] % operands[1] : null;
+        }
+        return null;
     }
 
     // ── Rule & filter info ──

@@ -154,32 +154,57 @@ class OgcApiSource extends Mapbender.Source {
     }
 
     _applyMapboxStyle(vectorLayer, mbStyle, collectionId) {
-        // Find the source name that uses our collectionId as source-layer
-        let sourceName = null;
-        for (const layer of (mbStyle.layers || [])) {
-            if (layer['source-layer'] === collectionId && layer.source) {
-                sourceName = layer.source;
-                break;
-            }
-        }
-        // Fallback: use first vector/geojson source
-        if (!sourceName) {
-            for (const [name, src] of Object.entries(mbStyle.sources || {})) {
-                if (src.type === 'vector' || src.type === 'geojson') {
-                    sourceName = name;
-                    break;
-                }
-            }
-        }
-        if (!sourceName) {
+        const resolved = this._resolveMapboxSource(mbStyle, collectionId);
+        if (!resolved) {
             return;
         }
+        if (!this._mapboxSourceLayers) this._mapboxSourceLayers = {};
+        this._mapboxSourceLayers[collectionId] = resolved.effectiveSourceLayer;
         vectorLayer.set('_collectionId', collectionId);
         try {
-            ol.mapboxStyle.stylefunction(vectorLayer, mbStyle, sourceName);
+            ol.mapboxStyle.stylefunction(vectorLayer, mbStyle, resolved.sourceName);
         } catch (e) {
             console.error('[OgcApiStyle] ol.mapboxStyle.stylefunction failed for "' + collectionId + '":', e);
         }
+    }
+
+    /**
+     * Resolves the Mapbox source name and the effective source-layer for a given collectionId.
+     *
+     * The collectionId may differ from the style's source-layer name when the style was built
+     * for an MVT dataset with a different layer name. The stylefunction looks up styles via
+     * l[feature.getProperties()['mvt:layer']], so features must be tagged with the source-layer
+     * name from the style, not the collectionId.
+     *
+     * @returns {{sourceName: string, effectiveSourceLayer: string}|null}
+     */
+    _resolveMapboxSource(mbStyle, collectionId) {
+        // Prefer an exact match: a style layer whose source-layer equals the collectionId
+        for (const layer of (mbStyle.layers || [])) {
+            if (layer['source-layer'] === collectionId && layer.source) {
+                return { sourceName: layer.source, effectiveSourceLayer: collectionId };
+            }
+        }
+        // Fallback: use the first vector/geojson source in the style
+        let sourceName = null;
+        for (const [name, src] of Object.entries(mbStyle.sources || {})) {
+            if (src.type === 'vector' || src.type === 'geojson') {
+                sourceName = name;
+                break;
+            }
+        }
+        if (!sourceName) {
+            return null;
+        }
+        // Find the first source-layer referenced by that source
+        let effectiveSourceLayer = collectionId;
+        for (const layer of (mbStyle.layers || [])) {
+            if (layer.source === sourceName && layer['source-layer']) {
+                effectiveSourceLayer = layer['source-layer'];
+                break;
+            }
+        }
+        return { sourceName, effectiveSourceLayer };
     }
 
     _loadCollection(collectionId, extent, resolution, projection, source) {
@@ -202,6 +227,7 @@ class OgcApiSource extends Mapbender.Source {
             })
             .then((data) => {
                 if (requestId !== this._currentRequestIds[collectionId]) {
+                    console.warn(`Discarding response for collection "${collectionId}" due to newer request`);
                     return;
                 }
                 const parsed = geojsonReader.readFeatures(data, {
@@ -210,9 +236,15 @@ class OgcApiSource extends Mapbender.Source {
                 });
                 // Set 'layer' property for internal use (tooltips, identification)
                 // Set 'mvt:layer' property so ol-mapbox-style's stylefunction can match source-layer
+                const mvtLayer = this._mapboxSourceLayers?.[collectionId] ?? collectionId;
                 parsed.forEach(f => {
                     f.set('layer', collectionId, true);
-                    f.set('mvt:layer', collectionId, true);
+                    f.set('mvt:layer', mvtLayer, true);
+                    // Expose properties on the feature object itself so the ol-mapbox-style
+                    // expression evaluator (EvaluationContext.properties()) can read them.
+                    // That method accesses feature.properties (GeoJSON convention), not OL's
+                    // feature.get(). Without this, ['get', 'prop'] in filters returns undefined.
+                    f.properties = f.getProperties();
                 });
                 source.clear(true);
                 source.addFeatures(parsed);

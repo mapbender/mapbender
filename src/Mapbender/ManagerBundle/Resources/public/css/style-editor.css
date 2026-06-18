@@ -84,6 +84,13 @@
     margin-bottom: 6px;
 }
 
+/* ── Empty field validation ── */
+input.field-empty,
+input.field-empty:focus {
+    background-color: #fff0f0 !important;
+    border-color: #f5a0a0 !important;
+}
+
 /* ── Layer Accordion ── */
 #layers-editor .layers-header {
     display: flex;
