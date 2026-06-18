@@ -38,8 +38,8 @@
                 // Do this BEFORE updating
                 if (this.options.group) {
                     const $others = $('.mb-button[data-group="' + this.options.group + '"]')
-                        .not(this);
-                    $others.each(() => {
+                        .not(this.$element);
+                    $others.each(function() {
                         try {
                             $(this).trigger('mbButtonDeactivate');
                         } catch (e) {
