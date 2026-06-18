@@ -26,7 +26,7 @@ class StyleEditorPreview {
         fontParts.push(s.fontFamily || 'Arial, Helvetica, sans-serif');
         ctx.font = fontParts.join(' ');
         ctx.fillStyle = label
-            ? StyleUtils.hexToRgba(s.fontColor || '#000000', parseFloat(s.fontOpacity) || 1)
+            ? StyleUtils.hexToRgba(s.fontColor || '#000000', s.fontOpacity)
             : 'rgba(0,0,0,0.35)';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -35,8 +35,8 @@ class StyleEditorPreview {
 
     drawAll(visualStyle) {
         const s = visualStyle;
-        const fillStyle   = StyleUtils.hexToRgba(s.fillColor || '#3399CC', parseFloat(s.fillOpacity) || 1);
-        const strokeStyle = StyleUtils.hexToRgba(s.strokeColor || '#ffffff', parseFloat(s.strokeOpacity) || 1);
+        const fillStyle   = StyleUtils.hexToRgba(s.fillColor || '#3399CC', s.fillOpacity);
+        const strokeStyle = StyleUtils.hexToRgba(s.strokeColor || '#ffffff', s.strokeOpacity);
         const strokeWidth = parseFloat(s.strokeWidth) || 1;
         const pointRadius = parseFloat(s.pointRadius) || 6;
         const dashes = this.dashMap[s.strokeDashstyle] || [];
