@@ -177,6 +177,9 @@ mb:
           weight_regular: Normal
           weight_bold: Kalın
           weight_italic: İtalik
+          font_style: Stil
+          style_normal: Normal
+          style_italic: İtalik
           font_color: Yazı tipi rengi
           font_opacity: Yazı tipi opaklığı
           preview_legend: Önizleme

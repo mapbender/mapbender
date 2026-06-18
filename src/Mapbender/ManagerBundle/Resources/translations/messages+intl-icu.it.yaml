@@ -235,6 +235,9 @@ mb:
           weight_regular: Normale
           weight_bold: Grassetto
           weight_italic: Corsivo
+          font_style: Stile
+          style_normal: Normale
+          style_italic: Corsivo
           font_color: Colore del carattere
           font_opacity: Opacità del carattere
           preview_legend: Anteprima

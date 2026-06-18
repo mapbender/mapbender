@@ -235,6 +235,9 @@ mb:
           weight_regular: Normal
           weight_bold: Fett
           weight_italic: Kursiv
+          font_style: Stil
+          style_normal: Normal
+          style_italic: Kursiv
           font_color: Schriftfarbe
           font_opacity: Schriftdeckkraft
           preview_legend: Vorschau

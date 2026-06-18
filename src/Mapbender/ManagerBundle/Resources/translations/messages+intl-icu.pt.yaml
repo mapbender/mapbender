@@ -235,6 +235,9 @@ mb:
           weight_regular: Normal
           weight_bold: Negrito
           weight_italic: Itálico
+          font_style: Estilo
+          style_normal: Normal
+          style_italic: Itálico
           font_color: Cor da fonte
           font_opacity: Opacidade da fonte
           preview_legend: Pré-visualização
