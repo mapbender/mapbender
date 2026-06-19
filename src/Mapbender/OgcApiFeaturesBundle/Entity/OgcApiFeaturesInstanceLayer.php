@@ -57,6 +57,13 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     #[ORM\Column(name: 'tooltip_property_map', type: 'json', nullable: true)]
     protected ?array $tooltipPropertyMap = null;
 
+    #[ORM\Column(name: 'tooltip_template', type: 'text', nullable: true)]
+    protected ?string $tooltipTemplate = null;
+
+    /** Persisted mode selection: 'props' or 'template'. Null defaults to 'props'. */
+    #[ORM\Column(name: 'tooltip_mode', type: 'string', length: 16, nullable: true)]
+    protected ?string $tooltipMode = null;
+
     public function setMinScale(?float $value): static
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
@@ -202,6 +209,28 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     public function setTooltipPropertyMap(?array $tooltipPropertyMap): static
     {
         $this->tooltipPropertyMap = $tooltipPropertyMap;
+        return $this;
+    }
+
+    public function getTooltipTemplate(): ?string
+    {
+        return $this->tooltipTemplate;
+    }
+
+    public function setTooltipTemplate(?string $tooltipTemplate): static
+    {
+        $this->tooltipTemplate = $tooltipTemplate ?: null;
+        return $this;
+    }
+
+    public function getTooltipMode(): string
+    {
+        return $this->tooltipMode ?? 'props';
+    }
+
+    public function setTooltipMode(?string $tooltipMode): static
+    {
+        $this->tooltipMode = ($tooltipMode === 'template') ? 'template' : null;
         return $this;
     }
 }

@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -100,6 +101,18 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
             ])
             ->add('tooltipPropertyMap', HiddenType::class, [
                 'required' => false,
+            ])
+            ->add('tooltipMode', HiddenType::class, [
+                'required' => false,
+            ])
+            ->add('tooltipTemplate', TextareaType::class, [
+                'required' => false,
+                'label' => false,
+                'attr' => [
+                    'class' => 'form-control form-control-sm tooltip-template-textarea',
+                    'rows' => 6,
+                    'placeholder' => '<b>${name}</b><br>Year: ${year}',
+                ],
             ])
         ;
         $builder->get('tooltipPropertyMap')->addModelTransformer(new JsonArrayTransformer());

@@ -46,6 +46,12 @@ mb:
         heading: Hover-Tooltip
         description: "Wählen Sie, welche Eigenschaften beim Überfahren von Features auf der Karte als Tooltip angezeigt werden sollen."
         no_properties: "Keine Eigenschaften verfügbar. Versuchen Sie, die Quelle neu zu laden."
+        mode_props: Eigenschaftsliste
+        mode_template: HTML-Vorlage
+        template_help: "HTML-Vorlage eingeben. ${Eigenschaftsname}-Platzhalter verwenden. Auf einen Eigenschafts-Tag klicken zum Einfügen."
+      featureinfo_template:
+        heading: Feature-Info-Vorlage
+        description: "HTML-Vorlage für das Feature-Info-Popup eingeben. ${Eigenschaftsname}-Platzhalter verwenden. Wenn gesetzt, überschreibt dies die instanzweite Eigenschaftszuordnung für diese Collection."
     metadata:
       title: Titel
       version: Version

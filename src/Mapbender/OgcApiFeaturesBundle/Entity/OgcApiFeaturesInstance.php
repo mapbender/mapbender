@@ -47,6 +47,13 @@ class OgcApiFeaturesInstance extends SourceInstance
     #[ORM\Column(name: 'feature_info_property_map', type: 'text', nullable: true)]
     protected ?string $featureInfoPropertyMap = "";
 
+    #[ORM\Column(name: 'feature_info_template', type: 'text', nullable: true)]
+    protected ?string $featureInfoTemplate = null;
+
+    /** Persisted mode selection: 'props' or 'template'. Null defaults to 'props'. */
+    #[ORM\Column(name: 'feature_info_mode', type: 'string', length: 16, nullable: true)]
+    protected ?string $featureInfoMode = null;
+
     public function __construct()
     {
         $this->layers = new ArrayCollection();
@@ -190,6 +197,28 @@ class OgcApiFeaturesInstance extends SourceInstance
     public function setFeatureInfoPropertyMap(?string $featureInfoPropertyMap): static
     {
         $this->featureInfoPropertyMap = $featureInfoPropertyMap;
+        return $this;
+    }
+
+    public function getFeatureInfoTemplate(): ?string
+    {
+        return $this->featureInfoTemplate;
+    }
+
+    public function setFeatureInfoTemplate(?string $featureInfoTemplate): static
+    {
+        $this->featureInfoTemplate = $featureInfoTemplate ?: null;
+        return $this;
+    }
+
+    public function getFeatureInfoMode(): string
+    {
+        return $this->featureInfoMode ?? 'props';
+    }
+
+    public function setFeatureInfoMode(?string $featureInfoMode): static
+    {
+        $this->featureInfoMode = ($featureInfoMode === 'template') ? 'template' : null;
         return $this;
     }
 
