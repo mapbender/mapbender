@@ -503,10 +503,19 @@ class StyleInstanceEditor {
             return;
         }
 
-        propNames.forEach(prop => {
+        // Restore saved order: selected props first (in their saved sequence), then remaining
+        const orderedProps = [
+            ...selected.filter(p => propNames.includes(p)),
+            ...propNames.filter(p => !selected.includes(p))
+        ];
+
+        orderedProps.forEach((prop) => {
             const id = 'tooltip_cb_' + Math.random().toString(36).substr(2, 6);
             const wrapper = document.createElement('div');
             wrapper.className = 'form-check tooltip-prop-check';
+            wrapper.draggable = true;
+            wrapper.dataset.prop = prop;
+            wrapper.style.cursor = 'move';
 
             const cb = document.createElement('input');
             cb.type = 'checkbox';
@@ -532,6 +541,46 @@ class StyleInstanceEditor {
 
             wrapper.appendChild(cb);
             wrapper.appendChild(label);
+            
+            // Drag event handlers
+            wrapper.addEventListener('dragstart', (e) => {
+                e.dataTransfer.effectAllowed = 'move';
+                wrapper.classList.add('tooltip-prop-dragging');
+            });
+            
+            wrapper.addEventListener('dragend', () => {
+                wrapper.classList.remove('tooltip-prop-dragging');
+                container.querySelectorAll('.tooltip-prop-check').forEach(w => {
+                    w.classList.remove('tooltip-prop-drag-over');
+                });
+                this._syncTooltipHidden(container, hiddenInput);
+            });
+            
+            wrapper.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                const dragging = container.querySelector('.tooltip-prop-dragging');
+                if (dragging && dragging !== wrapper) {
+                    wrapper.classList.add('tooltip-prop-drag-over');
+                    // Insert before or after depending on cursor position
+                    const rect = wrapper.getBoundingClientRect();
+                    const midY = rect.top + rect.height / 2;
+                    if (e.clientY < midY) {
+                        container.insertBefore(dragging, wrapper);
+                    } else {
+                        container.insertBefore(dragging, wrapper.nextSibling);
+                    }
+                }
+            });
+            
+            wrapper.addEventListener('dragleave', () => {
+                wrapper.classList.remove('tooltip-prop-drag-over');
+            });
+            
+            wrapper.addEventListener('drop', () => {
+                this._syncTooltipHidden(container, hiddenInput);
+            });
+
             container.appendChild(wrapper);
         });
     }
@@ -539,6 +588,7 @@ class StyleInstanceEditor {
     _syncTooltipHidden(container, hiddenInput) {
         if (!hiddenInput) return;
         const checked = [];
+        // Read in DOM order to respect drag-and-drop reordering
         container.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
             checked.push(cb.value);
         });
