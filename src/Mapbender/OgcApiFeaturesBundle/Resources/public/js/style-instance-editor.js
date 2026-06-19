@@ -73,7 +73,10 @@ class StyleInstanceEditor {
                 const body = $target.find('.popover-body')[0];
                 if (body) this.updatePreview(body);
                 const row = $trigger.closest('tr')[0];
-                if (body && row) this._initTooltipCheckboxes(body, row);
+                if (body && row) {
+                    this._initTooltipCheckboxes(body, row);
+                    this._initTooltipMode(body, row);
+                }
             }
         });
 
@@ -482,6 +485,13 @@ class StyleInstanceEditor {
         }
 
         this._renderCheckboxes(container, propNames, selected, hiddenInput, propertyTitles);
+
+        // Also build prop tag buttons for the tooltip template panel
+        const templateTagsContainer = popoverBody.querySelector('.template-prop-tags');
+        const templateTextarea = popoverBody.querySelector('.tooltip-template-textarea');
+        if (templateTagsContainer && templateTextarea) {
+            this._buildPropTags(templateTagsContainer, propNames, propertyTitles, templateTextarea);
+        }
     }
 
     _renderCheckboxes(container, propNames, selected, hiddenInput, propertyTitles) {
@@ -534,5 +544,133 @@ class StyleInstanceEditor {
         });
         hiddenInput.value = checked.length > 0 ? JSON.stringify(checked) : '';
     }
+
+    // ── Tooltip Mode Switcher ──
+
+    _initTooltipMode(popoverBody, row) {
+        if (popoverBody.dataset.tooltipModeInit === 'true') return;
+        popoverBody.dataset.tooltipModeInit = 'true';
+
+        const switcher = popoverBody.querySelector('.tooltip-mode-switcher');
+        if (!switcher) return;
+
+        // Read persisted mode from the hidden form field
+        const modeInput = popoverBody.querySelector('input[id$="_tooltipMode"]');
+        const initialMode = (modeInput && modeInput.value === 'template') ? 'template' : 'props';
+        this._setTooltipMode(popoverBody, initialMode);
+
+        // Wire radio buttons
+        switcher.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                this._setTooltipMode(popoverBody, radio.value);
+            });
+        });
+    }
+
+    _setTooltipMode(popoverBody, mode) {
+        const switcher = popoverBody.querySelector('.tooltip-mode-switcher');
+        if (!switcher) return;
+
+        const propsPanel = popoverBody.querySelector('.tooltip-props-panel');
+        const templatePanel = popoverBody.querySelector('.tooltip-template-panel');
+        const modeInput = popoverBody.querySelector('input[id$="_tooltipMode"]');
+        const radios = switcher.querySelectorAll('input[type="radio"]');
+
+        radios.forEach(r => { r.checked = r.value === mode; });
+        if (propsPanel)    propsPanel.style.display    = mode === 'props'    ? '' : 'none';
+        if (templatePanel) templatePanel.style.display = mode === 'template' ? '' : 'none';
+        // Persist the selection in the hidden form field
+        if (modeInput) modeInput.value = mode === 'template' ? 'template' : '';
+    }
+
+    // ── Property Tag Buttons (for HTML templates) ──
+
+    /**
+     * Builds clickable property tag buttons that insert ${propertyName} into the target textarea.
+     */
+    _buildPropTags(container, propNames, propertyTitles, targetTextarea) {
+        container.innerHTML = '';
+        if (!propNames.length) {
+            const msg = document.createElement('span');
+            msg.className = 'text-muted small';
+            msg.textContent = Mapbender.trans('mb.ogcapifeatures.admin.tooltip.no_properties');
+            container.appendChild(msg);
+            return;
+        }
+        propNames.forEach(prop => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-outline-secondary btn-sm prop-tag-btn';
+            const title = propertyTitles?.[prop];
+            btn.textContent = title ? title + ' (' + prop + ')' : prop;
+            btn.title = '${' + prop + '}';
+            btn.addEventListener('click', () => {
+                this._insertAtCursor(targetTextarea, '${' + prop + '}');
+            });
+            container.appendChild(btn);
+        });
+    }
+
+    _insertAtCursor(textarea, text) {
+        if (!textarea) return;
+        textarea.focus();
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+        textarea.value = before + text + after;
+        textarea.selectionStart = textarea.selectionEnd = start + text.length;
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    // ── Feature Info Template ──
+
+    _initFeatureInfoTemplate(popoverBody, row) {
+        if (popoverBody.dataset.featureInfoTemplateInit === 'true') return;
+        popoverBody.dataset.featureInfoTemplateInit = 'true';
+
+        const tagsContainer = popoverBody.querySelector('.featureinfo-prop-tags');
+        const textarea = popoverBody.querySelector('.featureinfo-template-textarea');
+        if (!tagsContainer || !textarea) return;
+
+        let propNames = [];
+        try { propNames = JSON.parse(row.dataset.properties || '[]'); } catch(e) {}
+        if (!Array.isArray(propNames)) propNames = [];
+
+        let propertyTitles = {};
+        try { propertyTitles = JSON.parse(row.dataset.propertyTitles || '{}'); } catch(e) {}
+
+        this._buildPropTags(tagsContainer, propNames, propertyTitles, textarea);
+    }
 }
-$(function() { new StyleInstanceEditor(); });
+$(function() {
+    new StyleInstanceEditor();
+    _initFeatureInfoModeSwitcher();
+});
+
+function _initFeatureInfoModeSwitcher() {
+    const switcher = document.querySelector('.featureinfo-mode-switcher');
+    if (!switcher) return;
+
+    const propsPanel = document.querySelector('.featureinfo-props-panel');
+    const templatePanel = document.querySelector('.featureinfo-template-panel');
+    const modeInput = document.querySelector('input[id$="_featureInfoMode"]');
+
+    // Determine initial mode: read from persisted hidden field
+    const initialMode = (modeInput && modeInput.value === 'template') ? 'template' : 'props';
+    _setFeatureInfoMode(switcher, propsPanel, templatePanel, modeInput, initialMode);
+
+    switcher.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            _setFeatureInfoMode(switcher, propsPanel, templatePanel, modeInput, radio.value);
+        });
+    });
+}
+
+function _setFeatureInfoMode(switcher, propsPanel, templatePanel, modeInput, mode) {
+    switcher.querySelectorAll('input[type="radio"]').forEach(r => { r.checked = r.value === mode; });
+    if (propsPanel)    propsPanel.style.display    = mode === 'props'    ? '' : 'none';
+    if (templatePanel) templatePanel.style.display = mode === 'template' ? '' : 'none';
+    // Persist the selection in the hidden form field
+    if (modeInput) modeInput.value = mode === 'template' ? 'template' : '';
+}

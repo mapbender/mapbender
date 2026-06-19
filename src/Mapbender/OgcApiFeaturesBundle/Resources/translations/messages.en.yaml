@@ -46,6 +46,12 @@ mb:
         heading: Hover Tooltip
         description: "Select which properties are shown in a tooltip when hovering over features on the map."
         no_properties: "No properties available. Try reloading the source."
+        mode_props: Property list
+        mode_template: HTML template
+        template_help: "Enter an HTML template. Use ${propertyName} placeholders. Click a property tag to insert it."
+      featureinfo_template:
+        heading: Feature Info Template
+        description: "Enter an HTML template for the feature info popup. Use ${propertyName} placeholders. If set, this overrides the instance-level property map for this collection."
     metadata:
       title: Title
       version: Version

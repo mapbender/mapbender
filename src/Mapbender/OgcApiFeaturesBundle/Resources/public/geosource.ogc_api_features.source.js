@@ -373,6 +373,15 @@ class OgcApiSource extends Mapbender.Source {
 
     _buildTooltipContent(feature, child) {
         const properties = feature.getProperties();
+        // Use explicit mode field; fall back to 'template' if template is set but mode is missing
+        const mode = child.options.tooltip?.mode
+            || (child.options.tooltip?.template ? 'template' : 'props');
+        if (mode === 'template') {
+            const template = child.options.tooltip?.template;
+            if (template) {
+                return this._renderHtmlTemplate(template, properties);
+            }
+        }
         const propertyMap = this._getChildTooltipMap(child);
         const propertyTitles = child.options.propertyTitles || {};
         const skipKeys = new Set(['geometry', 'layer', 'featureTitle']);
@@ -405,6 +414,20 @@ class OgcApiSource extends Mapbender.Source {
         if (this._tooltipElement) {
             this._tooltipElement.style.display = 'none';
         }
+    }
+
+    /**
+     * Resolves ${propertyName} placeholders in an HTML template string against feature properties.
+     * Returns a <div> wrapping the rendered HTML, or null if the template produces no visible content.
+     */
+    _renderHtmlTemplate(template, properties) {
+        const html = template.replace(/\$\{([^}]+)\}/g, (_, key) => {
+            const val = properties[key];
+            return val != null ? String(val) : '';
+        });
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html;
+        return wrapper;
     }
 
     _getChildTooltipMap(child) {
@@ -489,6 +512,19 @@ class OgcApiSource extends Mapbender.Source {
             h5.className = 'featureinfo__title mt-3';
             h5.textContent = label;
             geometryDiv.appendChild(h5);
+        }
+        // HTML template mode: use instance-level featureInfoTemplate if defined
+        const featureInfoMode = this.options.featureInfo?.mode
+            || (this.options.featureInfo?.template ? 'template' : 'props');
+        if (featureInfoMode === 'template') {
+            const featureInfoTemplate = this.options.featureInfo?.template;
+            if (featureInfoTemplate) {
+                const rendered = this._renderHtmlTemplate(featureInfoTemplate, properties);
+                if (rendered) {
+                    geometryDiv.appendChild(rendered);
+                }
+                return geometryDiv;
+            }
         }
         const table = document.createElement('table');
         table.className = 'table table-striped table-bordered table-condensed featureinfo__table';

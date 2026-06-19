@@ -4,7 +4,9 @@ namespace Mapbender\OgcApiFeaturesBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -67,6 +69,18 @@ class OgcApiFeaturesInstanceType extends AbstractType
                 'help' => 'mb.vectortiles.admin.featureinfo.property_map_help',
                 'json_encode' => true,
             ], $this->translator))
+            ->add('featureInfoTemplate', TextareaType::class, [
+                'required' => false,
+                'label' => 'mb.ogcapifeatures.admin.featureinfo_template.heading',
+                'attr' => [
+                    'class' => 'form-control featureinfo-template-textarea',
+                    'rows' => 6,
+                    'placeholder' => '<b>${name}</b><br>Year: ${year}',
+                ],
+            ])
+            ->add('featureInfoMode', HiddenType::class, [
+                'required' => false,
+            ])
             ->add('layers', CollectionType::class, [
                 'entry_type' => OgcApiFeaturesInstanceLayerType::class,
                 'entry_options' => [
