@@ -61,10 +61,14 @@
 .dropdownList .choice.filter-kept { font-style: italic; color: #6c757d; }
 
 /* ── Tooltip property checkboxes ── */
-.tooltip-checkbox-list { max-height: 250px; overflow-y: auto; padding: 6px 0; border: 1px solid #dee2e6; border-radius: 4px; padding: 8px; }
-.tooltip-prop-check { margin-bottom: 2px; }
-.tooltip-prop-check .form-check-label { user-select: none; }
+.tooltip-checkbox-list { max-height: 250px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 8px; }
+.tooltip-prop-check { display: grid; grid-template-columns: 16px 110px 20px 150px; align-items: center; column-gap: 6px; margin-bottom: 4px; cursor: move; }
+.tooltip-prop-check .form-check-input { grid-column: 1; margin: 0; }
+.tooltip-prop-check .form-check-label { grid-column: 2; user-select: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tooltip-prop-label-toggle { grid-column: 3; text-align: center; font-size: 0.9em; line-height: 1; color: #6c757d; text-decoration: none; }
+.tooltip-prop-label-toggle:hover { color: #0d6efd; }
 .tooltip-prop-check .prop-key { color: #6c757d; font-size: 0.85em; }
+.tooltip-prop-label-input { grid-column: 4; font-size: 0.8em; padding: 1px 5px; border: 1px solid #adb5bd; border-radius: 3px; background: #fff; width: 100%; box-sizing: border-box; }
 
 /* ── Tooltip property drag-and-drop ── */
 .tooltip-prop-check.tooltip-prop-dragging {
