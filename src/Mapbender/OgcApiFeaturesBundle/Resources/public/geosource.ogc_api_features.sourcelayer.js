@@ -1,3 +1,6 @@
+/** OGC API Features Part 1 mandates bounding boxes are always in WGS 84 */
+const OGC_API_BBOX_CRS = 'EPSG:4326';
+
 class OgcApiSourceLayer extends Mapbender.SourceLayer {
 
     constructor(definition, source, parent) {
@@ -9,19 +12,18 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
     }
 
     getBounds(projCode, inheritFromParent) {
-        // bbox is always in WGS 84
-        const bounds = this.source._bboxArrayToBounds(this.options.bbox, 'EPSG:4326');
-        return Mapbender.mapEngine.transformBounds(bounds, 'EPSG:4326', projCode);
+        const bounds = this.source._bboxArrayToBounds(this.options.bbox, OGC_API_BBOX_CRS);
+        return Mapbender.mapEngine.transformBounds(bounds, OGC_API_BBOX_CRS, projCode);
     }
 
     intersectsExtent(extent, srsName) {
         if (!this.hasBounds()) {
             return true;
         }
-        const extent_ = srsName !== 'EPSG:4326'
-            ? Mapbender.mapEngine.transformBounds(extent, srsName, 'EPSG:4326')
+        const extent_ = srsName !== OGC_API_BBOX_CRS
+            ? Mapbender.mapEngine.transformBounds(extent, srsName, OGC_API_BBOX_CRS)
             : extent;
-        const layerBounds = this.source._bboxArrayToBounds(this.options.bbox, 'EPSG:4326');
+        const layerBounds = this.source._bboxArrayToBounds(this.options.bbox, OGC_API_BBOX_CRS);
         return Mapbender.Util.extentsIntersect(extent_, layerBounds);
     }
 }
