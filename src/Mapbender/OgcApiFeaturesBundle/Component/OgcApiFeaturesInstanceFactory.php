@@ -86,6 +86,7 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
     {
         $source = $this->getSourceFromConfig($data, $id);
         $instance = new OgcApiFeaturesInstance();
+        $instance->setId($id);
         $instance->setSource($source);
         $instance->setTitle($data['title'] ?? $source->getTitle());
         $instance->setOpacity($data['opacity'] ?? 100);
@@ -95,8 +96,12 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
         $instance->setToggle($data['toggle'] ?? true);
         $instance->setMinScale($data['minScale'] ?? null);
         $instance->setMaxScale($data['maxScale'] ?? null);
-        $instance->setFeatureLimit($data['featureLimit'] ?? null);
-        $featureInfoPropertyMap = json_encode($data['featureInfoPropertyMap']);
+        $instanceFeatureLimit = $data['featureLimit'] ?? null;
+        if ($instanceFeatureLimit !== null) {
+            $instance->setFeatureLimit((int)$instanceFeatureLimit);
+        }
+        $instance->setBasesource(isset($data['isBaseSource']) ? (bool)$data['isBaseSource'] : false);
+        $featureInfoPropertyMap = isset($data['featureInfoPropertyMap']) ? json_encode($data['featureInfoPropertyMap']) : null;
         $instance->setFeatureInfoPropertyMap($featureInfoPropertyMap);
 
         foreach ($data['layers'] as $layer) {
@@ -119,7 +124,10 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
             $instanceLayer->setAllowSelected($layer['allowSelected'] ?? true);
             $instanceLayer->setInfo($layer['info'] ?? false);
             $instanceLayer->setAllowInfo($layer['allowInfo'] ?? true);
-            $instanceLayer->setFeatureLimit($data['featureLimit'] ?? null);
+            $layerFeatureLimit = $layer['featureLimit'] ?? $instanceFeatureLimit;
+            if ($layerFeatureLimit !== null) {
+                $instanceLayer->setFeatureLimit((int)$layerFeatureLimit);
+            }
             $instanceLayer->setPriority(null);
             $instance->addLayer($instanceLayer);
         };
