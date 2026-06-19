@@ -2,20 +2,24 @@
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #ccc;
     border-radius: 6px;
-    padding: 8px 12px;
+    padding: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     font-size: 13px;
-    line-height: 1.4;
-    max-width: 320px;
-    pointer-events: none;
+    line-height: 1.5;
+    max-width: 500px;
+    width: fit-content;
+    pointer-events: auto;
     z-index: 10000;
-    white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 .ogc-api-tooltip-row {
     display: flex;
     gap: 8px;
-    padding: 2px 0;
+    padding: 4px 0;
     border-bottom: 1px solid #eee;
+    align-items: flex-start;
 }
 .ogc-api-tooltip-row:last-child {
     border-bottom: none;
@@ -24,12 +28,13 @@
     font-weight: 600;
     color: #555;
     flex-shrink: 0;
+    min-width: fit-content;
 }
 .ogc-api-tooltip-key::after {
     content: ':';
 }
 .ogc-api-tooltip-val {
     color: #222;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    word-break: break-word;
+    flex: 1;
 }
