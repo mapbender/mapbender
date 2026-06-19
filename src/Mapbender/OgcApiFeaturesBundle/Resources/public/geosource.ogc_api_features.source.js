@@ -387,11 +387,15 @@ class OgcApiSource extends Mapbender.Source {
         const skipKeys = new Set(['geometry', 'layer', 'featureTitle']);
         const fragment = document.createDocumentFragment();
         let count = 0;
-        for (const [key, value] of Object.entries(properties)) {
+        // When propertyMap is set, iterate its keys in saved order; otherwise use feature property order
+        const keys = propertyMap
+            ? Object.keys(propertyMap)
+            : Object.keys(properties);
+        for (const key of keys) {
             if (skipKeys.has(key)) continue;
+            const value = properties[key];
             if (value == null || value === '') continue;
             if (typeof value === 'object') continue;
-            if (propertyMap && !propertyMap[key]) continue;
             const row = document.createElement('div');
             row.className = 'ogc-api-tooltip-row';
             const label = document.createElement('span');

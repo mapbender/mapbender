@@ -65,3 +65,15 @@
 .tooltip-prop-check { margin-bottom: 2px; }
 .tooltip-prop-check .form-check-label { user-select: none; }
 .tooltip-prop-check .prop-key { color: #6c757d; font-size: 0.85em; }
+
+/* ── Tooltip property drag-and-drop ── */
+.tooltip-prop-check.tooltip-prop-dragging {
+    opacity: 0.5;
+    background-color: #f0f0f0;
+}
+
+.tooltip-prop-check.tooltip-prop-drag-over {
+    background-color: #e7f3ff;
+    border-radius: 4px;
+    transition: background-color 0.15s;
+}
