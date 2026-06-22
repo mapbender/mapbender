@@ -21,7 +21,31 @@
         <ul class="list">
             {% for slug, app in apps %}
                 <li class="list-item">
+                {% if app.add_wms is defined and app.add_wms.mb_url is defined
+                    and app.add_wms.mb_url
+                    and app.add_wms.mb_url matches '/^https?:\\/\\/.+/' %}
+                    <a href="#"
+                       data-mb-action="source.add.wms"
+                       data-mb-url="{{ app.add_wms.mb_url }}"
+                        {% if app.add_wms.mb_wms_layers is defined and app.add_wms.mb_wms_layers %}
+                            data-mb-wms-layers="{{ app.add_wms.mb_wms_layers }}"
+                        {% endif %}
+                        {% if app.add_wms.mb_layer_merge is defined and app.add_wms.mb_layer_merge %}
+                            data-mb-layer-merge="{{ app.add_wms.mb_layer_merge }}"
+                        {% endif %}
+                        {% if app.add_wms.mb_wms_merge is defined and app.add_wms.mb_wms_merge %}
+                            data-mb-wms-merge="{{ app.add_wms.mb_wms_merge }}"
+                        {% endif %}
+                        {% if app.add_wms.mb_infoformat is defined and app.add_wms.mb_infoformat %}
+                            data-mb-infoformat="{{ app.add_wms.mb_infoformat }}"
+                        {% endif %}
+                        {% if app.add_wms.mb_add_vendor_specific is defined and app.add_wms.mb_add_vendor_specific %}
+                            data-mb-add-vendor-specific="{{ app.add_wms.mb_add_vendor_specific }}"
+                        {% endif %}
+                    >
+                {% else %}
                     <a href="{{ app.url }}"{% if app.description is defined and app.description %} title="{{ app.description }}"{% endif %}>
+                {% endif %}
                         <div class="list-content">
                             {% if app.img_url is defined and app.img_url != false %}
                             <img src="{{ app.img_url }}" alt="{{ app.title }}">
