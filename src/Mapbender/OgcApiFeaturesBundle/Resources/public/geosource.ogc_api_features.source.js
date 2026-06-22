@@ -244,7 +244,9 @@ class OgcApiSource extends Mapbender.Source {
                     // expression evaluator (EvaluationContext.properties()) can read them.
                     // That method accesses feature.properties (GeoJSON convention), not OL's
                     // feature.get(). Without this, ['get', 'prop'] in filters returns undefined.
-                    f.properties = f.getProperties();
+                    const propsCopy = Object.assign({}, f.getProperties());
+                    delete propsCopy.geometry;
+                    f.properties = propsCopy;
                 });
                 source.clear(true);
                 source.addFeatures(parsed);
