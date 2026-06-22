@@ -86,7 +86,11 @@
 
 /* ── Empty field validation ── */
 input.field-empty,
-input.field-empty:focus {
+select.field-empty,
+textarea.field-empty,
+input.field-empty:focus,
+select.field-empty:focus,
+textarea.field-empty:focus {
     background-color: #fff0f0 !important;
     border-color: #f5a0a0 !important;
 }
