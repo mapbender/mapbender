@@ -229,13 +229,8 @@ class StyleEditorLayers {
     }
 
     _markIfEmpty(input) {
-        if (input.value === '' || input.value === null || input.value === undefined) {
-            input.style.backgroundColor = '#fff0f0';
-            input.style.borderColor = '#f5a0a0';
-        } else {
-            input.style.backgroundColor = '';
-            input.style.borderColor = '';
-        }
+        const isEmpty = input.value === '';
+        input.classList.toggle('field-empty', isEmpty);
     }
 
     _createColorRow(prop, label, value) {
