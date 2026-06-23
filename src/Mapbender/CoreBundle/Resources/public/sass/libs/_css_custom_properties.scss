@@ -18,8 +18,10 @@
 
 :root {
     // ---- Typography ----
-    --font-family: #{$fontFamily};
-    --font-size: #{$fontSize};
+    --font-family: #{if($fontFamily, $fontFamily, sans-serif)};
+    --font-size: #{if($fontSize, $fontSize, 13px)};
+    --font-weight: normal;
+    --font-style: normal;
 
     // ---- Brand ----
     --primary: #{$ciColor};
@@ -141,8 +143,8 @@
     --metadata-border-color: var(--popup-border-color);
     --metadata-heading-color: var(--text-color);
     --metadata-section-toggle-color: var(--primary);
-    --metadata-header-background: var(--button-active-background);
-    --metadata-header-text: var(--button-active-text);
+    --metadata-header-background: var(--popup-background);
+    --metadata-header-text: var(--text-color);
 
     // ---- Layertree ----
     --layertree-indent: 1.6em;

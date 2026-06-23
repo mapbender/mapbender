@@ -11,6 +11,8 @@ html, body{
   font:{
     family: var(--font-family);
     size: var(--font-size);
+    weight: var(--font-weight);
+    style: var(--font-style);
   }
   color: var(--text-color);
   background-color: var(--background-color);
