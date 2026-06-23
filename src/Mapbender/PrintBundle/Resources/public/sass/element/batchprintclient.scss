@@ -139,8 +139,7 @@
   }
 
   // Shared button styling for all button groups
-  .geofile-button-wrapper,
-  .frame-table .frame-table-buttons {
+  .geofile-button-wrapper {
     button {
       white-space: nowrap;
       padding: 4px 12px;
@@ -173,7 +172,7 @@
       gap: 8px;
       flex-wrap: wrap;
       display: none; // Hide by default until frames are added
-      margin-right: 10px; // Move trash icon slightly to the left
+      margin-right: 10px;
       
       .fa-trash-can {
         cursor: pointer;
