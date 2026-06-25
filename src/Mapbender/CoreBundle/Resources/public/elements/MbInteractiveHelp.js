@@ -104,7 +104,7 @@
                     localStorage.removeItem(this.localStorageId);
                 }
             });
-            $(window).on('resize', () => {
+            $(window).add('.sidepane').on('resize sidepane-resize', () => {
                 if (this.isActive) {
                     this.prepareTourChapterConfiguration();
                     const chapters = this.options.tour.chapters;
@@ -162,8 +162,8 @@
             this.prevChapter = currentChapter;
             const $currentElement = $('#' + currentChapter.id);
             let id = '';
-            if (currentChapter.region === 'sidepane') {
-                const sidePaneType = this.sidePaneType();
+            if (currentChapter.region === 'sidepane' || currentChapter.region === 'sidepane-right') {
+                const sidePaneType = Mapbender.sidePane.sidePaneType();
                 switch (sidePaneType) {
                     case 'tabs':
                         id = $currentElement.closest('.container').attr('id').replace('container', '');
@@ -218,7 +218,7 @@
             if (currentChapter.region === 'toolbar' && this.isDropdownMenu() && this.dropdownMenuIsClosed()) {
                 this.openDropdownMenu();
             }
-            if (currentChapter.region === 'sidepane') {
+            if (currentChapter.region === 'sidepane' || currentChapter.region === 'sidepane-right') {
                 await Mapbender.sidePane.setOpen(true);
             }
             const anchor = currentChapter.element.options.anchor;
@@ -237,10 +237,9 @@
             }
 
             // close sidepane if a positioned content element would be overlayed by the sidepane
-            if (!Mapbender.sidePane.isOpen && (
-                (currentChapter.region === 'content' && !Mapbender.sidePane.isLeft) ||
+            if ((currentChapter.region === 'content' && !Mapbender.sidePane.isLeft) ||
                 (currentChapter.region === 'content-left' && Mapbender.sidePane.isLeft)
-            )) {
+            ) {
                 await Mapbender.sidePane.setOpen(false);
             }
             await this.calculatePopoverPosition(currentChapter);
@@ -251,7 +250,6 @@
             if (!targetElement) {
                 return;
             }
-            await this.waitForRunningTransitions(targetElement);
             const rect = targetElement.getBoundingClientRect();
             let top, left, position;
             switch (currentChapter.region) {
@@ -298,43 +296,6 @@
             });
         }
 
-        async waitForRunningTransitions(targetElement) {
-            // check for API support
-            if (typeof targetElement.getAnimations !== 'function') return;
-
-            const elementsToCheck = [];
-            let current = targetElement;
-            // Parent transitions can move children, so include the ancestor chain.
-            while (current && current !== document.body) {
-                elementsToCheck.push(current);
-                current = current.parentElement;
-            }
-
-            const runningAnimations = elementsToCheck.flatMap((element) => {
-                return element.getAnimations().filter((animation) => {
-                    if (animation.playState !== 'running' && animation.playState !== 'pending') {
-                        return false;
-                    }
-                    // Ignore infinite / non-terminating animations (e.g. spinners) which would block forever.
-                    const effect = animation.effect;
-                    if (!effect || typeof effect.getComputedTiming !== 'function') {
-                        return false;
-                    }
-                    const {endTime} = effect.getComputedTiming();
-                    return Number.isFinite(endTime);
-                });
-            });
-
-            if (!runningAnimations.length) {
-                return;
-            }
-
-            await Promise.race([
-                Promise.allSettled(runningAnimations.map((animation) => animation.finished)),
-                new Promise((resolve) => setTimeout(resolve, 1000))
-            ]);
-        }
-
         stopTour() {
             const chapters = this.options.tour.chapters;
             if (chapters[this.currentChapter - 1].region === 'toolbar') {
@@ -343,23 +304,6 @@
             this.currentChapter = 0;
             this.popover.detach();
             this.isActive = false;
-        }
-
-        sidePanePosition() {
-            return ($('.sidePane').hasClass('right')) ? 'right' : 'left';
-        }
-
-        sidePaneType() {
-            const $sidePane = $('.sidePane .sideContent > :first-child');
-            if ($sidePane.hasClass('tabContainerAlt')) {
-                return 'tabs';
-            } else if ($sidePane.hasClass('accordionContainer')) {
-                return 'accordion';
-            } else if ($sidePane.hasClass('listContainer')) {
-                return 'list';
-            } else { // unformatted sidepane
-                return 'list';
-            }
         }
 
         isDropdownMenu() {

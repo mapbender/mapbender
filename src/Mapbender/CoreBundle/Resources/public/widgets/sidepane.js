@@ -1,15 +1,20 @@
 $(function () {
+    /**
+     * Class that encapsulates all functionality regarding the fullscreen template's sidepane
+     * Emits the 'sidepane-resize' event on the .sidePane element when resized.
+     */
     class SidePane {
         constructor(element) {
             this.$element = $(element);
             this.$switchButton = this.$element.find(".toggleSideBar");
+            this.$switchIcon = this.$switchButton.children('i').first();
             this.element = this.$element[0];
             this.pointerPosition = 0;
             this.isLeft = this.$element.hasClass('left');
-            // potentially directly overridden in setupInitialState
+            // initial state overridden in _setupInitialState
             this.isOpen = true;
             this.isAnimating = false;
-            this.pendingRejects = [];
+            // stores resolve methods of promises that will be resolved when animation finishes
             this.pendingResolves = [];
 
             this.BORDER_SIZE = 'ontouchstart' in document ? 12 : 6;
@@ -17,15 +22,28 @@ $(function () {
             this.MAX_SIZE_WINDOW_PERCENTAGE = 0.95;
             this.MIN_SIZE_PX = 120;
 
+            this._lastFocusedListItem = null; // Global tracking of last focused list item
 
-            this.setupInitialState();
-            this.setupEvents();
+            this.boundResizeSidepane = this._resizeSidepane.bind(this);
+            this._setupInitialState();
+            this._setupEvents();
         }
 
+        /**
+         * toggles the current sidepane opened state.
+         * Returns a promise that will resolve once the animation finished.
+         * @return {Promise<void>}
+         */
         async toggle() {
             return await this.setOpen(!this.isOpen);
         }
 
+        /**
+         * sets the sidepane state to open or closed. Returns a promise that
+         * will resolve once the animation finished (or instantly if the sidepane
+         * already is at the desired state).
+         * @return {Promise<void>}
+         */
         setOpen(open) {
             if (open === this.isOpen && !this.isAnimating) {
                 return Promise.resolve();
@@ -33,23 +51,17 @@ $(function () {
             if (open === this.isOpen && this.isAnimating) {
                 return new Promise((resolve, reject) => {
                     this.pendingResolves.push(resolve);
-                    this.pendingRejects.push(reject);
                 });
             }
 
             // stop current animations if applicable
             this.$element.stop(true);
-            for (const reject of this.pendingRejects) {
-                reject();
-            }
-            this.pendingRejects = [];
 
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 const wasOpen = this.isOpen;
                 this.isOpen = open;
                 this.isAnimating = true;
-                this.pendingRejects.push(reject);
-                this.pendingResolves.push(reject);
+                this.pendingResolves.push(resolve);
 
                 var animation = {};
                 var align = this.isLeft ? 'left' : 'right';
@@ -59,46 +71,58 @@ $(function () {
                     animation[align] = "0px";
                 }
 
+                this.$switchButton.toggleClass('closed', !open);
+                this.$switchIcon.toggleClass('fa-bars', !open);
+                this.$switchIcon.toggleClass('fa-xmark', open);
+
+                this._updateToggleButtonIcons(this.$switchButton);
+
+                // When closing the sidepane, focus the fa-bars icon
+                if (this.$switchButton.hasClass('closed')) {
+                    setTimeout(() => {
+                        this.$switchIcon.focus();
+                    }, 50);
+                }
+
                 this.$element.addClass('animating');
                 this.$element.animate(animation, {
                     duration: 300,
                     complete: () => {
                         this.$element.removeClass('animating').toggleClass('closed', wasOpen);
-                        for(const _resolve of this.pendingResolves) {
+                        for (const _resolve of this.pendingResolves) {
                             _resolve();
                         }
                         this.pendingResolves = [];
-                        this.pendingRejects = [];
+                        this.isAnimating = false;
                     }
                 });
             });
         };
 
-        setupEvents() {
-            this.$switchButton.on('click', () => this.toggle());
-
-            $(document).on('pointerdown', '.sidePane.resizable', (e) => {
-                const paneRect = e.target.getBoundingClientRect();
-                const offsetX = e.clientX - paneRect.left;
-
-                if ((this.isLeft && this.sidePaneWidth() - offsetX < this.BORDER_SIZE) || (!this.isLeft && offsetX < this.BORDER_SIZE)) {
-                    this.pointerPosition = e.x;
-                    $("body").addClass("prevent-selection");
-                    document.addEventListener("pointermove", this.resize.bind(this));
-                }
-
-                $(document).one('pointercancel pointerup', () => {
-                    document.removeEventListener("pointermove", this.resize.bind(this));
-                    $("body").removeClass("prevent-selection");
-                });
-            });
-
-            // make sure sidebar is resizable even when making the window smaller
-            window.addEventListener("resize", this.constrainSize, false);
+        /**
+         * @return {"tabs" | "accordion" | "list" | "unformatted" }
+         */
+        sidePaneType() {
+            const $sidePane = $('.sidePane .sideContent > :first-child');
+            if ($sidePane.hasClass('tabContainerAlt')) {
+                return 'tabs';
+            } else if ($sidePane.hasClass('accordionContainer')) {
+                return 'accordion';
+            } else if ($sidePane.hasClass('listContainer')) {
+                return 'list';
+            } else {
+                return 'unformatted';
+            }
         }
 
-        setupInitialState() {
-            // TOGGLE SIDEPANE FUNCTIONALITY
+        _updateToggleButtonIcons($btn) {
+            var $elementIcons = $btn.find('.element-icons');
+
+            // Show element icons when closed, hide when open
+            $elementIcons.toggleClass('hidden', !$btn.hasClass('closed'));
+        }
+
+        _setupInitialState() {
             if (this.$element.hasClass('closed')) {
                 this.isOpen = false;
                 if (this.$element.hasClass("right")) {
@@ -109,15 +133,44 @@ $(function () {
             }
         }
 
-        // RESIZE SIDEPANE FUNCTIONALITY
+        _setupEvents() {
+            this.$switchButton.on('click', (e) => {
+                e.stopPropagation();
+                this.toggle();
+            });
+
+            $(document).on('pointerdown', '.sidePane.resizable', (e) => {
+                const paneRect = e.target.getBoundingClientRect();
+                const offsetX = e.clientX - paneRect.left;
+
+                if ((this.isLeft && this.sidePaneWidth() - offsetX < this.BORDER_SIZE) || (!this.isLeft && offsetX < this.BORDER_SIZE)) {
+                    this.pointerPosition = e.x;
+                    $("body").addClass("prevent-selection");
+                    document.addEventListener("pointermove", this.boundResizeSidepane);
+                }
+
+                $(document).one('pointercancel pointerup', () => {
+                    document.removeEventListener("pointermove", this.boundResizeSidepane);
+                    $("body").removeClass("prevent-selection");
+                });
+            });
+
+            // make sure sidebar is resizable even when making the window smaller
+            window.addEventListener("resize", this.constrainSize.bind(this), false);
+        }
+
+        /**
+         * gets the current sidepane width in pixels
+         * @return {number}
+         */
         sidePaneWidth() {
             return parseInt(getComputedStyle(this.element, '').width);
         }
 
-        resize(e) {
+        _resizeSidepane(e) {
             if (e.buttons === 0) {
                 // catch pointer released outside the window
-                document.removeEventListener("pointermove", this.resize.bind(this), false);
+                document.removeEventListener("pointermove", this.boundResizeSidepane, false);
                 return;
             }
 
@@ -145,8 +198,13 @@ $(function () {
             }
 
             this.element.style.width = calculatedWidth + "px";
+            this.$element.trigger('sidepane-resize');
         }
 
+        /**
+         * makes sure that after resize the sidepane size is within the allowed bounds
+         * (calculated using the property MAX_SIZE_WINDOW_PERCENTAGE)
+         */
         constrainSize() {
             if (!this.element) return;
             const allowedWidth = Math.floor(window.innerWidth * this.MAX_SIZE_WINDOW_PERCENTAGE);
