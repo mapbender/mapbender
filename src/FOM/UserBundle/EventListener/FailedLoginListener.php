@@ -46,6 +46,7 @@ class FailedLoginListener implements EventSubscriberInterface
             'ipAddress' => $ipAddress,
             'action' => 'login',
             'status' => 'fail',
+            'creationDate' => new \DateTime($this->checkInterval),
         ];
         // Log failed login attempt
         $entry = new UserLogEntry(array_merge($userInfo, [
@@ -56,17 +57,18 @@ class FailedLoginListener implements EventSubscriberInterface
         $em->persist($entry);
         $em->flush();
 
-        $failedLoginCount = $repository->createQueryBuilder('p')->select('count(p.id)')
+        $qb = $repository->createQueryBuilder('p')->select('count(p.id)')
             ->where('p.ipAddress = :ipAddress')
             ->andWhere('p.userName = :userName')
             ->andWhere('p.status = :status')
             ->andWhere('p.action = :action')
-            ->andWhere('p.creationDate > :creationDate')
-            ->setParameters($userInfo)
-            ->setParameter('creationDate', new \DateTime($this->checkInterval))
-            ->getQuery()
-            ->getSingleScalarResult()
-        ;
+            ->andWhere('p.creationDate > :creationDate');
+
+        foreach($userInfo as $key => $value){
+            $qb->setParameter($key, $value);
+        }
+
+        $failedLoginCount = $qb->getQuery()->getSingleScalarResult();
 
         if ($failedLoginCount >= $this->maxAttempts) {
             sleep($this->delayTime);
