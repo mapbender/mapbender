@@ -73,6 +73,12 @@
                 case 'width':
                     self.width(value);
                     break;
+                case 'left':
+                    self.left(value);
+                    break;
+                case 'top':
+                    self.top(value);
+                    break;
                 default:
                     unusedOptions[optionName] = value;
                     break;
@@ -97,6 +103,8 @@
             resizable: false,
             width: null,
             height: null,
+            left: null,
+            top: null,
             cssClass: null,
             title: null,
             subtitle: null,
@@ -231,6 +239,18 @@
                 return this.options.width;
             }
             this.$element.css('width', (null === width ? '' : width));
+        },
+        left: function(left) {
+            if (typeof left === 'undefined') {
+                return this.options.left;
+            }
+            this.$element.css('left', (null === left ? '' : left));
+        },
+        top: function(top) {
+            if (typeof top === 'undefined') {
+                return this.options.top;
+            }
+            this.$element.css('top', (null === top ? '' : top));
         },
         height: function(height) {
             if (typeof height === 'undefined') {
