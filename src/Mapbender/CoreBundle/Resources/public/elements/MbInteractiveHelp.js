@@ -160,25 +160,9 @@
             }
             const currentChapter = this.options.tour.chapters[this.currentChapter];
             this.prevChapter = currentChapter;
-            const $currentElement = $('#' + currentChapter.id);
-            let id = '';
-            if (currentChapter.region === 'sidepane' || currentChapter.region === 'sidepane-right') {
-                const sidePaneType = Mapbender.sidePane.sidePaneType();
-                switch (sidePaneType) {
-                    case 'tabs':
-                        id = $currentElement.closest('.container').attr('id').replace('container', '');
-                        $('.sidePane #tab' + id).trigger('click');
-                        break;
-                    case 'list':
-                        id = $currentElement.closest('.container-list-group-item').attr('id').replace('list_group_item_container', '');
-                        $('.sidePane #list_group_item' + id).trigger('click');
-                        break;
-                    default:
-                        $currentElement.closest('.container-accordion').prev().trigger('click');
-                }
-            }
+
             if (currentChapter.region === 'toolbar') {
-                $currentElement.trigger('click');
+                $('#' + currentChapter.id).trigger('click');
             }
             this.updatePopover(currentChapter);
             this.currentChapter++;
@@ -218,8 +202,8 @@
             if (currentChapter.region === 'toolbar' && this.isDropdownMenu() && this.dropdownMenuIsClosed()) {
                 this.openDropdownMenu();
             }
-            if (currentChapter.region === 'sidepane' || currentChapter.region === 'sidepane-right') {
-                await Mapbender.sidePane.setOpen(true);
+            if (currentChapter.region.startsWith('sidepane')) {
+                await Mapbender.sidePane.openElementById(currentChapter.id);
             }
             const anchor = currentChapter.element.options.anchor;
             switch (true) {

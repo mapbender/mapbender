@@ -5,9 +5,13 @@ $(function () {
      */
     class SidePane {
         constructor(element) {
+            /** {jQuery} **/
             this.$element = $(element);
+            /** {jQuery} **/
             this.$switchButton = this.$element.find(".toggleSideBar");
+            /** {jQuery} **/
             this.$switchIcon = this.$switchButton.children('i').first();
+            /** {HTMLDivElement} **/
             this.element = this.$element[0];
             this.pointerPosition = 0;
             this.isLeft = this.$element.hasClass('left');
@@ -214,6 +218,76 @@ $(function () {
                     this.element.style.left = "-" + allowedWidth + "px";
                 }
             }
+        }
+
+        /**
+         * opens the mapbender element by the supplied element id (for modes list, tabs and accordion).
+         * Also openes the sidepane if it's closed
+         * @param {number | string} id the element id to open
+         * @return {Promise<void>} resolves after animations finished
+         */
+        openElementById(id) {
+            const sidePaneType = this.sidePaneType();
+            switch (sidePaneType) {
+                case 'list':
+                    const $groupItem = this.$element.find('#' + id).closest('.container-list-group-item');
+                    const listId = $groupItem.attr('id').replace('list_group_item_container', '');
+                    $('.sidePane #list_group_item' + listId).trigger('click');
+                    return Promise.allSettled([
+                        this._waitForRunningTransitions($groupItem[0]),
+                        this.setOpen(true),
+                    ]);
+                case 'tabs':
+                    const tabId = this.$element.find('#' + id).closest('.container').attr('id').replace('container', '');
+                    $('.sidePane #tab' + tabId).trigger('click');
+                    this.$element.find('#tab' + tabId).trigger('click');
+                    // no animation, so we're good to just break through to awaiting setOpen
+                    break;
+                case 'accordion':
+                    this.$element.find('#' + id).closest('.container-accordion').prev().trigger('click');
+                    // no animation, so we're good to just break through to awaiting setOpen
+                    break;
+                // for unformatted, nothing needs to be highlighted
+            }
+
+            return this.setOpen(true);
+        }
+
+        async _waitForRunningTransitions(targetElement) {
+            // check for API support
+            if (typeof targetElement.getAnimations !== 'function') return;
+
+            const elementsToCheck = [];
+            let current = targetElement;
+            // Parent transitions can move children, so include the ancestor chain.
+            while (current && current !== document.body) {
+                elementsToCheck.push(current);
+                current = current.parentElement;
+            }
+
+            const runningAnimations = elementsToCheck.flatMap((element) => {
+                return element.getAnimations().filter((animation) => {
+                    if (animation.playState !== 'running' && animation.playState !== 'pending') {
+                        return false;
+                    }
+                    // Ignore infinite / non-terminating animations (e.g. spinners) which would block forever.
+                    const effect = animation.effect;
+                    if (!effect || typeof effect.getComputedTiming !== 'function') {
+                        return false;
+                    }
+                    const {endTime} = effect.getComputedTiming();
+                    return Number.isFinite(endTime);
+                });
+            });
+
+            if (!runningAnimations.length) {
+                return;
+            }
+
+            await Promise.race([
+                Promise.allSettled(runningAnimations.map((animation) => animation.finished)),
+                new Promise((resolve) => setTimeout(resolve, 1000))
+            ]);
         }
     }
 
