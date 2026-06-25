@@ -39,7 +39,13 @@ mb:
           left: Lewo
           right: Prawo
           center: Środek
-      generate_button_menu: 'Generuj menu dla przycisków'
+      menu_button:
+          label: 'Menu'
+          choice:
+              no_menu: 'bez menu (domyślnie)'
+              menu_desktop: 'Pokaż menu na komputerze'
+              menu_mobile_desktop: 'Pokaż menu na komputerze i urządzeniach mobilnych'
+              menu_mobile: 'Pokaż menu tylko na urządzeniach mobilnych'
       menu_label: 'Etykieta menu'
     visibility: Widoczność
     element:

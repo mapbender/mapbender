@@ -39,7 +39,13 @@ mb:
           left: Слева
           right: Справа
           center: 'По центру'
-      generate_button_menu: 'Объединять кнопки в меню'
+      menu_button:
+          label: 'Меню'
+          choice:
+              no_menu: 'без меню (по умолчанию)'
+              menu_desktop: 'Показывать меню на десктопе'
+              menu_mobile_desktop: 'Показывать меню на десктопе и мобильных'
+              menu_mobile: 'Показывать меню только на мобильных'
       menu_label: 'Заголовок меню'
     visibility: Видимость
     element:
