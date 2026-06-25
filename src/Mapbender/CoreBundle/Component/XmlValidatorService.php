@@ -20,7 +20,7 @@ class XmlValidatorService
     /** @var string */
     protected $tempDir;
 
-    public function __construct(HttpTransportInterface $httpTransport, $staticSchemaPath, LoggerInterface $logger = null)
+    public function __construct(HttpTransportInterface $httpTransport, $staticSchemaPath, ?LoggerInterface $logger = null)
     {
         $this->httpTransport = $httpTransport;
         $this->staticSchemaPath = $staticSchemaPath;

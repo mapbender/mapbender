@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -134,7 +135,7 @@ class PermissionManager extends Voter
      * returns the subject domain for a given subject
      * @see AbstractSubjectDomain::supports()
      */
-    public function findSubjectDomainFor(mixed $permissionOrSubject, string $action = null): AbstractSubjectDomain
+    public function findSubjectDomainFor(mixed $permissionOrSubject, ?string $action = null): AbstractSubjectDomain
     {
         foreach ($this->subjectDomains as $subjectDomain) {
             if ($permissionOrSubject instanceof Permission) {
@@ -220,7 +221,7 @@ class PermissionManager extends Voter
      */
     public function getPermissionsForUser(?UserInterface $user): array
     {
-        $userIdentifier = $user?->getUserIdentifier();
+        $userIdentifier = $user?->getUserIdentifier() ?? '';
         if (array_key_exists($userIdentifier, $this->cache)) return $this->cache[$userIdentifier];
 
         $q = $this->em->getRepository(Permission::class)->createQueryBuilder('p');
@@ -404,11 +405,12 @@ class PermissionManager extends Voter
      * @param TokenInterface $token a wrapper for the logged-in user
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
         return $this->isGranted($user, $subject, $attribute);
     }
+
 
     /** END Wrapper for symfony's VoterInterface */
 

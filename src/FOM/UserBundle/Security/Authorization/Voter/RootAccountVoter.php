@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Security\Authorization\Voter;
 
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -12,7 +13,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class RootAccountVoter implements VoterInterface
 {
-    function vote(TokenInterface $token, $subject, array $attributes): int
+    function vote(TokenInterface $token, $subject, array $attributes, ?Vote $vote = null): int
     {
         $user = $token->getUser();
         if ($user && \is_object($user) && \method_exists($user, 'isAdmin') && $user->isAdmin()) {

@@ -156,7 +156,7 @@ class ApplicationMarkupRenderer
         if ($this->allowResponsiveContainers) {
             switch (ArrayUtil::getDefault($props, 'screenType')) {
                 default:
-                case ScreenTypes::ALL;
+                case ScreenTypes::ALL:
                     // nothing;
                     break;
                 case ScreenTypes::DESKTOP_ONLY:

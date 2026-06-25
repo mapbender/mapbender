@@ -7,6 +7,7 @@ namespace Mapbender\Component\Collections;
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\ReadableCollection;
 use Doctrine\Common\Collections\Selectable;
 use Mapbender\CoreBundle\Component\Exception\ElementErrorException;
 use Mapbender\CoreBundle\Entity\Application;
@@ -33,7 +34,7 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
      * @param array $data
      * @param LoggerInterface|null $logger
      */
-    public function __construct(ElementEntityFactory $factory, Application $application, $data, LoggerInterface $logger = null)
+    public function __construct(ElementEntityFactory $factory, Application $application, $data, ?LoggerInterface $logger = null)
     {
         $this->factory = $factory;
         $this->application = $application;
@@ -93,7 +94,7 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
     /**
      * {@inheritDoc}
      */
-    public function matching(Criteria $criteria)
+    public function matching(Criteria $criteria): ReadableCollection&Selectable
     {
         $this->initialize();
         return $this->collection->matching($criteria);

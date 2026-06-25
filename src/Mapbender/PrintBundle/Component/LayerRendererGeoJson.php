@@ -578,7 +578,7 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param boolean $close ; use true for polygons, false for line strings
      * @param FeatureBounds|null $bounds of all $rings; will be calculated if omitted, but can be passed in as an optimization
      */
-    protected function drawLineSetsInternal(ExportCanvas $canvas, $style, $coordSets, $close, FeatureBounds $bounds = null)
+    protected function drawLineSetsInternal(ExportCanvas $canvas, $style, $coordSets, $close, ?FeatureBounds $bounds = null)
     {
         if (!$bounds) {
             $bounds = new FeatureBounds();

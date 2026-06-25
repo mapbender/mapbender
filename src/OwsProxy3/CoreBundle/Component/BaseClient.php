@@ -19,7 +19,7 @@ class BaseClient
     /** @var LoggerInterface */
     protected $logger;
 
-    public function __construct(array $proxyParams, $userAgent = null, LoggerInterface $logger = null)
+    public function __construct(array $proxyParams, $userAgent = null, ?LoggerInterface $logger = null)
     {
         if (empty($proxyParams['host'])) {
             $proxyParams = array();

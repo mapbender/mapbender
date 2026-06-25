@@ -19,7 +19,7 @@ class SourceTwigExtension extends AbstractExtension
         return 'mbcore_source';
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('source_label', [$this, 'getSourceLabel']),

@@ -4,6 +4,7 @@ namespace FOM\UserBundle\Security\Permission;
 
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -80,7 +81,7 @@ abstract class YamlBaseVoter extends Voter
         return false;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var YamlDefinedPermissionEntity $subject */
         $roles = $subject->getYamlRoles();

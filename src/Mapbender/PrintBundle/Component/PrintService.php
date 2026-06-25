@@ -464,7 +464,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
                 return date('d.m.Y');
             case 'scale':
                 return '1 : ' . $jobData['scale_select'];
-            case 'user_name';
+            case 'user_name':
                 return $jobData['userName'];
             case 'dynamic_text':
                 if (isset($jobData['dynamic_text']['text'])) {

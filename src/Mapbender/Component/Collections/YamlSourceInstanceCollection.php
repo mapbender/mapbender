@@ -20,7 +20,7 @@ class YamlSourceInstanceCollection extends AbstractLazyCollection
     {
     }
 
-    protected function doInitialize()
+    protected function doInitialize(): void
     {
         $this->collection = new ArrayCollection();
         $weight = 0;

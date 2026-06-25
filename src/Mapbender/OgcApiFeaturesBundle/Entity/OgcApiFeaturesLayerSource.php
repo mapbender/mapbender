@@ -27,7 +27,7 @@ class OgcApiFeaturesLayerSource extends SourceItem
     #[ORM\Column(name: 'properties', type: 'json', nullable: true)]
     private ?array $properties = null;
 
-    public function setTitle(string $title = null): void
+    public function setTitle(?string $title = null): void
     {
         $this->title = $title;
     }

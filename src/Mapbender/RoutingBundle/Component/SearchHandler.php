@@ -25,10 +25,10 @@ class SearchHandler {
 
         if ($configuration['useSearch'] && $searchConfig) {
             switch ($driver) {
-                case 'solr';
+                case 'solr':
                     $response = $this->solrDriver->search($requestParams, $searchConfig);
                     break;
-                case 'sql';
+                case 'sql':
                     $response = $this->sqlDriver->search($requestParams, $searchConfig);
                     break;
                 default:
