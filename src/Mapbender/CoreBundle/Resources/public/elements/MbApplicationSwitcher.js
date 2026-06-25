@@ -46,8 +46,15 @@
             url = url.replaceAll('%center_x%', viewParams.center[0]);
             url = url.replaceAll('%center_y%', viewParams.center[1]);
             url = url.replaceAll('%rotation%', viewParams.rotation);
-            url = url.replaceAll('%srs%', viewParams.srsName.toLowerCase().replace('epsg:', ''));
             url = url.replaceAll('%zoom%', this.mbMap.getModel().pickZoomForScale(viewParams.scale));
+
+            // Mapbender apps require the SRS parameter to take the form "epsg:xxxx" while
+            // external application may require only the numeric part of the EPSG code.
+            const isLocalApp = url.startsWith('/') || url.startsWith(this.baseUrl);
+            url = isLocalApp
+                ? url.replaceAll('%srs%', viewParams.srsName.toLowerCase())
+                : url.replaceAll('%srs%', viewParams.srsName.toLowerCase().replace('epsg:', ''));
+
             return url;
         }
     }

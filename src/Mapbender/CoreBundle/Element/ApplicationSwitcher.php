@@ -102,7 +102,11 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
                 $appConfig['title'] = (!empty($appConfig['title'])) ? $appConfig['title'] : $application->getTitle();
                 $appConfig['description'] = (!empty($appConfig['description'])) ? $appConfig['description'] : $application->getDescription();
                 if (empty($appConfig['url'])) {
-                    $appConfig['url'] = $this->router->generate('mapbender_core_application_application', ['slug' => $slug]);
+                    $url = $this->router->generate('mapbender_core_application_application', ['slug' => $slug]);
+                    // Placeholder values get filled in by the frontend when the application
+                    // is switched.
+                    $placeholders = '?center=%center_x%,%center_y%&scale=%scale%&srs=%srs%';
+                    $appConfig['url'] = $url . $placeholders;
                 }
                 if (empty($appConfig['img_url'])) {
                     $appConfig['img_url'] = false;
