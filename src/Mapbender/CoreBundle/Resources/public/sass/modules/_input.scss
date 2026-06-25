@@ -47,7 +47,7 @@ select[readonly] + .dropdownValue {
     pointer-events: none;
 }
 
-textarea.form-control {
+textarea.form-control:not([rows]) {
    min-height: 150px;
 }
 .input, .inputWrapper select {
