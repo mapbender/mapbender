@@ -1,4 +1,4 @@
-(function() {
+(function () {
     class MbInteractiveHelp extends MapbenderElement {
         constructor(configuration, $element) {
             super(configuration, $element);
@@ -104,7 +104,7 @@
                     localStorage.removeItem(this.localStorageId);
                 }
             });
-            $(window).on('resize', () => {
+            $(window).add('.sidepane').on('resize sidepane-resize', () => {
                 if (this.isActive) {
                     this.prepareTourChapterConfiguration();
                     const chapters = this.options.tour.chapters;
@@ -160,25 +160,9 @@
             }
             const currentChapter = this.options.tour.chapters[this.currentChapter];
             this.prevChapter = currentChapter;
-            const $currentElement = $('#' + currentChapter.id);
-            let id = '';
-            if (currentChapter.region === 'sidepane') {
-                const sidePaneType = this.sidePaneType();
-                switch (sidePaneType) {
-                    case 'tabs':
-                        id = $currentElement.closest('.container').attr('id').replace('container', '');
-                        $('.sidePane #tab' + id).trigger('click');
-                        break;
-                    case 'list':
-                        id = $currentElement.closest('.container-list-group-item').attr('id').replace('list_group_item_container', '');
-                        $('.sidePane #list_group_item' + id).trigger('click');
-                        break;
-                    default:
-                        $currentElement.closest('.container-accordion').prev().trigger('click');
-                }
-            }
+
             if (currentChapter.region === 'toolbar') {
-                $currentElement.trigger('click');
+                $('#' + currentChapter.id).trigger('click');
             }
             this.updatePopover(currentChapter);
             this.currentChapter++;
@@ -218,28 +202,39 @@
             if (currentChapter.region === 'toolbar' && this.isDropdownMenu() && this.dropdownMenuIsClosed()) {
                 this.openDropdownMenu();
             }
-            if (currentChapter.region === 'sidepane' && this.sidePaneIsClosed()) {
-                await this.openSidePane();
+            if (currentChapter.region.startsWith('sidepane')) {
+                await Mapbender.sidePane.openElementById(currentChapter.id);
             }
             const anchor = currentChapter.element.options.anchor;
             switch (true) {
                 case currentChapter.region === 'content' && anchor.startsWith('left'):
                     currentChapter.region = currentChapter.region + '-left';
                     break;
-                case currentChapter.region === 'sidepane' && this.sidePanePosition() === 'right':
+                case currentChapter.region === 'sidepane' && !Mapbender.sidePane.isLeft:
                     currentChapter.region = currentChapter.region + '-right';
                     break;
                 case currentChapter.region === 'sidepane' && this.isMobile():
                     currentChapter.region = currentChapter.region + '-mobile';
                     break;
                 default:
-                    // do nothing
+                // do nothing
             }
-            this.calculatePopoverPosition(currentChapter);
+
+            // close sidepane if a positioned content element would be overlayed by the sidepane
+            if ((currentChapter.region === 'content' && !Mapbender.sidePane.isLeft) ||
+                (currentChapter.region === 'content-left' && Mapbender.sidePane.isLeft)
+            ) {
+                await Mapbender.sidePane.setOpen(false);
+            }
+            await this.calculatePopoverPosition(currentChapter);
         }
 
-        calculatePopoverPosition(currentChapter) {
-            const rect = document.getElementById(currentChapter.id).getBoundingClientRect();
+        async calculatePopoverPosition(currentChapter) {
+            const targetElement = document.getElementById(currentChapter.id);
+            if (!targetElement) {
+                return;
+            }
+            const rect = targetElement.getBoundingClientRect();
             let top, left, position;
             switch (currentChapter.region) {
                 case 'footer':
@@ -295,43 +290,6 @@
             this.isActive = false;
         }
 
-        sidePanePosition() {
-            return ($('.sidePane').hasClass('right')) ? 'right' : 'left';
-        }
-
-        sidePaneIsClosed() {
-            return $('.sidePane').hasClass('closed');
-        }
-
-        sidePaneType() {
-            const $sidePane = $('.sidePane .sideContent > :first-child');
-            if ($sidePane.hasClass('tabContainerAlt')) {
-                return 'tabs';
-            } else if ($sidePane.hasClass('accordionContainer')) {
-                return 'accordion';
-            } else if ($sidePane.hasClass('listContainer')) {
-                return 'list';
-            } else { // unformatted sidepane
-                return 'list';
-            }
-        }
-
-        openSidePane() {
-            return new Promise((resolve) => {
-                const sidePane = $('.sidePane')[0];
-                if (!this.sidePaneIsClosed()) {
-                    resolve();
-                    return;
-                }
-                const onTransitionEnd = () => {
-                    sidePane.removeEventListener('transitionend', onTransitionEnd);
-                    resolve();
-                };
-                sidePane.addEventListener('transitionend', onTransitionEnd);
-                $('.toggleSideBar').trigger('click');
-            });
-        }
-
         isDropdownMenu() {
             return $('.toolBar > :first-child').hasClass('dropdown');
         }
@@ -350,7 +308,7 @@
 
         focusPopover() {
             const $p = this.popover;
-            $p.attr({ tabindex: '-1', role: 'dialog' });
+            $p.attr({tabindex: '-1', role: 'dialog'});
             const getFocusables = () => $p
                 .find('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')
                 .filter(':visible');
@@ -392,3 +350,6 @@
     window.Mapbender.Element = window.Mapbender.Element || {};
     window.Mapbender.Element.MbInteractiveHelp = MbInteractiveHelp;
 })();
+
+
+

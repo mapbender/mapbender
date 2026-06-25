@@ -1,12 +1,10 @@
-<h5 class="text-center">
-    {{ config.tour.intro.title|trans }}
-</h5>
+<h5>{{ config.tour.intro.title|trans }}</h5>
 <p class="lead">
     {{ config.tour.intro.description|trans }}
 </p>
 <div class="mb-3 form-check d-none dismiss-permanently">
-    <input type="checkbox" class="form-check-input ">
     <label class="form-check-label">
+        <input type="checkbox" class="form-check-input">
         {{ 'mb.interactivehelp.element.dismissPermanently' | trans }}
     </label>
 </div>

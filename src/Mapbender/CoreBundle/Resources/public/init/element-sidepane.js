@@ -1,3 +1,4 @@
+// TODO: integrate this into sidepane.js, having this as separate file is makes no sense
 ((function($) {
     var lastFocusedListItem = null; // Global tracking of last focused list item
     function updateResponsive($buttons) {
@@ -630,25 +631,6 @@
                 $icons.eq(currentIndex + 1).trigger('focus');
             }
         }
-    });
-
-    $(document).on('click', '.sidePane .toggleSideBar', function(e) {
-        var $btn = $(this);
-        var $icon = $btn.children('i').first();
-
-        $btn.toggleClass('closed');
-        $icon.toggleClass('fa-bars fa-xmark');
-
-        updateToggleButtonIcons($btn);
-
-        // When closing the sidepane, focus the fa-bars icon
-        if ($btn.hasClass('closed')) {
-            setTimeout(function() {
-                $icon.focus();
-            }, 50);
-        }
-
-        e.stopPropagation();
     });
 
     $(document).on('keydown', '.sidePane .toggleSideBar', function(e) {

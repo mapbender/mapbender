@@ -375,11 +375,11 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     margin-top: 0.5rem;
   }
   &.anchored-element-wrap-lt, &.anchored-element-wrap-lb {
-    left: calc(var(--space) * 2);
+    left: var(--content-element-padding-horizontal);
     text-align: left;
   }
   &.anchored-element-wrap-rt, &.anchored-element-wrap-rb {
-    right: calc(var(--space) * 2);
+    right: var(--content-element-padding-horizontal);
     text-align: right;
   }
   &.anchored-element-wrap-lt, &.anchored-element-wrap-rt {
