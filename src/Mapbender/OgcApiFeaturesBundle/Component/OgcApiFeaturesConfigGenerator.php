@@ -59,6 +59,8 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
             ],
             'featureInfo' => [
                 'propertyMap' => $featureInfoPropertyMapExists ? $featureInfoPropertyMap : null,
+                'template' => $sourceInstance->getFeatureInfoTemplate() ?: null,
+                'mode' => $sourceInstance->getFeatureInfoMode(),
             ],
         ];
         $config['state'] = [
@@ -96,10 +98,16 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                     $childConfig['options']['availableStyles'] = $availableStyles;
                 }
                 $tooltipMap = $layer->getTooltipPropertyMap();
-                if ($tooltipMap) {
-                    $childConfig['options']['tooltip'] = [
-                        'propertyMap' => $tooltipMap,
-                    ];
+                $tooltipTemplate = $layer->getTooltipTemplate();
+                $tooltipMode = $layer->getTooltipMode();
+                if ($tooltipMap || $tooltipTemplate) {
+                    $childConfig['options']['tooltip'] = ['mode' => $tooltipMode];
+                    if ($tooltipMap) {
+                        $childConfig['options']['tooltip']['propertyMap'] = $tooltipMap;
+                    }
+                    if ($tooltipTemplate) {
+                        $childConfig['options']['tooltip']['template'] = $tooltipTemplate;
+                    }
                 }
                 $propertyTitles = $layer->getSourceItem()->getPropertyTitles();
                 if ($propertyTitles) {

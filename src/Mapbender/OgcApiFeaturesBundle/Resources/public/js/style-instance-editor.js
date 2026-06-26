@@ -54,13 +54,22 @@ class StyleInstanceEditor {
     // ── Events ──
 
     _bindEvents() {
+        this._bindStyleEvents();
+        this._bindPopoverEvents();
+        this._bindFilterEvents();
+        this._bindSecondaryStyleEvents();
+    }
+
+    _bindStyleEvents() {
         $(document).on('change', 'select[id$="_styleId"]', (e) => {
             const popoverBody = e.target.closest('.popover-body');
             if (popoverBody) this.updatePreview(popoverBody);
             this._updateNativeStyleIndicator(e.target);
             this._updateChangedIndicator(e.target);
         });
+    }
 
+    _bindPopoverEvents() {
         this.$table.on('click', '.-fn-toggle-layer-detail', (e) => {
             const $trigger = $(e.currentTarget);
             const target = $trigger.attr('data-toggle-target');
@@ -73,7 +82,10 @@ class StyleInstanceEditor {
                 const body = $target.find('.popover-body')[0];
                 if (body) this.updatePreview(body);
                 const row = $trigger.closest('tr')[0];
-                if (body && row) this._initTooltipCheckboxes(body, row);
+                if (body && row) {
+                    this._initTooltipCheckboxes(body, row);
+                    this._initTooltipMode(body, row);
+                }
             }
         });
 
@@ -97,7 +109,9 @@ class StyleInstanceEditor {
                 this._updateSecondaryCount(secSelect);
             }
         });
+    }
 
+    _bindFilterEvents() {
         this.$table.on('click', '.-fn-apply-style-filter', (e) => {
             e.preventDefault();
             const row = e.currentTarget.closest('.style-filter-row');
@@ -117,8 +131,9 @@ class StyleInstanceEditor {
             this._applyFilters();
             this._updateFilterButtons();
         });
+    }
 
-        // Secondary styles: toggle panel
+    _bindSecondaryStyleEvents() {
         this.$table.on('click', '.-fn-toggle-secondary-styles', (e) => {
             e.preventDefault();
             const section = e.currentTarget.closest('.secondary-styles-section');
@@ -130,7 +145,6 @@ class StyleInstanceEditor {
             arrow.classList.toggle('fa-chevron-up', !visible);
         });
 
-        // Secondary styles: apply filter
         this.$table.on('click', '.-fn-apply-sec-filter', (e) => {
             e.preventDefault();
             const row = e.currentTarget.closest('.secondary-filter-row');
@@ -142,7 +156,6 @@ class StyleInstanceEditor {
             this._applySecFilters();
         });
 
-        // Secondary styles: reset filter
         this.$table.on('click', '.-fn-reset-sec-filter', (e) => {
             e.preventDefault();
             this._secFilterState = { name: '', origin: '', source: this.sourceId };
@@ -150,7 +163,6 @@ class StyleInstanceEditor {
             this._applySecFilters();
         });
 
-        // Secondary styles: update badge on selection change
         this.$table.on('change', '.secondary-style-select', (e) => {
             this._updateSecondaryCount(e.target);
         });
@@ -482,6 +494,13 @@ class StyleInstanceEditor {
         }
 
         this._renderCheckboxes(container, propNames, selected, hiddenInput, propertyTitles);
+
+        // Also build prop tag buttons for the tooltip template panel
+        const templateTagsContainer = popoverBody.querySelector('.template-prop-tags');
+        const templateTextarea = popoverBody.querySelector('.tooltip-template-textarea');
+        if (templateTagsContainer && templateTextarea) {
+            this._buildPropTags(templateTagsContainer, propNames, propertyTitles, templateTextarea);
+        }
     }
 
     _renderCheckboxes(container, propNames, selected, hiddenInput, propertyTitles) {
@@ -493,46 +512,222 @@ class StyleInstanceEditor {
             return;
         }
 
-        propNames.forEach(prop => {
-            const id = 'tooltip_cb_' + Math.random().toString(36).substr(2, 6);
-            const wrapper = document.createElement('div');
-            wrapper.className = 'form-check tooltip-prop-check';
+        const { selectedKeys, savedLabels } = this._parseSelectedEntries(selected);
+        const orderedProps = [
+            ...selectedKeys.filter(p => propNames.includes(p)),
+            ...propNames.filter(p => !selectedKeys.includes(p))
+        ];
 
-            const cb = document.createElement('input');
-            cb.type = 'checkbox';
-            cb.className = 'form-check-input';
-            cb.id = id;
-            cb.value = prop;
-            cb.checked = selected.includes(prop);
-            cb.addEventListener('change', () => this._syncTooltipHidden(container, hiddenInput));
+        orderedProps.forEach(prop => {
+            const row = this._buildCheckboxRow(prop, selectedKeys, savedLabels, propertyTitles, container, hiddenInput);
+            container.appendChild(row);
+        });
+    }
 
-            const label = document.createElement('label');
-            label.className = 'form-check-label small';
-            label.htmlFor = id;
-            const title = propertyTitles?.[prop];
-            if (title) {
-                label.textContent = title + ' ';
-                const keySpan = document.createElement('span');
-                keySpan.className = 'prop-key';
-                keySpan.textContent = '(' + prop + ')';
-                label.appendChild(keySpan);
-            } else {
-                label.textContent = prop;
+    _parseSelectedEntries(selected) {
+        const selectedKeys = selected.map(e => (typeof e === 'string' ? e : Object.keys(e)[0]));
+        const savedLabels = {};
+        selected.forEach(e => {
+            if (typeof e !== 'string') {
+                const [k, v] = Object.entries(e)[0];
+                savedLabels[k] = v;
             }
+        });
+        return { selectedKeys, savedLabels };
+    }
 
-            wrapper.appendChild(cb);
-            wrapper.appendChild(label);
-            container.appendChild(wrapper);
+    _buildCheckboxRow(prop, selectedKeys, savedLabels, propertyTitles, container, hiddenInput) {
+        const id = 'tooltip_cb_' + Math.random().toString(36).substr(2, 6);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'tooltip-prop-check';
+        wrapper.draggable = true;
+        wrapper.dataset.prop = prop;
+        wrapper.style.cursor = 'move';
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'form-check-input';
+        cb.id = id;
+        cb.value = prop;
+        cb.checked = selectedKeys.includes(prop);
+        cb.addEventListener('change', () => this._syncTooltipHidden(container, hiddenInput));
+
+        const label = document.createElement('label');
+        label.className = 'form-check-label small';
+        label.htmlFor = id;
+        const title = propertyTitles?.[prop];
+        if (title) {
+            label.textContent = title + ' ';
+            const keySpan = document.createElement('span');
+            keySpan.className = 'prop-key';
+            keySpan.textContent = '(' + prop + ')';
+            label.appendChild(keySpan);
+        } else {
+            label.textContent = prop;
+        }
+
+        const { toggleBtn, labelInput } = this._buildLabelToggle(prop, savedLabels, title, container, hiddenInput);
+
+        wrapper.appendChild(cb);
+        wrapper.appendChild(label);
+        wrapper.appendChild(toggleBtn);
+        wrapper.appendChild(labelInput);
+        this._attachDragHandlers(wrapper, container, hiddenInput);
+
+        return wrapper;
+    }
+
+    _buildLabelToggle(prop, savedLabels, title, container, hiddenInput) {
+        const hasLabel = !!savedLabels[prop];
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'tooltip-prop-label-toggle btn btn-link btn-sm p-0 flex-shrink-0';
+        toggleBtn.title = 'Custom label';
+        toggleBtn.textContent = hasLabel ? '×' : '+';
+
+        const labelInput = document.createElement('input');
+        labelInput.type = 'text';
+        labelInput.className = 'tooltip-prop-label-input';
+        labelInput.placeholder = title || prop;
+        labelInput.value = savedLabels[prop] || '';
+        labelInput.style.display = hasLabel ? '' : 'none';
+        labelInput.addEventListener('input', () => this._syncTooltipHidden(container, hiddenInput));
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isOpen = labelInput.style.display !== 'none';
+            if (isOpen) {
+                labelInput.value = '';
+                labelInput.style.display = 'none';
+                toggleBtn.textContent = '+';
+                this._syncTooltipHidden(container, hiddenInput);
+            } else {
+                labelInput.style.display = '';
+                toggleBtn.textContent = '×';
+                labelInput.focus();
+            }
+        });
+
+        return { toggleBtn, labelInput };
+    }
+
+    _attachDragHandlers(wrapper, container, hiddenInput) {
+        wrapper.addEventListener('dragstart', (e) => {
+            e.dataTransfer.effectAllowed = 'move';
+            wrapper.classList.add('tooltip-prop-dragging');
+        });
+
+        wrapper.addEventListener('dragend', () => {
+            wrapper.classList.remove('tooltip-prop-dragging');
+            container.querySelectorAll('.tooltip-prop-check').forEach(w => {
+                w.classList.remove('tooltip-prop-drag-over');
+            });
+            this._syncTooltipHidden(container, hiddenInput);
+        });
+
+        wrapper.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const dragging = container.querySelector('.tooltip-prop-dragging');
+            if (dragging && dragging !== wrapper) {
+                wrapper.classList.add('tooltip-prop-drag-over');
+                const rect = wrapper.getBoundingClientRect();
+                const midY = rect.top + rect.height / 2;
+                if (e.clientY < midY) {
+                    container.insertBefore(dragging, wrapper);
+                } else {
+                    container.insertBefore(dragging, wrapper.nextSibling);
+                }
+            }
+        });
+
+        wrapper.addEventListener('dragleave', () => {
+            wrapper.classList.remove('tooltip-prop-drag-over');
+        });
+
+        wrapper.addEventListener('drop', () => {
+            this._syncTooltipHidden(container, hiddenInput);
         });
     }
 
     _syncTooltipHidden(container, hiddenInput) {
         if (!hiddenInput) return;
-        const checked = [];
+        const result = [];
+        // Read in DOM order to respect drag-and-drop reordering
         container.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
-            checked.push(cb.value);
+            const wrapper = cb.closest('.tooltip-prop-check');
+            const labelInput = wrapper?.querySelector('.tooltip-prop-label-input');
+            const customLabel = labelInput?.value.trim();
+            if (customLabel) {
+                result.push({[cb.value]: customLabel});
+            } else {
+                result.push(cb.value);
+            }
         });
-        hiddenInput.value = checked.length > 0 ? JSON.stringify(checked) : '';
+        hiddenInput.value = result.length > 0 ? JSON.stringify(result) : '';
+    }
+
+    // ── Mode Switchers (tooltip + feature info) ──
+
+    _initTooltipMode(popoverBody, row) {
+        if (popoverBody.dataset.tooltipModeInit === 'true') return;
+        popoverBody.dataset.tooltipModeInit = 'true';
+        const modeInput = popoverBody.querySelector('input[id$="_tooltipMode"]');
+        const initialMode = modeInput?.value === 'template' ? 'template' : 'props';
+        this._initModeSwitcher(
+            popoverBody.querySelector('.tooltip-mode-switcher'),
+            popoverBody.querySelector('.tooltip-props-panel'),
+            popoverBody.querySelector('.tooltip-template-panel'),
+            modeInput,
+            initialMode
+        );
+    }
+
+    _initModeSwitcher(switcher, propsPanel, templatePanel, modeInput, initialMode) {
+        initModeSwitcher(switcher, propsPanel, templatePanel, modeInput, initialMode);
+    }
+
+    // ── Property Tag Buttons (for HTML templates) ──
+
+    /**
+     * Builds clickable property tag buttons that insert ${propertyName} into the target textarea.
+     */
+    _buildPropTags(container, propNames, propertyTitles, targetTextarea) {
+        container.innerHTML = '';
+        if (!propNames.length) {
+            const msg = document.createElement('span');
+            msg.className = 'text-muted small';
+            msg.textContent = Mapbender.trans('mb.ogcapifeatures.admin.tooltip.no_properties');
+            container.appendChild(msg);
+            return;
+        }
+        propNames.forEach(prop => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-outline-secondary btn-sm prop-tag-btn';
+            const title = propertyTitles?.[prop];
+            btn.textContent = title ? title + ' (' + prop + ')' : prop;
+            btn.title = '${' + prop + '}';
+            btn.addEventListener('click', () => {
+                this._insertAtCursor(targetTextarea, '${' + prop + '}');
+            });
+            container.appendChild(btn);
+        });
+    }
+
+    _insertAtCursor(textarea, text) {
+        if (!textarea) return;
+        textarea.focus();
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+        textarea.value = before + text + after;
+        textarea.selectionStart = textarea.selectionEnd = start + text.length;
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
     }
 }
-$(function() { new StyleInstanceEditor(); });
+$(function() {
+    new StyleInstanceEditor();
+});

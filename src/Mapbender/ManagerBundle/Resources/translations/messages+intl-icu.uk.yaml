@@ -222,6 +222,9 @@ mb:
           weight_regular: Звичайний
           weight_bold: Напівжирний
           weight_italic: Курсив
+          font_style: Стиль
+          style_normal: Звичайний
+          style_italic: Курсив
           font_color: Колір шрифту
           font_opacity: Непрозорість шрифту
           preview_legend: Попередній перегляд

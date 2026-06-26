@@ -13,12 +13,21 @@ class StyleEditorPreview {
     }
 
     drawLabel(ctx, s, x, y) {
-        const text = s.label || '';
-        if (!text) return;
+        const label = s.label || '';
+        const text = label;
         const fw = s.fontWeight || 'regular';
-        const prefix = fw === 'bold' ? 'bold ' : (fw === 'italic' ? 'italic ' : '');
-        ctx.font = `${prefix}${parseInt(s.fontSize) || 11}px ${s.fontFamily || 'Arial, Helvetica, sans-serif'}`;
-        ctx.fillStyle = StyleUtils.hexToRgba(s.fontColor || '#000000', parseFloat(s.fontOpacity) || 1);
+        const fi = s.fontStyle || 'normal';
+        const isItalic = fi === 'italic';
+        const isBold = fw === 'bold';
+        const fontParts = [];
+        if (isItalic) fontParts.push('italic');
+        if (isBold) fontParts.push('bold');
+        fontParts.push(`${parseInt(s.fontSize) || 11}px`);
+        fontParts.push(s.fontFamily || 'Arial, Helvetica, sans-serif');
+        ctx.font = fontParts.join(' ');
+        ctx.fillStyle = label
+            ? StyleUtils.hexToRgba(s.fontColor || '#000000', s.fontOpacity)
+            : 'rgba(0,0,0,0.35)';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(text, x, y);
@@ -26,8 +35,8 @@ class StyleEditorPreview {
 
     drawAll(visualStyle) {
         const s = visualStyle;
-        const fillStyle   = StyleUtils.hexToRgba(s.fillColor || '#3399CC', parseFloat(s.fillOpacity) || 1);
-        const strokeStyle = StyleUtils.hexToRgba(s.strokeColor || '#ffffff', parseFloat(s.strokeOpacity) || 1);
+        const fillStyle   = StyleUtils.hexToRgba(s.fillColor || '#3399CC', s.fillOpacity);
+        const strokeStyle = StyleUtils.hexToRgba(s.strokeColor || '#ffffff', s.strokeOpacity);
         const strokeWidth = parseFloat(s.strokeWidth) || 1;
         const pointRadius = parseFloat(s.pointRadius) || 6;
         const dashes = this.dashMap[s.strokeDashstyle] || [];

@@ -39,7 +39,8 @@ class OgcApiSource extends Mapbender.Source {
         const r = parseInt(hex.substring(0,2), 16);
         const g = parseInt(hex.substring(2,4), 16);
         const b = parseInt(hex.substring(4,6), 16);
-        return [r, g, b, parseFloat(opacity) || 1];
+        const alpha = parseFloat(opacity);
+        return [r, g, b, isNaN(alpha) ? 1 : alpha];
     }
 
     _getDashArray(dashStyle) {
@@ -113,8 +114,10 @@ class OgcApiSource extends Mapbender.Source {
         }
 
         const labelTemplate = s.label;
+        const fontWeight = s.fontWeight === 'bold' ? 'bold' : 'normal';
+        const fontStyle = s.fontStyle === 'italic' ? 'italic' : (s.fontWeight === 'italic' ? 'italic' : 'normal');
         const textBaseOptions = {
-            font: (s.fontSize || '12') + 'px ' + (s.fontFamily || 'Arial, Helvetica, sans-serif'),
+            font: `${fontStyle} ${fontWeight} ${s.fontSize || 12}px ${s.fontFamily || 'Arial, Helvetica, sans-serif'}`,
             fill: new ol.style.Fill({ color: s.fontColor || '#000000' }),
         };
 
@@ -151,32 +154,57 @@ class OgcApiSource extends Mapbender.Source {
     }
 
     _applyMapboxStyle(vectorLayer, mbStyle, collectionId) {
-        // Find the source name that uses our collectionId as source-layer
-        let sourceName = null;
-        for (const layer of (mbStyle.layers || [])) {
-            if (layer['source-layer'] === collectionId && layer.source) {
-                sourceName = layer.source;
-                break;
-            }
-        }
-        // Fallback: use first vector/geojson source
-        if (!sourceName) {
-            for (const [name, src] of Object.entries(mbStyle.sources || {})) {
-                if (src.type === 'vector' || src.type === 'geojson') {
-                    sourceName = name;
-                    break;
-                }
-            }
-        }
-        if (!sourceName) {
+        const resolved = this._resolveMapboxSource(mbStyle, collectionId);
+        if (!resolved) {
             return;
         }
+        if (!this._mapboxSourceLayers) this._mapboxSourceLayers = {};
+        this._mapboxSourceLayers[collectionId] = resolved.effectiveSourceLayer;
         vectorLayer.set('_collectionId', collectionId);
         try {
-            ol.mapboxStyle.stylefunction(vectorLayer, mbStyle, sourceName);
+            ol.mapboxStyle.stylefunction(vectorLayer, mbStyle, resolved.sourceName);
         } catch (e) {
             console.error('[OgcApiStyle] ol.mapboxStyle.stylefunction failed for "' + collectionId + '":', e);
         }
+    }
+
+    /**
+     * Resolves the Mapbox source name and the effective source-layer for a given collectionId.
+     *
+     * The collectionId may differ from the style's source-layer name when the style was built
+     * for an MVT dataset with a different layer name. The stylefunction looks up styles via
+     * l[feature.getProperties()['mvt:layer']], so features must be tagged with the source-layer
+     * name from the style, not the collectionId.
+     *
+     * @returns {{sourceName: string, effectiveSourceLayer: string}|null}
+     */
+    _resolveMapboxSource(mbStyle, collectionId) {
+        // Prefer an exact match: a style layer whose source-layer equals the collectionId
+        for (const layer of (mbStyle.layers || [])) {
+            if (layer['source-layer'] === collectionId && layer.source) {
+                return { sourceName: layer.source, effectiveSourceLayer: collectionId };
+            }
+        }
+        // Fallback: use the first vector/geojson source in the style
+        let sourceName = null;
+        for (const [name, src] of Object.entries(mbStyle.sources || {})) {
+            if (src.type === 'vector' || src.type === 'geojson') {
+                sourceName = name;
+                break;
+            }
+        }
+        if (!sourceName) {
+            return null;
+        }
+        // Find the first source-layer referenced by that source
+        let effectiveSourceLayer = collectionId;
+        for (const layer of (mbStyle.layers || [])) {
+            if (layer.source === sourceName && layer['source-layer']) {
+                effectiveSourceLayer = layer['source-layer'];
+                break;
+            }
+        }
+        return { sourceName, effectiveSourceLayer };
     }
 
     _loadCollection(collectionId, extent, resolution, projection, source) {
@@ -199,6 +227,7 @@ class OgcApiSource extends Mapbender.Source {
             })
             .then((data) => {
                 if (requestId !== this._currentRequestIds[collectionId]) {
+                    console.warn(`Discarding response for collection "${collectionId}" due to newer request`);
                     return;
                 }
                 const parsed = geojsonReader.readFeatures(data, {
@@ -207,9 +236,17 @@ class OgcApiSource extends Mapbender.Source {
                 });
                 // Set 'layer' property for internal use (tooltips, identification)
                 // Set 'mvt:layer' property so ol-mapbox-style's stylefunction can match source-layer
+                const mvtLayer = this._mapboxSourceLayers?.[collectionId] ?? collectionId;
                 parsed.forEach(f => {
                     f.set('layer', collectionId, true);
-                    f.set('mvt:layer', collectionId, true);
+                    f.set('mvt:layer', mvtLayer, true);
+                    // Expose properties on the feature object itself so the ol-mapbox-style
+                    // expression evaluator (EvaluationContext.properties()) can read them.
+                    // That method accesses feature.properties (GeoJSON convention), not OL's
+                    // feature.get(). Without this, ['get', 'prop'] in filters returns undefined.
+                    const propsCopy = Object.assign({}, f.getProperties());
+                    delete propsCopy.geometry;
+                    f.properties = propsCopy;
                 });
                 source.clear(true);
                 source.addFeatures(parsed);
@@ -338,16 +375,29 @@ class OgcApiSource extends Mapbender.Source {
 
     _buildTooltipContent(feature, child) {
         const properties = feature.getProperties();
+        // Use explicit mode field; fall back to 'template' if template is set but mode is missing
+        const mode = child.options.tooltip?.mode
+            || (child.options.tooltip?.template ? 'template' : 'props');
+        if (mode === 'template') {
+            const template = child.options.tooltip?.template;
+            if (template) {
+                return this._renderHtmlTemplate(template, properties);
+            }
+        }
         const propertyMap = this._getChildTooltipMap(child);
         const propertyTitles = child.options.propertyTitles || {};
         const skipKeys = new Set(['geometry', 'layer', 'featureTitle']);
         const fragment = document.createDocumentFragment();
         let count = 0;
-        for (const [key, value] of Object.entries(properties)) {
+        // When propertyMap is set, iterate its keys in saved order; otherwise use feature property order
+        const keys = propertyMap
+            ? Object.keys(propertyMap)
+            : Object.keys(properties);
+        for (const key of keys) {
             if (skipKeys.has(key)) continue;
+            const value = properties[key];
             if (value == null || value === '') continue;
             if (typeof value === 'object') continue;
-            if (propertyMap && !propertyMap[key]) continue;
             const row = document.createElement('div');
             row.className = 'ogc-api-tooltip-row';
             const label = document.createElement('span');
@@ -370,6 +420,20 @@ class OgcApiSource extends Mapbender.Source {
         if (this._tooltipElement) {
             this._tooltipElement.style.display = 'none';
         }
+    }
+
+    /**
+     * Resolves ${propertyName} placeholders in an HTML template string against feature properties.
+     * Returns a <div> wrapping the rendered HTML, or null if the template produces no visible content.
+     */
+    _renderHtmlTemplate(template, properties) {
+        const html = template.replace(/\$\{([^}]+)\}/g, (_, key) => {
+            const val = properties[key];
+            return val != null ? String(val) : '';
+        });
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html;
+        return wrapper;
     }
 
     _getChildTooltipMap(child) {
@@ -454,6 +518,19 @@ class OgcApiSource extends Mapbender.Source {
             h5.className = 'featureinfo__title mt-3';
             h5.textContent = label;
             geometryDiv.appendChild(h5);
+        }
+        // HTML template mode: use instance-level featureInfoTemplate if defined
+        const featureInfoMode = this.options.featureInfo?.mode
+            || (this.options.featureInfo?.template ? 'template' : 'props');
+        if (featureInfoMode === 'template') {
+            const featureInfoTemplate = this.options.featureInfo?.template;
+            if (featureInfoTemplate) {
+                const rendered = this._renderHtmlTemplate(featureInfoTemplate, properties);
+                if (rendered) {
+                    geometryDiv.appendChild(rendered);
+                }
+                return geometryDiv;
+            }
         }
         const table = document.createElement('table');
         table.className = 'table table-striped table-bordered table-condensed featureinfo__table';

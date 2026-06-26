@@ -43,7 +43,19 @@
         </div>
     </div>
     <h4 class="mt-4">{{ 'mb.vectortiles.admin.featureinfo.heading' | trans }}</h4>
-    {{ form_row(form.featureInfoPropertyMap) }}
+    {{ form_widget(form.featureInfoMode) }}
+    <div class="btn-group btn-group-sm w-100 mb-2 featureinfo-mode-switcher" role="group">
+        <input type="radio" class="btn-check" name="featureinfo_mode" id="featureinfo_mode_props" value="props" autocomplete="off">
+        <label class="btn btn-outline-secondary" for="featureinfo_mode_props">{{ 'mb.ogcapifeatures.admin.tooltip.mode_props' | trans }}</label>
+        <input type="radio" class="btn-check" name="featureinfo_mode" id="featureinfo_mode_tmpl" value="template" autocomplete="off">
+        <label class="btn btn-outline-secondary" for="featureinfo_mode_tmpl">{{ 'mb.ogcapifeatures.admin.tooltip.mode_template' | trans }}</label>
+    </div>
+    <div class="featureinfo-props-panel">
+        {{ form_row(form.featureInfoPropertyMap) }}
+    </div>
+    <div class="featureinfo-template-panel" style="display:none">
+        {{ form_row(form.featureInfoTemplate) }}
+    </div>
 {% endblock %}
 
 {% block form_layers %}
@@ -183,9 +195,26 @@
                                     <hr class="my-2">
                                     <div class="tooltip-config-section">
                                         <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}</label>
-                                        <p class="text-muted small mb-1">{{ 'mb.ogcapifeatures.admin.tooltip.description' | trans }}</p>
-                                        {{ form_widget(layer.tooltipPropertyMap) }}
-                                        <div class="tooltip-checkbox-list" data-empty-text="{{ 'mb.ogcapifeatures.admin.tooltip.no_properties' | trans }}"></div>
+                                        {{ form_widget(layer.tooltipMode) }}
+                                        {# Mode switcher #}
+                                        <div class="btn-group btn-group-sm w-100 mb-2 tooltip-mode-switcher" role="group">
+                                            <input type="radio" class="btn-check" name="tooltip_mode_{{ layer.vars.id }}" id="tooltip_mode_props_{{ layer.vars.id }}" value="props" autocomplete="off">
+                                            <label class="btn btn-outline-secondary btn-sm" for="tooltip_mode_props_{{ layer.vars.id }}">{{ 'mb.ogcapifeatures.admin.tooltip.mode_props' | trans }}</label>
+                                            <input type="radio" class="btn-check" name="tooltip_mode_{{ layer.vars.id }}" id="tooltip_mode_tmpl_{{ layer.vars.id }}" value="template" autocomplete="off">
+                                            <label class="btn btn-outline-secondary btn-sm" for="tooltip_mode_tmpl_{{ layer.vars.id }}">{{ 'mb.ogcapifeatures.admin.tooltip.mode_template' | trans }}</label>
+                                        </div>
+                                        {# Property list mode (existing) #}
+                                        <div class="tooltip-props-panel">
+                                            <p class="text-muted small mb-1">{{ 'mb.ogcapifeatures.admin.tooltip.description' | trans }}</p>
+                                            {{ form_widget(layer.tooltipPropertyMap) }}
+                                            <div class="tooltip-checkbox-list" data-empty-text="{{ 'mb.ogcapifeatures.admin.tooltip.no_properties' | trans }}"></div>
+                                        </div>
+                                        {# HTML template mode (new) #}
+                                        <div class="tooltip-template-panel" style="display:none">
+                                            <p class="text-muted small mb-1">{{ 'mb.ogcapifeatures.admin.tooltip.template_help' | trans }}</p>
+                                            <div class="template-prop-tags d-flex flex-wrap gap-1 mb-2"></div>
+                                            {{ form_widget(layer.tooltipTemplate) }}
+                                        </div>
                                     </div>
                                     <div class="text-end mt-2">
                                         <button type="button" class="btn btn-sm btn-primary -fn-confirm-style" data-toggle-target="#{{ _popover_id }}">
@@ -206,6 +235,7 @@
 {% block js %}
     {{ parent() }}
     <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
+    <script src="{{ asset('bundles/mapbenderogcapifeatures/js/mode-switcher.js') }}"></script>
     <script src="{{ asset('bundles/mapbenderogcapifeatures/js/style-instance-editor.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

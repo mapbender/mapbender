@@ -214,6 +214,7 @@ class StyleController extends ApplicationControllerBase
             'fontFamily' => 'Arial, Helvetica, sans-serif',
             'fontSize' => 11,
             'fontWeight' => 'regular',
+            'fontStyle' => 'normal',
             'fontColor' => '#333333',
             'fontOpacity' => 1,
         ];
