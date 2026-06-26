@@ -1,6 +1,6 @@
 # Upgrading Guide
 
-## next feature release
+## v5.0
 
 ### Update database
 Update your entities to the latest version.
