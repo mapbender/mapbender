@@ -152,29 +152,6 @@ class ApplicationMarkupRenderer
         $template = $this->templateRegistry->getApplicationTemplate($application);
         $props = $this->extractRegionProperties($application, $regionName);
         $props += $template->getRegionPropertiesDefaults($regionName);
-
-        // Resolve the configured button-menu mode into a boolean regarding the current screen type
-        if (!empty($props['generate_button_menu'])) {
-            $screenType = $props['screenType'];
-            $buttonMenu = $props['generate_button_menu'];
-            switch ($buttonMenu) {
-                case 'no_menu':
-                    $props['generate_button_menu'] = false;
-                    break;
-                case 'menu_desktop':
-                    $props['generate_button_menu'] = !(in_array($screenType, ['mobile', 'all']));
-                    break;
-                case 'menu_mobile':
-                    $props['generate_button_menu'] = !(in_array($screenType, ['desktop', 'all']));
-                    break;
-                case 'menu_mobile_desktop':
-                    $props['generate_button_menu'] = true;
-                    break;
-                default:
-                    $props['generate_button_menu'] = false;
-            }
-        }
-
         $classes = $template->getRegionClasses($application, $regionName);
         if ($this->allowResponsiveContainers) {
             switch (ArrayUtil::getDefault($props, 'screenType')) {
