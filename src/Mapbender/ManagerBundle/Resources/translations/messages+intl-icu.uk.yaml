@@ -37,7 +37,13 @@ mb:
           left: Зліва
           right: Справа
           center: 'По центру'
-      generate_button_menu: 'Створити меню для кнопок'
+      menu_button:
+          label: 'Меню'
+          choice:
+              no_menu: 'без меню (за замовчуванням)'
+              menu_desktop: 'Показувати меню на комп’ютері'
+              menu_mobile_desktop: 'Показувати меню на комп’ютері та мобільних'
+              menu_mobile: 'Показувати меню лише на мобільних'
       menu_label: 'Мітка меню'
       visibility: Видимість
     element:

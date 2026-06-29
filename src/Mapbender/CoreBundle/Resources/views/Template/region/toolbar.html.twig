@@ -1,6 +1,18 @@
 {% block region_wrapper %}
-<div class="{{ ('toolBar ' ~ region_class) | trim }}">
-    {%- if region_props['generate_button_menu'] -%}
+    {%- set menu_mode = region_props['generate_button_menu'] | default('no_menu') -%}
+    {#- backwards compatibility with the old boolean flag -#}
+    {%- if menu_mode is same as(true) or menu_mode == 1 or menu_mode == '1' -%}
+        {%- set menu_mode = 'menu_mobile_desktop' -%}
+    {%- elseif menu_mode is same as(false) or menu_mode == 0 or menu_mode == '' -%}
+        {%- set menu_mode = 'no_menu' -%}
+    {%- endif -%}
+    {%- set menu_mode_class = {
+        'menu_desktop': 'has-menu-desktop',
+        'menu_mobile': 'has-menu-mobile',
+    }[menu_mode] | default('') -%}
+    {%- set items_list_class = alignment_class | default('itemsRight') -%}
+    <div class="{{ ('toolBar ' ~ region_class ~ ' ' ~ menu_mode_class) | trim }}" data-toolbar-menu-mode="{{ menu_mode }}">
+    {%- if menu_mode != 'no_menu' %}
         {%- set inline_items = toolbar_inline_content(application, region_name) -%}
         {%- set menu_content = toolbar_menu_content(application, region_name) -%}
     {%- else -%}
@@ -16,17 +28,49 @@
                     {%- if not _menu_label -%} title="{{ 'mb.template.toolbar_menu_tooltip' | trans }}" {%-endif -%}>
                 {#- eat whitespace -#}
                 <i class="fa-solid fa-bars iconBig"></i></button>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" data-toolbar-menu-list>
                 {{- menu_content | raw -}}
             </ul>
         </div>
     {%- endif -%}
     {% block item_list %}
-    <ul class="{{ alignment_class | default('itemsRight') }}">
+    <ul class="{{ items_list_class }}" data-toolbar-inline-list>
         {% block item_list_body %}
             {{- inline_items | raw -}}
         {% endblock %}
     </ul>
     {% endblock item_list %}
+    {%- if menu_mode != 'no_menu' and elements is defined and elements|length -%}
+        {%- set ordered_menu_item_ids = [] -%}
+        {%- for element in elements -%}
+            {%- set ordered_menu_item_ids = ordered_menu_item_ids | merge([element.id]) -%}
+        {%- endfor -%}
+        <script>
+            (function() {
+                const toolbar = document.currentScript.closest('.toolBar');
+                const inlineList = toolbar && toolbar.querySelector('[data-toolbar-inline-list]');
+                const dropdownMenu = toolbar && toolbar.querySelector('[data-toolbar-menu-list]');
+                const orderedIds = {{ ordered_menu_item_ids | json_encode | raw }};
+
+                if (!toolbar || !inlineList || !dropdownMenu) {
+                    return;
+                }
+
+                toolbar.dataset.menuItemMap = JSON.stringify(orderedIds.map((id, order) => {
+                    const item = document.getElementById(String(id));
+                    if (!item || !toolbar.contains(item)) {
+                        return null;
+                    }
+                    if (dropdownMenu.contains(item)) {
+                        return {id: String(id), order: order, type: 'menu_content'};
+                    }
+                    if (inlineList.contains(item)) {
+                        return {id: String(id), order: order, type: 'inline_items'};
+                    }
+                    return null;
+                }).filter(Boolean));
+            })();
+        </script>
+    {%- endif -%}
 </div>
 {% endblock region_wrapper %}
