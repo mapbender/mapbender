@@ -227,6 +227,13 @@ body.popup-resizing {
     }
   }
 
+  .popup.popup-minimized {
+    .popup-body,
+    .footer {
+      display: none !important;
+    }
+  }
+
   .popupContainer.modal {
     padding: 0;
 
