@@ -118,7 +118,7 @@ fom:
         title: 'Resetare parolă'
         email_been_sent: 'Un e-mail cu codul și linkul de resetare a fost trimis la adresa furnizată.'
         back_to_login: 'Înapoi la autentificare'
-      email_body_text: 'Bună %user_username%, ați solicitat o parolă nouă. Deschideți în browser următorul link "%url%"'
+      email_body_text: 'Bună %user_username%, ați solicitat o parolă nouă. Deschideți în browser următorul link: "%url%"'
     userbundle:
       user_control: 'Administrare utilizatori'
       users: Utilizatori
