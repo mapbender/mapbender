@@ -1,0 +1,148 @@
+fom:
+  user:
+    registration:
+      email_body_html: '<p>Bună %user_username%,</p><p>V-ați înregistrat recent. Pentru a finaliza înregistrarea, vă rugăm să faceți clic <a href="%url%">aici</a>.</p>'
+      done:
+        title: Înregistrare
+        congratulations: 'Felicitări!'
+        account_activated: 'Contul dvs. a fost activat cu succes și este gata de utilizare!'
+        back_to_login: 'Înapoi la autentificare'
+      form:
+        title: Înregistrare
+        choose_password: 'Alegeți parola'
+        confirm_password: 'Confirmați parola'
+        email: E-mail
+        back_to_login: 'Înapoi la autentificare'
+        register: 'Înregistrați-vă'
+      email_subject: 'Înregistrarea dvs.'
+      send:
+        title: Înregistrare
+        account_created: 'Contul dvs. a fost creat. Un e-mail cu codul și linkul de activare a fost trimis la adresa furnizată.'
+        back_to_login: 'Înapoi la autentificare'
+      email_body_text: 'Bună %user_username%, v-ați înregistrat recent. Pentru a finaliza înregistrarea, deschideți în browser următorul link %url%.'
+    group:
+      index:
+        groups: Grupuri
+        add_new_group: 'Adăugați grup nou'
+        title: Nume
+        description: Descriere
+        edit_group: 'Editează grupul'
+        delete_group: 'Doriți într-adevăr să ștergeți grupul "{group_title}"'
+        no_groups_available: 'Nu există grupuri disponibile'
+      form:
+        edit_group: 'Editează grupul'
+        new_group: 'Grup nou'
+      container:
+        base_data: 'Date de bază'
+        users: Utilizatori
+        users_of_selected: 'Utilizatori din %users_count% selectați'
+        no_user_exists: 'Utilizatorul nu există'
+    login:
+      error_tockenexp:
+        title: 'Resetare parolă'
+        sorry: 'Ne pare rău!'
+        registration_token_expired: 'Tokenul de înregistrare a expirat. Din păcate trebuie să solicitați un nou token.'
+        request_new_token: 'Solicitați un nou token'
+        back_to_login: 'Înapoi la autentificare'
+      login:
+        title: Autentificare
+        username: Utilizator
+        password: Parolă
+        register: Înregistrare
+        forgot_password: 'Parolă uitată'
+        login: Autentificare
+      error_notocken:
+        password_reset: 'Resetare parolă'
+        sorry: 'Ne pare rău!'
+        no_such_tocken: 'Token negăsit. Dacă credeți că este o eroare, vă rugăm să contactați administratorul.'
+        contact: 'Contactați administratorul'
+        back_to_login: 'Înapoi la autentificare'
+    user:
+      index:
+        title: Utilizatori
+        add_new_user: 'Adăugați utilizator nou'
+        name: Nume
+        email: E-mail
+        groups: Grupuri
+        edit_user: 'Editează utilizatorul'
+        contact_user: 'Contactați utilizatorul prin e-mail'
+        edit_group: 'Editează grupul'
+        delete_user: 'Doriți într-adevăr să ștergeți utilizatorul "%user_username%"'
+        no_users_available: 'Niciun utilizator disponibil.'
+      form:
+        edit_user: 'Editează utilizatorul'
+        new_user: 'Utilizator nou'
+      container:
+        base_data: 'Date de bază'
+        profile: Profil
+        groups: Grupuri
+        security: Securitate
+        choose_password: 'Alegeți parola'
+        confirm_password: 'Confirmați parola'
+        name: Nume
+        users_of_selected: 'Grupuri din %users_count% selectate'
+        no_groups_defined: 'Nu sunt definite grupuri'
+        username: 'Nume utilizator'
+        description: Descriere
+        activated: activat
+    permissions:
+      index:
+        global_permissions: 'Permisiuni globale'
+        name: Nume
+        class: Clasă
+        edit: Editează
+      required: 'Câmpurile obligatorii sunt marcate cu o etichetă închisă la culoare, câmpurile opționale au o etichetă mai deschisă la culoare.'
+      edit:
+        edit_permission: 'Editați permisiunile pentru %name%'
+      groups_users:
+        name: Nume
+        no_groups_users: 'Nu sunt definite grupuri/utilizatori.'
+    password:
+      email_body_html: '<p>Bună %user_username%,</p><p>Ați solicitat o nouă parolă Mapbender.</p><p>Vă rugăm să faceți clic <a href="%url%">aici</a> pentru a vă schimba parola.</p>'
+      done:
+        password_reset: 'Resetare parolă'
+        congratulations: 'Felicitări!'
+        password_been_reset: 'Parola dvs. a fost resetată cu succes.'
+        back_to_login: 'Înapoi la autentificare'
+      reset:
+        title: 'Resetare parolă'
+        btn: 'Resetare parolă'
+      form:
+        message: 'Pentru a reseta parola, introduceți numele de utilizator sau adresa de e-mail.'
+        title: 'Parolă uitată'
+        username_email: 'Nume utilizator sau e-mail'
+        back_to_login: 'Înapoi la autentificare'
+        require_password: 'Solicitați parola'
+      email_subject: 'Parolă uitată'
+      send:
+        title: 'Resetare parolă'
+        email_been_sent: 'Un e-mail cu codul și linkul de resetare a fost trimis la adresa furnizată.'
+        back_to_login: 'Înapoi la autentificare'
+      email_body_text: 'Bună %user_username%, ați solicitat o parolă nouă. Deschideți în browser următorul link "%url%"'
+    userbundle:
+      user_control: 'Administrare utilizatori'
+      users: Utilizatori
+      new_user: 'Utilizator nou'
+      groups: Grupuri
+      new_group: 'Grup nou'
+      classes:
+        permissions: 'Administrare drepturi'
+        users: Utilizatori
+        groups: Grupuri
+        api: API
+      roles:
+        super_admin: 'Poate administra tot (super admin)'
+        user_admin: 'Poate administra utilizatori și grupuri'
+form:
+  profile:
+    basic:
+      firstname: Prenume
+      lastName: 'Nume de familie'
+      notes: Note
+      phone: 'Număr de telefon'
+      organizationName: Organizație
+      organizationRole: Funcție
+      street: Stradă
+      zipCode: 'Cod poștal'
+      city: Oraș
+      country: Țară
