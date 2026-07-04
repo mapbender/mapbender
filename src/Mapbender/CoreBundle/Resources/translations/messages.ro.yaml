@@ -1,0 +1,835 @@
+mb:
+  actions:
+    accept: Ok
+    add: Adaugă
+    back: Înapoi
+    cancel: Anulează
+    close: Închide
+    delete: Șterge
+    edit: Editează
+    filter: Filtrează
+    print: Tipărește
+    refresh: Actualizează
+    remove: Elimină
+    reset: Resetează
+    save: Salvează
+    search: Caută
+    duplicate: Duplică
+    sort_ascending: 'Sortare crescătoare'
+    sort_descending: 'Sortare descrescătoare'
+  terms:
+    application:
+      singular: Aplicație
+      plural: Aplicații
+    source:
+      singular: Sursă
+      plural: Surse
+    style:
+      singular: Stil
+      plural: Stiluri
+    layerset:
+      singular: 'Set de straturi'
+      plural: 'Seturi de straturi'
+    sourceinstance:
+      singular: Instanță
+      plural: Instanțe
+      typed:
+        singular: 'Instanță %type%'
+      reusable:
+        singular: 'Instanță partajată'
+        plural: 'Instanțe partajate'
+      bound:
+        singular: 'Instanță privată'
+        plural: 'Instanțe private'
+    security: Securitate
+  form:
+    choice_required: 'Selecție necesară'
+    choice_optional: 'Nimic selectat'
+    unnamed_entry: 'Intrare fără nume'
+  states:
+    active: activ
+    inactive: inactiv
+    public: public
+    not_public: 'nepublic'
+    permissions_defined: 'Pentru această instanță au fost definite drepturi de acces individuale'
+  core:
+    featureinfo:
+      error:
+        nolayer: 'Nu există niciun strat de informații.'
+        unknownoption: 'Opțiune necunoscută sau netratată %key% pentru %namespace%.%widgetname%.'
+        noresult: 'niciun rezultat'
+      no_results: 'Niciunul dintre straturile active nu a furnizat informații suplimentare.'
+      placeholder: 'Faceți clic pe hartă pentru a solicita informații despre obiecte.'
+      class:
+        title: Informații
+        description: Informații
+      admin:
+        maxcount: 'Nr. maxim'
+        height: Înălțime
+        width: Lățime
+        displaytype: 'Tip de afișare'
+        tabs: File
+        accordion: Acordeon
+    aboutdialog:
+      content:
+        versionprefix: v.
+        learnmore: 'aflați mai multe despre Mapbender'
+        linktitle: 'Vizitați site-ul oficial Mapbender'
+        website: 'site web'
+      class:
+        title: 'Dialog Despre'
+        description: 'Afișează un dialog cu informații despre Mapbender'
+      tag:
+        help: ajutor
+        info: informații
+        about: despre
+      admin:
+        tooltip: Despre
+    simplesearch:
+      input:
+        searchterm: 'Termen de căutare'
+        search: Caută
+        clear: 'Șterge câmpul'
+      class:
+        title: 'Căutare simplă'
+        description: 'Căutare într-un singur câmp pe surse JSON (de ex. Solr)'
+      error:
+        geometry:
+          missing: 'Intrarea selectată nu conține nicio geometrie.'
+      admin:
+        configurations: Configurări
+        title: Titlu
+        title.help: 'Text afișat în lista derulantă de configurări'
+        placeholder: Substituent
+        placeholder.help: 'Text afișat în câmpul de căutare atunci când acesta este gol. Dacă nu este definit un substituent, se utilizează titlul.'
+        query_url: 'URL interogare'
+        query_url.help: 'URL Solr sau Nominatim către care este trimis termenul de căutare (de ex. <code>https://nominatim.openstreetmap.org/search.php?format=geojson</code>).'
+        query_key: 'Parametru URL interogare'
+        query_key.help: 'Parametrul URL care este completat cu termenul de căutare introdus (de ex. <code>q</code>)'
+        query_ws_replace: 'Înlocuire spații goale în interogare'
+        query_ws_replace.help: 'Dacă este specificat, spațiile și întreruperile de linie din interogarea de căutare vor fi înlocuite cu această valoare, de ex. <code>+</code> sau <code>%20</code>'
+        query_format: 'Format cheie interogare'
+        query_format.help: 'Format pentru funcția PHP <a href="https://www.php.net/manual/en/function.sprintf.php" target="_blank">sprintf</a>, cu care este formatat termenul de căutare, de ex. <code>%s</code> (implicit) dacă termenul de căutare trebuie interpretat ca șir de caractere, <code>%d</code> dacă se așteaptă un număr'
+        token_regex: 'Tokenizer: Regex de separare'
+        token_regex.help: 'Cu ajutorul tokenizer-ului, termenii de căutare pot fi modificați înainte de a fi trimiși către URL-ul de căutare. Regex-ul de separare trebuie să corespundă tuturor caracterelor care marchează începutul unui nou token (de regulă, un cuvânt nou). Implicit: <code> </code> (spațiu)'
+        token_regex_in: 'Tokenizer: Regex de căutare'
+        token_regex_in.help: 'În interiorul fiecărui token (vezi Regex de separare) se caută această expresie regulată, care este apoi înlocuită cu valoarea din „Regex de înlocuire”.'
+        token_regex_out: 'Tokenizer: Regex de înlocuire'
+        token_regex_out.help: 'În interiorul fiecărui token (vezi Regex de separare) expresia regulată din „Regex de căutare” este înlocuită cu această valoare. Grupurile găsite sunt referențiate prin numerotare precedată de <code>$</code>. De exemplu, <code>$1*</code> ar adăuga un asterisc la fiecare cuvânt căutat.'
+        collection_path: 'Cale către rezultate'
+        collection_path.help: 'Calea către lista de rezultate din răspunsul URL-ului de căutare. Fiecare nivel ierarhic este separat printr-un punct, de ex. <code>response.docs</code> (standard Solr), <code>features</code> (GeoJSON)'
+        label_attribute: 'Atribut pentru etichetă'
+        label_attribute.help: 'Calea (în cadrul unui singur rezultat) către atributul care va fi afișat ca etichetă, de ex. <code>label</code>. Alternativ, poate fi specificat un șablon de tip șir de caractere, de ex. <code>Oraș ${properties.address.city} - ${properties.address.road}</code>'
+        geom_attribute: 'Atribut pentru geometrie'
+        geom_attribute.help: 'Calea (în cadrul unui singur rezultat) către atributul în care este disponibilă geometria, de ex. <code>geom</code>, <code>geometry</code> (GeoJSON)'
+        geom_format: 'Format geometrie'
+        geom_format.help: 'Formatul în care este disponibilă geometria, fie <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">Well Known Text</a>, fie <a href="https://geojson.org/" target="_blank">GeoJSON</a>'
+        sourceSrs: 'SRS sursă'
+        sourceSrs.help: '<a href="https://epsg.io/" target="_blank">Codul EPSG</a> al proiecției utilizate în URL-ul de căutare, inclusiv prefixul <code>EPSG:</code>, de ex. <code>EPSG:25832</code>. Dacă nu este specificat, se presupune că rezultatele sunt în proiecția implicită a hărții.'
+        delay: 'Întârziere căutare [ms]'
+        delay.help: 'Timpul în milisecunde care trece de la ultima tastă apăsată până la executarea automată a căutării. Implicit: 300 ms'
+        result_buffer: 'Zonă tampon rezultat [unități hartă]'
+        result_buffer.help: 'Determină indirect nivelul de zoom care apare după selectarea unui rezultat. În jurul geometriei este vizibilă cel puțin zona selectată. Unitatea de măsură variază în funcție de proiecție, de regulă fiind metri. O combinație cu scara (min/max) este posibilă, dar poate duce la rezultate nedorite.'
+        result_minscale: 'Scară minimă [numitor]'
+        result_minscale.help: 'Alternativă la specificarea nivelului de zoom. În funcție de dimensiunea geometriei țintă, se stabilește o scară între <code>min</code> și <code>max</code>. Pentru o scară de <code>1 : 1000</code> este suficient să introduceți <code>1000</code>. Pentru o scară fixă, este suficientă introducerea scării minime.'
+        result_maxscale: 'Scară maximă [numitor]'
+        result_icon_url: 'URL pictogramă'
+        result_icon_url.help: 'URL către un fișier imagine utilizat ca marker pentru geometriile de tip punct. Poate fi relativ sau absolut. Pinul implicit se află la <code>/bundles/mapbendercore/image/pin_red.png</code>.'
+        result_icon_offset: 'Decalaj pictogramă'
+        result_icon_offset.help: 'Corecția poziției pictogramei, ca decalaj x și y separat prin virgulă, de ex. <code>-6,-32</code> pentru pinul implicit'
+    searchrouter:
+      no_results: 'Niciun rezultat găsit.'
+      result_counter: 'Rezultate: %count%'
+      exportcsv: 'Exportă lista de rezultate ca CSV.'
+      invalid_input_data: 'Caractere nevalide în datele introduse'
+      class:
+        title: Căutare
+        description: 'Permite configurarea unor căutări personalizate'
+      tag:
+        search: căutare
+        router: router
+      admin:
+        width: Lățime
+        height: Înălțime
+        routes: Rute
+    poi:
+      sharepoi: 'Stabiliți un punct de întâlnire'
+      text:
+        snippet: 'Puteți trimite linkul de mai jos printr-un e-mail. Linkul deschide aplicația și afișează punctul de întâlnire.'
+      popup:
+        btn:
+          position: Poziționare
+      class:
+        title: 'Punct de întâlnire (POI)'
+        description: 'Element cu ajutorul căruia poate fi generat și trimis un punct de întâlnire.'
+      label:
+        text: 'Editați textul'
+      admin:
+        body: Text
+        gps: GPS
+        placeholder: 'Vă rugăm să vă uitați la acest punct de interes'
+      accept: 'Creează link'
+    basesourceswitcher:
+      error:
+        sourcenotavailable: 'Sursa cu ID-ul %id% nu există.'
+      class:
+        title: 'Comutare fundal'
+        Description: 'Pot fi definite hărți de fundal. În aplicație se poate comuta între acestea.'
+      form:
+        mesage: 'Nu există definiții de fundal.'
+        instancesets: Seturi de instanțe
+      admin:
+        tooltip: Indiciu
+        instances: Instanțe
+        instancesets: Seturi de instanțe
+    legend:
+      class:
+        title: Legendă
+        description: 'Afișează legenda pentru straturile active ale hărții.'
+    ruler:
+      create_error: 'Măsurare: tipul de geometrie trebuie să fie linie sau suprafață.'
+      class:
+        title: 'Măsurare linie/suprafață'
+        description: 'Măsurare: se desenează o linie/suprafață pentru a afișa lungimea/aria acesteia într-un dialog.'
+      tag:
+        line: linie
+        area: suprafață
+        both: 'selectabil de utilizator'
+        measure: măsurare
+      help: 'Dublu clic pentru a încheia'
+      admin:
+        type: Geometrie
+        help: Text de ajutor
+        help_help: 'Valoarea implicită <code>mb.core.ruler.help</code> înseamnă „Dublu clic pentru a încheia” în limba utilizatorului'
+        stroke_width_while_drawing: 'Grosimea liniei în timpul desenării'
+        only_for_area: 'relevant doar atunci când este selectată <i>Suprafață</i> ca geometrie'
+        style: Stil
+    printclient:
+      label:
+        template: Șablon
+        quality: Calitate
+        scale: Scară
+        rotation: Rotație
+        legend: 'Tipărește legenda'
+      class:
+        title: Tipărire
+        description: 'Dialog de tipărire'
+      btn:
+        deactivate: 'Dezactivează cadrul de tipărire'
+        activate: 'Activează cadrul de tipărire'
+    overview:
+      nolayer: 'Prezentarea generală nu conține niciun strat.'
+      class:
+        title: 'Prezentare generală (overview)'
+        description: 'Afișează o mică hartă de ansamblu (overview).'
+      tag:
+        overview: 'prezentare generală'
+        map: 'hartă (overview)'
+      admin:
+        visibility.closed_initially: 'Inițial închisă'
+        visibility.open_initially: 'Inițial deschisă'
+        visibility.open_permanent: 'Permanent deschisă'
+        layerset: Set de straturi
+    metadata:
+      popup:
+        title: Metadate
+    gpsposition:
+      error:
+        notsupported: 'Serviciul de geolocalizare nu este acceptat de browserul dumneavoastră.'
+        nosignal: 'Nu este posibilă determinarea poziției dumneavoastră.'
+      class:
+        title: 'Poziție GPS'
+        description: 'Adaugă un buton pentru afișarea poziției GPS.'
+      tag:
+        gpsposition: 'Poziție GPS'
+        gps: GPS
+        position: poziție
+        button: buton
+      admin:
+        average: Medie
+        follow: Urmărire
+        centeronfirstposition: 'Centrare pe prima poziție'
+        zoomtoaccuracyonfirstposition: 'Zoom pe precizia primei poziții'
+    layertree:
+      const:
+        outofscale: 'Strat în afara scării'
+        outofbounds: 'Strat în afara limitelor'
+        unsupportedprojection: 'Stratul nu acceptă proiecția curentă'
+        parentinvisible: 'Stratul părinte nu este vizibil'
+      tooltip:
+        sublayers_openclose: deschide/închide
+        removelayer: 'Elimină stratul'
+        menu:
+          close: Închide
+      label:
+        visibility_onoff: 'Vizibilitate activă/inactivă'
+        featureinfo_onoff: 'Informații activate/dezactivate'
+        opacity: Opacitate
+        zoomtolayer: 'Zoom pe strat'
+        select_style: Stil
+        metadata: Metadate
+        legend: Legendă
+        kmlexport: 'Export KML'
+        dimension_onoff: 'Activare/dezactivare dimensiune'
+        dimension: Dimensiune
+        sourcevisibility_onoff: 'Afișează/ascunde serviciile'
+      class:
+        title: 'Arbore de straturi'
+        description: 'Arborele straturilor hărții'
+      admin:
+        layerremove: 'Elimină stratul'
+        opacity: Opacitate
+        zoomtolayer: 'Zoom pe strat'
+        select_style: 'Selectează stilul'
+        metadata: Metadate
+        dimension: Dimensiune
+      filter:
+        placeholder: 'Filtrează…'
+    zoombar:
+      rotateclockwise: 'Rotește în sensul acelor de ceasornic'
+      rotatecounterclockwise: 'Rotește în sens invers acelor de ceasornic'
+      resetrotation: 'Resetează rotația'
+      zoombybox: 'Zoom pe o zonă selectată'
+      zoombyworld: 'Zoom pe întreaga întindere'
+      zoom_home: 'Înapoi la început'
+      zoomHomeRestoresLayers: '„Înapoi la început” resetează și starea serviciilor'
+      zoomin: Mărire
+      zoomout: Micșorare
+      class:
+        title: 'Instrument de navigare'
+        description: 'Instrumentul de navigare oferă opțiuni de zoom și deplasare, similar cu OpenLayers.'
+      tag:
+        zoom: zoom
+        pan: deplasare
+        control: control
+        navigation: navigare
+        panel: panou
+      admin:
+        components: Componente
+        rotation: Rotație
+        zoommax: 'Zoom pe întinderea maximă'
+        zoominout: 'Mărire și micșorare'
+        zoomslider: 'Cursor zoom'
+    activityindicator:
+      class:
+        title: 'Indicator de activitate'
+        description: 'Afișează activitatea HTTP.'
+      tag:
+        activity: activitate
+        indicator: indicator
+      admin:
+        tooltip: Indiciu
+        activityclass: 'Clasă CSS activitate generală'
+        ajaxactivityclass: 'Clasă CSS activitate de fundal'
+        ajaxactivityclass_help: 'Clasa CSS setată atunci când o acțiune se execută în fundal, de ex. atunci când se efectuează o căutare'
+        tileactivityclass: 'Clasă CSS la încărcarea hărții'
+    button:
+      class:
+        title: Buton
+        description: Buton
+      tag:
+        button: buton
+      admin:
+        click: Clic
+        action: Acțiune
+        deactivate: Dezactivează
+    controlbutton:
+      class:
+        description: 'Controlează un alt element'
+      admin:
+        group: Grup
+        target: Țintă
+    linkbutton:
+      class:
+        title: Link
+        description: 'Link către o adresă URL externă'
+      admin:
+        click: 'URL țintă'
+    coordinatesdisplay:
+      class:
+        title: 'Afișare coordonate'
+        description: 'Afișarea coordonatelor arată poziția mouse-ului în coordonatele hărții.'
+      tag:
+        coordinates: coordonate
+        display: afișare
+        mouse: mouse
+        position: poziție
+    copyright:
+      class:
+        title: 'Drepturi de autor'
+        description: 'Afișează condițiile de utilizare.'
+      tag:
+        copyright: 'Drepturi de autor'
+        dialog: dialog
+      admin:
+        content: Conținut
+        dontShowAgain: 'Opțiunea „Nu mai afișa”'
+        dontShowAgainLabel: 'Textul opțiunii „Nu mai afișa”'
+        dontShowAgainDefaultLabel: 'Nu mai afișa'
+    map:
+      class:
+        title: Hartă
+        description: 'Harta principală bazată pe OpenLayers'
+      tag:
+        map: hartă
+        mapquery: MapQuery
+        openlayers: OpenLayers
+      srsnotfound: 'Proprietățile SRS pentru %srslist% nu au fost găsite.'
+      admin:
+        fixedZoomSteps: 'Niveluri de scară fixe'
+        layersets: Seturi de straturi
+        tilesize: 'Dimensiune dală'
+        SRS: SRS
+        scales: 'Scări (separate prin virgulă)'
+        othersrs: 'Alte SRS'
+        srs: SRS
+      error:
+        extent_wrong: 'min %dim trebuie să fie mai mic decât max %dim.'
+    scalebar:
+      class:
+        title: 'Bară de scară'
+        description: 'Bara de scară care afișează scara curentă.'
+      tag:
+        scale: scară
+        bar: bară
+      admin:
+        maxwidth: 'Lățime maximă'
+        units: Unitate
+    scaledisplay:
+      label: Scară
+      scale_prefix: Prefix
+      scale_prefix.help: 'Text care apare înaintea valorii scării. Valoarea implicită <code>mb.core.scaledisplay.label</code> este redată ca <code>Scară</code> în limba utilizatorului.'
+      unit_prefix: 'Scurtează scara'
+      unit_prefix.help: 'Dacă este activat, valorile scării peste 1.000 nu vor mai fi scrise integral, ci vor primi sufixul <code>K</code> sau <code>M</code>.'
+      class:
+        title: 'Afișare scară'
+        description: 'Afișează scara curentă a hărții.'
+      tag:
+        scale: scară
+        display: afișare
+    scaleselector:
+      class:
+        title: 'Selector de scară'
+        description: 'Listă de selecție cu scările disponibile pentru schimbarea scării. Afișează scara curentă.'
+      tag:
+        scale: scară
+        selector: selector
+      admin:
+        tooltip: Indiciu
+    srsselector:
+      class:
+        title: 'Selector SRS'
+        description: 'După selectarea unui sistem de referință spațial (SRS), SRS-ul hărții se schimbă.'
+      tag:
+        srs: SRS
+        selector: selector
+      admin:
+        srsselector: 'Selector SRS'
+        tooltip: Indiciu
+    ShareUrl:
+      class:
+        title: 'Partajare URL'
+        description: 'Partajează vizualizarea curentă a hărții printr-un URL'
+      copied_to_clipboard: 'URL copiat în clipboard'
+    viewManager:
+      class:
+        title: 'Gestionare vizualizări'
+        description: 'Salvează stările hărții pentru a fi accesate ulterior'
+      saveAsPublic: 'Salvează ca intrare publică'
+      recordStatus:
+        public: 'Intrare publică'
+        private: 'Intrare privată'
+      confirmDelete: 'Sigur doriți să ștergeți această intrare?'
+      no_data: 'Nu există date'
+      title: Titlu
+      date: Dată
+      enter_title: 'Introduceți titlul'
+      apply: Aplică
+      replace: Suprascrie
+      details: 'Afișează detalii'
+      admin:
+        access.none: 'Nu afișa'
+        access.ro: 'Doar citire'
+        access.rw: 'Permite salvarea'
+        access.rwd: 'Permite salvarea și ștergerea'
+        publicEntries: 'Listă publică'
+        privateEntries: 'Afișează lista privată'
+        adminDeleteHint: 'Notă: administratorii pot șterge întotdeauna intrările publice'
+        allowAnonymousSave: 'Vizitatorii anonimi pot salva'
+        showDate: 'Afișează data'
+    coordinatesutility:
+      class:
+        title: 'Utilitar de coordonate'
+        description: 'Transformare de coordonate. Navigare la coordonate pe hartă.'
+      widget:
+        error:
+          noSrs: 'Nu este definit niciun SRS'
+          invalidCoordinates: 'Coordonate nevalide'
+      view:
+        srs:
+          title: Sistem de coordonate
+          tooltip: Sistem de coordonate
+        transformedCoordinates:
+          placeholder: 'Coordonate transformate'
+        copytoclipboard:
+          tooltip: 'Copiază coordonatele în clipboard'
+        originCoordinates:
+          title: 'Coordonate în sistemul de coordonate de afișare al hărții'
+          tooltip: 'needitabil'
+        button:
+          search: Căutare coordonate
+          centermap: 'Centrează harta'
+      backend:
+        addMapSrsList: 'Adaugă sistemele de coordonate de pe hartă'
+      admin:
+        srslist: Listă SRS
+        zoomlevel: Nivel de zoom
+    admin:
+      poi:
+        label:
+          usemailto: 'Trimitere prin e-mail - deschide clientul de e-mail'
+      legend:
+        label:
+          hideemptylayers: 'Ascunde straturile fără obiecte'
+          generatelegendurl: 'Generează URL-ul legendei'
+          showsourcetitle: 'Afișează titlul sursei de date'
+          showlayertitle: 'Afișează titlul stratului'
+          showgroupedlayertitle: 'Afișează titlul stratului grupat'
+      featureinfo:
+        label:
+          deactivateonclose: 'Dezactivează la închidere'
+          printResult: 'Afișează butonul „Tipărește”'
+          onlyvalid: 'Afișează doar cele valide'
+          highlighting_group: Evidențiere
+          highlighting: 'Evidențiere activă'
+          default_group: Standard
+          hover_group: Hover
+          fillColor: Culoare de umplere
+          strokeColor: Culoare contur
+          opacity_pct: 'Opacitate (%)'
+          stroke_width_px: 'Grosime contur (pixeli)'
+          fontColor: Culoare font
+          fontSize: Dimensiune font
+          point_radius_px: 'Rază (pentru geometrii de tip punct)'
+      printclient:
+        label:
+          rotatable: Rotativ
+          legend: 'Tipărește legenda'
+          legend_default_behaviour: 'Casetă de bifare legendă activă'
+          required_fields_first: 'Afișează câmpurile obligatorii primele'
+      layertree:
+        label:
+          showbasesources: 'Afișează sursele de fundal'
+          showlayerremove: 'Afișează „Elimină strat”'
+          usetheme: 'Strat tematic'
+          themes: Teme
+          theme:
+            opened: 'Temă deschisă/închisă'
+            activate: 'Activare adăugare/eliminare straturi'
+            useTheme: 'Afișează tema'
+            label: Denumire temă
+          hidenottoggleable: 'Ascunde folderele nepliabile'
+          hideinfo: 'Ascunde informațiile'
+          menu: Meniu
+          filter: 'Afișează filtrul'
+      template:
+        sidepane:
+          type:
+            label: Tip
+            choice:
+              tabs: Butoane
+              accordion: Acordeon
+              list: 'Listă'
+              unstyled: Neformatat
+      button:
+        show_label: 'Afișează eticheta'
+        label: Etichetă
+      layerset:
+        label:
+          title: Titlu
+          selected: Selectat
+    htmlelement:
+      class:
+        title: HTML
+        description: 'Adaugă conținut HTML'
+      admin:
+        content: Conținut
+        classes: Clase
+    entity:
+      app:
+        screenshotfile:
+          error: 'Fișierul este prea mare. Dimensiunea maximă admisă este de %limit% bytes.'
+    sketch:
+      geometrytype:
+        point: Punct
+        line: Linie
+        polygon: Poligon
+        rectangle: Dreptunghi
+        circle: Cerc
+      inputs:
+        label: Etichetă
+        radius: 'Rază (m)'
+      geometry:
+        action:
+          remove: 'Elimină geometria'
+          edit: 'Editează geometria'
+          zoom: 'Zoom pe geometrie'
+          stop_drawing: 'Oprește desenarea'
+      class:
+        title: Schițe
+        description: Instrument de desenare
+      admin:
+        deactivate_on_close: 'Dezactivează la închidere'
+        colors: Culori
+        allow_custom_color: 'Permite personalizarea culorii'
+        geometrytypes: Tipuri de geometrie
+    redlining:
+      class:
+        title: Schițe
+    resetView:
+      class:
+        title: 'Resetare vizualizare'
+        description: 'Restabilește vizualizarea inițială a hărții și setările serviciilor'
+      admin:
+        resetDynamicSources: 'Elimină sursele adăugate ulterior'
+    applicationSwitcher:
+      class:
+        title: 'Comutare aplicație'
+        description: 'Comută la o altă aplicație păstrând poziția curentă a hărții'
+      admin:
+        open_in_new_tab: 'Deschide într-o filă nouă'
+        drag_to_reorder: 'Ordinea poate fi stabilită cu ajutorul mouse-ului'
+        help: 'Consultați <a href="https://doc.mapbender.org/en/elements/misc/applicationswitcher.html" target="_blank" class="text-primary">documentația</a> pentru configurarea sintaxei YAML'
+    coordinesdisplay:
+      admin:
+        numdigits: 'Numărul de zecimale'
+        empty: 'Afișare goală'
+        prefix: Prefix
+        separator: Separator
+        label: 'Afișează eticheta'
+    dataupload:
+      class:
+        title: 'Încărcare date'
+        description: 'Încărcarea fișierelor în formatele GeoJSON, KML, GML și GPX.'
+      text:
+        filearea: 'Plasați fișierul'
+        fileupload: 'sau selectați fișierul/fișierele'
+        projection: 'Selectează automat proiecția'
+        tablehead:
+          name: Nume
+      error:
+        filesize: 'Dimensiunea maximă a fișierului a fost depășită!'
+        filetype: 'Tip de fișier neacceptat:'
+        gml: 'Formatul GML nu a putut fi determinat!'
+        projection: 'Proiecția nu a putut fi determinată'
+        nogeometry: 'Fișierul încărcat nu conține geometrii valide.'
+      admin:
+        maxFileSize: 'Dimensiunea maximă a fișierului (MB)'
+        helpLabel: Text de ajutor
+        helpText: 'Pot fi încărcate fișiere în formatele GeoJSON, KML, GML și GPX.'
+        helpInfo: 'Valoarea implicită <code>mb.core.dataupload.admin.helpText</code> înseamnă „Aici puteți încărca fișiere în formatele GeoJSON, KML, GML și GPX.” în limba utilizatorului'
+    searchrouterroute:
+      admin:
+        title: Titlu
+        configuration: Configurare
+    instanceset:
+      admin:
+        title: Titlu
+        group: Grup
+        instances: Instanțe
+        instancesets: Seturi de instanțe
+    basebutton:
+      admin:
+        tooltip: Indiciu
+        icon: Pictogramă
+        elementIcon: 'Pictogramă element'
+    icon:
+      mb:
+        about: Informații
+        layer_tree: Arbore de straturi
+        feature_info: 'Informații obiect'
+        area_ruler: 'Măsurare suprafață'
+        polygon: Poligon
+        line_ruler: 'Măsurare distanță'
+        image_export: Export imagine
+        legend: Legendă
+      fa:
+        about: Grup
+        accessibility: Accesibilitate
+        info: 'Informații (inversat)'
+        pin: Marker
+        home: Pagina de start
+        legend: Listă
+        print: Tipărește
+        search: Căutare
+        layer_tree: Ierarhie
+        logout: Deconectare
+        wms: Glob
+        edit: Editează
+        wmc: Folder
+        coordinates: Coordonate
+        poi: Ac cu gămălie
+        camera: Cameră
+        copyright: 'Drepturi de autor'
+        share: Partajează
+        forward: Redirecționează
+        refresh: Reîncarcă
+        earth: Glob pământesc
+        map: Hartă
+        pin_alt: 'Ac cu gămălie (alternativ)'
+        help: Ajutor
+        dataupload: Încărcare
+        bookmark: Marcaj
+        chartcolumn: Diagramă
+        bookopen: Carte
+  template:
+    toolbar_menu_tooltip: 'Deschide meniul'
+    region:
+      toolbar: 'Bară de instrumente superioară'
+      footer: Subsol
+      sidepane: Panou lateral
+      content: Zona hărții
+  demoapps:
+    themes: Teme
+    backgroundThemes: Teme de fundal
+    baseMaps: Hărți de bază
+    aerialView: Imagini aeriene
+    noBackground: 'fără fundal'
+    poi: 'Vă rugăm să vă uitați la acest punct de interes'
+    search: 'Căutați o locație'
+    about: 'Despre Mapbender'
+  wms:
+    wmsloader:
+      repo:
+        instancelayerform:
+          label:
+            title: Titlu
+  interactivehelp:
+    element:
+      title: Ajutor interactiv
+      description: 'Ajutorul interactiv afișează indicații direct la nivelul fiecărui element.'
+      dismissPermanently: 'Nu mai afișa'
+      startTourBtn: 'Începe turul'
+      next: 'înainte'
+      back: 'înapoi'
+      end: 'Final'
+    admin:
+      config: Configurare
+      help: 'Consultați <a href="https://doc.mapbender.org/en/elements/misc/interactivehelp.html" target="_blank" class="text-primary">documentația</a> pentru configurarea sintaxei YAML'
+      showOnStart: 'Afișează direct la pornire'
+    intro:
+      title:  'Bun venit la ajutorul interactiv'
+      description: 'Descoperiți Mapbender în câțiva pași simpli.'
+      dismissPermanentlyLabel: 'Nu mai afișa din nou.'
+    aboutdialog:
+      title: 'Despre'
+      description: 'Creează un buton care afișează versiunea instalării dumneavoastră Mapbender.'
+    activityindicator:
+      title: 'Indicator de activitate'
+      description: 'Elementul indicator de activitate oferă un widget simplu pentru afișarea activității de fundal.'
+    applicationswitcher:
+      title: 'Comutare aplicație'
+      description: 'Comută la o altă aplicație păstrând poziția curentă a hărții.'
+    basesourceswitcher:
+      title: 'Comutare fundal'
+      description: 'Comută între diferite surse de hărți de fundal predefinite.'
+    button:
+      title: 'Buton'
+      description: 'Execută acțiuni cu ajutorul unor butoane personalizabile.'
+    coordinatesdisplay:
+      title: 'Afișare coordonate'
+      description: 'Afișează poziția mouse-ului în coordonatele hărții.'
+    coordinatesutility:
+      title: 'Utilitar de coordonate'
+      description: 'Zoom la o coordonată de punct dată sau afișarea punctului selectat pe hartă.'
+    copyright:
+      title: 'Drepturi de autor'
+      description: 'Elementul de drepturi de autor poate fi utilizat pentru a afișa text simplu sau HTML într-o fereastră de dialog.'
+    datamanager:
+      title: 'Administrator de date'
+      description: 'Gestionează și editează date nespațiale.'
+    dataupload:
+      title: 'Încărcare date'
+      description: 'Încarcă și afișează fișiere în formatele GeoJSON, KML, GML sau GPX.'
+    digitizer:
+      title: 'Digitizor'
+      description: 'Creează și editează puncte, linii și suprafețe pe o hartă.'
+    featureinfo:
+      title: 'Informații obiect'
+      description: 'Faceți clic pe hartă pentru a obține informații despre obiectele de pe hartă.'
+    gpsposition:
+      title: 'Poziție GPS'
+      description: 'Afișează poziția dumneavoastră GPS curentă pe hartă.'
+    htmlelement:
+      title: 'Element HTML'
+      description: 'Afișează conținut HTML personalizat.'
+    layertree:
+      title: 'Arbore de straturi'
+      description: 'Controlează vizibilitatea și setările straturilor hărții.'
+    legend:
+      title: 'Legendă'
+      description: 'Afișează legenda pentru straturile active ale hărții.'
+    map:
+      title: 'Hartă'
+      description: 'Afișarea principală a hărții cu date geografice.'
+    overview:
+      title: 'Prezentare generală'
+      description: 'Mică hartă de ansamblu care afișează întinderea curentă a hărții.'
+    poi:
+      title: 'Punct de întâlnire'
+      description: 'Creează și partajează puncte de interes.'
+    printclient:
+      title: 'Tipărire'
+      description: 'Tipărește vizualizarea curentă a hărții cu setări personalizabile.'
+    routing:
+      title: 'Rutare'
+      description: 'Calculează rute între locații.'
+    ruler:
+      title: 'Măsurare'
+      description: 'Măsoară distanțe și suprafețe pe hartă.'
+    scalebar:
+      title: 'Bară de scară'
+      description: 'Afișează o bară de scară cu distanțele hărții.'
+    scaledisplay:
+      title: 'Afișare scară'
+      description: 'Afișează scara curentă a hărții sub formă de text.'
+    scaleselector:
+      title: 'Selector de scară'
+      description: 'Selectează scări predefinite ale hărții dintr-o listă derulantă.'
+    searchrouter:
+      title: 'Căutare'
+      description: 'Utilizați elementul de căutare pentru a găsi locații pe hartă.'
+    shareurl:
+      title: 'Partajare URL'
+      description: 'Partajează vizualizarea curentă a hărții printr-un URL.'
+    simplesearch:
+      title: 'Căutare simplă'
+      description: 'Caută locații printr-o simplă introducere de text.'
+    sketch:
+      title: 'Schiță'
+      description: 'Desenează și adaugă adnotări pe hartă.'
+    srsselector:
+      title: 'Selector SRS'
+      description: 'Schimbă sistemul de referință spațial al hărții.'
+    viewmanager:
+      title: 'Gestionare vizualizări'
+      description: 'Salvează și restabilește vizualizări ale hărții și stări ale straturilor.'
+    wmsloader:
+      title: 'Încărcare WMS'
+      description: 'Încarcă servicii WMS din surse externe.'
+    zoombar:
+      title: 'Instrument de navigare'
+      description: 'Navighează pe hartă folosind comenzile de zoom și deplasare.'
+  error:
+    csrf_failed: 'Eroare la conectarea la rețea'
+    session_expired: 'Nu sunteți autentificat sau sesiunea dumneavoastră a expirat.'
+    relogin: 'Vă rugăm să vă autentificați din nou.'
+    relogin_link: 'Către autentificare'
+    reload: 'Reîncarcă pagina'
+    retry: 'Încearcă din nou'
+    not_found: 'Elementul nu a fost găsit.'
+'Bad credentials.': 'Autentificare eșuată.'
+'User account is locked.': 'Contul de utilizator este blocat.'
+'User account is disabled.': 'Contul de utilizator este dezactivat.'
+'User account has expired.': 'Contul de utilizator a expirat.'
+'User credentials have expired.': 'Datele de autentificare au expirat.'
