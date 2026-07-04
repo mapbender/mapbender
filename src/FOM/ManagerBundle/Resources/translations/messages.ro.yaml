@@ -1,0 +1,8 @@
+fom:
+  core:
+    manager:
+      logged_as: 'Autentificat ca'
+      you_account: 'Contul dvs.'
+      btn:
+        logout: 'Deconectare'
+        login: 'Autentificare'
