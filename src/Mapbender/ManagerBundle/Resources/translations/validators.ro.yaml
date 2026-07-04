@@ -1,0 +1,8 @@
+mb:
+  core:
+    entity:
+      app:
+        screenshotfile:
+          format_error: Format neacceptat
+    layerset:
+      unique_title: Acest titlu este deja utilizat.
