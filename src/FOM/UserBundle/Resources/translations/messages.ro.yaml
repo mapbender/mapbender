@@ -19,7 +19,7 @@ fom:
         title: Înregistrare
         account_created: 'Contul dvs. a fost creat. Un e-mail cu codul și linkul de activare a fost trimis la adresa furnizată.'
         back_to_login: 'Înapoi la autentificare'
-      email_body_text: 'Bună %user_username%, v-ați înregistrat recent. Pentru a finaliza înregistrarea, deschideți în browser următorul link %url%.'
+      email_body_text: 'Bună %user_username%, v-ați înregistrat recent. Pentru a finaliza înregistrarea, deschideți în browser următorul link: %url%.'
     group:
       index:
         groups: Grupuri
