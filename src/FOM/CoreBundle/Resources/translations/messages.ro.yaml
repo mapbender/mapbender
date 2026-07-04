@@ -49,7 +49,7 @@ fom:
         view: 'Afișare'
         view_help: 'Îi permite utilizatorului/grupului să vizualizeze și să utilizeze aplicația în interfața frontend, inclusiv toate elementele pentru care nu sunt definite drepturi separate'
         edit: 'Editează'
-        edit_help: 'Permite editarea aplicației cu excepția filei „Securitate”. Pentru editarea seturilor de straturi trebuie acordat dreptul corespunzător la nivel de instalație.'
+        edit_help: 'Permite editarea aplicației cu excepția filei „Securitate”. Pentru editarea seturilor de straturi trebuie acordat dreptul corespunzător la nivel de instalare.'
         delete: 'Șterge'
         manage_permissions: 'Administrare drepturi'
         manage_permissions_help: 'Permite administrarea drepturilor pentru această aplicație (pagina curentă)'
