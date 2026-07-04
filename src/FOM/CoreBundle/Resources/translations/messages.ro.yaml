@@ -1,0 +1,59 @@
+fom:
+  core:
+    components:
+      popup:
+        delete_user_group:
+          title: 'Confirmați eliminarea'
+          content: 'Doriți într-adevăr să eliminați grupul "%userGroup%"?'
+          btn:
+            cancel: 'Anulează'
+            ok: 'Salvează'
+    fields:
+      no_user_group_defined: 'Nu este definit niciun utilizator/grup.'
+  security:
+    domain:
+      public: 'Acces public'
+      registered: 'Toți utilizatorii autentificați'
+    resource:
+      installation:
+        create_applications: 'Creează'
+        view_all_applications: 'Vizualizează'
+        view_all_applications_help: 'Permite vizualizarea tuturor aplicațiilor, indiferent de drepturile definite în aplicație'
+        edit_all_applications: 'Editează'
+        edit_all_applications_help: 'Permite editarea tuturor aplicațiilor, indiferent de drepturile definite în aplicație'
+        delete_all_applications: 'Șterge'
+        delete_all_applications_help: 'Permite ștergerea tuturor aplicațiilor, indiferent de drepturile definite în aplicație'
+        own_all_applications: 'Administrare drepturi'
+        own_all_applications_help: 'Permite editarea drepturilor de acces pentru toate aplicațiile, indiferent de drepturile definite în aplicație'
+        view_sources: 'Vizualizează'
+        create_sources: 'Editează'
+        refresh_sources: 'Actualizează'
+        edit_free_instances: 'Editează instanțe libere'
+        delete_sources: 'Șterge'
+        manage_permissions: 'Administrare globală a drepturilor'
+        view_users: 'Vizualizează'
+        create_users: 'Creează'
+        edit_users: 'Editează'
+        delete_users: 'Șterge'
+        view_styles: 'Vizualizează'
+        create_styles: 'Creează'
+        edit_styles: 'Editează'
+        delete_styles: 'Șterge'
+        view_groups: 'Vizualizează'
+        create_groups: 'Creează'
+        edit_groups: 'Editează'
+        delete_groups: 'Șterge'
+        access_api: 'Acces API'
+        upload_files: 'Încarcă fișiere'
+      application:
+        view: 'Afișare'
+        view_help: 'Îi permite utilizatorului/grupului să vizualizeze și să utilizeze aplicația în interfața frontend, inclusiv toate elementele pentru care nu sunt definite drepturi separate'
+        edit: 'Editează'
+        edit_help: 'Permite editarea aplicației cu excepția filei „Securitate”. Pentru editarea seturilor de straturi trebuie acordat dreptul corespunzător la nivel de instalație.'
+        delete: 'Șterge'
+        manage_permissions: 'Administrare drepturi'
+        manage_permissions_help: 'Permite administrarea drepturilor pentru această aplicație (pagina curentă)'
+      element:
+        view: 'Afișare'
+      source_instance:
+        view: 'Afișare'
