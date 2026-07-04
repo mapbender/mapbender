@@ -41,7 +41,7 @@ fom:
       error_tockenexp:
         title: 'Resetare parolă'
         sorry: 'Ne pare rău!'
-        registration_token_expired: 'Tokenul de înregistrare a expirat. Din păcate trebuie să solicitați un nou token.'
+        registration_token_expired: 'Tokenul de înregistrare a expirat. Din păcate, trebuie să solicitați un nou token.'
         request_new_token: 'Solicitați un nou token'
         back_to_login: 'Înapoi la autentificare'
       login:
