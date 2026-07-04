@@ -47,7 +47,7 @@ fom:
         upload_files: 'Încarcă fișiere'
       application:
         view: 'Afișare'
-        view_help: 'Îi permite utilizatorului/grupului să vizualizeze și să utilizeze aplicația în interfața frontend, inclusiv toate elementele pentru care nu sunt definite drepturi separate'
+        view_help: 'Permite utilizatorului/grupului să vizualizeze și să utilizeze aplicația în interfața frontend, inclusiv toate elementele pentru care nu sunt definite drepturi separate'
         edit: 'Editează'
         edit_help: 'Permite editarea aplicației cu excepția filei „Securitate”. Pentru editarea seturilor de straturi trebuie acordat dreptul corespunzător la nivel de instalare.'
         delete: 'Șterge'
