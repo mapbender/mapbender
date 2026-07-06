@@ -55,9 +55,10 @@ class ElementMarkupRenderer
 
     /**
      * @param Element[] $elements
+     * @param bool $forceLabel force display of the element label, overriding the element's own configuration
      * @return string
      */
-    public function renderElements($elements)
+    public function renderElements($elements, $forceLabel = false)
     {
         $wrappers = array();
         $markupFragments = array();
@@ -76,10 +77,9 @@ class ElementMarkupRenderer
                     $wrapper['tagName'] = 'div';
                 }
             }
-
             $markupFragments[] = $this->renderContent($element, $wrapper['tagName'], array_filter(array(
                 'class' => $wrapper['class'],
-            )));
+            )), $forceLabel);
         }
         return implode('', $markupFragments);
     }
@@ -103,7 +103,7 @@ class ElementMarkupRenderer
         return $markup;
     }
 
-    protected function renderContent(Element $element, $wrapperTag, $attributes)
+    protected function renderContent(Element $element, $wrapperTag, $attributes, $forceLabel = false)
     {
         try {
             $view = $this->inventory->getFrontendHandler($element)->getView($element);
@@ -113,7 +113,7 @@ class ElementMarkupRenderer
                 } else {
                     return $this->renderView($view, $wrapperTag, $attributes + array(
                         'id' => $element->getId(),
-                    ));
+                    ), $forceLabel);
                 }
             } else {
                 return '';
@@ -135,9 +135,10 @@ class ElementMarkupRenderer
      * @param ElementView $view
      * @param string $wrapperTag
      * @param string[] $baseAttributes
+     * @param bool $forceLabel force display of the element label, overriding the element's own configuration
      * @return string
      */
-    protected function renderView(ElementView $view, $wrapperTag, $baseAttributes)
+    protected function renderView(ElementView $view, $wrapperTag, $baseAttributes, $forceLabel = false)
     {
         if (!$view->cacheable) {
             $baseAttributes += array('class' => '');
@@ -145,6 +146,9 @@ class ElementMarkupRenderer
         }
         $attributes = $this->prepareAttributes($view->attributes, $baseAttributes);
         if ($view instanceof TemplateView) {
+            if ($forceLabel && array_key_exists('show_label', $view->variables)) {
+                $view->variables['show_label'] = true;
+            }
             $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
         } elseif ($view instanceof StaticView) {
             $content = $view->getContent();

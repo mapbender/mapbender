@@ -14,7 +14,7 @@
     <div class="{{ ('toolBar ' ~ region_class ~ ' ' ~ menu_mode_class) | trim }}" data-toolbar-menu-mode="{{ menu_mode }}">
     {%- if menu_mode != 'no_menu' %}
         {%- set inline_items = toolbar_inline_content(application, region_name) -%}
-        {%- set menu_content = toolbar_menu_content(application, region_name) -%}
+        {%- set menu_content = toolbar_menu_content(application, region_name, true) -%}
     {%- else -%}
         {%- set inline_items = region_content(application, region_name) -%}
         {%- set menu_content = '' -%}
