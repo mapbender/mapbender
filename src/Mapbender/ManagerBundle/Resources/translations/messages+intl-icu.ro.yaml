@@ -74,7 +74,7 @@ mb:
         title: Titlu
         type: Tip
         add: 'Adaugă element'
-        show_hide: aktiv/inaktiv
+        show_hide: 'Comutare vizibilitate'
         no_element_added: 'Nu există niciun element'
         delete:
           title: 'Șterge element'
