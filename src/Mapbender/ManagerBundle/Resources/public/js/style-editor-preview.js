@@ -18,7 +18,7 @@ class StyleEditorPreview {
         const fw = s.fontWeight || 'regular';
         const prefix = fw === 'bold' ? 'bold ' : (fw === 'italic' ? 'italic ' : '');
         ctx.font = `${prefix}${parseInt(s.fontSize) || 11}px ${s.fontFamily || 'Arial, Helvetica, sans-serif'}`;
-        ctx.fillStyle = StyleUtils.hexToRgba(s.fontColor || '#000000', parseFloat(s.fontOpacity) || 1);
+        ctx.fillStyle = StyleUtils.hexToRgba(s.fontColor || '#000000', this._normalizeOpacity(s.fontOpacity));
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(text, x, y);
@@ -26,8 +26,8 @@ class StyleEditorPreview {
 
     drawAll(visualStyle) {
         const s = visualStyle;
-        const fillStyle   = StyleUtils.hexToRgba(s.fillColor || '#3399CC', parseFloat(s.fillOpacity) || 1);
-        const strokeStyle = StyleUtils.hexToRgba(s.strokeColor || '#ffffff', parseFloat(s.strokeOpacity) || 1);
+        const fillStyle   = StyleUtils.hexToRgba(s.fillColor || '#3399CC', this._normalizeOpacity(s.fillOpacity));
+        const strokeStyle = StyleUtils.hexToRgba(s.strokeColor || '#ffffff', this._normalizeOpacity(s.strokeOpacity));
         const strokeWidth = parseFloat(s.strokeWidth) || 1;
         const pointRadius = parseFloat(s.pointRadius) || 6;
         const dashes = this.dashMap[s.strokeDashstyle] || [];
@@ -74,5 +74,10 @@ class StyleEditorPreview {
             ctx.closePath(); ctx.fill(); if (strokeWidth > 0) ctx.stroke();
             this.drawLabel(ctx, s, w/2, h/2);
         }
+    }
+
+    _normalizeOpacity(value) {
+        const alpha = parseFloat(value);
+        return isNaN(alpha) ? 1 : alpha;
     }
 }
