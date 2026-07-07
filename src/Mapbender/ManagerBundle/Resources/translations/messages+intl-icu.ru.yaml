@@ -232,6 +232,9 @@ mb:
           weight_regular: Обычный
           weight_bold: Полужирный
           weight_italic: Курсив
+          font_style: Стиль
+          style_normal: Обычный
+          style_italic: Курсив
           font_color: Цвет шрифта
           font_opacity: Непрозрачность шрифта
           preview_legend: Предпросмотр

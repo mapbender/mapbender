@@ -233,6 +233,9 @@ mb:
           weight_regular: Normal
           weight_bold: Negrita
           weight_italic: Cursiva
+          font_style: Estilo
+          style_normal: Normal
+          style_italic: Cursiva
           font_color: Color de fuente
           font_opacity: Opacidad de fuente
           preview_legend: Vista previa

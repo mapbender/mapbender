@@ -237,6 +237,9 @@ mb:
           weight_regular: Zwykły
           weight_bold: Pogrubiony
           weight_italic: Kursywa
+          font_style: Styl
+          style_normal: Normalny
+          style_italic: Kursywa
           font_color: Kolor czcionki
           font_opacity: Krycie czcionki
           preview_legend: Podgląd

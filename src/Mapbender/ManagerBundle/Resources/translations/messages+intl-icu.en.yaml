@@ -237,6 +237,9 @@ mb:
           weight_regular: Regular
           weight_bold: Bold
           weight_italic: Italic
+          font_style: Style
+          style_normal: Normal
+          style_italic: Italic
           font_color: Font Color
           font_opacity: Font Opacity
           preview_legend: Preview

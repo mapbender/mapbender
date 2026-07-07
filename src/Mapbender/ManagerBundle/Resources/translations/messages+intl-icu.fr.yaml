@@ -182,6 +182,9 @@ mb:
           weight_regular: Normal
           weight_bold: Gras
           weight_italic: Italique
+          font_style: Style
+          style_normal: Normal
+          style_italic: Italique
           font_color: Couleur de police
           font_opacity: Opacité de police
           preview_legend: Aperçu

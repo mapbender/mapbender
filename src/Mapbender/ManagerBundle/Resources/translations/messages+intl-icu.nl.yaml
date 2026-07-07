@@ -182,6 +182,9 @@ mb:
           weight_regular: Normaal
           weight_bold: Vet
           weight_italic: Cursief
+          font_style: Stijl
+          style_normal: Normaal
+          style_italic: Cursief
           font_color: Letterkleur
           font_opacity: Letterdekking
           preview_legend: Voorbeeld
