@@ -1,0 +1,11 @@
+html.invalid: 'HTML conține o eroare!'
+twig.invalid: 'TWIG conține o eroare!'
+mb.core.simplesearch.errors:
+  invalid_query_format: 'Formatul de interogare specificat nu conține substituenți. Consultați textul de ajutor!'
+  invalid_epsg_code: 'Textul introdus nu este un cod EPSG valid. Introduceți codul în formatul EPSG:1234'
+  no_configuration_added: 'Vă rugăm să adăugați cel puțin o configurare'
+
+mb.core.map.admin.min_one_layerset: 'Vă rugăm să selectați cel puțin un set de straturi.'
+mb.core.map.admin.epsg_invalid_format: "Sistemul de coordonate trebuie specificat în formatul \"EPSG:<cifre>\"."
+mb.core.map.admin.epsg_not_found: "Sistemul de referință de coordonate specificat nu a fost găsit în tabelul de referință."
+mb.core.map.admin.invalid_integer: "Sunt permise doar valori întregi."
