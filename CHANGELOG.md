@@ -28,6 +28,7 @@ Bugfixes:
 * [ViewManager] Show date in native format ([#PR1850](https://github.com/mapbender/mapbender/pull/1850))
 
 Other:
+* Added romanian translation ([#PR1878](https://github.com/mapbender/mapbender/pull/1878)) 
 * [Develop] New shared File utility module for geospatial file handling (KML, GeoJSON, GPX, GML) ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
 * In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
 * Changed default login-backdrop image ([PR#1845](https://github.com/mapbender/mapbender/pull/1845))

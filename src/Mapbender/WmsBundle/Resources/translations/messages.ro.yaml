@@ -1,0 +1,158 @@
+mb:
+  wms:
+    wmsloader:
+      dialog:
+        label:
+          example: Exemplu
+          wmsurl: URL
+          wmsuser: 'Nume utilizator'
+          wmspass: Parolă
+      error:
+        load: 'Încărcare WMS: documentul WMS Capabilities nu a putut fi încărcat!'
+      repo:
+        macros:
+          label:
+            formats: Formate
+        view:
+          label:
+            onlineresource: 'Resursă online'
+            exceptionformats: 'Formate de eroare'
+            fees: Taxe
+            accessconstraints: 'Restricții de acces'
+          message:
+            cautionscalehint: 'Atenție: calculul scării este supus rezoluției limitate ScaleHint din WMS 1.1.1'
+        instance:
+          btn:
+            save: 'Salvează'
+            cancel: 'Anulează'
+          label:
+            transparency: 'Transparență'
+            tiled: mozaicat
+            title: Titlu
+            minsc: 'Scară minimă'
+            maxsc: 'Scară maximă'
+            active: activ
+            select: selectat
+            info: Info
+            toggle: extinde
+            reorder: sortează
+            allow: permite
+            'on': pornit
+            ratio: 'Factor BBOX'
+            buffer: 'Zonă tampon'
+            layerorder: 'Ordinea straturilor'
+            layerorder.standard: Standard
+            layerorder.reverse: QGIS
+            exceptionformat: 'Format eroare'
+            infoformat: 'Formatul interogării GetFeatureInfo'
+            format: 'Formatul interogării GetMap'
+            dimensions: Dimensiuni
+            vendorspecifics: 'Parametri definiți de utilizator'
+            layers: Straturi
+            refresh_interval: 'Interval de actualizare [s]'
+            refresh_interval_help: 'Dacă este setat și diferit de 0, serviciul este actualizat automat la intervalul specificat (în secunde).'
+          vendorspecific:
+            label: 'Parametru specific furnizorului'
+        preview:
+          title:
+            servicerepository: 'Depozit de servicii'
+          label:
+            load: 'Încarcă'
+        layer:
+          label:
+            name: Nume
+            title: Titlu
+            abstract: Descriere
+            queryable: interogabil
+            cascaded: cascadat
+            opaque: opac
+            nosubset: 'Nicio subgrupă'
+            fixedwidth: 'Lățime fixă'
+            fixedheight: 'Înălțime fixă'
+            latlonbounds: 'Limite LatLon'
+            boundingbox: BoundingBox
+            srs: SRS
+            styles: Styles
+            legendurl: 'URL legendă'
+            scale: Scara
+            min: Minim
+            max: Maxim
+            scalehint: 'Indicație de scară'
+            attribution: Atribuire
+            onlineresource: 'Resursă online'
+            logourl: 'URL logo'
+            identifier: Identifier
+            authority: Autoritate
+            url: URL
+            value: Valoare
+            metadataurl: 'URL metadate'
+            dimension: Dimensiune
+            extent: Extindere
+            dataurl: 'URL date'
+            featurelisturl: 'URL listă de obiecte'
+        instancelayerform:
+          style_leafs_only: 'Mapbender nu suportă stiluri individuale pentru grupuri'
+      class:
+        title: 'Încarcă WMS'
+        description: 'Încarcă un WMS printr-o cerere GetCapabilities'
+      admin:
+        label:
+          splitlayers: 'Împarte straturile'
+    repository:
+      parser:
+        couldnotparse: 'Documentul XML nu poate fi analizat.'
+        not_supported_document: 'Documentul nu este acceptat.'
+        not_supported_version: 'Versiunea WMS nu este acceptată.'
+    metadata:
+      section:
+        common:
+          title: General
+        contact:
+          title: Contact
+        items:
+          title: Strat
+          name: Nume
+        useconditions:
+          title: 'Condiții de utilizare'
+      popup:
+        title: Metadate
+    repo:
+      instance:
+        label:
+          dimensions: Dimensiuni
+    dimhandler:
+      class:
+        title: 'Handler de dimensiuni'
+        description: 'Handler-ul de dimensiuni grupează și controlează cererile de dimensiuni în hartă.'
+    dimensionsets:
+      no_dimension: 'Nu există dimensiuni.'
+  core:
+    dimensionset:
+      admin:
+        title: Titlu
+        group: Grup
+        extent: Extindere
+    dimensionshandler:
+      admin:
+        tooltip: Tooltip
+        dimensionsets: 'Seturi de dimensiuni'
+    wmsloader:
+      admin:
+        defaultformat: 'Format standard'
+        defaultinfoformat: 'Format standard pentru informații'
+      onlineresource:
+        format: Format
+        href: href
+      legendurltype:
+        width: Lățime
+        height: Înălțime
+        onlineresource: 'Resursă online'
+      vendorspecifictype:
+        hidden: Ascuns
+        setdefaults: 'Stabilește valorile implicite'
+    vendorspecifictype:
+      admin:
+        vstype: 'Tip parametru'
+        name: 'Nume parametru'
+        default: 'Valoare implicită'
+        hidden: Ascuns

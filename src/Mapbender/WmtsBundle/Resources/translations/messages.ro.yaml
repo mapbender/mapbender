@@ -1,0 +1,41 @@
+mb:
+  wmts:
+    wmtsloader:
+      repo:
+        view:
+          label:
+            matrixsets: 'Seturi de matrice'
+            theme: Teme
+            serviceprovidername: 'Numele furnizorului de servicii'
+            serviceprovidersite: 'Site-ul web al furnizorului de servicii'
+        tilematrixset:
+          label:
+            identifier: Identificator
+            supportedcrs: 'CRS acceptate'
+            title: Titlu
+            abstract: Rezumat
+          matrixes: Matrice
+        theme:
+          label:
+            identifier: Identificator
+            title: Titlu
+            abstract: Rezumat
+            layerrefs: 'Referințe de strat'
+        instance:
+          label:
+            style: Stil
+        layer:
+          label:
+            identifier: Identificator
+            formats: Formate
+            title: Titlu
+            abstract: Rezumat
+            latlonbounds: 'Caseta de încadrare'
+            tilematrixsetlinks: 'Legături TileMatrixSet'
+        tilematrix:
+          label:
+            identifier: Identificator
+            scaledenominator: 'Numitor de scară'
+            topleftcorner: 'Colțul stânga-sus'
+            tilesize: 'Dimensiune plăcuțe'
+            matrixsize: 'Dimensiune matrice'

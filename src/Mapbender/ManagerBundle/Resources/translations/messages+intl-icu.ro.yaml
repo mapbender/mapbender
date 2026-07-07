@@ -1,0 +1,440 @@
+mb:
+  application:
+    create:
+      success: 'Aplicația dvs. a fost creată.'
+      failure:
+        create.directory: 'Directorul aplicației nu poate fi creat.'
+    save:
+      success: 'Aplicația dvs. a fost salvată.'
+      failure:
+        general: 'A apărut o eroare la salvarea aplicației dvs.'
+        create.directory: 'Aplicația dvs. a fost actualizată, dar directorul aplicației nu a putut fi creat.'
+    remove:
+      success: 'Aplicația dvs. a fost ștearsă.'
+      failure:
+        general: 'Aplicația dvs. nu a putut fi ștearsă.'
+  layerset:
+    create:
+      success: 'Setul dvs. de straturi a fost creat.'
+    remove:
+      success: 'Setul dvs. de straturi a fost șters.'
+      failure: 'Setul dvs. de straturi nu poate fi șters.'
+  manager:
+    automatic: Automat
+    autoActivate: 'Activează automat'
+    autoOpen: 'Deschide automat'
+    confirm_form_discard: 'Renunțați la modificări?'
+    popup_height: 'Înălțime dialog'
+    popup_width: 'Lățime dialog'
+    screentype:
+      label: 'Tip ecran'
+      choice:
+        all: Toate
+        mobile: Mobil
+        desktop: Desktop
+    toolbar:
+      alignment:
+        label: Aliniere
+        choice:
+          left: Stânga
+          right: Dreapta
+          center: Centru
+      generate_button_menu: 'Grupează butoanele într-un meniu'
+      menu_label: 'Titlu meniu'
+    visibility: Vizibilitate
+    element:
+      screentype:
+        mobile: 'Afișează pe dispozitive mobile'
+        desktop: 'Afișează pe ecrane mari'
+      openInline: 'Deschide în linie'
+      openInlineHelp: 'Pentru elementele inline, conținutul este afișat direct, fără titlu, în panoul lateral sau în zona hărții.'
+    sidepane:
+      width: Lățime
+      resizable: 'Dimensiune redimensionabilă'
+      resizable_help: 'Dacă este activat, utilizatorul poate modifica dimensiunea panoului lateral ținând apăsat și trăgând de marginea din dreapta. Lățimea maximă/minimă poate fi ajustată prin CSS personalizat (min-width/max-width pe .sidePane.resizable)'
+      closed: 'Pornește închis'
+      align:
+        label: Poziție
+        choice:
+          left: Stânga
+          right: Dreapta
+    application:
+      persistentView: 'Memorează starea hărții'
+      splashscreen: 'Afișează ecranul de încărcare'
+    admin:
+      csrf_token_invalid: 'Tokenul CSRF nu este valid.'
+      map:
+        max_extent: 'Extindere maximă hartă'
+        max_extent.help: 'Casetă de încadrare cu min/max x/y care marchează zona permisă a hărții în care utilizatorul se poate deplasa. La clic pe globul pământesc din bara de scară se face zoom la această extindere.'
+        start_extent: 'Extinderea inițială a hărții'
+        start_extent.help: 'Casetă de încadrare cu min/max x/y care marchează zona de hartă în care pornește aplicația. La clic pe pictograma casă din bara de scară se face zoom la această extindere.'
+        base_dpi: 'Rezoluție standard [dpi]'
+        base_dpi.help: 'Rezoluția se adaptează pe baza acestei valori la rezoluția dispozitivului utilizat.'
+      element:
+        title: Titlu
+        type: Tip
+        add: 'Adaugă element'
+        show_hide: 'Comutare vizibilitate'
+        no_element_added: 'Nu există niciun element'
+        delete:
+          title: 'Șterge element'
+          confirm: 'Doriți într-adevăr să ștergeți elementul "{element_name}"'
+        anchor:
+          label: Poziție
+          left-top: 'Stânga sus'
+          left-bottom: 'Stânga jos'
+          right-top: 'Dreapta sus'
+          right-bottom: 'Dreapta jos'
+      zoombar:
+        draggable: Deplasabil
+      overview:
+        fix: 'Fixează'
+      layerset:
+        add: 'Adaugă set de straturi'
+        title: Titlu
+        type: Tip
+        edit: 'Editează set de straturi'
+        delete:
+          title: 'Șterge set de straturi'
+          confirm: 'Doriți într-adevăr să ștergeți setul de straturi "{layerset_title}"?'
+        id: Id
+      instance:
+        add: 'Adaugă instanță'
+        show_hide: 'Instanță pornit/oprit'
+        edit: 'Editează instanță'
+        delete:
+          title: 'Șterge instanță'
+          confirm: 'Doriți într-adevăr să eliminați instanța cu titlul  "{instance_title}"'
+        no_instance_added: 'Nu există nicio instanță'
+        no_layer_added: 'Niciun strat adăugat'
+        max_input_vars_exceeded: 'Setarea PHP max_input_vars este prea mică pentru numărul de straturi din această instanță.'
+        update_successful: 'Instanța a fost actualizată'
+        converted_to_shared: 'Instanța a fost convertită într-o instanță liberă'
+        security: 'Editează drepturile de acces. Dacă nu este setat niciun drept (pictogramă gri), toți cei care au acces la aplicație pot vedea și sursa de date. Dacă sunt setate drepturi (pictogramă roșie), doar rolurile configurate pot vedea sursa de date.'
+      template: Șablon
+      application:
+        view: 'Afișează'
+        edit:
+          title: 'Editează aplicația'
+          base_data: 'Date de bază'
+        screenshot: 'Imagine de previzualizare'
+        layouts: Layout-uri
+        layersets: Layerset
+        custom_css: CSS
+        security:
+          title: Securitate
+          public: 'Acces public'
+        save: 'Salvează'
+        cancel: 'Anulează'
+        view_this: 'Afișează aplicația'
+        duplicate: 'Duplică aplicația'
+        public:
+          on_off: 'Comută accesul public'
+        delete:
+          title: 'Șterge aplicația'
+          confirm: 'Doriți într-adevăr să ștergeți aplicația "{application_title}"'
+        no_application: 'Nu există nicio aplicație'
+        new:
+          title: 'Creează aplicație'
+        create_use: 'Creați mai întâi o aplicație nouă cu informațiile de bază. Apoi puteți edita aplicația și adăuga elemente și seturi de straturi.'
+        btn:
+          create: 'Salvează'
+          cancel: 'Anulează'
+        upload:
+          button: 'Selectează fișier'
+          label: 'Niciun fișier selectat...'
+        export:
+          addSources: Surse
+          btn:
+            export: 'Exportă'
+        import:
+          addSources: Surse
+          btn:
+            import: 'Importă'
+        title: Titlu
+        url:
+          title: 'Titlu URL'
+        description: Descriere
+        template: Șablon
+      style:
+        title: Stil
+        secondary_short: Sec.
+        secondary_tooltip: 'Stiluri secundare pentru acest strat'
+        secondary_attached: 'Stiluri secundare atribuite'
+        settings: 'Setări stil'
+        label: Stil
+        preview_label: Previzualizare
+        secondary_styles: 'Stiluri secundare'
+        select_label: Selecție
+        ok: OK
+        native_style: "(stil nativ)"
+        changed_was: "Modificat (a fost: {label})"
+        changed: 'Diferit de valoarea salvată'
+        none: "-- niciun stil --"
+        multi_layer_preview: "Multistrat ({count})"
+        name_required: 'Numele stilului este obligatoriu.'
+        saved: 'Stil salvat.'
+        updated: 'Stil actualizat.'
+        copied: 'Stil copiat.'
+        deleted: 'Stil șters.'
+        cannot_delete_source_style: "Acest stil aparține unei surse OGC API și nu poate fi șters cât timp sursa există."
+        copy_suffix: "(copie)"
+        manager:
+          title: Stiluri
+          new_style: 'Stil nou'
+          th_id: ID
+          th_preview: Previzualizare
+          th_name: Nume
+          th_origin: Origine
+          th_source: Sursă
+          th_actions: Acțiuni
+          filter_name: "Filtrează după nume…"
+          filter_all: Toate
+          filter_source: "ID sursă…"
+          action_edit: 'Editează'
+          action_view: 'Vizualizează'
+          action_copy: 'Copiază'
+          action_delete: 'Șterge'
+          confirm_delete: 'Ștergeți acest stil?'
+          no_styles: 'Nu a fost configurat încă niciun stil.'
+          fallback_name: "Stil #{id}"
+        editor:
+          title_view: "Vizualizează stilul #{id}"
+          title_edit: "Editează stilul #{id}"
+          title_new: 'Stil nou'
+          name_label: Nume
+          name_placeholder: "Introduceți numele stilului..."
+          tab_visual: 'Editor vizual'
+          tab_json: 'Mapbox JSON'
+          tab_import: Import
+          import_overwrite_badge: 'Importul suprascrie stilul existent'
+          mapbox_layers: 'Straturi Mapbox'
+          add_layer: 'Adaugă strat'
+          fill: Umplere
+          color: Culoare
+          opacity: Opacitate
+          point_radius: 'Raza punctului'
+          stroke: Contur
+          width: Lățime
+          line_cap: 'Capăt linie'
+          cap_round: Rotund
+          cap_square: Pătrat
+          cap_butt: 'Tăiat drept'
+          dash_style: 'Linie întreruptă'
+          dash_solid: Continuu
+          dash_dot: Punct
+          dash_dash: Linie
+          dash_long: 'Linie lungă'
+          dash_dashdot: 'Linie-punct'
+          dash_longdashdot: 'Linie lungă-punct'
+          label_legend: Legendă
+          text: Text
+          font_family: 'Familie font'
+          font_size: Mărime
+          font_weight: Grosime
+          weight_regular: Normal
+          weight_bold: Aldin
+          weight_italic: Cursiv
+          font_color: 'Culoare font'
+          font_opacity: 'Opacitate font'
+          preview_legend: Previzualizare
+          geom_point: Punct
+          geom_line: Linie
+          geom_polygon: Poligon
+          mapbox_style_json: "Stil Mapbox (JSON)"
+          import_caution: Atenție
+          import_overwrite_text: "Acest stil conține deja date. Un import va <strong>înlocui toate setările actuale</strong>. Această acțiune nu poate fi anulată."
+          import_legend: 'Importă definiția stilului'
+          import_desc: "Încărcați un fișier Mapbox Style JSON pentru a completa automat editorul de stil."
+          import_file: Fișier
+          import_success: "Stil importat cu succes. Comutați la fila <strong>Editor vizual</strong> sau <strong>Mapbox JSON</strong> pentru verificare."
+          save: 'Salvează'
+          back: 'Înapoi'
+          cancel: 'Anulează'
+          fill_color: 'Culoare umplere'
+          fill_opacity: 'Opacitate umplere'
+          outline_color: 'Culoare contur'
+          line_color: 'Culoare linie'
+          line_width: 'Lățime linie'
+          line_opacity: 'Opacitate linie'
+          circle_radius: 'Rază cerc'
+          circle_color: 'Culoare cerc'
+          circle_opacity: 'Opacitate cerc'
+          stroke_color: 'Culoare contur'
+          stroke_width: 'Grosime contur'
+          text_color: 'Culoare text'
+          text_opacity: 'Opacitate text'
+          invalid_json: "JSON nevalid: %error%"
+          json_syntax_only_note: "Se verifică doar sintaxa JSON, nu și validitatea de conținut a stilului Mapbox."
+          remove_layer: 'Elimină strat'
+          readonly_notice: "Acest stil provine dintr-o sursă OGC API și poate fi doar afișat. Modificările nu sunt posibile."
+          text_field: 'Câmp text'
+          size: Mărime
+          font: Font
+          geom_symbol: Simbol
+          no_editable_properties: 'Nu există proprietăți de reprezentare editabile pentru acest tip de strat.'
+          complex_value_hint: "Această valoare depinde de nivelul de zoom. Modificările în editorul grafic vor înlocui valoarea pentru toate nivelurile de zoom. Pentru a nu pierde informații, editați JSON-ul brut în fila următoare."
+          unknown_layer: "%type%-Layer"
+          background_color: 'Culoare fundal'
+          background_opacity: 'Opacitate fundal'
+          raster_opacity: 'Opacitate raster'
+          raster_brightness_min: 'Luminozitate min'
+          raster_brightness_max: 'Luminozitate max'
+          raster_contrast: Contrast
+          raster_saturation: Saturație
+          extrusion_color: 'Culoare extrudare'
+          extrusion_opacity: 'Opacitate extrudare'
+          extrusion_height: Înălțime
+          extrusion_base: 'Înălțime de bază'
+          heatmap_radius: Rază
+          heatmap_intensity: Intensitate
+          heatmap_opacity: Opacitate
+          heatmap_weight: Pondere
+          geom_background: Fundal
+          geom_raster: Raster
+          geom_extrusion: 'Extrudare 3D'
+          geom_heatmap: Heatmap
+    source:
+      sources: 'Surse de date'
+      serviceurl: 'URL serviciu'
+      username: 'Nume utilizator'
+      password: Parolă
+      activate_new_layers: 'Activează straturile nou adăugate'
+      select_new_layers: 'Selectează straturile nou adăugate'
+      load: 'Încarcă'
+      add: 'Adaugă sursă de date'
+      show_metadata: 'Afișează metadate'
+      delete: 'Elimină sursa de date'
+      valid: 'Sursă validă'
+      notvalid: 'Sursa de date nu este validă'
+      no_source: 'Nicio sursă de date'
+      filter_all_types: 'Toate tipurile de surse de date'
+      update: 'Actualizează sursa de date'
+      status:
+        ok: 'Sursă de date OK'
+        toupdate: 'Sursa de date este neactualizată'
+        unreachable: 'Sursa de date nu este accesibilă'
+      embedded_in_applications: |
+        {count, plural,
+            =0    {Această sursă de date nu este utilizată de nicio aplicație}
+            one   {Această sursă de date este utilizată de o aplicație}
+            other {Această sursă de date este utilizată de # aplicații}
+        }
+      added: 'A fost creată o nouă sursă de tip %type%'
+      instance:
+        embedded_in_applications: |
+          {count, plural,
+              =0    {Această instanță nu este utilizată de nicio aplicație}
+              one   {Această instanță este utilizată de o aplicație}
+              other {Această instanță este utilizată de # aplicații}
+          }
+        convert_to_reusable: 'Transformă în instanță liberă'
+        convert_to_bound: 'Transformă în instanță privată'
+        converted_to_bound: 'O copie privată a instanței libere a fost adăugată la aplicație'
+        reusable_assigned_to_application: 'Instanța liberă a fost adăugată la aplicație'
+        create_reusable: 'Creează instanță liberă'
+        created_reusable: 'A fost creată o nouă instanță liberă'
+        created: 'A fost creată o nouă instanță. Vă rugăm să o configurați.'
+      instancelayer:
+        id: ID
+        id.help: 'Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId'
+        title: 'Titlu strat'
+        name: Nume
+        active: activ
+        minscale: 'Scară minimă'
+        maxscale: 'Scară maximă'
+        legend: 'Activează legenda'
+        allowselecttoc: 'Permite selectarea în arborele de straturi'
+        selectedtoc: 'Selectează setul de straturi la pornirea aplicației. Atenție: lăsați bifat dacă nu sunt utilizate straturi tematice'
+        selectedtoc.help: 'Setul de straturi este activ în arborele de straturi la pornirea aplicației. Această setare ar trebui modificată doar dacă sunt utilizate straturi tematice'
+        unselectedtoc.help: 'Setul de straturi este inactiv în arborele de straturi la pornirea aplicației. Atenție: dacă nu sunt utilizate straturi tematice, setul de straturi nu va putea fi apelat'
+        allowinfotoc: 'Permite FeatureInfo în arborele de straturi'
+        infotoc: 'FeatureInfo în arborele de straturi'
+        allowtoggletoc: 'Permite comutarea în arborele de straturi'
+        toggletoc: 'Comutare în arborele de straturi'
+        allowreordertoc: 'Permite reordonarea în arborele de straturi'
+        moreinfo: 'Informații suplimentare'
+        style: Stil
+        legend_help: 'Activează legenda pentru acest strat. Atenție: are efect doar pentru straturile care furnizează o legendă.'
+      option:
+        title: Titlu
+        opacity: Opacitate
+        basesource: BaseSource
+        proxy: Proxy
+      metadata:
+        metadata: Metadate
+        contact: Contact
+        details: Detalii
+        layers: Straturi
+        title: Titlu
+        version: Versiune
+        originurl: 'URL origine'
+        abstract: Descriere
+    contact:
+      person: Persoană
+      organization: Organizație
+      position: Funcție
+      telephone: Telefon
+      facsimile: Fax
+      email: E-Mail
+      address: Adresă
+      addresstype: 'Tip adresă'
+      city: Oraș
+      state: Regiune
+      postcode: 'Cod poștal'
+      country: Țară
+    managerbundle:
+      new_application: 'Aplicație nouă'
+      add_user_group: 'Adaugă utilizatori și grupuri'
+      import_application: 'Importă aplicație'
+      export_application: 'Exportă aplicație'
+    components:
+      popup:
+        duplicate_element:
+          title: 'Duplică element'
+          confirm: 'Doriți într-adevăr să duplicați elementul "{element_name}"?'
+        add_element:
+          title: 'Adaugă element'
+        edit_element:
+          title: 'Editează element'
+        delete_element:
+          title: 'Confirmați ștergerea'
+        add_edit_layerset:
+          title_edit: 'Editează set de straturi'
+          title_add: 'Adaugă set de straturi'
+        delete_layerset:
+          title: 'Șterge set de straturi'
+        add_instance:
+          title: 'Selectează sursa de date'
+        delete_instance:
+          title: 'Șterge instanță'
+        delete_user_group:
+          title: 'Confirmați eliminarea'
+          content: 'Doriți într-adevăr să eliminați înregistrarea "%subject%"?'
+    import:
+      application:
+        failed: 'Aplicația nu poate fi importată'
+    http_connection_error: 'Conexiunea a eșuat'
+    http_error_response: 'Serviciul contactat a trimis un mesaj de eroare'
+    xml_invalid: 'Documentul XML nu este valid'
+    xml_malformed: 'Nu este XML sau structura XML nu este validă'
+  core:
+    admin:
+      button:
+        show_label: 'Afișează eticheta'
+      element:
+        autostart: 'Pornire automată'
+      title: Titlu
+    entity:
+      app:
+        screenshotfile:
+          error: 'Fișierul este prea mare (%uploadFileSize% bytes). Dimensiunea maximă permisă este %maxFileSize% bytes.'
+          format_error: 'Format neacceptat'
+          resolution:
+            error: 'Pot fi încărcate doar fișiere cu %screenshotHeight% x %screenshotWidth% pixeli sau mai mari. Fișierul dvs. are %uploadWidth% x %uploadHeighth% pixeli.'
+    importjobtype:
+      admin:
+        importfile: 'Importă fișier'
+  actions:
+    secureelement: 'Restricționează accesul la element'
+    securesourceinstance: 'Restricționează accesul la sursa de date'

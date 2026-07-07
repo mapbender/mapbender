@@ -1,0 +1,136 @@
+mb:
+  print:
+    imageexport:
+      popup:
+        btn:
+          ok: Exportă
+          cancel: Anulează
+          close: Închide
+      info:
+        noactivelayer: 'Niciun strat activ!'
+      chooseformat: 'Selectează formatul de export'
+      class:
+        title: 'Export imagine'
+        description: 'Cu exportul de imagini, vizualizarea curentă a hărții poate fi exportată ca imagine. Imaginea poate fi salvată ca png sau jpeg.'
+      tag:
+        image: Imagine
+        export: Export
+        jpeg: jpeg
+        png: png
+    printclient:
+      tab:
+        settings: Setări
+        joblist: 'Comenzi de tipărire'
+      batchprint:
+        title: 'Titlu'
+        btn:
+          submit: 'Pornește tipărirea în serie'
+        track:
+          upload: 'Încarcă traseu (KML, GeoJSON, GPX, GML)'
+        geofile:
+          upload: 'Încarcă traseu (KML, GeoJSON, GPX, GML)'
+          load: 'Încarcă fișier'
+          choosefile: 'Selectează fișier'
+          clear: 'Elimină traseu'
+          placeframes: 'Plasează cadre de-a lungul traseului'
+          adjustframes: 'Ajustează rotația cadrelor'
+          overlap: 'Suprapunere cadre'
+          selected: 'Selectat'
+          loaded: 'Încărcat'
+          error: 'Eroare'
+          readerror: 'Eroare la citirea fișierului.'
+          placed: '%count% cadre plasate de-a lungul traseului.'
+          alert:
+            selectfile: 'Alegeți mai întâi un fișier.'
+            validfile: 'Alegeți un fișier valid (KML, GeoJSON, GPX, GML).'
+            error: 'Eroare la încărcarea fișierului.'
+            readerror: 'Eroare la citirea fișierului.'
+            loadfirst: 'Încărcați mai întâi un fișier de traseu.'
+            invalidgeometry: 'Geometrie nevalidă. Se așteaptă un LineString.'
+        overlap:
+          outofbounds: 'Valoarea de suprapunere %value%% este în afara intervalului valid (0-50%). Introduceți o valoare între 0 și 50.'
+        tracking:
+          title: 'Cadre de tipărire'
+          no: 'Nr.'
+          scale: 'Scară'
+          template: 'Șablon'
+          quality: 'Calitate'
+          rotation: 'Rotație'
+          delete: 'Șterge'
+          deleteall: 'Șterge toate cadrele'
+          empty: 'Nu există cadre de tipărire. Dați clic pe hartă pentru a adăuga cadre de tipărire.'
+        confirm:
+          create: 'Se vor crea %count% cadre. Continuați?'
+          deleteall: 'Ștergeți toate cele %count% cadre?'
+        alldeleted: 'Toate cadrele au fost șterse.'
+        alert:
+          noframes: 'Plasați cel puțin un cadru de tipărire pe hartă.'
+          error: 'Eroare la crearea comenzii de tipărire.'
+      joblist:
+        header:
+          id: '#'
+          ctime: Creat
+          status: Stare
+        status:
+          pending: 'în coadă de așteptare'
+          processing: 'în curs de procesare'
+          finished: finalizat
+        open: Deschide
+        delete: Șterge
+        cancel: Anulează
+        nodata: 'fără date'
+        loading: 'se încarcă'
+    admin:
+      printclient:
+        renderMode:
+          label: Mod
+          choice:
+            direct: Direct
+            queued: 'Coada de așteptare'
+        queueAccess:
+          label: 'Coada de așteptare'
+          choice:
+            global: global
+            private: privat
+  core:
+    printclient:
+      admin:
+        scales: 'Scări (separate prin virgulă)'
+        fileprefix: 'Prefix fișier'
+        optionalfields: 'Câmpuri opționale'
+        replacepattern: 'Înlocuiește modelul'
+        templates: Șabloane
+        qualitylevels: 'Niveluri de calitate'
+      label:
+        quality: Calitate
+      class:
+        title: 'Tipărire'
+    batchprintclient:
+      class:
+        title: 'Tipărire în serie'
+        description: 'Tipărire în serie - plasarea mai multor cadre de tipărire și emiterea într-o singură comandă de tipărire'
+    printclienttemplate:
+      admin:
+        template: Șablon
+        label: Denumire
+    printclientquality:
+      admin:
+        label: Denumire
+    admin:
+      printclient:
+        renderMode:
+          label: 'Mod'
+          choice:
+            direct: 'Direct'
+            queued: 'Coadă de așteptare'
+        queueAccess:
+          label: 'Coadă de așteptare'
+          choice:
+            global: 'global'
+            private: 'privat'
+        label:
+          qualitylevels: 'Niveluri de calitate'
+          templates: Șabloane
+      batchprintclient:
+        label:
+          enableGeofileUpload: 'Activează încărcarea de fișiere geospațiale'
