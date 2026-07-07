@@ -196,11 +196,9 @@
                             <div class="col-sm-3">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">{{ 'mb.manager.admin.style.editor.font_style' | trans }}</label>
-                                    {# backward compat: old styles stored italic in fontWeight #}
-                                    {% set _effectiveFontStyle = _visual.fontStyle ?? (_visual.fontWeight == 'italic' ? 'italic' : 'normal') %}
-                                    <select data-prop="fontStyle" class="form-select">
-                                        <option value="normal"{{ _effectiveFontStyle != 'italic' ? ' selected' : '' }}>{{ 'mb.manager.admin.style.editor.style_normal' | trans }}</option>
-                                        <option value="italic"{{ _effectiveFontStyle == 'italic' ? ' selected' : '' }}>{{ 'mb.manager.admin.style.editor.style_italic' | trans }}</option>
+                                      <select data-prop="fontStyle" class="form-select">
+                                          <option value="normal"{{ (_visual.fontStyle ?? 'normal') != 'italic' ? ' selected' : '' }}>{{ 'mb.manager.admin.style.editor.style_normal' | trans }}</option>
+                                          <option value="italic"{{ (_visual.fontStyle ?? 'normal') == 'italic' ? ' selected' : '' }}>{{ 'mb.manager.admin.style.editor.style_italic' | trans }}</option>
                                     </select>
                                 </div>
                             </div>
