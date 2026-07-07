@@ -126,10 +126,10 @@
                 '    </div>',
                 '   <div class="popup-body">',
                 '      <div class="popupContent"></div>',
-                '      <div class="footer row no-gutters">',
-                '        <div class="popupButtons"></div>',
-                '        <div class="clear"></div>',
-                '      </div>',
+                '   </div>',
+                '   <div class="footer row no-gutters">',
+                '       <div class="popupButtons"></div>',
+                '       <div class="clear"></div>',
                 '   </div>',
                 '   <div class="popup-mobile-resize">',
                 '     <i class="fa fa-angle-up"></i>',
@@ -311,6 +311,13 @@
             var isDragging = false;
             var startY = 0;
             var startHeight = 0;
+            let headerHeight = 0;
+            let footerHeight = 0;
+
+            const applyMinimizedState = function (newHeight) {
+                const minimized = newHeight < headerHeight + footerHeight;
+                self.$element.toggleClass('popup-minimized', minimized);
+            };
 
             $target.on('mousedown touchstart', '.popup-mobile-resize', function(evt) {
                 if (window.innerWidth > self.mobileBreakpoint) return; // Only on mobile
@@ -319,6 +326,10 @@
                 isDragging = true;
                 startY = evt.type === 'touchstart' ? evt.originalEvent.touches[0].clientY : evt.clientY;
                 startHeight = self.$element.height();
+
+                self.$element.removeClass('popup-minimized');
+                headerHeight = self.$element.find('.popupHead').outerHeight(true) || 0;
+                footerHeight = self.$element.find('.footer').outerHeight(true) || 0;
 
                 $('body').addClass('popup-resizing').css('user-select', 'none');
             });
@@ -338,6 +349,7 @@
                     )
                 );
                 self.$element.css('height', newHeight + 'px');
+                applyMinimizedState(newHeight);
             });
 
             $(document).on('mouseup touchend', function(evt) {
