@@ -1,11 +1,5 @@
 {% block region_wrapper %}
     {%- set menu_mode = region_props['generate_button_menu'] | default('no_menu') -%}
-    {#- backwards compatibility with the old boolean flag -#}
-    {%- if menu_mode is same as(true) or menu_mode == 1 or menu_mode == '1' -%}
-        {%- set menu_mode = 'menu_mobile_desktop' -%}
-    {%- elseif menu_mode is same as(false) or menu_mode == 0 or menu_mode == '' -%}
-        {%- set menu_mode = 'no_menu' -%}
-    {%- endif -%}
     {%- set menu_mode_class = {
         'menu_desktop': 'has-menu-desktop',
         'menu_mobile': 'has-menu-mobile',
