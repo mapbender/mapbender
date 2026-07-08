@@ -39,6 +39,7 @@
                         <option value="manual">{{ 'mb.ogcapifeatures.admin.filter.origin_manual' | trans }}</option>
                         <option value="ogc_api">{{ 'mb.ogcapifeatures.admin.filter.origin_ogc_api' | trans }}</option>
                         <option value="digitizer">{{ 'mb.ogcapifeatures.admin.filter.origin_digitizer' | trans }}</option>
+                        <option value="yaml">YAML</option>
                     </select>
                 </td>
                 <td><input id="filter-source" type="text" class="form-control form-control-sm" placeholder="{{ 'mb.manager.admin.style.manager.filter_source' | trans }}" title="{{ 'mb.ogcapifeatures.admin.filter.source_tooltip' | trans }}"></td>
@@ -48,9 +49,9 @@
         <tbody>
             {% for style in styles %}
                 <tr data-name="{{ style.name|default('')|lower }}"
-                    data-origin="{{ style.sourceType|default('') }}"
+                    data-origin="{{ style.yamlDefined ? 'yaml' : (style.sourceType|default('')) }}"
                     data-source="{{ style.sourceId|default('') }}">
-                    <td>{{ style.id }}</td>
+                    <td>{{ style.id ?? style.yamlKey }}</td>
                     <td>
                         {% if style.multiLayer %}
                             <span class="text-muted small">{{ 'mb.manager.admin.style.multi_layer_preview' | trans({'%count%': style.layerCount}) }}</span>
@@ -64,7 +65,9 @@
                     </td>
                     <td>{{ style.name ?? ('mb.manager.admin.style.manager.fallback_name' | trans({id: style.id})) }}</td>
                     <td>
-                        {% if style.sourceType == 'mapbox-json' %}
+                        {% if style.yamlDefined %}
+                            <span class="badge bg-warning text-dark">YAML</span>
+                        {% elseif style.sourceType == 'mapbox-json' %}
                             <span class="badge bg-primary">{{ 'mb.ogcapifeatures.admin.filter.origin_mapbox_json' | trans }}</span>
                         {% elseif style.sourceType == 'manual' %}
                             <span class="badge bg-secondary">{{ 'mb.ogcapifeatures.admin.filter.origin_manual' | trans }}</span>
@@ -81,6 +84,15 @@
                     <td>{{ style.sourceId ?? '-' }}</td>
                     <td>
                         <div class="d-flex flex-nowrap gap-1">
+                            {% if style.yamlDefined %}
+                                <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_yaml_view', {key: style.yamlKey}) }}" title="{{ 'mb.manager.admin.style.manager.action_view' | trans }}"><i class="fas fa-eye"></i></a>
+                                {% if is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_CREATE_STYLES')) %}
+                                <form method="post" action="{{ path('mapbender_manager_style_yaml_copy', {key: style.yamlKey}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('style_copy') }}">
+                                    <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.manager.admin.style.manager.action_copy' | trans }}"><i class="far fa-copy"></i></button>
+                                </form>
+                                {% endif %}
+                            {% else %}
                             {% if style.sourceType in ['manual', 'mapbox-json'] and is_granted(constant('FOM\\UserBundle\\Security\\Permission\\ResourceDomainInstallation::ACTION_EDIT_STYLES')) %}
                                 <a class="btn btn-light btn-sm" href="{{ path('mapbender_manager_style_edit', {id: style.id}) }}" title="{{ 'mb.manager.admin.style.manager.action_edit' | trans }}"><i class="fas fa-pencil"></i></a>
                             {% else %}
@@ -97,6 +109,7 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token('style_delete') }}">
                                 <button type="submit" class="btn btn-light btn-sm" title="{{ 'mb.manager.admin.style.manager.action_delete' | trans }}"><i class="far fa-trash-can"></i></button>
                             </form>
+                            {% endif %}
                             {% endif %}
                         </div>
                     </td>

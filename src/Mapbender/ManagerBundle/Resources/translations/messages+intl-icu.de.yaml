@@ -198,6 +198,7 @@ mb:
           confirm_delete: Diesen Style löschen?
           no_styles: Noch keine Styles konfiguriert.
           fallback_name: "Style #{id}"
+          yaml_readonly: "In YAML-Konfiguration definiert (schreibgeschützt)"
         editor:
           title_view: "Style #{id} ansehen"
           title_edit: "Style #{id} bearbeiten"
@@ -268,6 +269,7 @@ mb:
           json_syntax_only_note: "Es wird nur die JSON-Syntax geprüft, nicht die inhaltliche Gültigkeit des Mapbox-Stils."
           remove_layer: Ebene entfernen
           readonly_notice: "Dieser Stil stammt aus einer OGC-API-Quelle und kann nur angezeigt werden. Änderungen sind nicht möglich."
+          yaml_readonly_notice: "Dieser Stil ist in der YAML-Konfiguration definiert und kann nur angezeigt werden. Änderungen müssen in der Konfigurationsdatei vorgenommen werden."
           text_field: Textfeld
           size: Größe
           font: Schriftart

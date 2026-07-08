@@ -5,6 +5,7 @@ namespace Mapbender\ManagerBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
+use Mapbender\CoreBundle\Component\StyleYamlMapper;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\ManagerBundle\Form\Type\StyleType;
@@ -22,6 +23,7 @@ class StyleController extends ApplicationControllerBase
     public function __construct(
         EntityManagerInterface $em,
         protected TranslatorInterface $trans,
+        protected StyleYamlMapper $styleYamlMapper,
     ) {
         parent::__construct($em);
     }
@@ -30,7 +32,10 @@ class StyleController extends ApplicationControllerBase
     public function index(): Response
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_STYLES);
-        $styles = $this->em->getRepository(Style::class)->findAll();
+        $styles = array_merge(
+            $this->em->getRepository(Style::class)->findAll(),
+            $this->styleYamlMapper->getStyles(),
+        );
 
         return $this->render('@MapbenderManager/Style/index.html.twig', [
             'styles' => $styles,
@@ -46,10 +51,14 @@ class StyleController extends ApplicationControllerBase
     public function jsonList(): JsonResponse
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_STYLES);
-        $styles = $this->em->getRepository(Style::class)->findAll();
+        $styles = array_merge(
+            $this->em->getRepository(Style::class)->findAll(),
+            $this->styleYamlMapper->getStyles(),
+        );
         $map = [];
         foreach ($styles as $style) {
-            $map[$style->getId()] = [
+            $key = $style->isYamlDefined() ? 'yaml:' . $style->getYamlKey() : $style->getId();
+            $map[$key] = [
                 'style' => $style->getStyle(),
                 'collectionId' => $style->getCollectionId(),
                 'name' => $style->getName(),
@@ -138,6 +147,50 @@ class StyleController extends ApplicationControllerBase
             '_visual' => $this->extractVisualProps($style),
             'readonly' => true,
         ]);
+    }
+
+    #[ManagerRoute('/yaml/{key}/view', name: 'mapbender_manager_style_yaml_view', methods: ['GET'])]
+    public function yamlView(string $key): Response
+    {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_STYLES);
+        $style = $this->styleYamlMapper->getStyle($key);
+        if (!$style) {
+            throw $this->createNotFoundException();
+        }
+
+        $form = $this->createForm(StyleType::class, $style);
+
+        return $this->render('@MapbenderManager/Style/edit.html.twig', [
+            'form' => $form->createView(),
+            'style' => $style,
+            '_visual' => $this->extractVisualProps($style),
+            'readonly' => true,
+        ]);
+    }
+
+    #[ManagerRoute('/yaml/{key}/copy', name: 'mapbender_manager_style_yaml_copy', methods: ['POST'])]
+    public function yamlCopy(Request $request, string $key): Response
+    {
+        $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_STYLES);
+        if (!$this->isCsrfTokenValid('style_copy', $request->request->get('_token'))) {
+            throw new InvalidCsrfTokenException();
+        }
+        $source = $this->styleYamlMapper->getStyle($key);
+        if (!$source) {
+            throw $this->createNotFoundException();
+        }
+
+        $copy = new Style();
+        $copy->setName($source->getName() . ' ' . $this->trans->trans('mb.manager.admin.style.copy_suffix'));
+        $copy->setStyle($source->getStyle());
+        $copy->setSourceType('manual');
+        $copy->setSourceId(null);
+
+        $this->em->persist($copy);
+        $this->em->flush();
+
+        $this->addFlash('success', $this->trans->trans('mb.manager.admin.style.copied'));
+        return $this->redirectToRoute('mapbender_manager_style_edit', ['id' => $copy->getId()]);
     }
 
     #[ManagerRoute('/{id}/copy', name: 'mapbender_manager_style_copy', methods: ['POST'])]

@@ -9,11 +9,11 @@
 {% block manager_content %}
     <div class="content-box content-box-lg">
     {{ form_start(form, {action: style.id ? path('mapbender_manager_style_edit', {id: style.id}) : path('mapbender_manager_style_new'), attr: readonly|default(false) ? {class: 'style-readonly', novalidate: 'novalidate'} : {novalidate: 'novalidate'}}) }}
-        {{ form_widget(form.sourceType, {id: 'sourceType'}) }}
-        {% if readonly|default(false) and style.sourceType not in ['manual', 'mapbox-json'] %}
+        {{ form_widget(form.sourceType, {id: 'sourceType', disabled: readonly|default(false)}) }}
+        {% if readonly|default(false) and (style.yamlDefined or style.sourceType not in ['manual', 'mapbox-json']) %}
         <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
             <i class="fas fa-lock me-2"></i>
-            <div>{{ 'mb.manager.admin.style.editor.readonly_notice' | trans }}</div>
+            <div>{{ (style.yamlDefined ? 'mb.manager.admin.style.editor.yaml_readonly_notice' : 'mb.manager.admin.style.editor.readonly_notice') | trans }}</div>
         </div>
         <fieldset disabled>
         {% endif %}

@@ -91,6 +91,7 @@
                  public="true">
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument type="service" id="translator" />
+            <argument type="service" id="mapbender.style.yaml_mapper" />
             <tag name="container.service_subscriber" />
             <call method="setContainer">
                 <argument type="service" id="Psr\Container\ContainerInterface" />

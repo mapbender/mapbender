@@ -28,6 +28,13 @@ class Style
     #[ORM\Column(name: 'collection_id', type: 'string', length: 255, nullable: true)]
     private ?string $collectionId = null;
 
+    /**
+     * Not persisted. Set only for styles defined in YAML configuration
+     * (see StyleYamlMapper). Holds the YAML definition key and acts as a
+     * marker that distinguishes read-only YAML styles from database styles.
+     */
+    private ?string $yamlKey = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -81,6 +88,24 @@ class Style
     public function setCollectionId(?string $collectionId): void
     {
         $this->collectionId = $collectionId;
+    }
+
+    public function getYamlKey(): ?string
+    {
+        return $this->yamlKey;
+    }
+
+    public function setYamlKey(?string $yamlKey): void
+    {
+        $this->yamlKey = $yamlKey;
+    }
+
+    /**
+     * True for read-only styles defined in YAML configuration.
+     */
+    public function isYamlDefined(): bool
+    {
+        return $this->yamlKey !== null;
     }
 
     public function isMultiLayer(): bool

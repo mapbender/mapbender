@@ -140,6 +140,7 @@ mb:
           confirm_delete: Bu stili silmek istiyor musunuz?
           no_styles: Henüz stil yapılandırılmadı.
           fallback_name: "Stil #{id}"
+          yaml_readonly: "YAML yapılandırmasında tanımlı (salt okunur)"
         editor:
           title_view: "Stil #{id} görüntüle"
           title_edit: "Stil #{id} düzenle"
@@ -210,6 +211,7 @@ mb:
           json_syntax_only_note: "Sadece JSON sözdizimi doğrulanır, Mapbox stilinin anlamsal doğruluğu kontrol edilmez."
           remove_layer: Katmanı kaldır
           readonly_notice: "Bu stil bir OGC API kaynağından gelmektedir ve yalnızca görüntülenebilir. Değişiklik yapılamaz."
+          yaml_readonly_notice: "Bu stil YAML yapılandırmasında tanımlanmıştır ve yalnızca görüntülenebilir. Değişiklikler yapılandırma dosyasında yapılmalıdır."
           text_field: Metin alanı
           size: Boyut
           font: Yazı tipi
