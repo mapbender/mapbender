@@ -188,7 +188,7 @@
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">{{ 'mb.manager.admin.style.editor.font_weight' | trans }}</label>
                                     <select data-prop="fontWeight" class="form-select">
-                                        <option value="regular"{{ (_visual.fontWeight ?? 'regular') not in ['bold'] ? ' selected' : '' }}>{{ 'mb.manager.admin.style.editor.weight_regular' | trans }}</option>
+                                        <option value="normal"{{ (_visual.fontWeight ?? 'normal') not in ['bold'] ? ' selected' : '' }}>{{ 'mb.manager.admin.style.editor.weight_regular' | trans }}</option>
                                         <option value="bold"{{ (_visual.fontWeight ?? '') == 'bold' ? ' selected' : '' }}>{{ 'mb.manager.admin.style.editor.weight_bold' | trans }}</option>
                                     </select>
                                 </div>
