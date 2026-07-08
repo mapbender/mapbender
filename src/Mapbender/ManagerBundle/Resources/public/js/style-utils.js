@@ -62,8 +62,8 @@ class StyleUtils {
         }
         const s = styleJson || {};
         return {
-            fillStyle: StyleUtils.hexToRgba(s.fillColor || '#3399CC', parseFloat(s.fillOpacity) || 1),
-            strokeStyle: StyleUtils.hexToRgba(s.strokeColor || '#ffffff', parseFloat(s.strokeOpacity) || 1),
+            fillStyle: StyleUtils.hexToRgba(s.fillColor || '#3399CC', s.fillOpacity),
+            strokeStyle: StyleUtils.hexToRgba(s.strokeColor || '#ffffff', s.strokeOpacity),
             strokeWidth: parseFloat(s.strokeWidth) || 1,
             pointRadius: parseFloat(s.pointRadius) || 5,
             isMapbox: false
