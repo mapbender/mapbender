@@ -289,55 +289,35 @@ class ApplicationController extends ApplicationControllerBase
         ));
     }
 
-    /**
-     * @param Request $request
-     * @param SourceInstance $instance
-     * @param Layerset $layerset
-     * @return Response
-     */
-    #[ManagerRoute('/instance/{instance}/copy-into-layerset/{layerset}', methods: ['GET'])]
-    public function sharedinstancecopy(SourceInstance $instance, Layerset $layerset)
+    #[ManagerRoute('/assignment/{assignmentId}/convert-to-bound', methods: ['GET'])]
+    public function convertFreeAssignmentToBoundInstance(int $assignmentId): Response
     {
+        $assignment = $this->em->getRepository(ReusableSourceInstanceAssignment::class)->find($assignmentId);
+        if ($assignment === null) {
+            throw $this->createNotFoundException("Assignment not found");
+        }
+        $instance = $assignment->getInstance();
+        $layerset = $assignment->getLayerset();
+
         if ($instance->getLayerset()) {
             throw new \LogicException("Instance is already owned by a Layerset");
         }
         $application = $layerset->getApplication();
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         $instanceCopy = clone $instance;
-        $this->em->persist($instanceCopy);
         $instanceCopy->setLayerset($layerset);
-        $instanceCopy->setWeight(-1);
-        $layerset->addInstance($instanceCopy);
+        $instanceCopy->setWeight($assignment->getWeight());
+        $instanceCopy->setEnabled($assignment->getEnabled());
+        $this->em->persist($instanceCopy);
         $this->em->flush();
 
-        /**
-         * remove original shared instance from layerset
-         * @todo: finding the right assignment requires more information than is currently passed on by
-         * @see RepositoryController::instanceAction. We simply remove all assignments of the instance.
-         */
-        $reusablePartitions = $layerset->getReusableInstanceAssignments()->partition(function ($_, $assignment) use ($instance) {
-            /** @var SourceInstanceAssignment $assignment */
-            return $assignment->getInstance() !== $instance;
-        });
-        foreach ($reusablePartitions[1] as $removableAssignment) {
-            /** @var SourceInstanceAssignment $removableAssignment */
-            $instanceCopy->setEnabled($removableAssignment->getEnabled());
-            $this->permissionManager->movePermissions($removableAssignment, $instanceCopy, true);
-            $this->em->remove($removableAssignment);
-            $assignmentWeight = $removableAssignment->getWeight();
-            if ($instanceCopy->getWeight() < 0 && $assignmentWeight >= 0) {
-                $instanceCopy->setWeight($assignmentWeight);
-            }
-        }
-        $layerset->setReusableInstanceAssignments($reusablePartitions[0]);
-        WeightSortedCollectionUtil::reassignWeights($layerset->getCombinedInstanceAssignments());
-        $this->em->persist($layerset);
-        $this->em->persist($application);
+        $this->permissionManager->movePermissions($assignment, $instanceCopy, true);
+        $this->em->remove($assignment);
+
         $application->setUpdated(new \DateTime('now'));
         $this->em->flush();
         $this->addFlash('success', 'mb.manager.source.instance.converted_to_bound');
         return $this->redirectToRoute('mapbender_manager_repository_instance', array(
-            "slug" => $application->getSlug(),
             "instanceId" => $instanceCopy->getId(),
         ));
     }
@@ -375,9 +355,8 @@ class ApplicationController extends ApplicationControllerBase
         $instance->setLayerset(null);
         $this->em->flush();
         $this->addFlash('success', 'mb.manager.source.instance.reusable_assigned_to_application');
-        return $this->redirectToRoute("mapbender_manager_repository_instance", array(
-            "slug" => $application->getSlug(),
-            "instanceId" => $instance->getId(),
+        return $this->redirectToRoute("mapbender_manager_repository_unowned_instance_scoped", array(
+            "assignmentId" => $assignment->getId(),
         ));
     }
 

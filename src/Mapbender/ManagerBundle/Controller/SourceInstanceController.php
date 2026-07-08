@@ -41,32 +41,26 @@ class SourceInstanceController extends ApplicationControllerBase
         parent::__construct($em);
     }
 
-    /**
-     * @param Request $request
-     * @param string|null $slug
-     * @param string $instanceId
-     * @param Layerset|null $layerset
-     * @return Response
-     */
-    #[Route('/application/{slug}/instance/{instanceId}', name: 'mapbender_manager_repository_instance')]
-    #[Route('/instance/{instanceId}', name: 'mapbender_manager_repository_unowned_instance', requirements: ['instanceId' => '\d+'])]
-    #[Route('/instance/{instanceId}/layerset/{layerset}', name: 'mapbender_manager_repository_unowned_instance_scoped', requirements: ['instanceId' => '\d+'])]
-    public function edit(Request $request, $instanceId, $slug = null, ?Layerset $layerset = null)
+    #[Route('/instance/{instanceId}', name: 'mapbender_manager_repository_instance', requirements: ['instanceId' => '\d+'])]
+    #[Route('/instanceassignment/{assignmentId}', name: 'mapbender_manager_repository_unowned_instance_scoped', requirements: ['assignmentId' => '\d+'])]
+    public function edit(Request $request, ?int $instanceId = null, ?int $assignmentId = null)
     {
-        /** @var SourceInstance|null $instance */
-        $instance = $this->em->getRepository(SourceInstance::class)->find($instanceId);
-        $applicationRepository = $this->getDbApplicationRepository();
-        if (!$layerset) {
-            if ($slug) {
-                $application = $applicationRepository->findOneBy(array(
-                    'slug' => $slug,
-                ));
-            } else {
-                $application = null;
+        if ($assignmentId !== null) {
+            $assignment = $this->em->getRepository(ReusableSourceInstanceAssignment::class)->find($assignmentId);
+            if ($assignment === null) {
+                throw $this->createNotFoundException();
             }
+            $instance = $assignment->getInstance();
+            $layerset = $assignment->getLayerset();
         } else {
-            $application = $layerset->getApplication();
+            $instance = $this->em->getRepository(SourceInstance::class)->find($instanceId);
+            if ($instance === null) {
+                throw $this->createNotFoundException();
+            }
+            $layerset = $instance->getLayerset();
         }
+        $application = $layerset?->getApplication();
+
         /** @var Application|null $application */
         if ($application) {
             $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
@@ -90,6 +84,7 @@ class SourceInstanceController extends ApplicationControllerBase
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->persist($instance);
             $dtNow = new \DateTime('now');
+            $applicationRepository = $this->getDbApplicationRepository();
             foreach ($applicationRepository->findWithSourceInstance($instance) as $affectedApplication) {
                 $this->em->persist($affectedApplication);
                 $affectedApplication->setUpdated($dtNow);
@@ -107,6 +102,7 @@ class SourceInstanceController extends ApplicationControllerBase
             "form" => $form->createView(),
             "instance" => $form->getData(),
             'layerset' => $layerset,
+            "assignment" => $assignment ?? null,
             'edit_shared_instances' => $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES),
         ));
     }
@@ -178,18 +174,12 @@ class SourceInstanceController extends ApplicationControllerBase
         $newInstance = $this->createNewSourceInstance($application, $sourceId, $layersetId, $this->em);
         $this->addFlash('success', 'mb.manager.source.instance.created');
         return $this->redirectToRoute("mapbender_manager_repository_instance", array(
-            "slug" => $slug,
             "instanceId" => $newInstance->getId(),
         ));
     }
 
-    /**
-     * @param Request $request
-     * @param Source $source
-     * @return Response
-     */
     #[Route('/instance/createshared/{source}', methods: ['GET', 'POST'])]
-    public function createshared(Source $source)
+    public function createshared(Source $source): Response
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         // @todo: only act on post
@@ -198,18 +188,13 @@ class SourceInstanceController extends ApplicationControllerBase
         $this->em->persist($instance);
         $this->em->flush();
         $this->addFlash('success', 'mb.manager.source.instance.created_reusable');
-        return $this->redirectToRoute('mapbender_manager_repository_unowned_instance', array(
+        return $this->redirectToRoute('mapbender_manager_repository_instance', array(
             'instanceId' => $instance->getId(),
         ));
     }
 
-    /**
-     * @param Request $request
-     * @param SourceInstance $instance
-     * @return Response
-     */
     #[Route('/instance/{instance}/promotetoshared', name: 'mapbender_manager_repository_promotetosharedinstance')]
-    public function promotetoshared(SourceInstance $instance)
+    public function promotetoshared(SourceInstance $instance): Response
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         $layerset = $instance->getLayerset();
@@ -238,9 +223,8 @@ class SourceInstanceController extends ApplicationControllerBase
         $this->em->flush();
 
         $this->addFlash('success', $this->trans->trans('mb.manager.admin.instance.converted_to_shared'));
-        return $this->redirectToRoute('mapbender_manager_repository_instance', array(
-            'instanceId' => $instance->getId(),
-            'slug' => $layerset->getApplication()->getSlug(),
+        return $this->redirectToRoute('mapbender_manager_repository_unowned_instance_scoped', array(
+            'assignmentId' => $assignment->getId(),
         ));
     }
 
