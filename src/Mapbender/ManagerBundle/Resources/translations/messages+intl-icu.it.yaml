@@ -13,6 +13,8 @@ mb:
       success: 'L''applicazione è stata eliminata.'
       failure:
         general: 'La tua applicazione non può essere cancellata.'
+    duplicate:
+      success: 'La tua applicazione è stata duplicata.'
   layerset:
     create:
       success: 'Il tuo layerset di livelli è stato creato.'

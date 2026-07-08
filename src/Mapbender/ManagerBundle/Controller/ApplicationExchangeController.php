@@ -70,13 +70,10 @@ class ApplicationExchangeController extends AbstractController
     }
 
     /**
-     * Copies an application
-     *
-     * @param string $slug
-     * @return Response
+     * Duplicates an application
      */
     #[ManagerRoute('/application/{slug}/copydirectly', name: 'mapbender_manager_application_copydirectly', requirements: ['slug' => '[\w-]+'], methods: ['GET'])]
-    public function copyDirectly($slug)
+    public function copyDirectly(string $slug): Response
     {
         /** @var Application|null $sourceApplication */
         $sourceApplication = $this->em->getRepository(Application::class)->findOneBy(array(
@@ -97,9 +94,7 @@ class ApplicationExchangeController extends AbstractController
 
             $this->em->commit();
             if ($this->isGranted(ResourceDomainApplication::ACTION_EDIT, $clonedApp)) {
-                // Redirect to edit view of imported application
-                // @todo: distinct message for successful duplication?
-                $this->addFlash('success', 'mb.application.create.success');
+                $this->addFlash('success', 'mb.application.duplicate.success');
                 return $this->redirectToRoute('mapbender_manager_application_edit', array(
                     'slug' => $clonedApp->getSlug(),
                 ));

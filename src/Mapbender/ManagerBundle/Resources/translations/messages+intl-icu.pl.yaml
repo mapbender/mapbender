@@ -13,6 +13,8 @@ mb:
       success: 'Aplikacja została usunięta.'
       failure:
         general: 'Nie można usunąć aplikacji.'
+    duplicate:
+      success: 'Aplikacja została zduplikowana.'
   layerset:
     create:
       success: 'Zestaw warstw został utworzony.'

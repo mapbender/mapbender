@@ -13,6 +13,8 @@ mb:
       success: 'Uygulama silindi.'
       failure:
         general: 'Uygulama silinemiyor.'
+    duplicate:
+      success: 'Uygulama çoğaltıldı.'
   layerset:
     create:
       success: 'Katman oluşturuldu.'

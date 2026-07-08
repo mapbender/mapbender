@@ -13,6 +13,8 @@ mb:
       success: 'Uw applicatie is verwijderd.'
       failure:
         general: 'Uw applicatie kon niet verwijderd worden.'
+    duplicate:
+      success: 'Uw applicatie is gedupliceerd.'
   layerset:
     create:
       success: 'Uw lagenset is aangemaakt.'
