@@ -14,7 +14,8 @@ class StyleEditorPreview {
 
     drawLabel(ctx, s, x, y) {
         const label = s.label || '';
-        const text = label;
+        if (!label)
+            return;
         const fw = s.fontWeight || 'regular';
         const fi = s.fontStyle || 'normal';
         const isItalic = fi === 'italic';
@@ -25,12 +26,10 @@ class StyleEditorPreview {
         fontParts.push(`${parseInt(s.fontSize) || 11}px`);
         fontParts.push(s.fontFamily || 'Arial, Helvetica, sans-serif');
         ctx.font = fontParts.join(' ');
-        ctx.fillStyle = label
-            ? StyleUtils.hexToRgba(s.fontColor || '#000000', parseFloat(s.fontOpacity) || 1)
-            : 'rgba(0,0,0,0.35)';
+        ctx.fillStyle = StyleUtils.hexToRgba(s.fontColor || '#000000', this._normalizeOpacity(s.fontOpacity));
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(text, x, y);
+        ctx.fillText(label, x, y);
     }
 
     drawAll(visualStyle) {
@@ -83,5 +82,10 @@ class StyleEditorPreview {
             ctx.closePath(); ctx.fill(); if (strokeWidth > 0) ctx.stroke();
             this.drawLabel(ctx, s, w/2, h/2);
         }
+    }
+
+    _normalizeOpacity(value) {
+        const alpha = parseFloat(value);
+        return isNaN(alpha) ? 1 : alpha;
     }
 }
