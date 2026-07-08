@@ -3,4 +3,6 @@
   {%- endif -%}
   {%- if show_label or not icon -%}
   <span{% if icon %} class="hidden-sm hidden-xs hidden-md-down"{% endif %}>{{ label|trans }}</span>
+  {%- elseif force_menu_label is defined and force_menu_label -%}
+  <span class="forced-menu-label d-none">{{ label|trans }}</span>
   {%- endif -%}

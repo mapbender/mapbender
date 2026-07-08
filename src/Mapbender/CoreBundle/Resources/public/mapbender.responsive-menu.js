@@ -119,6 +119,8 @@
 				menuWrapper.style.removeProperty('display');
 			}
 
+            $('.toolBarItem .forced-menu-label').toggleClass('d-none', menuWrapper.style.display === 'none');
+
 			this.updateDropupLayout(menuWrapper);
 		}
 

@@ -146,8 +146,8 @@ class ElementMarkupRenderer
         }
         $attributes = $this->prepareAttributes($view->attributes, $baseAttributes);
         if ($view instanceof TemplateView) {
-            if ($forceLabel && array_key_exists('show_label', $view->variables)) {
-                $view->variables['show_label'] = true;
+            if ($forceLabel) {
+                $view->variables['force_menu_label'] = true;
             }
             $content = $this->templatingEngine->render($view->getTemplate(), $view->variables);
         } elseif ($view instanceof StaticView) {
