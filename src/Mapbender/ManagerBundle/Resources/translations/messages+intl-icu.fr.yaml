@@ -13,6 +13,8 @@ mb:
       success: 'L''application a été supprimée.'
       failure:
         general: 'L''application ne peut pas être supprimée'
+    duplicate:
+      success: 'L''application a été dupliquée.'
   layerset:
     create:
       success: 'L''ensemble de couches a été créée.'

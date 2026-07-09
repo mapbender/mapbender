@@ -13,6 +13,8 @@ mb:
       success: 'Your application has been deleted.'
       failure:
         general: 'Your application couldn''t be deleted.'
+    duplicate:
+      success: 'Your application has been duplicated.'
   layerset:
     create:
       success: 'Your layerset has been created.'

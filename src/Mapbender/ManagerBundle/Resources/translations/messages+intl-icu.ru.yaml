@@ -13,6 +13,8 @@ mb:
       success: 'Приложение удалено.'
       failure:
         general: 'Невозможно удалить приложение.'
+    duplicate:
+      success: 'Приложение дублировано.'
   layerset:
     create:
       success: 'Набор слоев создан.'

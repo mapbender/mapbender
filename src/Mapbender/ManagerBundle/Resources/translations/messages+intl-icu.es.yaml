@@ -13,6 +13,8 @@ mb:
       success: 'Tu aplicación ha sido eliminada.'
       failure:
         general: 'Tu aplicación no ha podido ser eliminada.'
+    duplicate:
+      success: 'Tu aplicación ha sido duplicada.'
   layerset:
     create:
       success: 'Tu conjunto de capas ha sido creado.'

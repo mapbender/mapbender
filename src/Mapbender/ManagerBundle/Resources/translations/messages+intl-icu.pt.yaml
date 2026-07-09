@@ -13,6 +13,8 @@ mb:
       success: 'Seu aplicativo foi deletado.'
       failure:
         general: 'Seu aplicativo não pôde ser deletado.'
+    duplicate:
+      success: 'Seu aplicativo foi duplicado.'
   layerset:
     create:
       success: 'Seu Layerset foi criado.'
