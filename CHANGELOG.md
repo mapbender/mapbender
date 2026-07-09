@@ -1,5 +1,5 @@
 ## next bugfix release
-* 
+* Do not show loading spinner in layer tree indefinetely when disabling source while it's loading ([#PR1886](https://github.com/mapbender/mapbender/pull/1886))
 
 ## v4.2.6
 Features:
