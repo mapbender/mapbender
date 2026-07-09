@@ -114,9 +114,17 @@ class OgcApiSource extends Mapbender.Source {
         }
 
         const labelTemplate = s.label;
+        // Normalize font values - fallback to 'normal' if invalid CSS values
+        const isValidFontWeight = (val) => val === 'normal' || val === 'bold' || !isNaN(parseInt(val));
+        const isValidFontStyle = (val) => val === 'normal' || val === 'italic' || val === 'oblique';
+        const fontWeight = isValidFontWeight(s.fontWeight) ? (s.fontWeight || 'normal') : 'normal';
+        const fontStyle = isValidFontStyle(s.fontStyle) ? (s.fontStyle ?? 'normal') : 'normal';
+        const fontSize = (s.fontSize || 12) + 'px';
+        const fontFamily = s.fontFamily || 'Arial, Helvetica, sans-serif';
+        const fontColor = s.fontColor || '#000000';
         const textBaseOptions = {
-            font: (s.fontSize || '12') + 'px ' + (s.fontFamily || 'Arial, Helvetica, sans-serif'),
-            fill: new ol.style.Fill({ color: s.fontColor || '#000000' }),
+            font: fontStyle + ' ' + fontWeight + ' ' + fontSize + ' ' + fontFamily,
+            fill: new ol.style.Fill({ color: fontColor }),
         };
 
         if (!/\$\{[^}]+\}/.test(labelTemplate)) {

@@ -13,15 +13,23 @@ class StyleEditorPreview {
     }
 
     drawLabel(ctx, s, x, y) {
-        const text = s.label || '';
-        if (!text) return;
+        const label = s.label || '';
+        if (!label)
+            return;
         const fw = s.fontWeight || 'regular';
-        const prefix = fw === 'bold' ? 'bold ' : (fw === 'italic' ? 'italic ' : '');
-        ctx.font = `${prefix}${parseInt(s.fontSize) || 11}px ${s.fontFamily || 'Arial, Helvetica, sans-serif'}`;
+        const fi = s.fontStyle || 'normal';
+        const isItalic = fi === 'italic';
+        const isBold = fw === 'bold';
+        const fontParts = [];
+        if (isItalic) fontParts.push('italic');
+        if (isBold) fontParts.push('bold');
+        fontParts.push(`${parseInt(s.fontSize) || 11}px`);
+        fontParts.push(s.fontFamily || 'Arial, Helvetica, sans-serif');
+        ctx.font = fontParts.join(' ');
         ctx.fillStyle = StyleUtils.hexToRgba(s.fontColor || '#000000', this._normalizeOpacity(s.fontOpacity));
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(text, x, y);
+        ctx.fillText(label, x, y);
     }
 
     drawAll(visualStyle) {
