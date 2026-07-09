@@ -236,6 +236,7 @@ window.Mapbender = Mapbender || {};
             }
             if (!targetVisibility) {
                 engine.setLayerVisibility(olLayer, false);
+                olLayer.getSource().dispatchEvent("sourcedeactivated");
             } else {
                 var newParams = {
                     LAYERS: layers,

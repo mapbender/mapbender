@@ -203,7 +203,7 @@ window.Mapbender.MapModelOl4 = (function() {
                 });
             }
         });
-        nativeSource.on(["tileloadend", "imageloadend"], function() {
+        nativeSource.on(["tileloadend", "imageloadend", "sourcedeactivated"], function() {
             tmp.pendingLoads = Math.max(0, tmp.pendingLoads - 1);
             if (!tmp.pendingLoads) {
                 mbMap.element.trigger('mbmapsourceloadend', {
