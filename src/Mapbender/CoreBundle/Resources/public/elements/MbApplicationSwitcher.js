@@ -19,7 +19,12 @@
         _initEvents() {
             $('a', this.$element).on('click', (e) => {
                 e.preventDefault();
-                this._switchApplication($(e.currentTarget).attr('href'));
+                const $a = $(e.currentTarget);
+                // no need to switch application, when Application Switcher is used to add a WMS
+                if (typeof $a.attr('data-mb-url') !== 'undefined') {
+                    return;
+                }
+                this._switchApplication($a.attr('href'));
             });
             $('select', this.$element).on('change', (e) => {
                 const slug = $(e.target).val();

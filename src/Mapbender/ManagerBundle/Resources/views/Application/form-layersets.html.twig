@@ -78,8 +78,8 @@
                   : path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': assignment.instance.id})
               ,
               '_edit_url': _is_reusable
-                  ? (edit_shared_instances ? path("mapbender_manager_repository_unowned_instance_scoped", {"instanceId": instance.id, "layerset": layerset }) : null)
-                  : path("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})
+                  ? (edit_shared_instances ? path("mapbender_manager_repository_unowned_instance_scoped", {"assignmentId": assignment.id}) : null)
+                  : path("mapbender_manager_repository_instance",{"instanceId": instance.id})
                   ,
               '_security_url': _is_reusable
                   ? path("mapbender_manager_sharedinstance_security", {"assignmentId": assignment.id, "layersetId": layerset.id })

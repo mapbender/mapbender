@@ -113,6 +113,14 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
                         $appConfig['img_url'] = $this->router->getContext()->getBaseUrl() . $imgPath;
                     }
                 }
+                if (!empty($appConfig['add_wms'])) {
+                    if (isset($appConfig['add_wms']['mb_layer_merge'])) {
+                        $appConfig['add_wms']['mb_layer_merge'] = ($appConfig['add_wms']['mb_layer_merge']) ? 1 : 0;
+                    }
+                    if (isset($appConfig['add_wms']['mb_wms_merge'])) {
+                        $appConfig['add_wms']['mb_wms_merge'] = ($appConfig['add_wms']['mb_wms_merge']) ? 1 : 0;
+                    }
+                }
                 $preparedAppConfig[$group][$slug] = $appConfig;
             } catch (AccessDeniedException | NotFoundHttpException $e) {
                 // external app (neither yaml nor database app)
