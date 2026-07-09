@@ -210,14 +210,14 @@ class ApplicationMarkupRenderer
         }
     }
 
-    public function renderToolbarMenuContent(Application $application, $regionName)
+    public function renderToolbarMenuContent(Application $application, $regionName, $forceLabel = false)
     {
         $elr = $this->elementRenderer;
         $elements = $this->getRegionElements($application, $regionName, function(Element $element) use ($elr) {
             return $elr->isMenuSupported($element);
         });
         if ($elements) {
-            return $this->elementRenderer->renderElements($elements);
+            return $this->elementRenderer->renderElements($elements, $forceLabel);
         } else {
             return '';
         }

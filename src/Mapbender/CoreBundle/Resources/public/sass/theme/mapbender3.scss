@@ -106,6 +106,45 @@ ul.toolBar, .toolBar > ul {
   margin-left: 0.5rem;
 }
 
+// Renders the toolbar menu-supported items inline (expanded out of the burger
+// dropdown) instead of collapsed behind the burger button. The menu <ul> is
+// still only rendered once; this just changes its presentation.
+@mixin toolbar-menu-inline {
+    .menu-wrapper {
+        float: none !important;
+        display: inline-flex;
+        vertical-align: top;
+        margin-top: 0 !important;
+
+        // hide the burger toggle button
+        > .btn {
+            display: none;
+        }
+
+        // render the dropdown items inline as part of the toolbar
+        .dropdown-menu {
+            display: inline-flex !important;
+            flex-direction: row;
+            position: static !important;
+            inset: auto !important;
+            transform: none !important;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            margin: 0;
+            padding: 0;
+            min-width: 0;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .toolBarItem {
+            display: inline-block;
+            margin: 0 0.25em;
+        }
+    }
+}
+
 .toolBar {
   z-index: 4;
   user-select: none;
@@ -200,7 +239,34 @@ ul.toolBar, .toolBar > ul {
       overflow-y: auto;
       overflow-x: hidden;
     }
+
+    &.dropup {
+      .dropdown-menu {
+        background: var(--toolbar-bottom-background);
+        top: auto;
+        bottom: var(--dropdown-bottom, 50px);
+      }
+    }
   }
+
+    // Responsive toolbar menu modes.
+    // The menu <ul> is rendered once (whenever the mode is not "no_menu").
+    // Depending on the configured mode and viewport width, the menu-supported
+    // items are either collapsed behind the burger button or shown inline
+    // (like the non-button-menu case).
+    //   menu_mobile_desktop -> always burger (no modifier class, never expanded)
+    //   menu_mobile  (.has-menu-mobile)  -> burger < 1200px, inline >= 1200px
+    //   menu_desktop (.has-menu-desktop) -> burger >= 1200px, inline < 1200px
+    @media (min-width: $desktopBreakpointWidth) {
+        &.has-menu-mobile {
+            @include toolbar-menu-inline;
+        }
+    }
+    @media (max-width: #{$desktopBreakpointWidth - 1px}) {
+        &.has-menu-desktop {
+            @include toolbar-menu-inline;
+        }
+    }
 }
 
 // Dropdown-style elements (SrsSelector, ScaleSelector, ApplicationSwitcher)

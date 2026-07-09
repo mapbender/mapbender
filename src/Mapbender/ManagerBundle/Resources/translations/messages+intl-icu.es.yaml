@@ -39,7 +39,13 @@ mb:
           left: Izquierda
           right: Derecha
           center: Centrada
-      generate_button_menu: 'Generar un menú para botones'
+      menu_button:
+          label: 'Menú'
+          choice:
+              no_menu: 'sin menú (predeterminado)'
+              menu_desktop: 'Mostrar menú en escritorio'
+              menu_mobile_desktop: 'Mostrar menú en escritorio y móvil'
+              menu_mobile: 'Mostrar menú solo en móvil'
       menu_label: 'Título del menú'
     visibility: Visibilidad
     element:

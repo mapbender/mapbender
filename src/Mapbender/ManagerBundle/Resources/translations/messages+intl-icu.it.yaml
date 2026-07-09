@@ -39,7 +39,13 @@ mb:
           left: Sinistra
           right: Destra
           center: Centro
-      generate_button_menu: 'Genera menu per i pulsanti'
+      menu_button:
+          label: 'Menu'
+          choice:
+              no_menu: 'nessun menu (predefinito)'
+              menu_desktop: 'Mostra menu su desktop'
+              menu_mobile_desktop: 'Mostra menu su desktop+mobile'
+              menu_mobile: 'Mostra menu solo su mobile'
       menu_label: 'Menu label'
     visibility: Visibilità
     element:

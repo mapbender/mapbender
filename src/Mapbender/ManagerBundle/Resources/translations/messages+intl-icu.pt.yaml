@@ -39,7 +39,13 @@ mb:
           left: Esquerda
           right: Direita
           center: Centralizado
-      generate_button_menu: 'Agrupar botões em um menu'
+      menu_button:
+          label: 'Menu'
+          choice:
+              no_menu: 'sem menu (padrão)'
+              menu_desktop: 'Mostrar menu no desktop'
+              menu_mobile_desktop: 'Mostrar menu no desktop e dispositivos móveis'
+              menu_mobile: 'Mostrar menu apenas em dispositivos móveis'
       menu_label: 'Rótulo do menu'
     visibility: Visibilidade
     element:

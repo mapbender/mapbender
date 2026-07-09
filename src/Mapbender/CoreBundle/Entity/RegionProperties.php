@@ -138,6 +138,18 @@ class RegionProperties
      */
     public function getProperties()
     {
-        return $this->properties;
+        $properties = $this->properties;
+        // backwards compatibility: generate_button_menu used to be a boolean flag
+        if (array_key_exists('generate_button_menu', $properties)) {
+            $value = $properties['generate_button_menu'];
+            if ($value === true || $value === 1 || $value === '1') {
+                $properties['generate_button_menu'] = 'menu_mobile_desktop';
+            } elseif ($value === false || $value === 0 || $value === '') {
+                $properties['generate_button_menu'] = 'no_menu';
+            } elseif (!in_array($value, array('no_menu', 'menu_mobile_desktop', 'menu_mobile', 'menu_desktop'))) {
+                $properties['generate_button_menu'] = 'no_menu';
+            }
+        }
+        return $properties;
     }
 }

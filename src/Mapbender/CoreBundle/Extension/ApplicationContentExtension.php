@@ -127,9 +127,9 @@ class ApplicationContentExtension extends AbstractExtension
         ;
     }
 
-    public function toolbar_menu_content(Application $application, $regionName)
+    public function toolbar_menu_content(Application $application, $regionName, $forceLabel = false)
     {
-        return $this->renderer->renderToolbarMenuContent($application, $regionName);
+        return $this->renderer->renderToolbarMenuContent($application, $regionName, $forceLabel);
     }
 
     public function toolbar_inline_content(Application $application, $regionName)
