@@ -670,6 +670,7 @@ mb:
         refresh: Aggiorna
         earth: Terra
         map: Mappa
+        images: Immagini
         pin_alt: 'Pin (Alternativa)'
         help: Aiuto
         dataupload: 'Caricamento'

@@ -394,6 +394,7 @@ mb:
         refresh: 'Herladen'
         earth: 'Aardbol'
         map: 'Kaart'
+        images: Afbeeldingen
         pin_alt: 'Marker (Alternatief)'
         help: 'Help'
         dataupload: 'Uploaden'

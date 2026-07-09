@@ -676,6 +676,7 @@ mb:
         refresh: 'Neu laden'
         earth: Erdkugel
         map: Karte
+        images: Bilder
         pin_alt: 'Stecknadel (Alternative)'
         help: Hilfe
         dataupload: Hochladen
