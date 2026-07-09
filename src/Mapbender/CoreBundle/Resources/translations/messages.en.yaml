@@ -676,6 +676,7 @@ mb:
         refresh: Refresh
         earth: Earth
         map: Map
+        images: Images
         pin_alt: 'Pin (Alternative)'
         help: Help
         dataupload: Upload

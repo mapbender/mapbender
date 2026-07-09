@@ -385,6 +385,7 @@ mb:
         refresh: 'Yeniden yükle'
         earth: 'Dünya'
         map: 'Harita'
+        images: 'Görseller'
         pin_alt: 'İşaretleyici (Alternatif)'
         help: 'Yardım'
         dataupload: 'Yükleme'

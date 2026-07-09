@@ -51,6 +51,7 @@ class IconPackageFa4 implements IconPackageInterface
             'mb.core.icon.fa.refresh' => 'iconRefresh',
             'mb.core.icon.fa.earth' => 'iconEarth',
             'mb.core.icon.fa.map' => 'iconMap',
+            'mb.core.icon.fa.images' => 'iconImages',
             'mb.core.icon.fa.pin_alt' => 'iconMapPin',
             'mb.core.icon.fa.dataupload' => 'iconDataUpload',
             'mb.routing.backend.iconTitle' => 'iconRouting',
@@ -126,6 +127,8 @@ class IconPackageFa4 implements IconPackageInterface
                 $class = 'fas fa-rotate'; break;
             case 'iconMap':
                 $class = 'far fa-map'; break;
+            case 'iconImages':
+                $class = 'far fa-images'; break;
             case 'iconMapPin':
                 $class = 'fas fa-map-pin'; break;
             case 'iconEarth':

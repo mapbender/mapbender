@@ -42,7 +42,7 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
     }
     public static function getDefaultIcon()
     {
-        return 'iconMap';
+        return 'iconImages';
     }
 
     public static function getType()

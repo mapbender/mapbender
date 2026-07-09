@@ -394,6 +394,7 @@ mb:
         refresh: 'Recharger'
         earth: 'Globe terrestre'
         map: 'Carte géographique'
+        images: Images
         pin_alt: 'Marqueur (alternative)'
         help: 'Aide'
         dataupload: 'Téléchargement'

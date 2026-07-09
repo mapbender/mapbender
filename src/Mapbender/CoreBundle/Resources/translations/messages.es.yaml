@@ -649,6 +649,7 @@ mb:
         refresh: Actualizar
         earth: Globo
         map: Mapa
+        images: Imágenes
         pin_alt: 'Pin (Alternativo)'
         help: Ayuda
         bookmark: 'marcador de página'

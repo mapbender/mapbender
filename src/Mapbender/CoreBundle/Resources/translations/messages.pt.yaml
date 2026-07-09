@@ -649,6 +649,7 @@ mb:
         refresh: 'Recarregar'
         earth: Globo terrestre
         map: Mapa
+        images: Imagens
         pin_alt: 'Alfinete (alternativo)'
         help: Ajuda
         dataupload: 'Carregar'
