@@ -63,6 +63,10 @@
         <!-- combination of B (bold), I (italic) or U (underline) -->
         <parameter key="mapbender.print.font_style_scale_bar">null</parameter>
         <parameter key="mapbender.print.scale_bar_height">2</parameter> <!-- px -->
+        <parameter key="mapbender.print.legend_margin_x">5</parameter> <!-- mm -->
+        <parameter key="mapbender.print.legend_margin_y">10</parameter> <!-- mm -->
+        <parameter key="mapbender.print.legend_margin_y_page">5</parameter> <!-- mm -->
+        <parameter key="mapbender.print.legend_margin_title_to_image">0</parameter> <!-- mm -->
     </parameters>
     <services>
         <service id="mapbender.imageexport.service" class="%mapbender.imageexport.service.class%">
@@ -120,6 +124,11 @@
             <argument>%mapbender.print.canvas_legend.class%</argument>
             <argument>%mapbender.print.font_legend%</argument>
             <argument>%mapbender.print.font%</argument>
+            <argument>%mapbender.print.font_size%%</argument>
+            <argument>%mapbender.print.legend_margin_x%</argument>
+            <argument>%mapbender.print.legend_margin_y%</argument>
+            <argument>%mapbender.print.legend_margin_y_page%</argument>
+            <argument>%mapbender.print.legend_margin_title_to_image%</argument>
         </service>
         <service id="mapbender.print_plugin_host.service" class="%mapbender.print_plugin_host.service.class%">
         </service>

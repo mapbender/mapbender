@@ -13,11 +13,8 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class OdgParser
 {
     const DEFAULT_ORIENTATION = 'landscape';
-    const DEFAULT_FONT_NAME = 'Arial';
     const DEFAULT_FONT_COLOR = '#000000';
     const DEFAULT_ALIGNMENT = 'L';
-
-    const DEFAULT_FONT_SIZE = '10pt';
 
     const STYLE_ATTRIBUTES = [
         'fontsize' => 'fo:font-size',
@@ -145,7 +142,7 @@ class OdgParser
             $templateRegion = $this->parseShapeIntoRegion($customShape);
             $templateRegion->setName($shapeName);
             // @todo: extract (non-default) font styles for all shapes?
-            $templateRegion->setFontStyle(FontStyle::defaultFactory());
+            $templateRegion->setFontStyle(new FontStyle($this->defaultFont, $this->defaultFontSize, OdgParser::DEFAULT_FONT_COLOR));
             $templateObject->addRegion($templateRegion);
         }
     }

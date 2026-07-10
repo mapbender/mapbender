@@ -22,9 +22,10 @@ class PDF_Extensions extends Fpdi
                     'bolditalic', 'italicbold' => 'BI',
                     default => ''
                 };
-                $fontFile = "$fileName.php";
+                $fontFile = "$fileName.json";
                 if (!file_exists("$resourceDir/fonts/$fontFile")) {
-                    $fontFile = "$fileName.json";
+                    // fpdf fonts can alternatively be declared in php files
+                    $fontFile = "$fileName.php";
                 }
                 if (!file_exists("$resourceDir/fonts/$fontFile")) {
                     throw new \RuntimeException("Could not locate configured font file $fileName (font family $fontFamily). Check custom-fonts.md in documentation.");
