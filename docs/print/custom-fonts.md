@@ -37,3 +37,8 @@ parameters:
   mapbender.print.font: roboto
   mapbender.print.font_legend: courier
 ```
+
+
+[↑ Back to top](#using-custom-fonts-in-mapbender-print)
+
+[← Back to README](../README.md)
