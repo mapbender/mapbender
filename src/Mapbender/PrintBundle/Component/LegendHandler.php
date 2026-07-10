@@ -30,7 +30,7 @@ class LegendHandler
     protected PdfUtil $pdfUtil;
     protected float $maxColumnWidthMm = 100.;
     protected float $maxImageDpi = 96.;
-    protected string $legendPageFontName = 'Arial';
+    protected string $legendPageFontName;
     /**
      * @var bool if true, the columns are rendered only as wide as they need to be. If false, all columns are $maxColumnWidthMm wide
      */
@@ -41,9 +41,12 @@ class LegendHandler
         protected string         $resourceDir,
         ?string                  $tempDir,
         protected string         $canvasLegendClass,
+        ?string                  $legendFont,
+        string                   $defaultFont,
     )
     {
         $this->pdfUtil = new PdfUtil($tempDir, 'mb_print_legend');
+        $this->legendPageFontName = $legendFont ?? $defaultFont;
     }
 
     /**

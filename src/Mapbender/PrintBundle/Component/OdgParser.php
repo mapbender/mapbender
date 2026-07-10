@@ -31,10 +31,11 @@ class OdgParser
     /** @var string */
     protected $sourcePath;
 
-    /**
-     * @param string $sourcePath
-     */
-    public function __construct($sourcePath)
+    public function __construct(
+        string $sourcePath,
+        protected string $defaultFont,
+        protected string $defaultFontSize,
+    )
     {
         $this->sourcePath = rtrim($sourcePath, '/');
     }
@@ -286,8 +287,8 @@ class OdgParser
     public function parseStyleNodes(array $nodes): array
     {
         $data = [
-            'font' => static::DEFAULT_FONT_NAME,
-            'fontsize' => static::DEFAULT_FONT_SIZE,
+            'font' => $this->defaultFont,
+            'fontsize' => $this->defaultFontSize,
             'fontcolor' => static::DEFAULT_FONT_COLOR,
             'alignment' => static::DEFAULT_ALIGNMENT,
         ];

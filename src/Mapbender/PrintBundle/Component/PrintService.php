@@ -46,16 +46,22 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string|null $tempDir absolute path or emptyish to autodetect via sys_get_temp_dir()
      */
     public function __construct(
-        array                     $layerRenderers,
-        protected ImageTransport  $imageTransport,
-        protected LegendHandler   $legendHandler,
-        protected OdgParser       $templateParser,
-        protected PrintPluginHost $pluginHost,
-        TypeDirectoryService      $typeDirectoryService,
-        LoggerInterface           $logger,
+        array                                $layerRenderers,
+        protected ImageTransport             $imageTransport,
+        protected LegendHandler              $legendHandler,
+        protected OdgParser                  $templateParser,
+        protected PrintPluginHost            $pluginHost,
+        TypeDirectoryService                 $typeDirectoryService,
+        LoggerInterface                      $logger,
         private readonly ApplicationResolver $applicationResolver,
-        protected string          $resourceDir,
-        ?string                   $tempDir,
+        protected string                     $resourceDir,
+        ?string                              $tempDir,
+        protected string                     $font,
+        protected ?string                    $fontScaleBar,
+        protected ?string                    $fontStyleScaleBar,
+        protected ?int                       $fontSizeScaleBar,
+        protected ?int                       $scaleBarHeight,
+        protected ?array                     $customFonts,
     )
     {
         $this->pdfUtil = new PdfUtil($tempDir, 'mb_print');
@@ -189,7 +195,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected function makeBlankPdf($templateData, $templateName)
     {
         /** @var PDF_Extensions|\FPDF $pdf */
-        $pdf = new PDF_Extensions();
+        $pdf = new PDF_Extensions(resourceDir: $this->resourceDir, customFonts: $this->customFonts);
         $pdfPath = $this->templateParser->getTemplateFilePath($templateName, 'pdf');
         $pdf->setSourceFile($pdfPath);
         $pdf->SetAutoPageBreak(false);
@@ -578,7 +584,11 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         // if the region width isn't evenly divided by 10mm, offset the bar to center it
         $barX0 = $region->getOffsetX() + 0.5 * ($totalWidth - $nSections * $sectionWidth);
 
-        $pdf->SetFont('arial', '', 10);
+        $pdf->SetFont(
+            $this->fontScaleBar ?? $this->font,
+            $this->fontStyleScaleBar ?? '',
+            $this->fontSizeScaleBar ?? 8
+        );
 
         $pdf->Text($barX0, $region['y'] - 1, '0');
         $scaleText = "{$totalMeters}m";
@@ -595,7 +605,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             } else {
                 $pdf->SetFillColor(0, 0, 0);
             }
-            $pdf->Rect($barX0 + $i * $sectionWidth, $region['y'], $sectionWidth, 2, 'FD');
+            $pdf->Rect($barX0 + $i * $sectionWidth, $region['y'], $sectionWidth, $this->scaleBarHeight ?? 2, 'FD');
         }
         return true;
     }
@@ -755,20 +765,12 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return $this->pdfUtil->addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width, $height);
     }
 
-    /**
-     * @param PDF_Extensions|\FPDF $pdf
-     * @param resource|string $gdResOrPath
-     * @param TemplateRegion $region
-     */
-    public function addImageToPdfRegion($pdf, $gdResOrPath, $region)
+    public function addImageToPdfRegion(PDF_Extensions|\FPDF $pdf, mixed $gdResOrPath, TemplateRegion $region): void
     {
-        return $this->pdfUtil->addImageToPdfRegion($pdf, $gdResOrPath, $region);
+        $this->pdfUtil->addImageToPdfRegion($pdf, $gdResOrPath, $region);
     }
 
-    /**
-     * @return PrintPluginHost
-     */
-    protected function getPluginHost()
+    protected function getPluginHost(): PrintPluginHost
     {
         return $this->pluginHost;
     }

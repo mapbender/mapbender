@@ -50,6 +50,18 @@
              see http://php.net/manual/en/faq.using.php#faq.using.shorthandbytes
              NOTE: this will never REDUCE memory limit vs a system configuration (php.ini etc), it only works upwards -->
         <parameter key="mapbender.print.queue.memory_limit">1G</parameter>
+        <!-- default available fonts: helvetica (alias: arial), courier, times. See docs/print/custom-fonts.md to use your own -->
+        <parameter key="mapbender.print.font">helvetica</parameter>
+        <!--See docs/print/custom-fonts.md on how to register your own fonts -->
+        <parameter key="mapbender.print.fonts">null</parameter>
+        <!-- falls back to default font if not defined -->
+        <parameter key="mapbender.print.font_scale_bar">null</parameter>
+        <parameter key="mapbender.print.font_legend">null</parameter>
+        <parameter key="mapbender.print.font_size">10</parameter> <!-- pt -->
+        <parameter key="mapbender.print.font_size_scale_bar">8</parameter> <!-- pt -->
+        <!-- combination of B (bold), I (italic) or U (underline) -->
+        <parameter key="mapbender.print.font_style_scale_bar">null</parameter>
+        <parameter key="mapbender.print.scale_bar_height">2</parameter> <!-- px -->
     </parameters>
     <services>
         <service id="mapbender.imageexport.service" class="%mapbender.imageexport.service.class%">
@@ -85,15 +97,25 @@
             <argument type="service" id="Mapbender\CoreBundle\Component\Application\ApplicationResolver" />
             <argument>%mapbender.print.resource_dir%</argument>
             <argument>%mapbender.print.temp_dir%</argument>
+            <argument>%mapbender.print.font%</argument>
+            <argument>%mapbender.print.font_scale_bar%</argument>
+            <argument>%mapbender.print.font_style_scale_bar%</argument>
+            <argument>%mapbender.print.font_size_scale_bar%</argument>
+            <argument>%mapbender.print.scale_bar_height%</argument>
+            <argument>%mapbender.print.fonts%</argument>
         </service>
         <service id="mapbender.print.template_parser.service" class="%mapbender.print.template_parser.service.class%">
             <argument>%mapbender.print.template_dir%</argument>
+            <argument>%mapbender.print.font%</argument>
+            <argument>%mapbender.print.font_size%</argument>
         </service>
         <service id="mapbender.print.legend_handler.service" class="%mapbender.print.legend_handler.service.class%">
             <argument type="service" id="mapbender.imageexport.image_transport.service" />
             <argument>%mapbender.print.resource_dir%</argument>
             <argument>%mapbender.print.temp_dir%</argument>
             <argument>%mapbender.print.canvas_legend.class%</argument>
+            <argument>%mapbender.print.font_legend%</argument>
+            <argument>%mapbender.print.font%</argument>
         </service>
         <service id="mapbender.print_plugin_host.service" class="%mapbender.print_plugin_host.service.class%">
         </service>

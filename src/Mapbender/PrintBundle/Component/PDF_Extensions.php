@@ -6,6 +6,33 @@ use setasign\Fpdi\Fpdi;
 
 class PDF_Extensions extends Fpdi
 {
+    public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4',
+                                protected ?string $resourceDir = null,
+                                protected ?array $customFonts = null
+    )
+    {
+        parent::__construct($orientation, $unit, $size);
+
+        if (!is_array($customFonts)) return;
+        foreach($customFonts as $fontFamily => $configuration) {
+            foreach($configuration as $fontStyle => $fileName) {
+                $fontStyleFpdf = match(strtolower($fontStyle)) {
+                    'bold' => 'B',
+                    'italic' => 'I',
+                    'bolditalic', 'italicbold' => 'BI',
+                    default => ''
+                };
+                $fontFile = "$fileName.php";
+                if (!file_exists("$resourceDir/fonts/$fontFile")) {
+                    $fontFile = "$fileName.json";
+                }
+                if (!file_exists("$resourceDir/fonts/$fontFile")) {
+                    throw new \RuntimeException("Could not locate configured font file $fileName (font family $fontFamily)");
+                }
+                $this->AddFont($fontFamily, $fontStyleFpdf, $fontFile, "$resourceDir/fonts");
+            }
+        }
+    }
 
     /**
      * @return mixed
@@ -48,7 +75,7 @@ class PDF_Extensions extends Fpdi
     public function getMultiCellTextHeight(string $text, int|float $width): int
     {
         /** @var static|\FPDF $tempPdf */
-        $tempPdf = new static();
+        $tempPdf = new static(resourceDir: $this->resourceDir, customFonts: $this->customFonts);
         $tempPdf->AddPage();
         $tempPdf->SetXY(0, 0);
         // clone font attributes
