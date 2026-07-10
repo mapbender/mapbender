@@ -18,6 +18,7 @@ Features:
 * [Map] Improve form validation in backend ([#PR1851](https://github.com/mapbender/mapbender/pull/1851))
 * [SearchRouter] Extend SQLSearchEngine with support for dates, numbers and greater/lower than operators ([#PR1796](https://github.com/mapbender/mapbender/pull/1796))
 * [InteractiveHelp] Add new Interactive Help element ([#PR1808](https://github.com/mapbender/mapbender/pull/1808))
+* [Print] Support custom fonts and improve configuration options ([#PR1887](https://github.com/mapbender/mapbender/pull/1887))
 * [HTMLElement] Add 'openInline' flag to provide more flexibility in sidebar and content area ([#PR1814](https://github.com/mapbender/mapbender/pull/1814))
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
 * [SearchRouter] Extend SQLSearchEngine to support multiple search values separated by configurable delimiters ([#PR1836](https://github.com/mapbender/mapbender/pull/1836))
