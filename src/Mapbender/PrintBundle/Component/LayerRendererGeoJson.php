@@ -23,7 +23,11 @@ class LayerRendererGeoJson extends LayerRenderer
 
     public function __construct(
         string                         $fontPath,
-        protected LayerRendererMarkers $markerRenderer)
+        protected LayerRendererMarkers $markerRenderer,
+        protected string               $defaultFont,
+        protected ?string              $fontGeojson,
+        protected ?array               $customFonts,
+    )
     {
         $this->fontPath = rtrim($fontPath, '/');
     }
@@ -476,7 +480,7 @@ class LayerRendererGeoJson extends LayerRenderer
     {
         $color = $this->getColor($style['fontColor'], $style['fontOpacity'], $canvas->resource);
         $bgcolor = $this->getColor($style['labelOutlineColor'], $style['labelOutlineOpacity'], $canvas->resource);
-        $fontName = $this->getLabelFont($style);
+        $fontName = $this->fontPath . '/' . $this->getLabelFont($style);
         $fontSize = $this->getLabelFontSize($canvas, $style);
         $textSize = GdUtil::getTtfTextSize($fontName, $fontSize, $text);
         $anchor = $this->getFeatureLabelAnchor($canvas, $style, $centroid, $textSize[0], $textSize[1]);
@@ -658,22 +662,32 @@ class LayerRendererGeoJson extends LayerRenderer
     }
 
     /**
-     * Should return an absolute path to the appropriate .ttf file for rendering a feature label.
-     *
-     * @param array $style
-     * @return string
+     * returns a path relative to $this->fontPath for the appropriate .ttf file for rendering a feature label.
      */
-    protected function getLabelFont($style)
+    protected function getLabelFont(array $style): string
     {
-        // @todo: check existance of ttf, fall back to default if no such file
-        $fontWeightRule = !empty($style['fontWeight']) ? $style['fontWeight'] : 'regular';
-        // @todo: undo capitalization of file name!
-        $suffix = \ucfirst($fontWeightRule);
+        $fontFamily = $this->fontGeojson ?? $this->defaultFont;
+        $fontStyle = '';
+        if (($style['fontWeight'] ?? null) === 'bold') $fontStyle .= 'bold';
+        if (($style['fontStyle'] ?? null) === 'italic') $fontStyle .= 'italic';
+        if (!$fontStyle) $fontStyle = 'regular';
+
+        if (isset($this->customFonts[$fontFamily])) {
+            $fontFamily = $this->customFonts[$fontFamily];
+            foreach ($fontFamily as $style => $file) {
+                if (strtolower($style) === $fontStyle) return $file.".ttf";
+            }
+            // fall back to first defined entry
+            return $fontFamily[array_key_first($fontFamily)].'.ttf';
+        }
+
+        // as default-font, use open sans which also lives in the fonts directory
+        $suffix = \ucfirst($fontStyle);
         if (\file_exists("{$this->fontPath}/OpenSans-{$suffix}.ttf")) {
-            return "{$this->fontPath}/OpenSans-{$suffix}.ttf";
+            return "OpenSans-{$suffix}.ttf";
         } else {
             // Hope for the best
-            return "{$this->fontPath}/OpenSans-Regular.ttf";
+            return "OpenSans-Regular.ttf";
         }
     }
 

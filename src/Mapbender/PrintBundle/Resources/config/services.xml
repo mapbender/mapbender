@@ -57,6 +57,7 @@
         <!-- falls back to default font if not defined -->
         <parameter key="mapbender.print.font_scale_bar">null</parameter>
         <parameter key="mapbender.print.font_legend">null</parameter>
+        <parameter key="mapbender.print.font_geojson">null</parameter>
         <parameter key="mapbender.print.font_size">10</parameter> <!-- pt -->
         <parameter key="mapbender.print.font_size_scale_bar">8</parameter> <!-- pt -->
         <!-- combination of B (bold), I (italic) or U (underline) -->
@@ -82,6 +83,9 @@
         <service id="mapbender.imageexport.renderer.geojson" class="%mapbender.imageexport.renderer.geojson.class%">
             <argument>%mapbender.imageexport.resource_dir%/fonts</argument>
             <argument type="service" id="mapbender.imageexport.renderer.markers" />
+            <argument>%mapbender.print.font%</argument>
+            <argument>%mapbender.print.font_geojson%</argument>
+            <argument>%mapbender.print.fonts%</argument>
         </service>
         <service id="mapbender.print.service" class="%mapbender.print.service.class%">
             <argument type="collection"><!-- layer renderers -->

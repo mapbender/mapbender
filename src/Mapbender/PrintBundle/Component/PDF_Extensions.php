@@ -27,7 +27,7 @@ class PDF_Extensions extends Fpdi
                     $fontFile = "$fileName.json";
                 }
                 if (!file_exists("$resourceDir/fonts/$fontFile")) {
-                    throw new \RuntimeException("Could not locate configured font file $fileName (font family $fontFamily)");
+                    throw new \RuntimeException("Could not locate configured font file $fileName (font family $fontFamily). Check custom-fonts.md in documentation.");
                 }
                 $this->AddFont($fontFamily, $fontStyleFpdf, $fontFile, "$resourceDir/fonts");
             }

@@ -22,6 +22,7 @@ php ../../../vendor/setasign/fpdf/makefont/makefont.php <your-font-file.ttf> cp1
 - To use the font, set the parameter `mapbender.print.font` to the font's key as configured in `mapbender.print.fonts`. Apart from the custom fonts, the default fonts helvetica (alias: arial), courier and  times are available. The default font can be overwritten for individual text fields:
   - `mapbender.print.font_legend`: Legend titles
   - `mapbender.print.font_scale_bar`: Scale bar text
+  - `mapbender.print.font_geojson`: Text for GeoJSON layers on the map, e.g. labels in sketches :warning: For GeoJSON layers, only true type fonts (.ttf) are supported.
 
 Example configuration: 
 
