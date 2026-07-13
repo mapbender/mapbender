@@ -16,9 +16,9 @@ class ProvideCookieConsentGlobalPass implements CompilerPassInterface
 
         $twigDefinition = $container->getDefinition('twig');
         // not added as twig global, but (still) required in many templates => add it
-        $twigDefinition->addMethodCall('addGlobal', array(
+        $twigDefinition->addMethodCall('addGlobal', [
             'cookieconsent',
             $cookieConsent,
-        ));
+        ]);
     }
 }

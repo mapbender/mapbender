@@ -50,7 +50,7 @@ class VectorTilesLoader extends SourceLoader
         $source->setDescription($json['description'] ?? '');
         $source->setVersion($json['version'] ?? '');
         $source->setMetadata(json_encode(array_filter($json['metadata'] ?? [],
-            fn($key, $value) => !is_array($value) && !is_object($value), ARRAY_FILTER_USE_BOTH)
+            fn($key, $value): bool => !is_array($value) && !is_object($value), ARRAY_FILTER_USE_BOTH)
         ));
         $this->loadBbox($json, $source);
     }

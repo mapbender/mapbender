@@ -2,10 +2,9 @@
 
 namespace Mapbender\WmsBundle\Element\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
 use Mapbender\Utils\ApplicationUtil;
 use Mapbender\WmsBundle\Component\DimensionInst;
@@ -27,39 +26,39 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('tooltip', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.dimensionshandler.admin.tooltip',
-            ))
+            ])
         ;
         $builder->addEventSubscriber($this);
     }
 
     public static function getSubscribedEvents(): array
     {
-        return array(FormEvents::PRE_SET_DATA => 'preSetData');
+        return [FormEvents::PRE_SET_DATA => 'preSetData'];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         /** @var Element $element */
         $element = $event->getForm()->getParent()->getData();
         $application = $element->getApplication();
-        $dimensions = array();
+        $dimensions = [];
         if ($application) {
             $dimensions = $this->collectDimensions($application);
         }
         $event->getForm()
-            ->add('dimensionsets', SortableCollectionType::class, array(
-                'entry_type' => 'Mapbender\WmsBundle\Element\Type\DimensionSetAdminType',
+            ->add('dimensionsets', SortableCollectionType::class, [
+                'entry_type' => DimensionSetAdminType::class,
                 'label' => 'mb.core.dimensionshandler.admin.dimensionsets',
                 'allow_add' => !!count($dimensions),
                 'allow_delete' => true,
                 'auto_initialize' => false,
-                'entry_options' => array(
+                'entry_options' => [
                     'dimensions' => $dimensions,
-                ),
-            ))
+                ],
+            ])
         ;
     }
 
@@ -67,13 +66,13 @@ class DimensionsHandlerAdminType extends AbstractType implements EventSubscriber
      * @param Application $application
      * @return DimensionInst[]
      */
-    protected function collectDimensions(Application $application)
+    protected function collectDimensions(Application $application): array
     {
-        $dimensions = array();
+        $dimensions = [];
         foreach (ApplicationUtil::getMapLayersets($application) as $layerset) {
             foreach ($layerset->getInstances(true) as $instance) {
                 if ($instance->getEnabled() && ($instance instanceof WmsInstance)) {
-                    foreach ($instance->getDimensions() ?: array() as $ix => $dimension) {
+                    foreach ($instance->getDimensions() ?: [] as $ix => $dimension) {
                         /** @var DimensionInst $dimension */
                         $key = "{$instance->getId()}-{$ix}";
                         $dimension->id = $key;

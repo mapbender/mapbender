@@ -62,12 +62,12 @@ class LegendHandler
      * @param array $printJobData
      * @return LegendBlockContainer[]
      */
-    public function collectLegends($printJobData)
+    public function collectLegends(array $printJobData): array
     {
         if (empty($printJobData['legends'])) {
-            return array();
+            return [];
         }
-        $groups = array();
+        $groups = [];
         foreach ($printJobData['legends'] as $groupData) {
             $group = $this->collectLegendGroup($groupData, $printJobData);
 
@@ -89,7 +89,7 @@ class LegendHandler
      * @param array $printJobData if you need to look into the whole thing again...
      * @return LegendBlockContainer
      */
-    public function collectLegendGroup($groupData, $printJobData)
+    public function collectLegendGroup($groupData, $printJobData): LegendBlockGroup
     {
         $group = new LegendBlockGroup();
         foreach ($groupData as $key => $data) {
@@ -113,7 +113,7 @@ class LegendHandler
      * @param Template|array $templateData
      * @param array $jobData
      */
-    public function addLegends($pdf, $region, $blockGroups, $allowPageBreaks, $templateData, $jobData)
+    public function addLegends($pdf, $region, $blockGroups, $allowPageBreaks, Template|array $templateData, array $jobData): void
     {
         $margins = $this->getMargins($region);
         $pageMargins = $this->getPageMargins($region);
@@ -181,10 +181,10 @@ class LegendHandler
     public function addPage(PDF_Extensions|\FPDF $pdf, Template|array $templateData, array $jobData): void
     {
         if ($templateData['orientation'] == 'portrait') {
-            $format = array($templateData['pageSize']['width'], $templateData['pageSize']['height']);
+            $format = [$templateData['pageSize']['width'], $templateData['pageSize']['height']];
             $orientation = 'P';
         } else {
-            $format = array($templateData['pageSize']['height'], $templateData['pageSize']['width']);
+            $format = [$templateData['pageSize']['height'], $templateData['pageSize']['width']];
             $orientation = 'L';
         }
         $pdf->addPage($orientation, $format);
@@ -231,11 +231,11 @@ class LegendHandler
      */
     protected function getMargins(TemplateRegion $region): array
     {
-        return array(
+        return [
             'x' => $this->marginX,
             'y' => $region instanceof FullPage ? $this->marginYPage : $this->marginY,
             'title_to_image' => $this->marginTitleToImage,
-        );
+        ];
     }
 
     protected function getPageMargins(TemplateRegion $region): array

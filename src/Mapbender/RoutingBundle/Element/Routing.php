@@ -2,6 +2,8 @@
 
 namespace Mapbender\RoutingBundle\Element;
 
+use Mapbender\RoutingBundle\Element\Type\RoutingAdminType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Exception;
@@ -18,16 +20,8 @@ use Mapbender\RoutingBundle\Component\ReverseGeocodingHandler;
  */
 class Routing extends AbstractElementService
 {
-    protected RoutingHandler $routingHandler;
-
-    protected SearchHandler $searchHandler;
-
-    protected ReverseGeocodingHandler $reverseGeocodingHandler;
-
-    public function __construct(RoutingHandler $routingHandler, SearchHandler $searchHandler, ReverseGeocodingHandler $reverseGeocodingHandler) {
-        $this->routingHandler = $routingHandler;
-        $this->searchHandler = $searchHandler;
-        $this->reverseGeocodingHandler = $reverseGeocodingHandler;
+    public function __construct(protected RoutingHandler $routingHandler, protected SearchHandler $searchHandler, protected ReverseGeocodingHandler $reverseGeocodingHandler)
+    {
     }
 
     public static function getClassTitle() : string
@@ -115,7 +109,7 @@ class Routing extends AbstractElementService
             'element_icon' => self::getDefaultIcon(),
         ];
     }
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconRouting';
     }
@@ -127,7 +121,7 @@ class Routing extends AbstractElementService
 
     public static function getType(): ?string
     {
-        return 'Mapbender\RoutingBundle\Element\Type\RoutingAdminType';
+        return RoutingAdminType::class;
     }
 
     public function getView(Element $element): TemplateView
@@ -147,7 +141,7 @@ class Routing extends AbstractElementService
         return $view;
     }
 
-    public function getHttpHandler(Element $element)
+    public function getHttpHandler(Element $element): static
     {
         return $this;
     }
@@ -155,22 +149,18 @@ class Routing extends AbstractElementService
     /**
      * @throws Exception
      */
-    public function handleRequest(Element $element, Request $request)
+    public function handleRequest(Element $element, Request $request): JsonResponse
     {
         $action = $request->attributes->get('action');
         $configuration = $element->getConfiguration();
         $configuration['locale'] = $request->getLocale();
 
-        switch ($action) {
-            case 'getRoute':
-                return $this->routingHandler->calculateRoute($request->request->all(), $configuration);
-            case 'search':
-                return $this->searchHandler->search($request->query->all(), $configuration);
-            case 'reverseGeocoding':
-                return $this->reverseGeocodingHandler->doReverseGeocoding($request->query->all(), $configuration);
-            default:
-                throw new NotFoundHttpException('No such action.');
-        }
+        return match ($action) {
+            'getRoute' => $this->routingHandler->calculateRoute($request->request->all(), $configuration),
+            'search' => $this->searchHandler->search($request->query->all(), $configuration),
+            'reverseGeocoding' => $this->reverseGeocodingHandler->doReverseGeocoding($request->query->all(), $configuration),
+            default => throw new NotFoundHttpException('No such action.'),
+        };
     }
 
     protected function getTransportationModes(Element $element): array

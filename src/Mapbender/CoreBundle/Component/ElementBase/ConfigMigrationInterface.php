@@ -3,6 +3,7 @@
 
 namespace Mapbender\CoreBundle\Component\ElementBase;
 
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity;
 
 /**
@@ -16,5 +17,5 @@ interface ConfigMigrationInterface
      * @param Entity\Element $entity
      * @return void
      */
-    public static function updateEntityConfig(Entity\Element $entity);
+    public static function updateEntityConfig(Element $entity);
 }

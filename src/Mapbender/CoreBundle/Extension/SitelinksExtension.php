@@ -9,21 +9,17 @@ use Twig\TwigFunction;
 
 class SitelinksExtension extends AbstractExtension
 {
-    /** @var string[][] */
-    protected $linkConfig;
-
     /**
      * @param string[][] $linkConfig
      */
-    public function __construct($linkConfig)
+    public function __construct(protected $linkConfig)
     {
-        $this->linkConfig = $linkConfig;
     }
 
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return 'mapbender_sitelinks';
     }
@@ -33,9 +29,9 @@ class SitelinksExtension extends AbstractExtension
      */
     public function getFunctions(): array
     {
-        return array(
-            new TwigFunction('get_sitelinks', array($this, 'get_sitelinks')),
-        );
+        return [
+            new TwigFunction('get_sitelinks', $this->get_sitelinks(...)),
+        ];
     }
 
     /**

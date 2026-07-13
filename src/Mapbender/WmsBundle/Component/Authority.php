@@ -32,7 +32,7 @@ class Authority implements MutableUrlTarget
      * @param string $value
      * @return $this
      */
-    public function setUrl($value)
+    public function setUrl($value): static
     {
         $this->url = $value;
         return $this;
@@ -53,7 +53,7 @@ class Authority implements MutableUrlTarget
      * @param string $value
      * @return $this
      */
-    public function setName($value)
+    public function setName($value): static
     {
         $this->name = $value;
         return $this;
@@ -62,15 +62,15 @@ class Authority implements MutableUrlTarget
     /**
      * @return string[]
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return array(
+        return [
             'url' => $this->url,
             'name' => $this->name,
-        );
+        ];
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
         if ($this->getUrl()) {
             $this->setUrl($transformer->process($this->getUrl()));

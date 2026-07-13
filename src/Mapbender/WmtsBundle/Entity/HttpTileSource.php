@@ -48,11 +48,8 @@ abstract class HttpTileSource extends HttpParsedSource
     #[ORM\OrderBy(['id' => 'asc'])]
     protected $tilematrixsets;
 
-    /**
-     * @var Contact
-     */
     #[ORM\OneToOne(targetEntity: Contact::class, cascade: ['persist', 'remove'])]
-    protected $contact;
+    protected Contact $contact;
 
     /**
      * @var WmtsSourceKeyword[]|ArrayCollection
@@ -116,7 +113,7 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @param WmtsLayerSource[]|ArrayCollection $layers
      */
-    public function setLayers($layers)
+    public function setLayers($layers): void
     {
         $this->layers = $layers;
     }
@@ -124,7 +121,7 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @param WmtsLayerSource $layer
      */
-    public function addLayer(WmtsLayerSource $layer)
+    public function addLayer(WmtsLayerSource $layer): void
     {
         $this->layers->add($layer);
         $layer->setSource($this);
@@ -149,7 +146,7 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @param Contact $contact
      */
-    public function setContact(Contact $contact)
+    public function setContact(Contact $contact): void
     {
         $this->contact = $contact;
     }
@@ -165,7 +162,7 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @param Collection $keywords
      */
-    public function setKeywords(Collection $keywords)
+    public function setKeywords(Collection $keywords): void
     {
         $this->keywords = $keywords;
     }
@@ -173,7 +170,7 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @param Keyword $keyword
      */
-    public function addKeyword(Keyword $keyword)
+    public function addKeyword(Keyword $keyword): void
     {
         $this->keywords->add($keyword);
     }
@@ -181,7 +178,7 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @param Collection $tilematrixsets
      */
-    public function setTilematrixsets(Collection $tilematrixsets)
+    public function setTilematrixsets(Collection $tilematrixsets): void
     {
         $this->tilematrixsets = $tilematrixsets;
     }
@@ -197,12 +194,12 @@ abstract class HttpTileSource extends HttpParsedSource
     /**
      * @param TileMatrixSet $tilematrixset
      */
-    public function addTilematrixset(TileMatrixSet $tilematrixset)
+    public function addTilematrixset(TileMatrixSet $tilematrixset): void
     {
         $this->tilematrixsets->add($tilematrixset);
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
         $this->setOriginUrl($transformer->process($this->getOriginUrl()));
         foreach ($this->getLayers() as $layer) {

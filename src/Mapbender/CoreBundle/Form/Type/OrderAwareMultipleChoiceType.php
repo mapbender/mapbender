@@ -20,10 +20,10 @@ class OrderAwareMultipleChoiceType extends ChoiceType
          * Prevent addition of order-destructive MergeCollectionListener
          * @see ChoiceType::buildForm() L150
          */
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'by_reference' => false,
-        ));
-        $resolver->setAllowedValues('by_reference', array(false));
+        ]);
+        $resolver->setAllowedValues('by_reference', [false]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -44,11 +44,11 @@ class OrderAwareMultipleChoiceType extends ChoiceType
                 if (!\in_array($preSubmitHandler, $preSubmitHandlersBefore, true)) {
                     $eventDispatcher->removeListener(FormEvents::PRE_SUBMIT, $preSubmitHandler);
                     // Register replacement
-                    $eventDispatcher->addListener(FormEvents::PRE_SUBMIT, array($this, 'preSubmit'));
+                    $eventDispatcher->addListener(FormEvents::PRE_SUBMIT, $this->preSubmit(...));
                     break;
                 }
             }
-            $eventDispatcher->addListener(FormEvents::PRE_SET_DATA, array($this, 'preSetData'));
+            $eventDispatcher->addListener(FormEvents::PRE_SET_DATA, $this->preSetData(...));
         }
     }
 
@@ -59,7 +59,7 @@ class OrderAwareMultipleChoiceType extends ChoiceType
      * @see ChoiceType::buildForm()
      * @param FormEvent $event
      */
-    public function preSubmit(FormEvent $event)
+    public function preSubmit(FormEvent $event): void
     {
         $form = $event->getForm();
         $data = $event->getData();
@@ -67,23 +67,23 @@ class OrderAwareMultipleChoiceType extends ChoiceType
         // When no choices are submitted, treat as empty array
         // to allow validation constraints (e.g. Count) to detect empty submissions
         if (null === $data) {
-            $data = array();
+            $data = [];
         }
 
         // Convert the submitted data to a string, if scalar, before
         // casting it to an array
         if (!\is_array($data)) {
-            $data = array(strval($data));
+            $data = [strval($data)];
         }
         // Keep data values as they are, but reubild the array using form children names
         // as keys.
-        $formChildMap = array();
+        $formChildMap = [];
         foreach ($form->all() as $child) {
             $formValue = $child->getConfig()->getOption('value');
             $formChildMap[$formValue] = $child;
         }
-        $reconstructedData = array();
-        $reconstructedCheckboxes = array();
+        $reconstructedData = [];
+        $reconstructedCheckboxes = [];
         $unknownValues = array_flip($data);
         foreach ($data as $index => $entryValue) {
             if (isset($formChildMap[$entryValue])) {
@@ -120,11 +120,11 @@ class OrderAwareMultipleChoiceType extends ChoiceType
         $event->setData($reconstructedData);
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         // Rebuild child checkbox list in order of current data
         $form = $event->getForm();
-        $formChildMap = array();
+        $formChildMap = [];
         foreach ($form->all() as $child) {
             $formValue = $child->getConfig()->getOption('value');
             $formChildMap[$formValue] = $child;

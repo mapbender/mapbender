@@ -10,7 +10,7 @@ class ColorUtils
         $color = trim($config[$keyColor]);
         // 8-digit rgba hex string or rgba => just return the color, no need to include the opacity into it
         if (preg_match("/^#[0-9A-Fa-f]{8}$/", $color)) return $color;
-        if (substr($color, 0, 4) === 'rgba') return $color;
+        if (str_starts_with($color, 'rgba')) return $color;
 
         $opacity = floatval($config[$keyOpacity] / $maxOpacity);
         if ($opacity < 0) $opacity = 0;
@@ -24,7 +24,7 @@ class ColorUtils
             return "rgba($r, $g, $b, $opacity)";
         }
 
-        if (substr($color, 0, 3) === 'rgb') {
+        if (str_starts_with($color, 'rgb')) {
             return 'rgba' . substr($color, 3, -1) . ', ' . $opacity . ')';
         }
 
@@ -74,7 +74,7 @@ class ColorUtils
     public static function parseHslColor($hsl): array
     {
         // Handle hsl() format
-        preg_match('/hsla?\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*/', $hsl, $matches);
+        preg_match('/hsla?\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*/', (string) $hsl, $matches);
         $h = (int)$matches[1] / 360;
         $s = (int)$matches[2] / 100;
         $l = (int)$matches[3] / 100;
@@ -92,7 +92,7 @@ class ColorUtils
         return ['red' => $r, 'green' => $g, 'blue' => $b];
     }
 
-    private static function hueToRgb(float|int $p, float|int $q, float|int $t)
+    private static function hueToRgb(float|int $p, float|int $q, float|int $t): float|int
     {
         if ($t < 0) $t += 1;
         if ($t > 1) $t -= 1;

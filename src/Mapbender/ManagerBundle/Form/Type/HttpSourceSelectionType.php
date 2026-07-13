@@ -12,8 +12,8 @@ class HttpSourceSelectionType extends HttpSourceOriginType
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => HttpOriginModel::class,
-        ));
+        ]);
     }
 }

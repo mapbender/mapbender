@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Form\Type\Application;
 
 
+use Symfony\Component\Form\FormInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
@@ -19,35 +20,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class RegionPropertiesType extends AbstractType
     implements DataMapperInterface
 {
-    /** @var ApplicationTemplateRegistry */
-    protected $templateRegistry;
-
-    public function __construct(ApplicationTemplateRegistry $templateRegistry)
+    public function __construct(protected ApplicationTemplateRegistry $templateRegistry)
     {
-        $this->templateRegistry = $templateRegistry;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $templateRegistry = $this->templateRegistry;
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'application' => null,
             'compound' => true,
-            'label_attr' => array(
+            'label_attr' => [
                 'class' => 'hidden',
-            ),
+            ],
             'region_names' => function (Options $options) use ($templateRegistry) {
                 /** @var Application $application */
                 $application = $options['application'];
                 $template = $templateRegistry->getApplicationTemplate($application);
                 // Guard against empty template (creating new Application)
                 if ($template) {
-                    return $template->getRegions() ?: array();
+                    return $template->getRegions() ?: [];
                 } else {
-                    return array();
+                    return [];
                 }
             }
-        ));
+        ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -69,7 +66,7 @@ class RegionPropertiesType extends AbstractType
 
     /**
      * @param Collection|Selectable|RegionProperties[] $viewData
-     * @param \Symfony\Component\Form\FormInterface[]|\Traversable $forms
+     * @param FormInterface[]|\Traversable $forms
      */
     public function mapDataToForms($viewData, $forms): void
     {
@@ -95,7 +92,7 @@ class RegionPropertiesType extends AbstractType
 
     /**
      * @param Collection|Selectable|RegionProperties[] $viewData
-     * @param \Symfony\Component\Form\FormInterface[]|\Traversable $forms
+     * @param FormInterface[]|\Traversable $forms
      */
     public function mapFormsToData($forms, &$viewData): void
     {
@@ -114,7 +111,7 @@ class RegionPropertiesType extends AbstractType
      * @param string $regionName
      * @return RegionProperties
      */
-    protected function createDefault($application, $regionName)
+    protected function createDefault(Application $application, $regionName): RegionProperties
     {
         $rpEntity = new RegionProperties();
         $rpEntity->setApplication($application);
@@ -129,7 +126,7 @@ class RegionPropertiesType extends AbstractType
     protected function mergeDefaults(RegionProperties $props, Application $application, $regionName)
     {
         $defaults = $this->getRegionDefaults($application, $regionName);
-        $merged = ($props->getProperties() ?: array()) + $defaults;
+        $merged = ($props->getProperties() ?: []) + $defaults;
         $props->setProperties($merged);
     }
 

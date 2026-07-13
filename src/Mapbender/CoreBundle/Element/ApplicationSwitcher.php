@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\ApplicationSwitcherAdminType;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -22,57 +23,57 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
 
     }
 
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return 'mb.core.applicationSwitcher.class.title';
     }
 
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return 'mb.core.applicationSwitcher.class.description';
     }
 
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'open_in_new_tab' => false,
-            'applications' => array(),
+            'applications' => [],
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconImages';
     }
 
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\ApplicationSwitcherAdminType';
+        return ApplicationSwitcherAdminType::class;
     }
 
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/applicationswitcher.html.twig';
     }
 
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbApplicationSwitcher';
     }
 
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbApplicationSwitcher.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/mbApplicationSwitcher.scss',
-            ),
-        );
+            ],
+        ];
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/application_switcher.html.twig');
         $view->attributes['class'] = 'mb-element-applicationswitcher';
@@ -89,7 +90,10 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
         return $config;
     }
 
-    public function prepareAppConfigurations($appConfigurations)
+    /**
+     * @return non-empty-array[]
+     */
+    public function prepareAppConfigurations($appConfigurations): array
     {
         $preparedAppConfig = [];
         foreach ($appConfigurations as $slug => $appConfig) {
@@ -124,7 +128,7 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
                 $preparedAppConfig[$group][$slug] = $appConfig;
             } catch (AccessDeniedException | NotFoundHttpException $e) {
                 // external app (neither yaml nor database app)
-                if (get_class($e) === 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException') {
+                if ($e::class === NotFoundHttpException::class) {
                     $preparedAppConfig[$group][$slug] = $appConfig;
                 }
             }
@@ -132,7 +136,7 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
         return $preparedAppConfig;
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         $conf = $entity->getConfiguration();
         if (!empty($conf['applications'][0]) && is_string($conf['applications'][0])) {

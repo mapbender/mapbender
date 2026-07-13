@@ -29,12 +29,12 @@ class PermissionManager extends Voter
 {
     public function __construct(
         /** @var AbstractResourceDomain[] */
-        private array                  $resourceDomains,
+        private readonly array                  $resourceDomains,
         /** @var AbstractSubjectDomain[] */
-        private array                  $subjectDomains,
-        private ?SubjectDomainPublic   $publicAccessDomain,
-        private EntityManagerInterface $em,
-        private FormFactory            $formFactory,
+        private readonly array                  $subjectDomains,
+        private readonly ?SubjectDomainPublic   $publicAccessDomain,
+        private readonly EntityManagerInterface $em,
+        private readonly FormFactory            $formFactory,
     )
     {
     }
@@ -351,9 +351,9 @@ class PermissionManager extends Voter
      */
     public function createPermissionForm(mixed $resource, array $options = []): FormInterface
     {
-        $form = $this->formFactory->create(FormType::class, null, array(
+        $form = $this->formFactory->create(FormType::class, null, [
             'label' => false,
-        ));
+        ]);
         $this->addFormType($form, $resource, $options);
         return $form;
     }
@@ -379,7 +379,7 @@ class PermissionManager extends Voter
         if (is_object($class)) {
             $class = ($class instanceof Proxy)
                 ? get_parent_class($class)
-                : get_class($class);
+                : $class::class;
         }
 
         return !$this->em->getMetadataFactory()->isTransient($class);

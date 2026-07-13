@@ -39,7 +39,7 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
 
         $rootLayer = null;
         foreach ($source->getLayers() as $layer) {
-            $instLayer = $this->createInstanceLayer($layer, $rootLayer);
+            $instLayer = static::createInstanceLayer($layer, $rootLayer);
             if ($layer->getParent() === null) $rootLayer = $instLayer;
             $instance->addLayer($instLayer);
         }
@@ -108,12 +108,12 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
 
     public function matchInstanceToPersistedSource(ImportState $importState, array $data, EntityPool $entityPool): bool
     {
-        $identFields = array(
+        $identFields = [
             'title',
             'type',
             'name',
             'onlineResource',
-        );
+        ];
         $criteria = ImportHandler::extractArrayFields($data, $identFields);
         foreach ($this->entityManager->getRepository(WmtsSource::class)->findBy($criteria) as $source) {
             if ($this->compareSource($importState, $entityPool, $source, $data)) {
@@ -125,7 +125,7 @@ abstract class InstanceFactoryCommon extends SourceInstanceFactory
         return false;
     }
 
-    private function compareSource(ImportState $state, EntityPool $entityPool, $source, array $data)
+    private function compareSource(ImportState $state, EntityPool $entityPool, $source, array $data): bool
     {
         foreach ($data['layers'] as $layerData) {
             $layerClass = ImportHandler::extractClassName($layerData);

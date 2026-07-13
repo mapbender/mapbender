@@ -55,11 +55,11 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     #[ORM\Column(type: 'json', nullable: true)]
     protected $latlonBounds;
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $boundingBoxes;
+    protected array $boundingBoxes;
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $srs;
+    protected array $srs;
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $styles;
+    protected array $styles;
     #[ORM\Column(type: 'json', nullable: true)]
     protected $scale;
 
@@ -70,16 +70,16 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     protected $identifier;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $authority;
+    protected array $authority;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $metadataUrl;
+    protected array $metadataUrl;
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $dimension;
+    protected array $dimension;
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $dataUrl;
+    protected array $dataUrl;
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $featureListUrl;
+    protected array $featureListUrl;
     /**
      * @var ArrayCollection A list of WMS Layer keywords
      */
@@ -102,14 +102,14 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     {
         $this->sublayer = new ArrayCollection();
         $this->keywords = new ArrayCollection();
-        $this->boundingBoxes = array();
-        $this->metadataUrl = array();
-        $this->dimension = array();
-        $this->dataUrl = array();
-        $this->featureListUrl = array();
-        $this->styles = array();
-        $this->srs = array();
-        $this->authority = array();
+        $this->boundingBoxes = [];
+        $this->metadataUrl = [];
+        $this->dimension = [];
+        $this->dataUrl = [];
+        $this->featureListUrl = [];
+        $this->styles = [];
+        $this->srs = [];
+        $this->authority = [];
     }
 
     /**
@@ -118,7 +118,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param ?WmsLayerSource $parent
      * @return $this
      */
-    public function setParent(?WmsLayerSource $parent = null)
+    public function setParent(?WmsLayerSource $parent = null): static
     {
         $this->parent = $parent;
         return $this;
@@ -147,7 +147,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param ArrayCollection $sublayer
      * @return $this
      */
-    public function setSublayer($sublayer)
+    public function setSublayer($sublayer): static
     {
         $this->sublayer = $sublayer;
         return $this;
@@ -159,7 +159,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param WmsLayerSource $sublayer
      * @return $this
      */
-    public function addSublayer(WmsLayerSource $sublayer)
+    public function addSublayer(WmsLayerSource $sublayer): static
     {
         $sublayer->setParent($this);
         $this->sublayer->add($sublayer);
@@ -172,7 +172,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param string $name
      * @return $this
      */
-    public function setName($name = null)
+    public function setName($name = null): static
     {
         $this->name = $name;
         return $this;
@@ -194,7 +194,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param string $title
      * @return $this
      */
-    public function setTitle($title = null)
+    public function setTitle($title = null): static
     {
         $this->title = $title;
         return $this;
@@ -216,7 +216,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param string $abstract
      * @return $this
      */
-    public function setAbstract($abstract = null)
+    public function setAbstract($abstract = null): static
     {
         $this->abstract = $abstract;
         return $this;
@@ -238,7 +238,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param boolean $queryable
      * @return $this
      */
-    public function setQueryable($queryable)
+    public function setQueryable($queryable): static
     {
         $this->queryable = (bool)$queryable;
         return $this;
@@ -260,7 +260,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param integer $cascaded
      * @return $this
      */
-    public function setCascaded($cascaded)
+    public function setCascaded($cascaded): static
     {
         $this->cascaded = is_numeric($cascaded) ? intval($cascaded) : 0;
         return $this;
@@ -282,7 +282,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param boolean $opaque
      * @return $this
      */
-    public function setOpaque($opaque)
+    public function setOpaque($opaque): static
     {
         $this->opaque = (bool)$opaque;
         return $this;
@@ -304,7 +304,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param boolean $noSubset
      * @return $this
      */
-    public function setNoSubset($noSubset)
+    public function setNoSubset($noSubset): static
     {
         $this->noSubset = (bool)$noSubset;
         return $this;
@@ -320,7 +320,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
         return $this->noSubset;
     }
 
-    public function setFixedWidth($fixedWidth = null)
+    public function setFixedWidth($fixedWidth = null): static
     {
         $this->fixedWidth = is_numeric($fixedWidth) ? intval($fixedWidth) : null;
         return $this;
@@ -342,7 +342,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param integer $fixedHeight
      * @return $this
      */
-    public function setFixedHeight($fixedHeight = null)
+    public function setFixedHeight($fixedHeight = null): static
     {
         $this->fixedHeight = $fixedHeight ?: null;
         return $this;
@@ -360,7 +360,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param BoundingBox|null $latlonBounds
      * @return $this
      */
-    public function setLatlonBounds(?BoundingBox $latlonBounds = null)
+    public function setLatlonBounds(?BoundingBox $latlonBounds = null): static
     {
         $this->latlonBounds = $latlonBounds;
         return $this;
@@ -386,7 +386,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param BoundingBox $boundingBoxes
      * @return $this
      */
-    public function addBoundingBox(BoundingBox $boundingBoxes)
+    public function addBoundingBox(BoundingBox $boundingBoxes): static
     {
         $this->boundingBoxes[] = $boundingBoxes;
         return $this;
@@ -396,9 +396,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * Non-EPSG:4326 bounds. Only used in view template.
      * @param BoundingBox[] $boundingBoxes
      */
-    public function setBoundingBoxes($boundingBoxes)
+    public function setBoundingBoxes($boundingBoxes): void
     {
-        $this->boundingBoxes = $boundingBoxes ?: array();
+        $this->boundingBoxes = $boundingBoxes ?: [];
     }
 
     /**
@@ -416,9 +416,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param array $srs
      * @return $this
      */
-    public function setSrs($srs)
+    public function setSrs($srs): static
     {
-        $this->srs = $srs ? $srs : array();
+        $this->srs = $srs ?: [];
         return $this;
     }
 
@@ -428,7 +428,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param string $srs
      * @return $this
      */
-    public function addSrs($srs)
+    public function addSrs($srs): static
     {
         $this->srs[] = $srs;
         return $this;
@@ -455,7 +455,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param Style|null $style
      * @return $this
      */
-    public function addStyle(?Style $style = null)
+    public function addStyle(?Style $style = null): static
     {
         $this->styles[] = $style;
         return $this;
@@ -467,9 +467,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param array $styles
      * @return $this
      */
-    public function setStyles($styles)
+    public function setStyles($styles): static
     {
-        $this->styles = $styles ? $styles : array();
+        $this->styles = $styles ?: [];
         return $this;
     }
 
@@ -514,7 +514,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param MinMax|null $scale
      * @return $this
      */
-    public function setScale(?MinMax $scale = null)
+    public function setScale(?MinMax $scale = null): static
     {
         $this->scale = $scale;
         return $this;
@@ -539,7 +539,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param bool $recursive Try to get value from parent
      * @return float|null
      */
-    public function getMinScale($recursive = false)
+    public function getMinScale($recursive = false): ?float
     {
         $value = null;
         $nextSource = $this;
@@ -558,7 +558,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param bool $recursive Try to get value from parent
      * @return float|null
      */
-    public function getMaxScale($recursive = false)
+    public function getMaxScale($recursive = false): ?float
     {
         $value = null;
         $nextSource = $this;
@@ -577,7 +577,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param Attribution|null $attribution
      * @return $this
      */
-    public function setAttribution(?Attribution $attribution = null)
+    public function setAttribution(?Attribution $attribution = null): static
     {
         $this->attribution = $attribution;
         return $this;
@@ -599,7 +599,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param Identifier $identifier
      * @return $this
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier): static
     {
         $this->identifier = $identifier;
         return $this;
@@ -621,7 +621,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param Authority $authority
      * @return $this
      */
-    public function addAuthority(Authority $authority)
+    public function addAuthority(Authority $authority): static
     {
         $this->authority[] = $authority;
         return $this;
@@ -633,9 +633,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param array $authority
      * @return $this
      */
-    public function setAuthority($authority)
+    public function setAuthority($authority): static
     {
-        $this->authority = $authority ? $authority : array();
+        $this->authority = $authority ?: [];
         return $this;
     }
 
@@ -660,7 +660,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param MetadataUrl $metadataUrl
      * @return $this
      */
-    public function addMetadataUrl(MetadataUrl $metadataUrl)
+    public function addMetadataUrl(MetadataUrl $metadataUrl): static
     {
         $this->metadataUrl[] = $metadataUrl;
         return $this;
@@ -672,9 +672,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param MetadataUrl[] $metadataUrl
      * @return $this
      */
-    public function setMetadataUrl($metadataUrl)
+    public function setMetadataUrl($metadataUrl): static
     {
-        $this->metadataUrl = $metadataUrl ? $metadataUrl : array();
+        $this->metadataUrl = $metadataUrl ?: [];
         return $this;
     }
 
@@ -694,7 +694,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param Dimension | null $dimension
      * @return $this
      */
-    public function addDimension($dimension)
+    public function addDimension($dimension): static
     {
         if ($dimension !== null) {
             $this->dimension[] = $dimension;
@@ -708,9 +708,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param array $dimension
      * @return $this
      */
-    public function setDimension($dimension)
+    public function setDimension($dimension): static
     {
-        $this->dimension = $dimension ? $dimension : array();
+        $this->dimension = $dimension ?: [];
         return $this;
     }
 
@@ -730,7 +730,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param OnlineResource|null $dataUrl
      * @return $this
      */
-    public function addDataUrl(?OnlineResource $dataUrl = null)
+    public function addDataUrl(?OnlineResource $dataUrl = null): static
     {
         $this->dataUrl[] = $dataUrl;
         return $this;
@@ -742,7 +742,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param OnlineResource[] $dataUrl
      * @return $this
      */
-    public function setDataUrl($dataUrl)
+    public function setDataUrl($dataUrl): static
     {
         $this->dataUrl = $dataUrl;
         return $this;
@@ -764,7 +764,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param OnlineResource $featureListUrl
      * @return $this
      */
-    public function addFeatureListUrl(OnlineResource $featureListUrl)
+    public function addFeatureListUrl(OnlineResource $featureListUrl): static
     {
         $this->featureListUrl[] = $featureListUrl;
         return $this;
@@ -776,9 +776,9 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param array $featureListUrl
      * @return $this
      */
-    public function setFeatureListUrl($featureListUrl)
+    public function setFeatureListUrl($featureListUrl): static
     {
-        $this->featureListUrl = $featureListUrl ? $featureListUrl : array();
+        $this->featureListUrl = $featureListUrl ?: [];
         return $this;
     }
 
@@ -798,7 +798,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param ArrayCollection $keywords
      * @return $this
      */
-    public function setKeywords(ArrayCollection $keywords)
+    public function setKeywords(ArrayCollection $keywords): static
     {
         $this->keywords = $keywords;
         return $this;
@@ -820,7 +820,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param Keyword $keyword
      * @return $this
      */
-    public function addKeyword(Keyword $keyword)
+    public function addKeyword(Keyword $keyword): static
     {
         $this->keywords->add($keyword);
         return $this;
@@ -832,7 +832,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      * @param integer $priority
      * @return $this
      */
-    public function setPriority($priority)
+    public function setPriority($priority): static
     {
         $this->priority = $priority !== null ? intval($priority) : $priority;
         return $this;
@@ -848,10 +848,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
         return $this->priority;
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
-        $stylesNew = array();
-        $authoritiesNew = array();
+        $stylesNew = [];
+        $authoritiesNew = [];
         foreach ($this->getStyles(false) as $style) {
             $style->mutateUrls($transformer);
             $stylesNew[] = clone $style;

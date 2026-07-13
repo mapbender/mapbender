@@ -30,7 +30,7 @@ class Attribution
      * Set title
      * @param string $value
      */
-    public function setTitle($value)
+    public function setTitle($value): void
     {
         $this->title = $value;
     }
@@ -49,7 +49,7 @@ class Attribution
      * Set onlineResource
      * @param string $value
      */
-    public function setOnlineResource($value)
+    public function setOnlineResource($value): void
     {
         $this->onlineResource = $value;
     }
@@ -70,7 +70,7 @@ class Attribution
      * @param LegendUrl $value
      * @return $this
      */
-    public function setLogoUrl(LegendUrl $value)
+    public function setLogoUrl(LegendUrl $value): static
     {
         $this->logoUrl = $value;
         return $this;

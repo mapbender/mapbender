@@ -15,25 +15,25 @@ abstract class ButtonLike extends AbstractElementService
 
     public static function getDefaultConfiguration()
     {
-        return array(
+        return [
             /** @see \Mapbender\CoreBundle\Element\Type\BaseButtonAdminType::buildForm */
             'label' => true,
             'tooltip' => null,
             'icon' => null,
-        );
+        ];
     }
 
     public function getRequiredAssets(Element $element)
     {
-        return array(
-            'js' => array(
-            ),
-            'css' => array(
+        return [
+            'js' => [
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/button.scss',
-            ),
-            'trans' => array(
-            ),
-        );
+            ],
+            'trans' => [
+            ],
+        ];
     }
 
     /**

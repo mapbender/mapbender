@@ -15,15 +15,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractSourceCommand extends Command
 {
-    protected ManagerRegistry $managerRegistry;
-    protected Importer $importer;
-
-    public function __construct(ManagerRegistry $managerRegistry,
-                                Importer        $importer)
+    public function __construct(protected ManagerRegistry $managerRegistry,
+                                protected Importer        $importer)
     {
         parent::__construct();
-        $this->managerRegistry = $managerRegistry;
-        $this->importer = $importer;
     }
 
     protected function getImporter(): Importer
@@ -58,7 +53,7 @@ abstract class AbstractSourceCommand extends Command
     {
         $layerCount = count($source->getLayers());
         $output->writeln("Source #{$source->getId()} describes $layerCount layers (origin url: {$source->getOriginUrl()}):");
-        $this->showLayers($output, array($source->getRootlayer()), 1);
+        $this->showLayers($output, [$source->getRootlayer()], 1);
     }
 
     protected function showLayers(OutputInterface $output, $layers, $level): void
@@ -75,13 +70,11 @@ abstract class AbstractSourceCommand extends Command
 
     protected function getLayerDetails($layers): array
     {
-        return array_map(function (WmsLayerSource $layer) {
-            return [
-                "title" => $layer->getTitle(),
-                "name" => $layer->getName(),
-                "children" => $this->getLayerDetails($layer->getSublayer())
-            ];
-        }, iterator_to_array($layers));
+        return array_map(fn(WmsLayerSource $layer): array => [
+            "title" => $layer->getTitle(),
+            "name" => $layer->getName(),
+            "children" => $this->getLayerDetails($layer->getSublayer())
+        ], iterator_to_array($layers));
     }
 
     protected function getEntityManager(): EntityManagerInterface

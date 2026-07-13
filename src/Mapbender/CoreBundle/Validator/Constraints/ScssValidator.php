@@ -13,30 +13,27 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class ScssValidator extends ConstraintValidator
 {
-    protected $compiler;
-
     /**
      * @param CssCompiler $compiler
      */
-    public function __construct(CssCompiler $compiler)
+    public function __construct(protected CssCompiler $compiler)
     {
-        $this->compiler = $compiler;
     }
 
     /**
      * @inheritdoc
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         $asset = new StringAsset($value ?: '');
 
         try {
-            $this->compiler->compile(array($asset), true);
+            $this->compiler->compile([$asset], true);
         } catch (\Exception $e) {
             $message = \preg_replace('#^.*Error Output:\s*#s', '', $e->getMessage());
-            $message = \preg_replace('#Input:.*$#s', '', $message);
+            $message = \preg_replace('#Input:.*$#s', '', (string) $message);
             $matches = null;
-            if (\preg_match('#^[^:]+:(\d+):\s*(.*)\s*$#', $message, $matches)) {
+            if (\preg_match('#^[^:]+:(\d+):\s*(.*)\s*$#', (string) $message, $matches)) {
                 $line = $matches[1];
                 $errorMessage = $matches[2];
                 if ($errorMessage == 'invalid property name') {
@@ -44,7 +41,7 @@ class ScssValidator extends ConstraintValidator
                 }
                 $message = "Line {$line}: {$errorMessage}";
             }
-            $this->context->addViolation($message, array());
+            $this->context->addViolation($message, []);
         }
     }
 }

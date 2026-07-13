@@ -22,10 +22,10 @@ class FormExtension extends AbstractExtension
 {
     public function getFunctions(): array
     {
-        return array(
-            'get_value_choice' => new TwigFunction('get_value_choice', array($this, 'get_value_choice')),
-            'first_choice' => new TwigFunction('first_choice', array($this, 'first_choice')),
-        );
+        return [
+            'get_value_choice' => new TwigFunction('get_value_choice', $this->get_value_choice(...)),
+            'first_choice' => new TwigFunction('first_choice', $this->first_choice(...)),
+        ];
     }
 
     /**
@@ -55,9 +55,9 @@ class FormExtension extends AbstractExtension
      * @param ChoiceListView[]|ChoiceGroupView[] $choices
      * @return ChoiceView[]
      */
-    protected function flatten($choices)
+    protected function flatten($choices): array
     {
-        $flat = array();
+        $flat = [];
         foreach ($choices as $choice) {
             if (($choice instanceof ChoiceListView) || ($choice instanceof ChoiceGroupView)) {
                 $flat = array_merge($flat, $this->flatten($choice->choices));

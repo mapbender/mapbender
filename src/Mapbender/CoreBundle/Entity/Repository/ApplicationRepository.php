@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Entity\Repository;
 
 
+use Mapbender\CoreBundle\Entity\Layerset;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
@@ -31,8 +32,8 @@ class ApplicationRepository extends EntityRepository
     public function findWithInstancesOf(Source $source, ?array $criteria=null, ?array $orderBy = null, $limit = null, $offset = null)
     {
         /** @var LayersetRepository $layersetRepository */
-        $layersetRepository = $this->getEntityManager()->getRepository('\Mapbender\CoreBundle\Entity\Layerset');
-        $applications = array();
+        $layersetRepository = $this->getEntityManager()->getRepository(Layerset::class);
+        $applications = [];
         if ($criteria) {
             $matchingApplications = $this->findBy($criteria);
         } else {
@@ -65,8 +66,8 @@ class ApplicationRepository extends EntityRepository
     public function findWithSourceInstance(SourceInstance $instance, ?array $criteria = null, ?array $orderBy = null, $limit = null, $offset = null)
     {
         /** @var LayersetRepository $layersetRepository */
-        $layersetRepository = $this->getEntityManager()->getRepository('\Mapbender\CoreBundle\Entity\Layerset');
-        $applications = array();
+        $layersetRepository = $this->getEntityManager()->getRepository(Layerset::class);
+        $applications = [];
         if ($criteria) {
             $matchingApplications = $this->findBy($criteria);
         } else {

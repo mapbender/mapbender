@@ -12,12 +12,11 @@ class RegisterIconPackagesPass implements CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
 
-    /** @var string */
-    protected $indexId;
-
-    public function __construct($indexId)
+    /**
+     * @param string $indexId
+     */
+    public function __construct(protected $indexId)
     {
-        $this->indexId = $indexId;
     }
 
     public function process(ContainerBuilder $container): void

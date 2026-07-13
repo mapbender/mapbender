@@ -44,7 +44,7 @@ class ApplicationToSources
     /**
      * @return SourceToSourceInstances[]
      */
-    public function getSourceRelations()
+    public function getSourceRelations(): array
     {
         $this->ensureSort();
         $enabled = array_values($this->sourceRelations['enabled']);
@@ -55,7 +55,7 @@ class ApplicationToSources
     /**
      * @return SourceInstance[]
      */
-    public function getSourceInstances()
+    public function getSourceInstances(): array
     {
         $this->ensureSort();
         $enabled = array_values($this->sourceInstances['enabled']);
@@ -67,7 +67,7 @@ class ApplicationToSources
      * @param Application $application
      * @throws \InvalidArgumentException
      */
-    public function setApplication($application)
+    public function setApplication($application): void
     {
         if (!$application || !($application instanceof Application)) {
             throw new \InvalidArgumentException("Not an application entity");
@@ -79,7 +79,7 @@ class ApplicationToSources
     /**
      * @param SourceInstance $instance
      */
-    public function addSourceInstance(SourceInstance $instance)
+    public function addSourceInstance(SourceInstance $instance): void
     {
         if ($instance->getEnabled()) {
             $groupKey = 'enabled';
@@ -101,17 +101,17 @@ class ApplicationToSources
     /**
      * @param SourceInstance[]|null $instances
      */
-    public function setSourceInstances(array $instances = null)
+    public function setSourceInstances(array $instances = null): void
     {
-        $instances = $instances ?: array();
-        $this->sourceInstances = array(
-            'enabled' => array(),
-            'disabled' => array(),
-        );
-        $this->sourceRelations = array(
-            'enabled' => array(),
-            'disabled' => array(),
-        );
+        $instances = $instances ?: [];
+        $this->sourceInstances = [
+            'enabled' => [],
+            'disabled' => [],
+        ];
+        $this->sourceRelations = [
+            'enabled' => [],
+            'disabled' => [],
+        ];
         foreach ($instances as $instance) {
             $this->addSourceInstance($instance);
         }

@@ -13,7 +13,7 @@ class SqliteConnectionListener implements Middleware
     public bool $skipForeignKeys = false;
 
     /** @var Connection[] */
-    public array $modifiedConnections = array();
+    public array $modifiedConnections = [];
 
     public function wrap(Driver $driver): Driver
     {
@@ -35,7 +35,7 @@ class SqliteConnectionListener implements Middleware
             foreach ($this->modifiedConnections as $connection) {
                 $this->undoEnableForeignKeys($connection);
             }
-            $this->modifiedConnections = array();
+            $this->modifiedConnections = [];
         }
     }
 

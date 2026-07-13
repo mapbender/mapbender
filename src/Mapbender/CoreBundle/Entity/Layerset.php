@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Mapbender\CoreBundle\Entity\Repository\LayersetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -16,10 +17,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Christian Wygoda
  */
 #[UniqueEntity(fields: ['application', 'title'], message: 'mb.core.layerset.unique_title')]
-#[ORM\Entity(repositoryClass: \Mapbender\CoreBundle\Entity\Repository\LayersetRepository::class)]
+#[ORM\Entity(repositoryClass: LayersetRepository::class)]
 #[ORM\Table(name: 'mb_core_layerset')]
 #[UniqueConstraint(name: 'layerset_idx', columns: ['application_id', 'title'])]
-class Layerset
+class Layerset implements \Stringable
 {
 
     /**
@@ -79,7 +80,7 @@ class Layerset
      * @param $id
      * @return $this
      */
-    public function setId($id)
+    public function setId($id): static
     {
         if (null !== $id) {
             $this->id = $id;
@@ -104,7 +105,7 @@ class Layerset
      * @param string $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
 
@@ -127,7 +128,7 @@ class Layerset
      * @param Application $application
      * @return $this
      */
-    public function setApplication(Application $application)
+    public function setApplication(Application $application): static
     {
         $this->application = $application;
 
@@ -147,7 +148,7 @@ class Layerset
     /**
      * @return bool
      */
-    public function getSelected()
+    public function getSelected(): bool
     {
         return !!$this->selected;
     }
@@ -165,7 +166,7 @@ class Layerset
      *
      * @param SourceInstance $instance
      */
-    public function addInstance(SourceInstance $instance)
+    public function addInstance(SourceInstance $instance): void
     {
         $this->instances->add($instance);
     }
@@ -176,7 +177,7 @@ class Layerset
      * @param Collection $instances
      * @return $this
      */
-    public function setInstances($instances)
+    public function setInstances($instances): static
     {
         $this->instances = $instances;
 
@@ -195,7 +196,7 @@ class Layerset
      * @param ReusableSourceInstanceAssignment[]|ArrayCollection $reusableInstanceAssignments
      * @return $this
      */
-    public function setReusableInstanceAssignments($reusableInstanceAssignments)
+    public function setReusableInstanceAssignments($reusableInstanceAssignments): static
     {
         $this->reusableInstanceAssignments = $reusableInstanceAssignments;
         return $this;
@@ -240,9 +241,9 @@ class Layerset
         $owned = $this->instances->getValues();
         $unowned = $this->getReusableInstanceAssignments()->getValues();
         $combined = new ArrayCollection(array_merge($owned, $unowned));
-        return $combined->matching(Criteria::create()->orderBy(array(
+        return $combined->matching(Criteria::create()->orderBy([
             'weight' => Order::Ascending
-        )));
+        ]));
     }
 
     /**
@@ -254,7 +255,7 @@ class Layerset
      */
     public function getInstancesOf(Source $source, $includeUnowned = true)
     {
-        return $this->getInstances($includeUnowned)->filter(function ($instance) use ($source) {
+        return $this->getInstances($includeUnowned)->filter(function ($instance) use ($source): bool {
             /** @var SourceInstance $instance */
             return $instance->getSource() === $source;
         });
@@ -276,7 +277,7 @@ class Layerset
      */
     public function getAssignedReusableInstanceAssignmentsOf(Source $source)
     {
-        return $this->getReusableInstanceAssignments()->filter(function($assignment) use ($source) {
+        return $this->getReusableInstanceAssignments()->filter(function($assignment) use ($source): bool {
             /** @var ReusableSourceInstanceAssignment $assignment */
             return $assignment->getInstance()->getSource() === $source;
         });
@@ -285,7 +286,7 @@ class Layerset
     /**
      * @return string Layerset ID
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->getId();
     }

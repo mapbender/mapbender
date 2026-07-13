@@ -22,7 +22,7 @@ class CustomParameter
      *
      * @param string $value
      */
-    public function setName($value)
+    public function setName($value): void
     {
         $this->name = $value;
     }
@@ -48,7 +48,7 @@ class CustomParameter
     /**
      * @param string $value
      */
-    public function setDefault($value)
+    public function setDefault($value): void
     {
         $this->default = $value;
     }
@@ -64,7 +64,7 @@ class CustomParameter
     /**
      * @param $hidden
      */
-    public function setHidden($hidden)
+    public function setHidden($hidden): void
     {
         $this->hidden = $hidden;
     }

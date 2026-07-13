@@ -2,6 +2,7 @@
 
 namespace Mapbender;
 
+use Doctrine\Deprecations\Deprecation;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\DoctrineAutoIncrementCompilerPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -36,8 +37,8 @@ class BaseKernel extends Kernel
     public function boot(): void
     {
         parent::boot();
-        if ($this->isDebug() && \class_exists('Doctrine\Deprecations\Deprecation')) {
-            \Doctrine\Deprecations\Deprecation::enableWithTriggerError();
+        if ($this->isDebug() && \class_exists(Deprecation::class)) {
+            Deprecation::enableWithTriggerError();
         }
     }
 

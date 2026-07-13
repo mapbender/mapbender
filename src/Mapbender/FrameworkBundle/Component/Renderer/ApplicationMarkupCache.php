@@ -16,28 +16,10 @@ use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 class ApplicationMarkupCache
 {
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-    /** @var AccessDecisionManagerInterface */
-    protected $accessDecisionManager;
-    /** @var LocaleAwareInterface */
-    protected $localeProvider;
-    protected $basePath;
     protected $isDebug;
 
-    protected bool $includeSessionId = false;
-
-    public function __construct(TokenStorageInterface          $tokenStorage,
-                                AccessDecisionManagerInterface $accessDecisionManager,
-                                LocaleAwareInterface           $localeProvider,
-                                                               $basePath,
-                                bool                           $includeSessionId)
+    public function __construct(protected TokenStorageInterface          $tokenStorage, protected AccessDecisionManagerInterface $accessDecisionManager, protected LocaleAwareInterface           $localeProvider, protected $basePath, protected bool                           $includeSessionId)
     {
-        $this->accessDecisionManager = $accessDecisionManager;
-        $this->tokenStorage = $tokenStorage;
-        $this->localeProvider = $localeProvider;
-        $this->basePath = $basePath;
-        $this->includeSessionId = $includeSessionId;
     }
 
     /**
@@ -46,7 +28,7 @@ class ApplicationMarkupCache
      * @param ApplicationMarkupRenderer $renderer
      * @return Response
      */
-    public function getMarkupResponse(Request $request, Application $application, ApplicationMarkupRenderer $renderer)
+    public function getMarkupResponse(Request $request, Application $application, ApplicationMarkupRenderer $renderer): Response|BinaryFileResponse
     {
         $filePath = $this->getFilePath($request, $application);
         $cacheValid = \is_readable($filePath) && $application->getUpdated()->getTimestamp() < filectime($filePath);
@@ -60,11 +42,11 @@ class ApplicationMarkupCache
             \clearstatcache($filePath, true);
             $response = new Response($html);
         }
-        $response->setVary(array(
+        $response->setVary([
             'Accept-Language',
             // Bust browser cache on session / login state change
             'Cookie',
-        ));
+        ]);
         return $response;
     }
 
@@ -73,23 +55,23 @@ class ApplicationMarkupCache
      * @param Application $application
      * @return string
      */
-    protected function getFilePath(Request $request, Application $application)
+    protected function getFilePath(Request $request, Application $application): string
     {
         // Output depends on
         // 1) locale
         // 2) Base url (app.php / app_dev.php / nothing); generated script / asset urls may differ
         // 3) Granted element subset
         // => Bake all of these into cache file path.
-        $parts = array(
+        $parts = [
             $application->getSlug(),
             $this->localeProvider->getLocale(),
-        );
+        ];
 
         // Output also depends on user (granted elements may vary)
         // @todo: DO NOT use a user-specific cache location (=session_id). This completely defeates the purpose of caching.
-        $hashParts = array(
+        $hashParts = [
             $request->getBaseUrl(),
-        );
+        ];
         $token = $this->tokenStorage->getToken();
         $isAnon = !$token || ($token instanceof NullToken);
         if ($isAnon) {
@@ -99,9 +81,9 @@ class ApplicationMarkupCache
             // Add base url hash. 16 bits of entropy should be enough for three possible base urls.
             $parts[] = \substr(\md5($request->getBaseUrl()), 0, 4);
         } else {
-            $hashParts = array(
+            $hashParts = [
                 $request->getBaseUrl(),
-            );
+            ];
             foreach ($application->getElements() as $element) {
                 if (!$this->accessDecisionManager->decide($token, [ResourceDomainElement::ACTION_VIEW], $element)) {
                     $hashParts[] = $element->getId();

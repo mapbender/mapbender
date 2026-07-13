@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Form\Type;
 
+use Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType;
 use Mapbender\CoreBundle\Element\Type\MapbenderTypeTrait;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Form\EventListener\FieldSubscriber;
@@ -27,7 +28,7 @@ class WmsInstanceLayerType extends AbstractType
 
     public function getParent(): string
     {
-        return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceItemType';
+        return SourceInstanceItemType::class;
     }
 
     /**
@@ -38,40 +39,40 @@ class WmsInstanceLayerType extends AbstractType
         $subscriber = new FieldSubscriber();
         $builder->addEventSubscriber($subscriber);
         $builder
-            ->add('info', CheckboxType::class, array(
+            ->add('info', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.infotoc',
-            ))
-            ->add('toggle', CheckboxType::class, array(
+            ])
+            ->add('toggle', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.toggletoc',
-            ))
-            ->add('allowinfo', CheckboxType::class, array(
+            ])
+            ->add('allowinfo', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowinfotoc',
-            ))
-            ->add('allowtoggle', CheckboxType::class, array(
+            ])
+            ->add('allowtoggle', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowtoggletoc',
-            ))
-            ->add('minScale', TextType::class, array(
+            ])
+            ->add('minScale', TextType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.minscale',
                 'attr' => ['class' => 'minScale'],
-            ))
-            ->add('maxScale', TextType::class, array(
+            ])
+            ->add('maxScale', TextType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.maxscale',   // sic!
                 'attr' => ['class' => 'maxScale'],
-            ))
-            ->add('priority', HiddenType::class, array(
+            ])
+            ->add('priority', HiddenType::class, [
                 'required' => true,
-            ))
-            ->add('legend', CheckboxType::class, $this->createInlineHelpText(array(
+            ])
+            ->add('legend', CheckboxType::class, $this->createInlineHelpText([
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.legend',
                 'help' => 'mb.manager.source.instancelayer.legend_help',
-            ), $this->translator))
+            ], $this->translator))
         ;
     }
 

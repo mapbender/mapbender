@@ -28,15 +28,12 @@ class Template implements \ArrayAccess
     const ORIENTATION_PORTRAIT = 'portrait';
 
     /** @var float in mm*/
-    protected $width;
+    protected float $width;
     /** @var float in mm*/
-    protected $height;
-    /** @var string */
-    protected $orientation;
-    /** @var RegionCollection */
-    protected $textFields;
-    /** @var RegionCollection */
-    protected $regions;
+    protected float $height;
+    protected string $orientation;
+    protected RegionCollection $textFields;
+    protected RegionCollection $regions;
 
     /**
      * @param float $width in mm
@@ -51,14 +48,10 @@ class Template implements \ArrayAccess
         }
         $this->width = floatval($width);
         $this->height = floatval($height);
-        switch ($orientation) {
-            case self::ORIENTATION_LANDSCAPE:
-            case self::ORIENTATION_PORTRAIT:
-                $this->orientation = $orientation;
-                break;
-            default:
-                throw new \InvalidArgumentException("Invalid orientation " . print_r($orientation, true));
-        }
+        $this->orientation = match ($orientation) {
+            self::ORIENTATION_LANDSCAPE, self::ORIENTATION_PORTRAIT => $orientation,
+            default => throw new \InvalidArgumentException("Invalid orientation " . print_r($orientation, true)),
+        };
 
         $this->textFields = new RegionCollection();
         $this->regions = new RegionCollection();
@@ -134,7 +127,7 @@ class Template implements \ArrayAccess
     /**
      * @param TemplateRegion $region
      */
-    public function addRegion($region)
+    public function addRegion(TemplateRegion $region): void
     {
         $region->setParentTemplate($this);
         $this->regions->addMember($region->getName(), $region);
@@ -143,7 +136,7 @@ class Template implements \ArrayAccess
     /**
      * @param TemplateRegion $field
      */
-    public function addTextField($field)
+    public function addTextField(TemplateRegion $field): void
     {
         $field->setParentTemplate($this);
         $this->textFields->addMember($field->getName(), $field);
@@ -154,10 +147,10 @@ class Template implements \ArrayAccess
     {
         return match ($offset) {
             'orientation' => $this->getOrientation(),
-            'pageSize' => array(
+            'pageSize' => [
                 'width' => $this->getWidth(),
                 'height' => $this->getHeight(),
-            ),
+            ],
             'fields' => $this->getTextFields(),
             default => $this->getRegion($offset),
         };
@@ -173,11 +166,11 @@ class Template implements \ArrayAccess
 
     public function offsetSet($offset, $value): void
     {
-        throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
+        throw new \RuntimeException(static::class . " does not support array-style mutation");
     }
 
     public function offsetUnset($offset): void
     {
-        throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
+        throw new \RuntimeException(static::class . " does not support array-style mutation");
     }
 }

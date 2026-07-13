@@ -11,17 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class VersionCommand extends Command
 {
-    protected $name;
-    protected $version;
-    protected $projectName;
-    protected $projectVersion;
-
-    public function __construct($name, $version, $projectName, $projectVersion)
+    public function __construct(protected $name, protected $version, protected $projectName, protected $projectVersion)
     {
-        $this->name = $name;
-        $this->version = $version;
-        $this->projectName = $projectName;
-        $this->projectVersion = $projectVersion;
         parent::__construct(null);
     }
 

@@ -18,26 +18,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ApplicationDataService
 {
-    /** @var LoggerInterface */
-    protected $logger;
-
-    /** @var Backend\File */
-    protected $backend;
-
-    /** @var float */
-    protected $containerTimestamp;
-
     /**
      * ApplicationDataService constructor.
      * @param LoggerInterface $logger
      * @param Backend\File $backend
      * @param float $containerTimestamp
      */
-    public function __construct(LoggerInterface $logger, $backend, $containerTimestamp)
+    public function __construct(protected LoggerInterface $logger, protected $backend, protected $containerTimestamp)
     {
-        $this->logger = $logger;
-        $this->backend = $backend;
-        $this->containerTimestamp = $containerTimestamp;
     }
 
     /**
@@ -51,11 +39,9 @@ class ApplicationDataService
     {
         try {
             $signature = $this->getSignature($application);
-            $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
+            $fullKeyPath = array_merge([$application->getSlug()], $keyPath);
             return $this->backend->get($fullKeyPath, $signature);
-        } catch (NotCachable $e) {
-            return false;
-        } catch (CacheMiss $e) {
+        } catch (NotCachable|CacheMiss) {
             return false;
         }
     }
@@ -69,23 +55,21 @@ class ApplicationDataService
      * @param string $mimeType
      * @return Response|false
      */
-    public function getResponse(Application $application, $keyPath, $mimeType)
+    public function getResponse(Application $application, $keyPath, $mimeType): false|Response
     {
         try {
             $signature = $this->getSignature($application);
-            $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
+            $fullKeyPath = array_merge([$application->getSlug()], $keyPath);
             $content = $this->backend->get($fullKeyPath, $signature);
             if ($content === false) {
                 return false;
             }
-            $response = new Response($content, Response::HTTP_OK, array(
+            $response = new Response($content, Response::HTTP_OK, [
                 'Content-Type' => $mimeType,
                 'Etag' => '"' . md5($content) . '"',
-            ));
+            ]);
             return $response;
-        } catch (NotCachable $e) {
-            return false;
-        } catch (CacheMiss $e) {
+        } catch (NotCachable|CacheMiss) {
             return false;
         }
     }
@@ -95,13 +79,13 @@ class ApplicationDataService
      * @param string[] $keyPath
      * @param string $value
      */
-    public function putValue(Application $application, $keyPath, $value)
+    public function putValue(Application $application, $keyPath, $value): void
     {
         try {
             $signature = $this->getSignature($application);
-            $fullKeyPath = array_merge(array($application->getSlug()), $keyPath);
+            $fullKeyPath = array_merge([$application->getSlug()], $keyPath);
             $this->backend->put($fullKeyPath, $value, $signature);
-        } catch (NotCachable $e) {
+        } catch (NotCachable) {
             // Not creating a cache entry should not be a visible error condition, just like not getting
             // a reusable entry from the cache is not an error condition.
             // => do nothing, let the application continue normally
@@ -116,9 +100,9 @@ class ApplicationDataService
      * @param Application $application
      * @return string
      */
-    protected function getSignature(Application $application)
+    protected function getSignature(Application $application): string
     {
-        $parts = array();
+        $parts = [];
         if ($this->containerTimestamp !== null) {
             $parts[] = $this->containerTimestamp;
         }

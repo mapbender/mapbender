@@ -29,41 +29,24 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class InstanceTunnelService
 {
-    /** @var HttpTransportInterface */
-    protected $httpTransport;
-    /** @var RouterInterface */
-    protected $router;
-    /** @var TypeDirectoryService */
-    protected $sourceTypeDirectory;
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-    /** @var EntityManagerInterface */
-    protected $entityManager;
     /** @var Endpoint[] */
-    protected $bufferedEndPoints = array();
-    /** @var string */
-    protected $tunnelRouteName;
-    /** @var string */
-    protected $legendTunnelRouteName;
+    protected $bufferedEndPoints = [];
+    protected string $tunnelRouteName;
+    protected string $legendTunnelRouteName;
 
     /**
-     * @param HttpTransportInterface $httpTransprot
+     * @param HttpTransportInterface $httpTransport
      * @param RouterInterface $router
      * @param TypeDirectoryService $sourceTypeDirectory
      * @param TokenStorageInterface $tokenStorage
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(HttpTransportInterface $httpTransprot,
-                                RouterInterface        $router,
-                                TypeDirectoryService   $sourceTypeDirectory,
-                                TokenStorageInterface  $tokenStorage,
-                                EntityManagerInterface $entityManager)
+    public function __construct(protected HttpTransportInterface $httpTransport,
+                                protected RouterInterface        $router,
+                                protected TypeDirectoryService   $sourceTypeDirectory,
+                                protected TokenStorageInterface  $tokenStorage,
+                                protected EntityManagerInterface $entityManager)
     {
-        $this->httpTransport = $httpTransprot;
-        $this->router = $router;
-        $this->sourceTypeDirectory = $sourceTypeDirectory;
-        $this->tokenStorage = $tokenStorage;
-        $this->entityManager = $entityManager;
         $this->tunnelRouteName = 'mapbender_core_instancetunnel_instancetunnel';
         $this->legendTunnelRouteName = 'mapbender_core_instancetunnel_instancetunnellegend';
     }
@@ -89,7 +72,7 @@ class InstanceTunnelService
      * @param SourceInstance $instance
      * @return Endpoint
      */
-    public function makeEndpoint(Application $application, SourceInstance $instance)
+    public function makeEndpoint(Application $application, SourceInstance $instance): Endpoint
     {
         return new Endpoint($this, $application,$instance);
     }
@@ -100,14 +83,14 @@ class InstanceTunnelService
      * @param Endpoint $endpoint
      * @return string
      */
-    public function getPublicBaseUrl(Endpoint $endpoint)
+    public function getPublicBaseUrl(Endpoint $endpoint): string
     {
         $vsHandler = new VendorSpecificHandler();
         $vsParams = $vsHandler->getPublicParams($endpoint->getSourceInstance(), $this->tokenStorage->getToken());
-        $params = array_replace($vsParams, array(
+        $params = array_replace($vsParams, [
             'slug' => $endpoint->getApplicationEntity()->getSlug(),
             'instanceId' => $endpoint->getSourceInstance()->getId(),
-        ));
+        ]);
 
         return $this->router->generate($this->tunnelRouteName, $params);
     }
@@ -121,13 +104,13 @@ class InstanceTunnelService
      * @return string
      * @throws \RuntimeException if no REQUEST=... in given $url
      */
-    public function generatePublicUrl(Endpoint $endpoint, $url)
+    public function generatePublicUrl(Endpoint $endpoint, $url): string
     {
         // require a "request" param, the tunnel action doesn't function without it
-        $params = array();
+        $params = [];
         parse_str(parse_url($url, PHP_URL_QUERY), $params);
         foreach ($params as $name => $value) {
-            if (strtolower($name) == 'request') {
+            if (strtolower((string) $name) == 'request') {
                 // @todo: validate if request value is in our supported set (GetMap, GetLegendGraphic, GetFeatureInfo)?
                 $fullQueryString = strstr($url, '?', false);
                 // forward ALL GET parameters in input url

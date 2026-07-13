@@ -18,10 +18,10 @@ class WmtsDataSource extends DataSource
     const TYPE = "WMTS";
 
     public function __construct(
-        private ConfigGeneratorWmts   $configService,
-        private SourceInstanceFactory $instanceFactory,
-        private Loader                $loader,
-        private LayerRendererWmts     $layerRenderer,
+        private readonly ConfigGeneratorWmts   $configService,
+        private readonly SourceInstanceFactory $instanceFactory,
+        private readonly Loader                $loader,
+        private readonly LayerRendererWmts     $layerRenderer,
     )
     {
     }

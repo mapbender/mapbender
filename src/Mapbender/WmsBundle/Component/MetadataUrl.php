@@ -28,7 +28,7 @@ class MetadataUrl
      * @param string $value
      * @return $this
      */
-    public function setType($value)
+    public function setType($value): static
     {
         $this->type = $value;
         return $this;
@@ -50,7 +50,7 @@ class MetadataUrl
      * @param OnlineResource $onlineResource
      * @return $this
      */
-    public function setOnlineResource(OnlineResource $onlineResource)
+    public function setOnlineResource(OnlineResource $onlineResource): static
     {
         $this->onlineResource = $onlineResource;
         return $this;

@@ -2,6 +2,9 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Mapbender\CoreBundle\Element\Overview;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,9 +19,9 @@ class OverviewAdminType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'application' => null,
-        ));
+        ]);
     }
 
     /**
@@ -27,44 +30,44 @@ class OverviewAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('layerset', 'Mapbender\CoreBundle\Element\Type\LayersetAdminType', array(
+            ->add('layerset', LayersetAdminType::class, [
                 'application' => $options['application'],
                 'required' => true,
                 'label' => 'mb.core.overview.admin.layerset',
-            ))
-            ->add('fixed', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ])
+            ->add('fixed', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.admin.overview.fix',
-            ))
-            ->add('visibility', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            ])
+            ->add('visibility', ChoiceType::class, [
                 'required' => true,
                 'label' => 'mb.manager.visibility',
-                'choices' => array(
+                'choices' => [
                     'mb.core.overview.admin.visibility.closed_initially' => Overview::VISIBILITY_CLOSED_INITIALLY,
                     'mb.core.overview.admin.visibility.open_initially' => Overview::VISIBILITY_OPEN_INITIALLY,
                     'mb.core.overview.admin.visibility.open_permanent' => Overview::VISIBILITY_OPEN_PERMANENT,
-                ),
-            ))
-            ->add('width', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                ],
+            ])
+            ->add('width', TextType::class, [
                 'label' => 'mb.manager.popup_width',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'mb.manager.automatic',
-                ),
+                ],
                 'constraints' => [
                     new Type('numeric'),
                     new PositiveOrZero(),
                 ],
-            ))
-            ->add('height', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('height', TextType::class, [
                 'label' => 'mb.manager.popup_height',
-                'attr' => array(
+                'attr' => [
                     'placeholder' => 'mb.manager.automatic',
-                ),
+                ],
                 'constraints' => [
                     new Type('numeric'),
                     new PositiveOrZero(),
                 ],
-            ))
+            ])
         ;
     }
 }

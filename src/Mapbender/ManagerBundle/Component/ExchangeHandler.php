@@ -2,6 +2,11 @@
 
 namespace Mapbender\ManagerBundle\Component;
 
+use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\WmtsBundle\Component\TileMatrix;
+use Mapbender\WmtsBundle\Component\TileMatrixSetLink;
+use Mapbender\WmtsBundle\Component\UrlTemplateType;
+use Mapbender\WmtsBundle\Component\Style;
 use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -12,26 +17,22 @@ abstract class ExchangeHandler
 {
     const KEY_CLASS         = '__class__';
 
-    /** @var EntityManagerInterface $em */
-    protected $em;
+    protected $entityClassBlacklist = [
+        Keyword::class,
+    ];
 
-    protected $entityClassBlacklist = array(
-        'Mapbender\CoreBundle\Entity\Keyword',
-    );
-
-    protected static $legacyClassMapping = array(
-        'Mapbender\WmtsBundle\Entity\TileMatrix' => 'Mapbender\WmtsBundle\Component\TileMatrix',
-        'Mapbender\WmtsBundle\Entity\TileMatrixSetLink' => 'Mapbender\WmtsBundle\Component\TileMatrixSetLink',
-        'Mapbender\WmtsBundle\Entity\UrlTemplateType' => 'Mapbender\WmtsBundle\Component\UrlTemplateType',
-        'Mapbender\WmtsBundle\Entity\Style' => 'Mapbender\WmtsBundle\Component\Style',
-    );
+    protected static $legacyClassMapping = [
+        'Mapbender\WmtsBundle\Entity\TileMatrix' => TileMatrix::class,
+        'Mapbender\WmtsBundle\Entity\TileMatrixSetLink' => TileMatrixSetLink::class,
+        'Mapbender\WmtsBundle\Entity\UrlTemplateType' => UrlTemplateType::class,
+        'Mapbender\WmtsBundle\Entity\Style' => Style::class,
+    ];
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @param EntityManagerInterface $em
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $em)
     {
-        $this->em = $entityManager;
     }
 
     /**

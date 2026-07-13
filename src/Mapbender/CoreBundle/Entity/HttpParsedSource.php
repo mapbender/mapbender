@@ -4,10 +4,11 @@
 namespace Mapbender\CoreBundle\Entity;
 
 
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Url;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints;
 
 
 #[ORM\MappedSuperclass]
@@ -17,8 +18,8 @@ abstract class HttpParsedSource extends Source
     /**
      * @var string|null
      */
-    #[Constraints\NotBlank]
-    #[Constraints\Url]
+    #[NotBlank]
+    #[Url]
     #[ORM\Column(type: 'text', nullable: true)]
     protected $originUrl = "";
 

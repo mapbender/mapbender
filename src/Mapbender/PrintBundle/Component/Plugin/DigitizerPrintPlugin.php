@@ -11,7 +11,7 @@ namespace Mapbender\PrintBundle\Component\Plugin;
  */
 class DigitizerPrintPlugin implements TextFieldPluginInterface
 {
-    public function getDomainKey()
+    public function getDomainKey(): string
     {
         return 'digitizer';
     }
@@ -19,7 +19,7 @@ class DigitizerPrintPlugin implements TextFieldPluginInterface
     public function getTextFieldContent($fieldName, $jobData)
     {
         if (isset($jobData['digitizer_feature']) && preg_match("/^feature./", $fieldName)) {
-            $attributes = $jobData['digitizer_feature'] ?: array();
+            $attributes = $jobData['digitizer_feature'] ?: [];
             $attributeName = substr(strrchr($fieldName, "."), 1);
             if (!empty($attributes[$attributeName])) {
                 return $attributes[$attributeName];

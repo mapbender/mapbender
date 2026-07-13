@@ -12,25 +12,17 @@ use Twig\TwigFunction;
 
 class IconExtension extends AbstractExtension
 {
-    /** @var AssetExtension */
-    protected $assetExtension;
-    /** @var IconPackageInterface */
-    protected $iconIndex;
-
-    public function __construct(AssetExtension $assetExtension,
-                                IconPackageInterface $iconIndex)
+    public function __construct(protected AssetExtension $assetExtension, protected IconPackageInterface $iconIndex)
     {
-        $this->assetExtension = $assetExtension;
-        $this->iconIndex = $iconIndex;
     }
 
     public function getFunctions(): array
     {
-        return array(
-            'icon_markup' => new TwigFunction('icon_markup', array($this, 'icon_markup')),
-            'icon_stylesheets' => new TwigFunction('icon_stylesheets', array($this, 'icon_stylesheets')),
-            'icon_stylesheet_links' => new TwigFunction('icon_stylesheet_links', array($this, 'icon_stylesheet_links')),
-        );
+        return [
+            'icon_markup' => new TwigFunction('icon_markup', $this->icon_markup(...)),
+            'icon_stylesheets' => new TwigFunction('icon_stylesheets', $this->icon_stylesheets(...)),
+            'icon_stylesheet_links' => new TwigFunction('icon_stylesheet_links', $this->icon_stylesheet_links(...)),
+        ];
     }
 
     public function icon_markup(string $iconCode, ?string $additionalClass = null): string
@@ -53,14 +45,14 @@ class IconExtension extends AbstractExtension
      *
      * @return string
      */
-    public function icon_stylesheet_links()
+    public function icon_stylesheet_links(): string
     {
-        $parts = array();
+        $parts = [];
         foreach ($this->iconIndex->getStyleSheets() as $path) {
-            $attributes = array(
+            $attributes = [
                 'rel' => 'stylesheet',
                 'href' => $this->assetExtension->getAssetUrl($path),
-            );
+            ];
             $parts[] = '<link ' . HtmlUtil::renderAttributes($attributes) . ' />';
         }
         return \implode('', $parts);

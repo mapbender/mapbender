@@ -13,10 +13,12 @@ use Symfony\Component\Translation\Exception\InvalidResourceException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
-#[AsCommand('mapbender:normalize-translations')]
+#[AsCommand('mapbender:normalize-translations', help: <<<'TXT'
+This command normalizes YAML order of translation files and adds missing translations.
+TXT)]
 class TranslationCommand extends Command
 {
-    public function __construct(private KernelInterface $kernel)
+    public function __construct(private readonly KernelInterface $kernel)
     {
         parent::__construct();
     }
@@ -37,7 +39,6 @@ class TranslationCommand extends Command
     {
         $this
             ->setDescription('Normalize YAML order of translation files and mark missing translations.')
-            ->setHelp('This command normalizes YAML order of translation files and adds missing translations.')
             ->addArgument(self::ARGUMENT_LANGUAGE, mode: InputArgument::REQUIRED, description: 'the language code (e.g. de) that should be processed')
             ->addOption(self::OPTION_SOURCE_LANGUAGE, mode: InputOption::VALUE_OPTIONAL, description: 'the source language (e.g. en) that is seen as default. It is assumed all keys are present in the source language', default: 'en')
             ->addOption(self::OPTION_ADD_MISSING_KEYS, 'a', description: 'if set to true, entries not present in the target language will be added (marked with a prefix)')

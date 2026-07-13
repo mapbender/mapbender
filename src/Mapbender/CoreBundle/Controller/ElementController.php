@@ -47,7 +47,7 @@ class ElementController extends AbstractController
             return new Response(null, Response::HTTP_NOT_FOUND);
         }
 
-        if (!$this->filter->prepareFrontend(array($element), true, false)) {
+        if (!$this->filter->prepareFrontend([$element], true, false)) {
             return new Response(null, Response::HTTP_FORBIDDEN);
         }
         $handler = $this->filter->getInventory()->getHttpHandler($element);
@@ -68,7 +68,7 @@ class ElementController extends AbstractController
      * @return Response
      */
     #[Route(path: '/application/{slug}/elements', methods: ['GET'])]
-    public function reloadMarkup(Request $request, $slug)
+    public function reloadMarkup(Request $request, string $slug)
     {
         $application = $this->applicationResolver->getApplicationEntity($slug);
         $idsParam = $request->query->get('ids', '');
@@ -81,10 +81,10 @@ class ElementController extends AbstractController
         }
         $elements = $this->filter->prepareFrontend($elements, false, false);
 
-        $htmlMap = array();
+        $htmlMap = [];
         foreach ($elements as $element) {
             // Map to jQuery-friendly id selectors
-            $htmlMap['#' . $element->getId()] = $this->renderer->renderElements(array($element));
+            $htmlMap['#' . $element->getId()] = $this->renderer->renderElements([$element]);
         }
         return new JsonResponse($htmlMap);
     }

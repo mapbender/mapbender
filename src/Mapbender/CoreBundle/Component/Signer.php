@@ -1,18 +1,18 @@
 <?php
 namespace Mapbender\CoreBundle\Component;
 
+use ArsGeografica\Signing\BadSignatureException;
 use Mapbender\CoreBundle\Component\Exception\ProxySignatureEmptyException;
 use Mapbender\CoreBundle\Component\Exception\ProxySignatureException;
 use Mapbender\CoreBundle\Component\Exception\ProxySignatureInvalidException;
 
 class Signer
 {
-    /** @var string */
-    protected $secret;
-
-    public function __construct($secret)
+    /**
+     * @param string $secret
+     */
+    public function __construct(protected $secret)
     {
-        $this->secret = $secret;
     }
 
     /**
@@ -24,7 +24,7 @@ class Signer
      * @param   string  $url
      * @return  string  $signedUrl  Signed url, with signature included as _sign parameter
      */
-    public function signUrl($url)
+    public function signUrl($url): string
     {
         $signature = $this->getSignature($url);
         if (!preg_match('#\?.+$#', rtrim($url, '?'))) {
@@ -41,28 +41,28 @@ class Signer
      * @param string $url
      * @return string
      */
-    public function getSignature($url)
+    public function getSignature($url): string
     {
         // cut URL at first slash after hostname / port
         // => allow all requests to same scheme + host + port (+ username + password for basic auth)
         $baseUrl = preg_replace('#(?<=[^:/])/.*$#', '', $url);
-        return implode(':', array(
-            strlen($baseUrl),
+        return implode(':', [
+            strlen((string) $baseUrl),
             $this->hashBase64($baseUrl),
-        ));
+        ]);
     }
 
     /**
      * @param string $url
      * @throws ProxySignatureException
      */
-    public function checkSignedUrl($url)
+    public function checkSignedUrl($url): void
     {
         parse_str(parse_url($url, PHP_URL_QUERY), $params);
         if (empty($params['_signature'])) {
             if (class_exists('\ArsGeografica\Signing\BadSignatureException')) {
                 // Old owsproxy < v3.0.6.5
-                throw new \ArsGeografica\Signing\BadSignatureException('No URL signature provided');
+                throw new BadSignatureException('No URL signature provided');
             } else {
                 throw new ProxySignatureEmptyException();
             }
@@ -71,7 +71,7 @@ class Signer
         if ($compareSignature !== $params['_signature']) {
             if (class_exists('\ArsGeografica\Signing\BadSignatureException')) {
                 // Old owsproxy < v3.0.6.5
-                throw new \ArsGeografica\Signing\BadSignatureException('Signature mismatch');
+                throw new BadSignatureException('Signature mismatch');
             } else {
                 throw new ProxySignatureInvalidException();
             }
@@ -84,11 +84,11 @@ class Signer
      * @param string $value
      * @return string
      */
-    public function hashBase64($value)
+    public function hashBase64($value): string
     {
         $binaryHash = hash_hmac('sha1', $value, $this->secret . 'signer', true);
         $base64 = base64_encode($binaryHash);
-        $base64UrlSafe = str_replace(array('+', '/'), array('-', '_'), $base64);
+        $base64UrlSafe = str_replace(['+', '/'], ['-', '_'], $base64);
         return rtrim($base64UrlSafe, '=');
     }
 }

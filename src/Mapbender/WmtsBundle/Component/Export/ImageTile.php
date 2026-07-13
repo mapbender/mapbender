@@ -6,23 +6,14 @@ namespace Mapbender\WmtsBundle\Component\Export;
 
 class ImageTile
 {
-    protected $tileX;
-    protected $tileY;
-    protected $offsetX;
-    protected $offsetY;
-
     /**
      * @param int $tileX in TileMatrix space
      * @param int $tileY in TileMatrix space
      * @param int $offsetX in pixel space
      * @param int $offsetY in pixel space (GD convention: 0 is top)
      */
-    public function __construct($tileX, $tileY, $offsetX, $offsetY)
+    public function __construct(protected $tileX, protected $tileY, protected $offsetX, protected $offsetY)
     {
-        $this->tileX = $tileX;
-        $this->tileY = $tileY;
-        $this->offsetX = $offsetX;
-        $this->offsetY = $offsetY;
     }
 
     /**

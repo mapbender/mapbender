@@ -17,7 +17,7 @@ class KeywordUpdater
      * @param array $keywordList
      * @return bool
      */
-    public static function keywordExists($keyword, $keywordList)
+    public static function keywordExists($keyword, $keywordList): bool
     {
         foreach ($keywordList as $keywordTemp) {
             if ($keyword->getValue() == $keywordTemp->getValue()) {
@@ -40,7 +40,7 @@ class KeywordUpdater
         ContainingKeyword $compenentNew,
         $entityManager,
         $newKeywordClass
-    ) {
+    ): void {
         foreach ($componentOld->getKeywords() as $keyword) {
             if (!self::keywordExists($keyword, $compenentNew->getKeywords())) {
                 $componentOld->getKeywords()->removeElement($keyword);

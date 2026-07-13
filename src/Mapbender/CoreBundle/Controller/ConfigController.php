@@ -14,8 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ConfigController extends AbstractController
 {
-    /** @var ApplicationDataService|null */
-    protected $cacheService;
+    protected ?ApplicationDataService $cacheService;
 
     public function __construct(protected ApplicationResolver $applicationResolver,
                                 protected ConfigService       $configService,
@@ -31,10 +30,10 @@ class ConfigController extends AbstractController
      * @return Response
      */
     #[Route(path: '/application/{slug}/config', name: 'mapbender_core_application_configuration')]
-    public function configuration($slug)
+    public function configuration(string $slug)
     {
         $applicationEntity = $this->applicationResolver->getApplicationEntity($slug);
-        $cacheKeyPath = array('config.json');
+        $cacheKeyPath = ['config.json'];
 
         if ($this->cacheService) {
             $response = $this->cacheService->getResponse($applicationEntity, $cacheKeyPath, 'application/json');

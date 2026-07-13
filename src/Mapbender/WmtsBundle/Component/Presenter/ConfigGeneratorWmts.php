@@ -16,22 +16,22 @@ class ConfigGeneratorWmts extends ConfigGeneratorCommon
      * @param WmtsInstanceLayer $instanceLayer
      * @return array
      */
-    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer)
+    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer): array
     {
-        return array(
+        return [
             "info" => $instanceLayer->getInfoformat() && $instanceLayer->getInfo(),
             "selected" => $instanceLayer->getSelected(),
             "toggle" => $instanceLayer->getToggle(),
-            "allow" => array(
+            "allow" => [
                 "info" => $instanceLayer->getInfoformat() && $instanceLayer->getAllowinfo(),
                 "selected" => $instanceLayer->getAllowselected(),
                 "toggle" => $instanceLayer->getAllowtoggle(),
                 "reorder" => false,
-            ),
-        );
+            ],
+        ];
     }
 
-    protected function formatTileUrl(WmtsInstanceLayer $instanceLayer, $url)
+    protected function formatTileUrl(WmtsInstanceLayer $instanceLayer, $url): string|array
     {
         $style = $instanceLayer->getStyle();
         // Spec unclear about capitalization => do both
@@ -46,7 +46,7 @@ class ConfigGeneratorWmts extends ConfigGeneratorCommon
      * @param WmtsInstanceLayer $instanceLayer
      * @return array
      */
-    protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer)
+    protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer): array
     {
         // @todo: tunnel support
         $legendHref = $this->getInternalLegendUrl($instanceLayer);
@@ -56,11 +56,11 @@ class ConfigGeneratorWmts extends ConfigGeneratorCommon
             if ($sourceInstance->getProxy()) {
                 $legendHref = $this->urlProcessor->proxifyUrl($legendHref);
             }
-            return array(
+            return [
                 'url' => $legendHref,
-            );
+            ];
         }
-        return array();
+        return [];
     }
 
     public function getInternalLegendUrl(SourceInstanceItem $instanceLayer): ?string

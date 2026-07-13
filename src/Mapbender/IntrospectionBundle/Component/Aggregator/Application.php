@@ -2,6 +2,8 @@
 
 namespace Mapbender\IntrospectionBundle\Component\Aggregator;
 
+use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\ApplicationToSources;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\IntrospectionBundle\Component\WorkingSet;
 
 /**
@@ -10,16 +12,12 @@ use Mapbender\IntrospectionBundle\Component\WorkingSet;
  */
 class Application extends Base
 {
-    /** @var Relation\ApplicationToSources[] */
-    protected $relationBuckets;
-
     /**
-     * @param Relation\ApplicationToSources[][] $applicationRelationBuckets
-     * @param \Mapbender\CoreBundle\Entity\Source[] $unusedSources
+     * @param Relation\ApplicationToSources[][] $relationBuckets
+     * @param Source[] $unusedSources
      */
-    protected function __construct($applicationRelationBuckets, $unusedSources)
+    protected function __construct(protected $relationBuckets, $unusedSources)
     {
-        $this->relationBuckets = $applicationRelationBuckets;
         parent::__construct($unusedSources);
     }
 
@@ -27,16 +25,16 @@ class Application extends Base
      * @param WorkingSet $workingSet
      * @return static
      */
-    public static function build(WorkingSet $workingSet)
+    public static function build(WorkingSet $workingSet): static
     {
-        $unusedSources = array();
+        $unusedSources = [];
         foreach ($workingSet->getSources() as $source) {
             $sourceId = $source->getId();
             $unusedSources[$sourceId] = $source;
         }
         $buckets = [];
         foreach ($workingSet->getApplications() as $applicationEntity) {
-            $relation = new Relation\ApplicationToSources($applicationEntity);
+            $relation = new ApplicationToSources($applicationEntity);
             foreach (static::getLayerSetInstances($applicationEntity) as $lsi) {
                 $relation->addSourceInstance($lsi);
                 unset($unusedSources[$lsi->getSource()->getId()]);

@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PermissionListType extends AbstractType
 
 {
-    public function __construct(private PermissionManager $permissionManager)
+    public function __construct(private readonly PermissionManager $permissionManager)
     {
 
     }
@@ -52,7 +52,7 @@ class PermissionListType extends AbstractType
             'allow_add' => true,
             'allow_delete' => true,
             'prototype' => true,
-            'data' => fn (Options $options) => array_values($this->loadPermissions($options)),
+            'data' => fn (Options $options): array => array_values($this->loadPermissions($options)),
         ]);
         $resolver->setAllowedValues('mapped', [false]);
         $resolver->setAllowedTypes('resource_domain', [AbstractResourceDomain::class]);

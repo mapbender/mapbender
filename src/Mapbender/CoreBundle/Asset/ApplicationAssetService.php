@@ -68,11 +68,11 @@ class ApplicationAssetService
         if (!in_array($type, $this->getValidAssetTypes(), true)) {
             throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
         }
-        $referenceLists = array(
+        $referenceLists = [
             $this->getBaseAssetReferences($type),
             $source->getAssets($type),
             $source->getLateAssets($type),
-        );
+        ];
         $references = array_unique(call_user_func_array('\array_merge', $referenceLists));
         $assetType = $sourceMap ? 'map.' . $type : $type;
         return $this->compileAssetContent($references, $assetType, $sourceMapRoute);
@@ -84,7 +84,7 @@ class ApplicationAssetService
      */
     protected function collectAssetReferences(Application $application, $type): array
     {
-        $referenceLists = array();
+        $referenceLists = [];
         if ($type === 'css') {
             $template = $this->templateRegistry->getApplicationTemplate($application);
             $variables = $template->getSassVariablesAssets($application);
@@ -95,18 +95,18 @@ class ApplicationAssetService
             }
             $referenceLists[] = $variables;
         }
-        $referenceLists = array_merge($referenceLists, array(
+        $referenceLists = array_merge($referenceLists, [
             $this->getBaseAssetReferences($type),
             $this->getFrontendBaseAssets($type),
             $this->getLayerAssetReferences($application, $type),
             $this->getTemplateBaseAssetReferences($application, $type),
             $this->getElementAssetReferences($application, $type),
             $this->getTemplateLateAssetReferences($application, $type),
-        ));
+        ]);
         $references = call_user_func_array('\array_merge', $referenceLists);
         // Append `extra_assets` references (only occurs in YAML application, see ApplicationYAMLMapper)
-        $extraYamlAssetGroups = $application->getExtraAssets() ?: array();
-        $extraYamlRefs = ArrayUtil::getDefault($extraYamlAssetGroups, $type, array());
+        $extraYamlAssetGroups = $application->getExtraAssets() ?: [];
+        $extraYamlRefs = ArrayUtil::getDefault($extraYamlAssetGroups, $type, []);
         $references = array_merge($references, $extraYamlRefs);
 
         $references = $this->deduplicate($references);
@@ -140,19 +140,19 @@ class ApplicationAssetService
     protected function getBaseAssetReferences(string $type): array
     {
         return match ($type) {
-            'js' => array(
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/polyfills.js',
                 '@MapbenderCoreBundle/Resources/public/stubs.js',
                 '@MapbenderCoreBundle/Resources/public/util.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                 '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                 '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.actions.*',
                 'mb.terms.*',
-            ),
-            default => array(),
+            ],
+            default => [],
         };
     }
 
@@ -232,7 +232,7 @@ class ApplicationAssetService
      */
     protected function getElementAssetReferences(Application $application, string $type): array
     {
-        $combinedRefs = array();
+        $combinedRefs = [];
         // Skip grants checks here to avoid issues with application asset caching.
         // Non-granted Elements will skip HTML rendering and config and will not be initialized.
         // Emitting the base js / css / translation assets OTOH is always safe to do
@@ -259,13 +259,13 @@ class ApplicationAssetService
             } catch (ElementErrorException) {
                 // for frontend presentation, incomplete / invalid elements are silently suppressed
                 // => return nothing
-                return array();
+                return [];
             }
             assert(\is_a($handlingClass, 'Mapbender\CoreBundle\Component\Element', true));
             $shimService = $this->inventory->getFrontendHandler($element);
             $fullElementRefs = $shimService->getRequiredAssets($element);
         }
-        return ArrayUtil::getDefault($fullElementRefs ?: array(), $type, array());
+        return ArrayUtil::getDefault($fullElementRefs ?: [], $type, []);
     }
 
     /**
@@ -291,10 +291,10 @@ class ApplicationAssetService
         // Strip multiline comments (including unclosed at the end)
         $customCss = \preg_replace('#/\*.*?(\*/|$)#Ds', '', $customCss);
         // Strip single-line comments
-        $customCss = \preg_replace('#//[^\n]*$#', '', $customCss);
+        $customCss = \preg_replace('#//[^\n]*$#', '', (string) $customCss);
         // Strip leading whitespace
-        $customCss = ltrim($customCss);
-        $variableLines = array();
+        $customCss = ltrim((string) $customCss);
+        $variableLines = [];
         foreach (\explode("\n", $customCss) as $line) {
             if (\trim($line) && \preg_match('#^\s*\$.*?:#', $line)) {
                 $variableLines[] = $line;
@@ -325,8 +325,8 @@ class ApplicationAssetService
      */
     private function deduplicate(array $references): array
     {
-        $seen = array();
-        $refsOut = array();
+        $seen = [];
+        $refsOut = [];
         foreach ($references as $reference) {
             if (!\is_string($reference)) {
                 $refsOut[] = $reference;

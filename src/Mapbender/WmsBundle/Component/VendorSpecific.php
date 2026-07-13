@@ -33,7 +33,7 @@ class VendorSpecific extends CustomParameter
     /**
      * @param string $vstype one of the VS_TYPE_* consts
      */
-    public function setVstype($vstype)
+    public function setVstype($vstype): void
     {
         $this->vstype = $vstype;
     }

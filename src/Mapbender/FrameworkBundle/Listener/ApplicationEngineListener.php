@@ -8,7 +8,7 @@ use Mapbender\CoreBundle\Entity\Application;
 
 class ApplicationEngineListener
 {
-    public function postLoad(Application $application)
+    public function postLoad(Application $application): void
     {
         // Rewrite legacy explicit 'ol4' identifier to 'current'
         if ('ol4' === $application->getMapEngineCode()) {

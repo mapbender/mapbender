@@ -1,12 +1,11 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
+use Twig\Environment;
+use Mapbender\CoreBundle\Element\Type\CopyrightAdminType;
 use Mapbender\Component\Element\AbstractElementService;
-use Mapbender\Component\Element\StaticView;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\Utils\HtmlUtil;
-use Twig;
 
 /**
  * A Copyright
@@ -17,18 +16,14 @@ use Twig;
  */
 class Copyright extends AbstractElementService
 {
-    /** @var Twig\Environment */
-    protected $templateEngine;
-
-    public function __construct(Twig\Environment $templateEngine)
+    public function __construct(protected Environment $templateEngine)
     {
-        $this->templateEngine = $templateEngine;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.copyright.class.title";
     }
@@ -36,7 +31,7 @@ class Copyright extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.copyright.class.description";
     }
@@ -44,15 +39,15 @@ class Copyright extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\CopyrightAdminType';
+        return CopyrightAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
         return ['js' => ['@MapbenderCoreBundle/Resources/public/elements/MbCopyright.js']];
     }
@@ -67,10 +62,10 @@ class Copyright extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
 
-        return array(
+        return [
             'autoOpen' => false,
             'content' => null,
             'dontShowAgain' => false,
@@ -78,18 +73,18 @@ class Copyright extends AbstractElementService
             'popupWidth'    => 300,
             'popupHeight' => null,
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbCopyright';
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $config = $element->getConfiguration();
 
@@ -101,7 +96,7 @@ class Copyright extends AbstractElementService
         $view->variables['dontShowAgainLabel'] = $config['dontShowAgainLabel'];
 
         // Do not cache if content contains any twig expressions or flow control ("{{" or "{%")
-        if (!empty($config['content']) && false !== strpos($config['content'], '{')) {
+        if (!empty($config['content']) && str_contains($config['content'], '{')) {
             $view->cacheable = false;
         }
 
@@ -111,12 +106,12 @@ class Copyright extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/copyright.html.twig';
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconCopyright';
     }

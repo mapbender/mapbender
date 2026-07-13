@@ -6,7 +6,6 @@ namespace Mapbender\Component\Collections;
 
 use Doctrine\Common\Collections\AbstractLazyCollection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Layerset;
 
@@ -32,7 +31,7 @@ class YamlSourceInstanceCollection extends AbstractLazyCollection
             $instance = $factory->fromConfig($instanceDefinition, $instanceId);
             $instance->setLayerset($this->layerset);
             $instance->setWeight($weight++);
-            $instance->setYamlRoles(array_key_exists('roles', $instanceDefinition) ? $instanceDefinition['roles'] : array());
+            $instance->setYamlRoles(array_key_exists('roles', $instanceDefinition) ? $instanceDefinition['roles'] : []);
             $this->collection->add($instance);
         }
     }

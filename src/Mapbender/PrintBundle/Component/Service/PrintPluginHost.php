@@ -14,9 +14,9 @@ use Symfony\Component\HttpFoundation\Request;
 class PrintPluginHost
 {
     /** @var PrintClientHttpPluginInterface[] */
-    protected $httpPlugins = array();
+    protected $httpPlugins = [];
     /** @var TextFieldPluginInterface[] */
-    protected $textFieldPlugins = array();
+    protected $textFieldPlugins = [];
 
     /**
      * Register a plugin at runtime.
@@ -25,9 +25,9 @@ class PrintPluginHost
      *
      * @param object $plugin
      */
-    public function registerPlugin($plugin)
+    public function registerPlugin($plugin): void
     {
-        $t = is_object($plugin) ? get_class($plugin) : gettype($plugin);
+        $t = get_debug_type($plugin);
         if ($plugin instanceof PluginBaseInterface) {
             $key = $plugin->getDomainKey();
             if (!$key || !is_string($key)) {
@@ -69,12 +69,12 @@ class PrintPluginHost
      * @param string $domainKey
      * @return PluginBaseInterface|null
      */
-    public function getPlugin($domainKey)
+    public function getPlugin($domainKey): PrintClientHttpPluginInterface|TextFieldPluginInterface|null
     {
-        $lists = array(
+        $lists = [
             $this->httpPlugins,
             $this->textFieldPlugins,
-        );
+        ];
         foreach ($lists as $pluginList) {
             if (!empty($pluginList[$domainKey])) {
                 return $pluginList[$domainKey];

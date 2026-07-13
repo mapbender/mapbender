@@ -4,6 +4,7 @@
 namespace Mapbender\FrameworkBundle\Component\Renderer;
 
 
+use Twig\Environment;
 use Mapbender\Component\Application\ElementDistribution;
 use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\UploadsManager;
@@ -13,54 +14,32 @@ use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Symfony\Component\Filesystem\Exception\IOException;
-use Twig;
 
 class ApplicationMarkupRenderer
 {
-    /** @var Twig\Environment */
-    protected $templatingEngine;
-    /** @var ApplicationTemplateRegistry */
-    protected $templateRegistry;
-    /** @var ElementFilter */
-    protected $elementFilter;
-    /** @var ElementMarkupRenderer */
-    protected $elementRenderer;
-    /** @var UploadsManager */
-    protected $uploadsManager;
-    /** @var bool */
-    protected $allowResponsiveContainers;
-
     /** @var ElementDistribution[] */
-    protected $distributions = array();
+    protected $distributions = [];
 
-    public function __construct(Twig\Environment $templatingEngine,
-                                ApplicationTemplateRegistry $templateRegistry,
-                                ElementFilter $elementFilter,
-                                ElementMarkupRenderer $elementRenderer,
-                                UploadsManager $uploadsManager,
-                                $allowResponsiveContainers)
+    /**
+     * @param bool $allowResponsiveContainers
+     */
+    public function __construct(protected Environment $templatingEngine, protected ApplicationTemplateRegistry $templateRegistry, protected ElementFilter $elementFilter, protected ElementMarkupRenderer $elementRenderer, protected UploadsManager $uploadsManager, protected $allowResponsiveContainers)
     {
-        $this->templatingEngine = $templatingEngine;
-        $this->templateRegistry = $templateRegistry;
-        $this->elementFilter = $elementFilter;
-        $this->elementRenderer = $elementRenderer;
-        $this->uploadsManager = $uploadsManager;
-        $this->allowResponsiveContainers = $allowResponsiveContainers;
     }
 
     /**
      * @param Application $application
      * @return string
      */
-    public function renderApplication(Application $application)
+    public function renderApplication(Application $application): string
     {
         $templateObj = $this->templateRegistry->getApplicationTemplate($application);
         $twigTemplate = $templateObj->getTwigTemplate();
-        $vars = array_replace($templateObj->getTemplateVars($application), array(
+        $vars = array_replace($templateObj->getTemplateVars($application), [
             'application' => $application,
             'uploads_dir' => $this->getPublicUploadsBaseUrl($application),
             'body_class' => $templateObj->getBodyClass($application),
-        ));
+        ]);
         return $this->templatingEngine->render($twigTemplate, $vars);
     }
 
@@ -70,10 +49,10 @@ class ApplicationMarkupRenderer
      * @param bool $suppressEmptyRegion
      * @return string
      */
-    public function renderRegionByName(Application $application, $regionName, $suppressEmptyRegion = true)
+    public function renderRegionByName(Application $application, $regionName, $suppressEmptyRegion = true): string
     {
         $elementBucket = $this->getElementDistribution($application)->getRegionBucketByName($regionName);
-        $elements = $elementBucket ? $elementBucket->getElements() : array();
+        $elements = $elementBucket ? $elementBucket->getElements() : [];
         if ($elements || !$suppressEmptyRegion) {
             $template = $this->templateRegistry->getApplicationTemplate($application);
             $skin = $template->getRegionTemplate($application, $regionName);
@@ -115,7 +94,7 @@ class ApplicationMarkupRenderer
     public function renderMap(Application $application)
     {
         $mapElement = $this->getElementDistribution($application)->getMapElement();
-        return $this->elementRenderer->renderElements(array($mapElement));
+        return $this->elementRenderer->renderElements([$mapElement]);
     }
 
     /**
@@ -135,7 +114,7 @@ class ApplicationMarkupRenderer
      * @param Application $application
      * @return ElementDistribution
      */
-    public function createElementDistribution(Application $application)
+    public function createElementDistribution(Application $application): ElementDistribution
     {
         $elements = $this->elementFilter->prepareFrontend($application->getElements(), true, true);
         return new ElementDistribution($elements);
@@ -147,10 +126,10 @@ class ApplicationMarkupRenderer
      * @param Element[] $elements
      * @return array
      */
-    protected function getRegionTemplateVars(Application $application, $regionName, $elements)
+    protected function getRegionTemplateVars(Application $application, $regionName, $elements): array
     {
         $template = $this->templateRegistry->getApplicationTemplate($application);
-        $props = $this->extractRegionProperties($application, $regionName);
+        $props = static::extractRegionProperties($application, $regionName);
         $props += $template->getRegionPropertiesDefaults($regionName);
         $classes = $template->getRegionClasses($application, $regionName);
         if ($this->allowResponsiveContainers) {
@@ -173,13 +152,13 @@ class ApplicationMarkupRenderer
             $props['width'] = $props['width'] . 'px';
         }
 
-        return array_replace($template->getRegionTemplateVars($application, $regionName), array(
+        return array_replace($template->getRegionTemplateVars($application, $regionName), [
             'elements' => $elements,
             'region_name' => $regionName,
             'application' => $application,
             'region_class' => implode(' ', $classes),
             'region_props' => $props,
-        ));
+        ]);
     }
 
     /**
@@ -189,20 +168,18 @@ class ApplicationMarkupRenderer
      */
     protected static function extractRegionProperties(Application $application, $regionName)
     {
-        foreach ($application->getRegionProperties() ?: array() as $regionProps) {
+        foreach ($application->getRegionProperties() ?: [] as $regionProps) {
             if ($regionProps->getName() === $regionName) {
-                return $regionProps->getProperties() ?: array();
+                return $regionProps->getProperties() ?: [];
             }
         }
-        return array();
+        return [];
     }
 
     public function renderToolbarInlineContent(Application $application, $regionName)
     {
         $elr = $this->elementRenderer;
-        $elements = $this->getRegionElements($application, $regionName, function(Element $element) use ($elr) {
-            return !$elr->isMenuSupported($element);
-        });
+        $elements = $this->getRegionElements($application, $regionName, fn(Element $element): bool => !$elr->isMenuSupported($element));
         if ($elements) {
             return $this->elementRenderer->renderElements($elements);
         } else {
@@ -213,9 +190,7 @@ class ApplicationMarkupRenderer
     public function renderToolbarMenuContent(Application $application, $regionName, $forceLabel = false)
     {
         $elr = $this->elementRenderer;
-        $elements = $this->getRegionElements($application, $regionName, function(Element $element) use ($elr) {
-            return $elr->isMenuSupported($element);
-        });
+        $elements = $this->getRegionElements($application, $regionName, fn(Element $element) => $elr->isMenuSupported($element));
         if ($elements) {
             return $this->elementRenderer->renderElements($elements, $forceLabel);
         } else {
@@ -232,7 +207,7 @@ class ApplicationMarkupRenderer
     protected function getRegionElements(Application $application, $regionName, $filter = null)
     {
         $elementBucket = $this->getElementDistribution($application)->getRegionBucketByName($regionName);
-        $elements = $elementBucket ? $elementBucket->getElements() : array();
+        $elements = $elementBucket ? $elementBucket->getElements() : [];
         if ($filter) {
             $elements = \array_filter($elements, $filter);
         }
@@ -243,13 +218,13 @@ class ApplicationMarkupRenderer
      * @param Application $application
      * @return string|null
      */
-    protected function getPublicUploadsBaseUrl(Application $application)
+    protected function getPublicUploadsBaseUrl(Application $application): ?string
     {
         $slug = $application->getSlug();
         try {
             $this->uploadsManager->getSubdirectoryPath($slug, true);
             return $this->uploadsManager->getWebRelativeBasePath(false) . '/' . $slug;
-        } catch (IOException $e) {
+        } catch (IOException) {
             return null;
         }
     }

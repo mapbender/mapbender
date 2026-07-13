@@ -45,7 +45,7 @@ class UrlReloadCommand extends AbstractHttpCapabilitiesProcessingCommand
         return 0;
     }
 
-    protected function getValidationOption(InputInterface $input)
+    protected function getValidationOption(InputInterface $input): mixed
     {
         return $input->getOption('validate');
     }

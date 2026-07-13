@@ -2,13 +2,12 @@
 
 namespace FOM\UserBundle\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use FOM\ManagerBundle\Configuration\Route;
-use FOM\UserBundle\Form\Type\PermissionListType;
 use FOM\UserBundle\Security\Permission\AssignableSubject;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,7 +25,7 @@ class PermissionController extends AbstractController
      * @return Response
      */
     #[Route('/security/edit/{category}', methods: ['GET', 'POST'])]
-    public function edit(Request $request, string $category)
+    public function edit(Request $request, string $category): RedirectResponse|Response
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_MANAGE_PERMISSION);
 
@@ -45,18 +44,18 @@ class PermissionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->permissionManager->savePermissions(null, $form->get('security')->getData(), $actions);
 
-            return $this->redirectToRoute('fom_user_security_index', array(
+            return $this->redirectToRoute('fom_user_security_index', [
                 '_fragment' => 'tabPermissions',
-            ));
+            ]);
         } elseif ($form->isSubmitted()) {
             $this->addFlash('error', 'Your form has errors, please review them below.');
         }
 
-        return $this->render('@FOMUser/Permission/edit.html.twig', array(
+        return $this->render('@FOMUser/Permission/edit.html.twig', [
             'class' => $category,
             'form' => $form->createView(),
             'permission_class' => $this->installationPermissions->getCategoryList()[$category],
-        ));
+        ]);
     }
 
     #[Route('/permission/overview', methods: ['GET'])]
@@ -68,13 +67,13 @@ class PermissionController extends AbstractController
         if ($existingSubjectsJson) {
             $assignableSubjects = array_filter(
                 $assignableSubjects,
-                fn(AssignableSubject $subject) => !in_array($subject->getSubjectJson(), $existingSubjectsJson)
+                fn(AssignableSubject $subject): bool => !in_array($subject->getSubjectJson(), $existingSubjectsJson)
             );
         }
 
-        return $this->render('@FOMUser/Permission/groups-and-users.html.twig', array(
+        return $this->render('@FOMUser/Permission/groups-and-users.html.twig', [
             'subjects' => $assignableSubjects
-        ));
+        ]);
     }
 
     private function readExistingSubjectsJson(Request $request): ?array

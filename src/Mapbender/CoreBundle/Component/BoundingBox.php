@@ -7,65 +7,33 @@ namespace Mapbender\CoreBundle\Component;
 class BoundingBox
 {
     /**
-     * @var string srs Spatial reference system
-     */
-    public $srs;
-
-    /**
-     * @var float minx Minimum X of the Bounding Box
-     */
-    public $minx;
-
-    /**
-     * @var float miny Minimum Y of the Bounding Box
-     */
-    public $miny;
-
-    /**
-     * @var float maxx Maximum X of the Bounding Box
-     */
-    public $maxx;
-
-    /**
-     * @var float maxy Maximum Y of the Bounding Box
-     */
-    public $maxy;
-
-    /**
      * Creates a BoundingBox from parameters
      *
      * @param array $parameters
      * @return BoundingBox
      */
-    public static function create(array $parameters)
+    public static function create(array $parameters): BoundingBox
     {
         return new BoundingBox(
-            isset($parameters["srs"]) ? $parameters["srs"] : null,
-            isset($parameters["minx"]) ? $parameters["minx"] : null,
-            isset($parameters["miny"]) ? $parameters["miny"] : null,
-            isset($parameters["maxx"]) ? $parameters["maxx"] : null,
-            isset($parameters["maxy"]) ? $parameters["maxy"] : null
+            $parameters["srs"] ?? null,
+            $parameters["minx"] ?? null,
+            $parameters["miny"] ?? null,
+            $parameters["maxx"] ?? null,
+            $parameters["maxy"] ?? null
         );
     }
 
     /**
      * Creates a BoundingBox
-     * 
+     *
      * @param string $srs  srs
-     * @param float $minX minx
-     * @param float $minY miny
-     * @param float $maxX maxx
-     * @param float $maxY maxy
+     * @param float $minx minx
+     * @param float $miny miny
+     * @param float $maxx maxx
+     * @param float $maxy maxy
      */
-    public function __construct(
-        $srs = null, $minX = null, $minY = null,
-        $maxX = null, $maxY = null)
+    public function __construct(public $srs = null, public $minx = null, public $miny = null, public $maxx = null, public $maxy = null)
     {
-        $this->srs = $srs;
-        $this->minx = $minX;
-        $this->miny = $minY;
-        $this->maxx = $maxX;
-        $this->maxy = $maxY;
     }
 
     /**
@@ -83,7 +51,7 @@ class BoundingBox
      * @param string $value 
      * @return BoundingBox
      */
-    public function setSrs($value)
+    public function setSrs($value): static
     {
         $this->srs = $value;
         return $this;
@@ -104,7 +72,7 @@ class BoundingBox
      * @param float $value 
      * @return BoundingBox
      */
-    public function setMinx($value)
+    public function setMinx($value): static
     {
         $this->minx = $value;
         return $this;
@@ -125,7 +93,7 @@ class BoundingBox
      * @param float $value
      * @return BoundingBox
      */
-    public function setMiny($value)
+    public function setMiny($value): static
     {
         $this->miny = $value;
         return $this;
@@ -146,7 +114,7 @@ class BoundingBox
      * @param float $value 
      * @return BoundingBox
      */
-    public function setMaxx($value)
+    public function setMaxx($value): static
     {
         $this->maxx = $value;
         return $this;
@@ -167,7 +135,7 @@ class BoundingBox
      * @param float $value 
      * @return BoundingBox
      */
-    public function setMaxy($value)
+    public function setMaxy($value): static
     {
         $this->maxy = $value;
         return $this;
@@ -178,29 +146,29 @@ class BoundingBox
      * 
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return array(
+        return [
             "srs" => $this->srs,
             "minx" => $this->minx,
             "miny" => $this->miny,
             "maxx" => $this->maxx,
             "maxy" => $this->maxy
-        );
+        ];
     }
 
     /**
      * The entity handlers like to call this, for database storage maybe
      * @return float[]
      */
-    public function toCoordsArray()
+    public function toCoordsArray(): array
     {
-        return array(
+        return [
             floatval($this->getMinx()),
             floatval($this->getMiny()),
             floatval($this->getMaxx()),
             floatval($this->getMaxy())
-        );
+        ];
     }
 
 }

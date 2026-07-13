@@ -2,6 +2,7 @@
 
 namespace Mapbender\RoutingBundle\Component;
 
+use Symfony\Component\HttpFoundation\Response;
 use Mapbender\Component\Transport\ConnectionErrorException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use \Exception;
@@ -12,45 +13,25 @@ use Mapbender\RoutingBundle\Component\RoutingDriver\TriasDriver;
 
 class RoutingHandler {
 
-    protected OsrmDriver $osrmDriver;
-
-    protected GraphhopperDriver $graphhopperDriver;
-
-    protected PgRoutingDriver $pgRoutingDriver;
-
-    protected TriasDriver $triasDriver;
-
-    public function __construct(OsrmDriver $osrmDriver, GraphhopperDriver $graphhopperDriver, PgRoutingDriver $pgRoutingDriver, TriasDriver $triasDriver) {
-        $this->osrmDriver = $osrmDriver;
-        $this->graphhopperDriver = $graphhopperDriver;
-        $this->pgRoutingDriver = $pgRoutingDriver;
-        $this->triasDriver = $triasDriver;
+    public function __construct(protected OsrmDriver $osrmDriver, protected GraphhopperDriver $graphhopperDriver, protected PgRoutingDriver $pgRoutingDriver, protected TriasDriver $triasDriver)
+    {
     }
 
     /**
      * @throws ConnectionErrorException
      */
-    public function calculateRoute($requestParams, $configuration): JsonResponse
+    public function calculateRoute($requestParams, array $configuration): JsonResponse
     {
         $driver = $configuration['routingDriver'];
 
-        switch ($driver) {
-            case 'osrm':
-                $route = $this->osrmDriver->getRoute($requestParams, $configuration);
-                break;
-            case 'graphhopper':
-                $route = $this->graphhopperDriver->getRoute($requestParams, $configuration);
-                break;
-            case 'pgrouting' :
-                $route = $this->pgRoutingDriver->getRoute($requestParams, $configuration);
-                break;
-            case 'trias' :
-                $route = $this->triasDriver->getRoute($requestParams, $configuration);
-                break;
-            default:
-                throw new Exception('No Routing Driver selected.');
-        }
+        $route = match ($driver) {
+            'osrm' => $this->osrmDriver->getRoute($requestParams, $configuration),
+            'graphhopper' => $this->graphhopperDriver->getRoute($requestParams, $configuration),
+            'pgrouting' => $this->pgRoutingDriver->getRoute($requestParams, $configuration),
+            'trias' => $this->triasDriver->getRoute($requestParams, $configuration),
+            default => throw new Exception('No Routing Driver selected.'),
+        };
 
-        return new JsonResponse($route, 200);
+        return new JsonResponse($route, Response::HTTP_OK);
     }
 }

@@ -46,7 +46,7 @@ class ApplicationUtil
 
         $layersets = [];
         $mapConfig = $mapEl->getConfiguration();
-        $layersetIds = !empty($mapConfig['layersets']) ? \array_map('\strval', $mapConfig['layersets']) : array();
+        $layersetIds = !empty($mapConfig['layersets']) ? \array_map('\strval', $mapConfig['layersets']) : [];
         foreach ($application->getLayersets() as $candidate) {
             if (\in_array(\strval($candidate->getId()), $layersetIds, true)) {
                 $layersets[] = $candidate;

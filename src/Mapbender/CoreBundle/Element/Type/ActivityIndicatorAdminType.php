@@ -11,11 +11,8 @@ class ActivityIndicatorAdminType extends AbstractType
 {
     use MapbenderTypeTrait;
 
-    private TranslatorInterface $translator;
-
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(private TranslatorInterface $translator)
     {
-        $this->translator = $translator;
     }
 
     /**
@@ -24,23 +21,23 @@ class ActivityIndicatorAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('tooltip', TextType::class, array(
+            ->add('tooltip', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.activityindicator.admin.tooltip',
-            ))
-            ->add('activityClass', TextType::class, array(
+            ])
+            ->add('activityClass', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.activityindicator.admin.activityclass',
-            ))
+            ])
             ->add('ajaxActivityClass', TextType::class, $this->createInlineHelpText([
                 'required' => false,
                 'help' => 'mb.core.activityindicator.admin.ajaxactivityclass_help',
                 'label' => 'mb.core.activityindicator.admin.ajaxactivityclass',
             ], $this->translator))
-            ->add('tileActivityClass', TextType::class, array(
+            ->add('tileActivityClass', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.activityindicator.admin.tileactivityclass',
-            ))
+            ])
         ;
     }
 

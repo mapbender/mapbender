@@ -17,11 +17,11 @@ class Utils
      * @param Request $request
      * @return array
      */
-    public static function getHeadersFromRequest(Request $request)
+    public static function getHeadersFromRequest(Request $request): array
     {
-        $headers = array();
+        $headers = [];
         foreach ($request->headers->keys() as $key) {
-            $value = $request->headers->get($key, null, true);
+            $value = $request->headers->get($key, null);
             if ($value !== null) {
                 $headers[$key] = $value;
             }
@@ -38,12 +38,12 @@ class Utils
      * @param string[] $namesToRemove
      * @return string[] remaining headers
      */
-    public static function filterHeaders($headers, $namesToRemove)
+    public static function filterHeaders($headers, $namesToRemove): array
     {
         $namesToRemove = array_map('strtolower', $namesToRemove);
-        $filtered = array();
+        $filtered = [];
         foreach ($headers as $name => $value) {
-            if (!\in_array(strtolower($name), $namesToRemove)) {
+            if (!\in_array(strtolower((string) $name), $namesToRemove)) {
                 $filtered[$name] = $value;
             }
         }
@@ -92,7 +92,7 @@ class Utils
      * @return string
      * @since v3.1.6
      */
-    public static function filterDuplicateQueryParams($url, $caseSensitiveNames)
+    public static function filterDuplicateQueryParams($url, $caseSensitiveNames): string
     {
         $fragmentParts = explode('#', $url, 2);
         if (count($fragmentParts) === 2) {
@@ -100,7 +100,7 @@ class Utils
         }
         $queryString = parse_url($url, PHP_URL_QUERY);
         $paramPairs = explode('&', $queryString);
-        $paramPairsOut = array();
+        $paramPairsOut = [];
         foreach ($paramPairs as $pairIn) {
             if (!$pairIn || $pairIn == '?') {
                 // internal chained param separators => strip them
@@ -109,7 +109,7 @@ class Utils
             // NOTE: this will also support (and deduplicate) no-value params, e.g.
             // ?one&two&one
             $name = preg_replace('#[=].*$#', '', $pairIn);
-            $dedupeKey = $caseSensitiveNames ? $name : strtolower($name);
+            $dedupeKey = $caseSensitiveNames ? $name : strtolower((string) $name);
             if (!array_key_exists($dedupeKey, $paramPairsOut)) {
                 $paramPairsOut[$dedupeKey] = $pairIn;
             }
@@ -142,10 +142,10 @@ class Utils
             return static::addBasicAuthCredentials($fragmentParts[0], $user, $password) . '#' . $fragmentParts[1];
         }
         if ($user) {
-            $credentialsEnc = implode(':', array(
+            $credentialsEnc = implode(':', [
                 rawurlencode($user),
                 rawurlencode($password ?: ''),
-            ));
+            ]);
             return preg_replace('#(?<=//)([^@]+@)?#', $credentialsEnc . '@', $url, 1);
         } else {
             return $url;
@@ -164,10 +164,10 @@ class Utils
     public static function extendPostContent($content, $params)
     {
         if ($params) {
-            return implode('&', array_filter(array(
+            return implode('&', array_filter([
                 $content,
                 \http_build_query($params),
-            )));
+            ]));
         } else {
             return $content;
         }

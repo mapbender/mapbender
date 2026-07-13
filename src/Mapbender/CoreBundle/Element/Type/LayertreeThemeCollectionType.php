@@ -21,9 +21,9 @@ class LayertreeThemeCollectionType extends AbstractType implements EventSubscrib
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
-            'entry_type' => 'Mapbender\CoreBundle\Element\Type\LayerThemeType',
-        ));
+        $resolver->setDefaults([
+            'entry_type' => LayerThemeType::class,
+        ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -33,15 +33,15 @@ class LayertreeThemeCollectionType extends AbstractType implements EventSubscrib
 
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             // Run before collection ResizeFormListener preSetData
             /** @see \Symfony\Component\Form\Extension\Core\Type\CollectionType::buildForm */
             /** @see \Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener::getSubscribedEvents */
             FormEvents::PRE_SET_DATA => ['preSetData', 1],
-        );
+        ];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         $form = $event->getForm();
         /** @var Element $element */
@@ -53,30 +53,33 @@ class LayertreeThemeCollectionType extends AbstractType implements EventSubscrib
         }
     }
 
-    protected function mergeData(Element $element, $data)
+    /**
+     * @return mixed[][]
+     */
+    protected function mergeData(Element $element, $data): array
     {
-        $settingsMap = array();
-        foreach ($data ?: array() as $themeSettings) {
+        $settingsMap = [];
+        foreach ($data ?: [] as $themeSettings) {
             if (!empty($themeSettings['id'])) {
                 $settingsMap[$themeSettings['id']] = $themeSettings;
             }
         }
-        $defaults = array(
+        $defaults = [
             'opened' => false,
             'useTheme' => true,
-        );
-        $dataOut = array();
+        ];
+        $dataOut = [];
         foreach (ApplicationUtil::getMapLayersets($element->getApplication()) as $layerset) {
             if (!empty($settingsMap[$layerset->getId()])) {
-                $dataOut[] = \array_replace($settingsMap[$layerset->getId()], array(
+                $dataOut[] = \array_replace($settingsMap[$layerset->getId()], [
                     'id' => $layerset->getId(),     // NOTE: may change type int <=> string
                     'title' => $layerset->getTitle(),
-                ));
+                ]);
             } else {
-                $dataOut[] = \array_replace($defaults, array(
+                $dataOut[] = \array_replace($defaults, [
                     'id' => $layerset->getId(),
                     'title' => $layerset->getTitle(),
-                ));
+                ]);
             }
         }
         return $dataOut;

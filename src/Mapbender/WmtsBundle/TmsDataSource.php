@@ -18,10 +18,10 @@ class TmsDataSource extends DataSource
     const TYPE = "TMS";
 
     public function __construct(
-        private ConfigGeneratorTms    $configService,
-        private SourceInstanceFactory $instanceFactory,
-        private Loader                $loader,
-        private LayerRendererTms      $layerRenderer,
+        private readonly ConfigGeneratorTms    $configService,
+        private readonly SourceInstanceFactory $instanceFactory,
+        private readonly Loader                $loader,
+        private readonly LayerRendererTms      $layerRenderer,
     )
     {
     }

@@ -8,29 +8,20 @@ namespace Mapbender\PrintBundle\Component\Export;
  */
 class BufferedSection
 {
-    protected $offset;
-    protected $innerLength;
-    protected $bufferBefore;
-    protected $bufferAfter;
-
     /**
      * @param float|int $offset
      * @param float|int $innerLength
      * @param float|int $bufferBefore
      * @param float|int $bufferAfter
      */
-    public function __construct($offset, $innerLength, $bufferBefore = 0, $bufferAfter = 0)
+    public function __construct(protected $offset, protected $innerLength, protected $bufferBefore = 0, protected $bufferAfter = 0)
     {
-        $this->offset = $offset;
-        $this->innerLength = $innerLength;
-        $this->bufferBefore = $bufferBefore;
-        $this->bufferAfter = $bufferAfter;
     }
 
     /**
      * @return float|int
      */
-    public function getBufferedOffset()
+    public function getBufferedOffset(): int|float
     {
         return $this->offset - $this->bufferBefore;
     }
@@ -46,7 +37,7 @@ class BufferedSection
     /**
      * @return float|int
      */
-    public function getBufferedLength()
+    public function getBufferedLength(): float|int|array
     {
         return $this->innerLength + $this->bufferBefore + $this->bufferAfter;
     }
@@ -62,7 +53,7 @@ class BufferedSection
     /**
      * @return float|int
      */
-    public function getBufferedEnd()
+    public function getBufferedEnd(): float|int|array
     {
         return $this->offset + $this->innerLength + $this->bufferAfter;
     }
@@ -70,7 +61,7 @@ class BufferedSection
     /**
      * @return float|int
      */
-    public function getUnbufferedEnd()
+    public function getUnbufferedEnd(): int|float
     {
         return $this->getBufferedEnd() - $this->bufferAfter;
     }

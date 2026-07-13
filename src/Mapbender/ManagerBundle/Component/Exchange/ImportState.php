@@ -8,10 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ImportState
 {
-    /** @var EntityPool */
-    protected $entityPool;
-    /** @var ObjectIdentityPool */
-    protected $globalList;
+    protected EntityPool $entityPool;
+    protected ObjectIdentityPool $globalList;
 
     /**
      * @param EntityManagerInterface $em

@@ -30,7 +30,7 @@ class LinkifyTwigExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('linkify', [$this, 'linkify'], ['is_safe' => ['html']]),
+            new TwigFilter('linkify', $this->linkify(...), ['is_safe' => ['html']]),
         ];
     }
 
@@ -65,7 +65,7 @@ class LinkifyTwigExtension extends AbstractExtension
         }
 
         // Replace URLs with anchor tags
-        $result = preg_replace_callback($pattern, function ($matches) use ($attributes) {
+        $result = preg_replace_callback($pattern, function ($matches) use ($attributes): string {
             $url = $matches[1];
             // Remove trailing punctuation that's likely not part of the URL
             $trailingPunctuation = '';

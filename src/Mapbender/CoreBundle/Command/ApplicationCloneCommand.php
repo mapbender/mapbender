@@ -22,9 +22,9 @@ class ApplicationCloneCommand extends AbstractApplicationTransportCommand
     {
         $slug = $input->getArgument('slug');
         /** @var Application|null $application */
-        $application = $this->getApplicationRepository()->findOneBy(array(
+        $application = $this->getApplicationRepository()->findOneBy([
             'slug' => $slug,
-        ));
+        ]);
         if (!$application) {
             $application = $this->yamlRepository->getApplication($slug);
         }

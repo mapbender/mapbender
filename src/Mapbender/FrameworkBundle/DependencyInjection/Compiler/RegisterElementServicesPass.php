@@ -13,11 +13,11 @@ class RegisterElementServicesPass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         $inventoryDefinition = $container->getDefinition('mapbender.element_inventory.service');
-        $registering = array();
+        $registering = [];
         foreach ($container->findTaggedServiceIds('mapbender.element') as $id => $tagInfo) {
             $definition = $container->getDefinition($id);
             $canonical = $definition->getClass();
-            $handledClassNames = array($canonical);
+            $handledClassNames = [$canonical];
             foreach ($tagInfo as $attributes) {
                 if (!empty($attributes['replaces'])) {
                     $handledClassNames = array_merge($handledClassNames, explode(',', $attributes['replaces']));
@@ -28,9 +28,9 @@ class RegisterElementServicesPass implements CompilerPassInterface
                 }
             }
             $handledClassNames = array_unique($handledClassNames);
-            $registering[] = array(new Reference($id), $handledClassNames, $canonical);
+            $registering[] = [new Reference($id), $handledClassNames, $canonical];
         }
         /** @see \Mapbender\CoreBundle\Component\ElementInventoryService::registerServices */
-        $inventoryDefinition->addMethodCall('registerServices', array($registering));
+        $inventoryDefinition->addMethodCall('registerServices', [$registering]);
     }
 }

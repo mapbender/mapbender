@@ -7,7 +7,6 @@ use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\Style;
-use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
 
@@ -75,8 +74,8 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                         'priority' => $layer->getPriority(),
                         'title' => $layer->getTitle(),
                         'collectionId' => $layer->getSourceItem()->getCollectionId(),
-                        'minScale' => ($layer->getMinScale() !== null ? $layer->getMinScale() : $sourceInstance->getMinScale()),
-                        'maxScale' => ($layer->getMaxScale() !== null ? $layer->getMaxScale() : $sourceInstance->getMaxScale()),
+                        'minScale' => ($layer->getMinScale() ?? $sourceInstance->getMinScale()),
+                        'maxScale' => ($layer->getMaxScale() ?? $sourceInstance->getMaxScale()),
                         'featureLimit' => (!empty($layer->getFeatureLimit()) ? $layer->getFeatureLimit() : $sourceInstance->getFeatureLimit()),
                         'metadataUrl' => $this->getMetaDataUrl($sourceInstance, $layer),
                         'bbox' => $layer->getSourceItem()->getBbox(),

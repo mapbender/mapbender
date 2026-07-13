@@ -42,7 +42,7 @@ class TypeDirectoryService
      */
     public function getTypeLabels(bool $filterAllowAddFromManager = true): array
     {
-        $labelMap = array();
+        $labelMap = [];
         foreach ($this->sources as $source) {
             if ($filterAllowAddFromManager && !$source->allowAddSourceFromManager()) continue;
             $labelMap[strtolower($source->getName())] = $source->getLabel(false);
@@ -79,7 +79,7 @@ class TypeDirectoryService
         return $this->getSource($type)->getLayerRenderer();
     }
 
-    public function getSourceLoaderByType($type): SourceLoader
+    public function getSourceLoaderByType(string $type): SourceLoader
     {
         return $this->getSource($type)->getLoader();
     }
@@ -92,7 +92,7 @@ class TypeDirectoryService
      */
     public function getScriptAssets(Application $application, string $type): array
     {
-        $refs = array();
+        $refs = [];
         foreach ($this->sources as $source) {
             $typeRefs = $source->getConfigGenerator()->getAssets($application, $type);
             if ($typeRefs) {
@@ -102,7 +102,7 @@ class TypeDirectoryService
         return $refs;
     }
 
-    public function getSources()
+    public function getSources(): array
     {
         return $this->sources;
     }

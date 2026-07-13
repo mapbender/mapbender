@@ -25,8 +25,7 @@ class OdgParser
     /** Conversion factor for meters to centimeters */
     const CONVERSION_FACTOR = 10;
 
-    /** @var string */
-    protected $sourcePath;
+    protected string $sourcePath;
 
     public function __construct(
         string $sourcePath,
@@ -42,7 +41,7 @@ class OdgParser
      * @param string $extension
      * @return string
      */
-    public function getTemplateFilePath($templateName, $extension)
+    public function getTemplateFilePath($templateName, $extension): string
     {
         $extension = ltrim($extension, '.');
         return "{$this->sourcePath}/{$templateName}.{$extension}";
@@ -55,7 +54,7 @@ class OdgParser
      * @param $file
      * @return string
      */
-    private function readOdgFile($template, $file)
+    private function readOdgFile($template, string $file): string
     {
         $odgPath = $this->getTemplateFilePath($template, 'odg');
         $xml = '';
@@ -87,7 +86,7 @@ class OdgParser
      * @param $template
      * @return string JSON object {width: n, height: n}
      */
-    public function getMapSize($template)
+    public function getMapSize($template): string|false
     {
         $doc = new \DOMDocument();
         $xmlContent = $this->readOdgFile($template, 'content.xml');
@@ -96,10 +95,10 @@ class OdgParser
         /** @var \DOMElement $draMapNode */
         $draMapNode = (new \DOMXPath($doc))->query("//draw:custom-shape[@draw:name='map']")->item(0);
 
-        return json_encode(array(
+        return json_encode([
             'width' => static::parseNumericNodeAttribute($draMapNode, 'svg:width') / static::CONVERSION_FACTOR,
             'height' => static::parseNumericNodeAttribute($draMapNode, 'svg:height') / static::CONVERSION_FACTOR
-        ));
+        ]);
     }
 
     /**
@@ -147,7 +146,7 @@ class OdgParser
         }
     }
 
-    protected function parseTextFields(Template $templateObject, \DOMXPath $xPath)
+    protected function parseTextFields(Template $templateObject, \DOMXPath $xPath): Template
     {
         foreach ($xPath->query("draw:page/draw:frame", $xPath->document->getElementsByTagName('drawing')->item(0)) as $node) {
             $name = $node->getAttribute('draw:name');
@@ -206,24 +205,24 @@ class OdgParser
      * @param \DOMElement $customShape
      * @return array
      */
-    public static function parseShape($customShape)
+    public static function parseShape($customShape): array
     {
-        return array(
+        return [
             'width' => static::parseNumericNodeAttribute($customShape, 'svg:width'),
             'height' => static::parseNumericNodeAttribute($customShape, 'svg:height'),
             'x' => static::parseNumericNodeAttribute($customShape, 'svg:x'),
             'y' => static::parseNumericNodeAttribute($customShape, 'svg:y'),
-        );
+        ];
     }
 
     /**
      * @param \DOMElement $customShape
      * @return TemplateRegion
      */
-    public function parseShapeIntoRegion($customShape)
+    public function parseShapeIntoRegion($customShape): TemplateRegion
     {
         $shd = static::parseShape($customShape);
-        return new TemplateRegion($shd['width'], $shd['height'], array($shd['x'], $shd['y']));
+        return new TemplateRegion($shd['width'], $shd['height'], [$shd['x'], $shd['y']]);
 
     }
 
@@ -231,22 +230,22 @@ class OdgParser
      * @param \DOMElement $node
      * @return array
      */
-    public function parsePageGeometry($node)
+    public function parsePageGeometry($node): array
     {
-        return array(
+        return [
             'orientation' => static::parseNodeAttribute($node, 'style:print-orientation', static::DEFAULT_ORIENTATION),
-            'pageSize' => array(
+            'pageSize' => [
                 'height' => static::parseNumericNodeAttribute($node, 'fo:page-height'),
                 'width' => static::parseNumericNodeAttribute($node, 'fo:page-width'),
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @param \DOMElement $node
      * @return Template
      */
-    public function parsePageGeometryIntoObject($node)
+    public function parsePageGeometryIntoObject($node): Template
     {
         $data = $this->parsePageGeometry($node);
         return new Template($data['pageSize']['width'], $data['pageSize']['height'], $data['orientation']);

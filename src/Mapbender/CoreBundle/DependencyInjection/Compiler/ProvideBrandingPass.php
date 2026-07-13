@@ -35,15 +35,15 @@ class ProvideBrandingPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        $name = $this->selectProjectName($container);
-        $version = $this->selectProjectVersion($container);
-        $logo = $this->selectLogo($container);
-        $splashscreenLogo = $this->selectSplashscreenImage($container, $logo);
+        $name = static::selectProjectName($container);
+        $version = static::selectProjectVersion($container);
+        $logo = static::selectLogo($container);
+        $splashscreenLogo = static::selectSplashscreenImage($container, $logo);
         $container->setParameter('branding.project_name', $name);
         $container->setParameter('branding.project_version', $version);
         $container->setParameter('branding.logo', $logo);
         $container->setParameter('branding.splashscreen_image', $splashscreenLogo);
-        $this->forwardSelectionToFom($container, $name, $version, $logo, $splashscreenLogo);
+        static::forwardSelectionToFom($container, $name, $version, $logo, $splashscreenLogo);
     }
 
     public static function selectProjectName(ContainerInterface $container)
@@ -58,7 +58,7 @@ class ProvideBrandingPass implements CompilerPassInterface
         $mbName = $container->getParameter('mapbender.branding.name');
         $fomOverrideName = ArrayUtil::getDefault(static::getFomParameter($container), 'server_name', null);
         // disregard any historically used 'Mapbender' or 'Mapbender3' brandings from fom : server_name
-        if (empty($fomOverrideName) || preg_match('#^\s*mapbender\d?\s*$#', $fomOverrideName)) {
+        if (empty($fomOverrideName) || preg_match('#^\s*mapbender\d?\s*$#', (string) $fomOverrideName)) {
             return $mbName;
         } else {
             // fom : server_name is sufficiently not "Mapbender"-ish, thus sufficiently likely to be a deliberately
@@ -79,7 +79,7 @@ class ProvideBrandingPass implements CompilerPassInterface
         $mbVersion = $container->getParameter('mapbender.version');
         $fomOverrideVersion = ArrayUtil::getDefault(static::getFomParameter($container), 'server_version', null);
         // disregard any historically used Mapbender versions (3.0.[<=7].[<=9] or "3.0pre2") from fom : server_version
-        if (empty($fomOverrideVersion) || preg_match('#^\s*3\.0((\.[0-7]\.\d)|(pre2))\s*$#', $fomOverrideVersion)) {
+        if (empty($fomOverrideVersion) || preg_match('#^\s*3\.0((\.[0-7]\.\d)|(pre2))\s*$#', (string) $fomOverrideVersion)) {
             return $mbVersion;
         } else {
             return $fomOverrideVersion;
@@ -97,7 +97,7 @@ class ProvideBrandingPass implements CompilerPassInterface
         }
         $mbLogo = $container->getParameter('mapbender.branding.logo');
         $fomOverrideLogo = ArrayUtil::getDefault(static::getFomParameter($container), 'server_logo', null);
-        $historicalLogos = array(
+        $historicalLogos = [
             // these are all logo names ever referenced in parameters.yaml.dist over the entire github
             // history of mapbender-starter
             // hint: git log -p parameters.yaml.dist | grep -P '^[+-]\s*server_logo:' | awk '{print $3}' | sort -u
@@ -105,7 +105,7 @@ class ProvideBrandingPass implements CompilerPassInterface
             'bundles/mapbendercore/image/logo_mb.png',
             'bundles/mapbendercore/image/mapbender-logo.png',
             'bundles/public/mapbendermanager/logo.png',
-        );
+        ];
 
         // disregard any historically used logos from fom : server_logo
         if (empty($fomOverrideLogo) || in_array($fomOverrideLogo, $historicalLogos)) {
@@ -115,7 +115,7 @@ class ProvideBrandingPass implements CompilerPassInterface
         }
     }
 
-    public static function selectSplashscreenImage(ContainerBuilder $container, string $fallback)
+    public static function selectSplashscreenImage(ContainerBuilder $container, string $fallback): array
     {
         $image = null;
         if ($container->hasParameter('branding.splashscreen_image')) {
@@ -130,14 +130,14 @@ class ProvideBrandingPass implements CompilerPassInterface
         return $image;
     }
 
-    public static function forwardSelectionToFom(ContainerBuilder $container, $name, $version, $logo, $splashscreenLogo)
+    public static function forwardSelectionToFom(ContainerBuilder $container, $name, $version, $logo, $splashscreenLogo): void
     {
-        $fomParamReplacements = array(
+        $fomParamReplacements = [
             'server_name' => $name,
             'server_version' => $version,
             'server_logo' => $logo,
             'splashscreen_image' => $splashscreenLogo,
-        );
+        ];
 
         $fomParam = static::getFomParameter($container);
         $mergedFomParam = array_replace($fomParam, $fomParamReplacements);
@@ -152,7 +152,7 @@ class ProvideBrandingPass implements CompilerPassInterface
         foreach ($twigMethodCalls as &$methodCall) {
             /** @see \Twig_Environment::addGlobal() */
             if ($methodCall[0] == 'addGlobal' && !empty($methodCall[1][0]) && $methodCall[1][0] == 'fom') {
-                $methodCall[1][1] = array_replace($methodCall[1][1] ?: array(), $mergedFomParam);
+                $methodCall[1][1] = array_replace($methodCall[1][1] ?: [], $mergedFomParam);
                 $twigDefinition->setMethodCalls($twigMethodCalls);
                 $addGlobalMethodCallFound = true;
                 break;
@@ -160,14 +160,14 @@ class ProvideBrandingPass implements CompilerPassInterface
         }
         if (!$addGlobalMethodCallFound) {
             // not added as twig global, but (still) required in many templates => add it
-            $twigDefinition->addMethodCall('addGlobal', array(
+            $twigDefinition->addMethodCall('addGlobal', [
                 'fom',
                 $mergedFomParam,
-            ));
+            ]);
         }
     }
 
-    public static function getFomParameter(ContainerInterface $container, $default = array())
+    public static function getFomParameter(ContainerInterface $container, $default = [])
     {
         return $container->hasParameter('fom') ? ($container->getParameter('fom') ?: $default) : $default;
     }

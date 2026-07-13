@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\ActivityIndicatorAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Entity\Element;
@@ -17,7 +18,7 @@ class ActivityIndicator extends AbstractElementService
     /**
      * @inheritdoc
      */
-    static function getClassTitle()
+    static function getClassTitle(): string
     {
         return "mb.core.activityindicator.class.title";
     }
@@ -25,7 +26,7 @@ class ActivityIndicator extends AbstractElementService
     /**
      * @inheritdoc
      */
-    static function getClassDescription()
+    static function getClassDescription(): string
     {
         return "mb.core.activityindicator.class.description";
     }
@@ -33,20 +34,20 @@ class ActivityIndicator extends AbstractElementService
     /**
      * @inheritdoc
      */
-    static function getDefaultConfiguration()
+    static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'tooltip' => static::getClassTitle(),
             'activityClass' => 'mb-activity',
             'ajaxActivityClass' => 'mb-activity-ajax',
             'tileActivityClass' => 'mb-activity-tile',
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbActivityIndicator';
     }
@@ -54,40 +55,40 @@ class ActivityIndicator extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\ActivityIndicatorAdminType';
+        return ActivityIndicatorAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbActivityIndicator.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/activityindicator.scss',
-            ),
-        );
+            ],
+        ];
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): StaticView
     {
-        $view = new StaticView(HtmlUtil::renderTag('i', '', array(
+        $view = new StaticView(HtmlUtil::renderTag('i', '', [
             'class' => 'fa fas fa-spinner fa-spin activityindicator-spinner',
-        )));
+        ]));
         $view->attributes['class'] = 'mb-element-activityindicator';
-        $view->attributes['title'] = $element->getConfiguration()['tooltip'] ?: $element->getTitle() ?: $this->getClassTitle();
+        $view->attributes['title'] = $element->getConfiguration()['tooltip'] ?: $element->getTitle() ?: static::getClassTitle();
         return $view;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderManager/Element/activityindicator.html.twig';
     }

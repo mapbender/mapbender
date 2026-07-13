@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use OwsProxy3\CoreBundle\Component\Utils;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
@@ -22,46 +23,36 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SimpleSearch extends AbstractElementService
     implements ConfigMigrationInterface, ElementHttpHandlerInterface, FloatableElement
 {
-    /** @var HttpTransportInterface */
-    protected $httpTransport;
-    protected TranslatorInterface $translator;
-    protected $isDebug;
-
-    public function __construct(HttpTransportInterface $httpTransport,
-                                TranslatorInterface    $translator,
-                                                       $isDebug = false)
+    public function __construct(protected HttpTransportInterface $httpTransport, protected TranslatorInterface    $translator, protected $isDebug = false)
     {
-        $this->httpTransport = $httpTransport;
-        $this->translator = $translator;
-        $this->isDebug = $isDebug;
     }
 
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return 'mb.core.simplesearch.class.title';
     }
 
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return 'mb.core.simplesearch.class.description';
     }
 
-    public static function getType()
+    public static function getType(): string
     {
         return SimpleSearchAdminType::class;
     }
 
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/simple_search.html.twig';
     }
 
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbSimpleSearch';
     }
 
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
         return [
             'configurations' => [
@@ -71,9 +62,9 @@ class SimpleSearch extends AbstractElementService
         ];
     }
 
-    public static function getDefaultChildConfiguration()
+    public static function getDefaultChildConfiguration(): array
     {
-        return array(
+        return [
             'placeholder' => null,
             'query_url' => 'https://',
             'query_key' => 'q',
@@ -93,19 +84,19 @@ class SimpleSearch extends AbstractElementService
             'result_maxscale' => null,
             'result_icon_url' => '/bundles/mapbendercore/image/pin_red.png',
             'result_icon_offset' => '-6,-38',
-        );
+        ];
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/simple_search.html.twig');
         $view->attributes['class'] = 'mb-element-simplesearch';
         $configurations = $element->getConfiguration()['configurations'];
-        if (\preg_match('#toolbar|footer#i', $element->getRegion())) {
+        if (\preg_match('#toolbar|footer#i', (string) $element->getRegion())) {
             $view->attributes['title'] = $element->getTitle();
         }
         if (count($configurations) > 1) {
-            $view->variables['configuration_titles'] = array_map(fn($c) => $this->translator->trans($c['title']), $configurations);
+            $view->variables['configuration_titles'] = array_map(fn(array $c): string => $this->translator->trans($c['title']), $configurations);
         }
         return $view;
     }
@@ -117,7 +108,7 @@ class SimpleSearch extends AbstractElementService
         unset($config['url']);
         for ($i = 0; $i < count($config['configurations']); $i++) {
             if (empty($config['configurations'][$i]['sourceSrs'])) {
-                $config['configurations'][$i]['sourceSrs'] = $this->getDefaultConfiguration()['configurations'][$i]['sourceSrs'];
+                $config['configurations'][$i]['sourceSrs'] = static::getDefaultConfiguration()['configurations'][$i]['sourceSrs'];
             }
         }
         return $config;
@@ -126,22 +117,22 @@ class SimpleSearch extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbSimpleSearch.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 "@MapbenderCoreBundle/Resources/public/sass/element/simple_search.scss"
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.core.simplesearch.error.*',
-            ),
-        );
+            ],
+        ];
     }
 
-    public function getHttpHandler(Element $element)
+    public function getHttpHandler(Element $element): static
     {
         return $this;
     }
@@ -156,16 +147,16 @@ class SimpleSearch extends AbstractElementService
         // Replace Whitespace if desired
         if (array_key_exists('query_ws_replace', $configuration)) {
             $pattern = $configuration['query_ws_replace'];
-            if ('' !== trim($pattern)) {
-                $q = preg_replace('/\s+/', $pattern, $q);
+            if ('' !== trim((string) $pattern)) {
+                $q = preg_replace('/\s+/', (string) $pattern, (string) $q);
             }
         }
 
         // Build query URL
-        $params = array(
+        $params = [
             $configuration['query_key'] => sprintf($qf, $q),
-        );
-        $url = \OwsProxy3\CoreBundle\Component\Utils::appendQueryParams($configuration['query_url'], $params);
+        ];
+        $url = Utils::appendQueryParams($configuration['query_url'], $params);
         $response = $this->httpTransport->getUrl($url);
 
         // prepare a valid json null encoding before testing for errors (encode clears json_last_error_msg!)
@@ -192,7 +183,7 @@ class SimpleSearch extends AbstractElementService
         return $response;
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         $config = $entity->getConfiguration();
         if (!empty($config['result']) && \is_array($config['result'])) {
@@ -247,7 +238,7 @@ class SimpleSearch extends AbstractElementService
         $entity->setConfiguration($config);
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconSearch';
     }

@@ -49,7 +49,7 @@ class WmsSource extends HttpParsedSource
      * @var Contact A contact.
      */
     #[ORM\OneToOne(targetEntity: Contact::class, cascade: ['persist', 'remove'])]
-    protected $contact;
+    protected Contact $contact;
 
     /**
      * @var string A fees.
@@ -85,7 +85,7 @@ class WmsSource extends HttpParsedSource
      * @var array A list of supported exception formats
      */
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $exceptionFormats = array();
+    protected array $exceptionFormats;
 
     /**
      * @var boolean A SLD support
@@ -195,7 +195,7 @@ class WmsSource extends HttpParsedSource
         $this->instances = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
-        $this->exceptionFormats = array();
+        $this->exceptionFormats = [];
         $this->contact = new Contact();
     }
 
@@ -205,7 +205,7 @@ class WmsSource extends HttpParsedSource
      * @param string $name
      * @return $this
      */
-    public function setName($name)
+    public function setName($name): static
     {
         $this->name = $name;
         return $this;
@@ -227,7 +227,7 @@ class WmsSource extends HttpParsedSource
      * @param string $version
      * @return $this
      */
-    public function setVersion($version)
+    public function setVersion($version): static
     {
         $this->version = $version;
         return $this;
@@ -249,7 +249,7 @@ class WmsSource extends HttpParsedSource
      * @param string $onlineResource
      * @return $this
      */
-    public function setOnlineResource($onlineResource)
+    public function setOnlineResource($onlineResource): static
     {
         $this->onlineResource = $onlineResource;
         return $this;
@@ -269,7 +269,7 @@ class WmsSource extends HttpParsedSource
      * @param Contact $contact
      * @return $this
      */
-    public function setContact($contact)
+    public function setContact($contact): static
     {
         $this->contact = $contact;
         return $this;
@@ -291,7 +291,7 @@ class WmsSource extends HttpParsedSource
      * @param string $fees
      * @return $this
      */
-    public function setFees($fees)
+    public function setFees($fees): static
     {
         $this->fees = $fees;
         return $this;
@@ -313,7 +313,7 @@ class WmsSource extends HttpParsedSource
      * @param string $accessConstraints
      * @return $this
      */
-    public function setAccessConstraints($accessConstraints)
+    public function setAccessConstraints($accessConstraints): static
     {
         $this->accessConstraints = $accessConstraints;
         return $this;
@@ -335,7 +335,7 @@ class WmsSource extends HttpParsedSource
      * @param integer $layerLimit
      * @return $this
      */
-    public function setLayerLimit($layerLimit)
+    public function setLayerLimit($layerLimit): static
     {
         $this->layerLimit = $layerLimit;
         return $this;
@@ -357,7 +357,7 @@ class WmsSource extends HttpParsedSource
      * @param integer $maxWidth
      * @return $this
      */
-    public function setMaxWidth($maxWidth)
+    public function setMaxWidth($maxWidth): static
     {
         $this->maxWidth = $maxWidth;
         return $this;
@@ -379,7 +379,7 @@ class WmsSource extends HttpParsedSource
      * @param integer $maxHeight
      * @return $this
      */
-    public function setMaxHeight($maxHeight)
+    public function setMaxHeight($maxHeight): static
     {
         $this->maxHeight = $maxHeight;
         return $this;
@@ -401,7 +401,7 @@ class WmsSource extends HttpParsedSource
      * @param array $exceptionFormats
      * @return $this
      */
-    public function setExceptionFormats($exceptionFormats)
+    public function setExceptionFormats($exceptionFormats): static
     {
         $this->exceptionFormats = $exceptionFormats;
         return $this;
@@ -413,7 +413,7 @@ class WmsSource extends HttpParsedSource
      * @param array $exceptionFormat
      * @return $this
      */
-    public function addExceptionFormat($exceptionFormat)
+    public function addExceptionFormat($exceptionFormat): static
     {
         $this->exceptionFormats[] = $exceptionFormat;
         return $this;
@@ -435,7 +435,7 @@ class WmsSource extends HttpParsedSource
      * @param boolean $supportSld
      * @return $this
      */
-    public function setSupportSld($supportSld)
+    public function setSupportSld($supportSld): static
     {
         $this->supportSld = (bool) $supportSld;
         return $this;
@@ -457,7 +457,7 @@ class WmsSource extends HttpParsedSource
      * @param boolean $userLayer
      * @return $this
      */
-    public function setUserLayer($userLayer)
+    public function setUserLayer($userLayer): static
     {
         $this->userLayer = (bool) $userLayer;
         return $this;
@@ -479,7 +479,7 @@ class WmsSource extends HttpParsedSource
      * @param boolean $userStyle
      * @return $this
      */
-    public function setUserStyle($userStyle)
+    public function setUserStyle($userStyle): static
     {
         $this->userStyle = (bool) $userStyle;
         return $this;
@@ -501,7 +501,7 @@ class WmsSource extends HttpParsedSource
      * @param boolean $remoteWfs
      * @return $this
      */
-    public function setRemoteWfs($remoteWfs = null)
+    public function setRemoteWfs($remoteWfs = null): static
     {
         $this->remoteWfs = (bool) $remoteWfs;
         return $this;
@@ -523,7 +523,7 @@ class WmsSource extends HttpParsedSource
      * @param boolean $inlineFeature
      * @return $this
      */
-    public function setInlineFeature($inlineFeature = null)
+    public function setInlineFeature($inlineFeature = null): static
     {
         $this->inlineFeature = (bool) $inlineFeature;
         return $this;
@@ -545,7 +545,7 @@ class WmsSource extends HttpParsedSource
      * @param boolean $remoteWcs
      * @return $this
      */
-    public function setRemoteWcs($remoteWcs)
+    public function setRemoteWcs($remoteWcs): static
     {
         $this->remoteWcs = (bool) $remoteWcs;
         return $this;
@@ -567,7 +567,7 @@ class WmsSource extends HttpParsedSource
      * @param RequestInformation|null $getCapabilities
      * @return $this
      */
-    public function setGetCapabilities(?RequestInformation $getCapabilities = NULL)
+    public function setGetCapabilities(?RequestInformation $getCapabilities = NULL): static
     {
         $this->getCapabilities = $getCapabilities;
         return $this;
@@ -589,7 +589,7 @@ class WmsSource extends HttpParsedSource
      * @param RequestInformation|null $getMap
      * @return $this
      */
-    public function setGetMap(?RequestInformation $getMap = NULL)
+    public function setGetMap(?RequestInformation $getMap = NULL): static
     {
         $this->getMap = $getMap;
         return $this;
@@ -611,7 +611,7 @@ class WmsSource extends HttpParsedSource
      * @param RequestInformation|null $getFeatureInfo
      * @return $this
      */
-    public function setGetFeatureInfo(?RequestInformation $getFeatureInfo = NULL)
+    public function setGetFeatureInfo(?RequestInformation $getFeatureInfo = NULL): static
     {
         $this->getFeatureInfo = $getFeatureInfo;
         return $this;
@@ -633,7 +633,7 @@ class WmsSource extends HttpParsedSource
      * @param RequestInformation|null $describeLayer
      * @return $this
      */
-    public function setDescribeLayer(?RequestInformation $describeLayer = NULL)
+    public function setDescribeLayer(?RequestInformation $describeLayer = NULL): static
     {
         $this->describeLayer = $describeLayer;
         return $this;
@@ -655,7 +655,7 @@ class WmsSource extends HttpParsedSource
      * @param RequestInformation|null $getLegendGraphic
      * @return $this
      */
-    public function setGetLegendGraphic(?RequestInformation $getLegendGraphic = NULL)
+    public function setGetLegendGraphic(?RequestInformation $getLegendGraphic = NULL): static
     {
         $this->getLegendGraphic = $getLegendGraphic;
         return $this;
@@ -677,7 +677,7 @@ class WmsSource extends HttpParsedSource
      * @param RequestInformation|null $getStyles
      * @return $this
      */
-    public function setGetStyles(?RequestInformation $getStyles = NULL)
+    public function setGetStyles(?RequestInformation $getStyles = NULL): static
     {
         $this->getStyles = $getStyles;
         return $this;
@@ -699,7 +699,7 @@ class WmsSource extends HttpParsedSource
      * @param RequestInformation|null $putStyles
      * @return $this
      */
-    public function setPutStyles(?RequestInformation $putStyles = NULL)
+    public function setPutStyles(?RequestInformation $putStyles = NULL): static
     {
         $this->putStyles = $putStyles;
         return $this;
@@ -721,7 +721,7 @@ class WmsSource extends HttpParsedSource
      * @param array $layers
      * @return $this
      */
-    public function setLayers($layers)
+    public function setLayers($layers): static
     {
         $this->layers = $layers;
         return $this;
@@ -743,7 +743,7 @@ class WmsSource extends HttpParsedSource
      * @param WmsLayerSource $layer
      * @return $this
      */
-    public function addLayer(WmsLayerSource $layer)
+    public function addLayer(WmsLayerSource $layer): static
     {
         $this->layers->add($layer);
         return $this;
@@ -770,7 +770,7 @@ class WmsSource extends HttpParsedSource
      * @param Collection $keywords
      * @return Source
      */
-    public function setKeywords(Collection $keywords)
+    public function setKeywords(Collection $keywords): static
     {
         $this->keywords = $keywords;
         return $this;
@@ -790,7 +790,7 @@ class WmsSource extends HttpParsedSource
      * @param Keyword|WmsSourceKeyword $keyword
      * @return Source
      */
-    public function addKeyword(Keyword $keyword)
+    public function addKeyword(Keyword $keyword): static
     {
         $this->keywords->add($keyword);
         return $this;
@@ -802,7 +802,7 @@ class WmsSource extends HttpParsedSource
      * @param WmsInstance $instance
      * @return $this
      */
-    public function addInstance(WmsInstance $instance)
+    public function addInstance(WmsInstance $instance): static
     {
         $this->instances->add($instance);
         return $this;
@@ -821,7 +821,7 @@ class WmsSource extends HttpParsedSource
      *
      * @param WmsLayerSource $layers
      */
-    public function removeLayer(WmsLayerSource $layers)
+    public function removeLayer(WmsLayerSource $layers): void
     {
         $this->layers->removeElement($layers);
     }
@@ -829,10 +829,10 @@ class WmsSource extends HttpParsedSource
     /**
      * @return Dimension[]
      */
-    public function getDimensions()
+    public function getDimensions(): array
     {
-        $dimensions = array();
-        $uniqueNames = array();
+        $dimensions = [];
+        $uniqueNames = [];
         foreach ($this->getLayers() as $layer) {
             foreach ($layer->getDimension() as $dimension) {
                 if (!in_array($dimension->getName(), $uniqueNames)) {
@@ -847,9 +847,9 @@ class WmsSource extends HttpParsedSource
     /**
      * @return DimensionInst[]
      */
-    public function dimensionInstancesFactory()
+    public function dimensionInstancesFactory(): array
     {
-        $dimensions = array();
+        $dimensions = [];
         foreach ($this->getDimensions() as $dimension) {
             $dimensions[] = DimensionInst::fromDimension($dimension);
         }
@@ -876,14 +876,14 @@ class WmsSource extends HttpParsedSource
     public function getInternalUrl(Request $request): ?string
     {
         $requestType = RequestUtil::getGetParamCaseInsensitive($request, 'request', null);
-        return match (strtolower($requestType)) {
+        return match (strtolower((string) $requestType)) {
             'getmap' => $this->getGetMap()->getHttpGet(),
             'getfeatureinfo' => $this->getGetFeatureInfo()->getHttpGet(),
             default => null,
         };
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): static
     {
         $this->setOriginUrl($transformer->process($this->getOriginUrl()));
 

@@ -16,12 +16,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class InitDbCommand extends Command
 {
-    /** @var EventDispatcherInterface */
-    protected $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(protected EventDispatcherInterface $eventDispatcher)
     {
-        $this->eventDispatcher = $eventDispatcher;
         parent::__construct('mapbender:database:init');
     }
 

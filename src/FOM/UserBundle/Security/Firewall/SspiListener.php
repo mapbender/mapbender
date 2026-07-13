@@ -10,9 +10,6 @@ use FOM\UserBundle\Security\Authentication\Token\SspiUserToken;
 
 class SspiListener
 {
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-
     /** @var AuthenticationManagerInterface */
     protected $manager;
 
@@ -21,12 +18,11 @@ class SspiListener
      * @param TokenStorageInterface $tokenStorage
      * @param AuthenticationManagerInterface $manager
      */
-    public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $manager) {
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(protected TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $manager) {
         $this->manager = $manager;
     }
 
-    public function __invoke(RequestEvent $event)
+    public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -48,7 +44,7 @@ class SspiListener
             return;
         }
 
-        $cred = explode('\\', $remote_user);
+        $cred = explode('\\', (string) $remote_user);
         if (count($cred) == 1) {
             array_unshift($cred, "unknown");
         }
@@ -60,7 +56,7 @@ class SspiListener
             $token = $this->manager->authenticate($token);
             $this->tokenStorage->setToken($token);
             return;
-        } catch(AuthenticationException $failed) {
+        } catch(AuthenticationException) {
             $this->tokenStorage->setToken(null);
             return;
         }

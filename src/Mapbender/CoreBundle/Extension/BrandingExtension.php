@@ -28,10 +28,10 @@ class BrandingExtension extends AbstractExtension
 
     public function getFunctions(): array
     {
-        return array(
-            'login_backdrop_asset' => new TwigFunction('login_backdrop_asset', array($this, 'login_backdrop_asset')),
-            'login_backdrop_asset_hq' => new TwigFunction('login_backdrop_asset_hq', array($this, 'login_backdrop_asset_hq')),
-        );
+        return [
+            'login_backdrop_asset' => new TwigFunction('login_backdrop_asset', $this->login_backdrop_asset(...)),
+            'login_backdrop_asset_hq' => new TwigFunction('login_backdrop_asset_hq', $this->login_backdrop_asset_hq(...)),
+        ];
     }
 
     public function login_backdrop_asset()

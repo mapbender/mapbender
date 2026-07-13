@@ -6,6 +6,8 @@
 
 namespace FOM\UserBundle\DependencyInjection;
 
+use FOM\UserBundle\Entity\BasicProfile;
+use FOM\UserBundle\Form\Type\BasicProfileType;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -53,22 +55,22 @@ class Configuration implements ConfigurationInterface {
                     ->defaultNull()
                 ->end()
                 ->scalarNode('profile_entity')
-                    ->defaultValue('FOM\UserBundle\Entity\BasicProfile')
+                    ->defaultValue(BasicProfile::class)
                 ->end()
                 ->scalarNode('profile_formtype')
-                    ->defaultValue('FOM\UserBundle\Form\Type\BasicProfileType')
+                    ->defaultValue(BasicProfileType::class)
                 ->end()
                 ->scalarNode('profile_template')
                     ->defaultValue('@FOMUser/User/basic_profile.html.twig')
                 ->end()
                 ->arrayNode('self_registration_groups')
                     ->prototype('scalar')->end()
-                    ->treatNullLike(array())
-                    ->defaultValue(array())
+                    ->treatNullLike([])
+                    ->defaultValue([])
                 ->end()
                 ->arrayNode('user_own_permissions')
                     ->prototype('scalar')->end()
-                    ->defaultValue(array('VIEW', 'EDIT'))
+                    ->defaultValue(['VIEW', 'EDIT'])
                 ->end()
             ->end();
 

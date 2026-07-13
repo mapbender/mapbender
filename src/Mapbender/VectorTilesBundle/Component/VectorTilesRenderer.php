@@ -10,7 +10,6 @@ use Mapbender\PrintBundle\Component\Export\ExportCanvas;
 use Mapbender\PrintBundle\Component\Export\Resolution;
 use Mapbender\PrintBundle\Component\LayerRenderer;
 use Mapbender\VectorTilesBundle\Entity\VectorTileInstance;
-use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 

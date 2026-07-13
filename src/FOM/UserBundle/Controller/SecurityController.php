@@ -4,6 +4,7 @@
 namespace FOM\UserBundle\Controller;
 
 
+use Twig\Environment;
 use Doctrine\Persistence\ManagerRegistry;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Entity\User;
@@ -19,7 +20,7 @@ class SecurityController
 {
     public function __construct(protected ManagerRegistry               $managerRegistry,
                                 protected AuthorizationCheckerInterface $authorizationChecker,
-                                protected \Twig\Environment             $twig,
+                                protected Environment             $twig,
                                 protected string                        $userEntityClass,
                                 protected ResourceDomainInstallation    $installationPermissions,
     )
@@ -29,21 +30,21 @@ class SecurityController
     #[Route(path: '/manager/security', methods: ['GET'])]
     public function indexAction(Request $request): Response
     {
-        $grants = array(
+        $grants = [
             'users' => $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_USERS),
             'groups' => $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_VIEW_GROUPS),
             'global_permissions' => $this->authorizationChecker->isGranted(ResourceDomainInstallation::ACTION_MANAGE_PERMISSION),
-        );
+        ];
 
         if (!array_filter($grants)) {
             throw new AccessDeniedException();
         }
-        $vars = array(
+        $vars = [
             'grants' => $grants,
             'permission_categories' => $this->installationPermissions->getCategoryList(),
             'users' => $grants['users'] ? $this->managerRegistry->getRepository(User::class)->findAll() : [],
             'groups' => $grants['groups'] ? $this->managerRegistry->getRepository(Group::class)->findAll() : [],
-        );
+        ];
 
         return new Response($this->twig->render('@FOMUser/Security/index.html.twig', $vars));
     }

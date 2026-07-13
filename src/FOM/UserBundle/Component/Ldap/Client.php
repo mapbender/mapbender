@@ -3,6 +3,8 @@
 
 namespace FOM\UserBundle\Component\Ldap;
 
+use LDAP\Connection;
+
 /**
  * Simple ldap client
  * Service registered as fom.ldap_client
@@ -12,20 +14,12 @@ namespace FOM\UserBundle\Component\Ldap;
  */
 class Client
 {
-    /** @var string */
-    protected $host;
     /** @var int */
     protected $port;
-    /** @var int */
-    protected $version;
-    /** @var string */
-    protected $bindDn;
-    /** @var string|null */
-    protected $bindPassword;
 
     // NOTE: Connection type changed from resource => object in PHP8.1.
     // See https://www.php.net/manual/en/function.ldap-connect.php
-    /** @var resource|\LDAP\Connection */
+    /** @var resource|Connection */
     protected $connection;
 
     /**
@@ -35,15 +29,11 @@ class Client
      * @param string $bindDn
      * @param string|null $bindPassword
      */
-    public function __construct($host, $port, $version,
-                                $bindDn, $bindPassword)
+    public function __construct(protected $host, $port, protected $version,
+                                protected $bindDn, protected $bindPassword)
     {
-        $this->host = $host;
         /** @todo: TLS support (active TLS should change default port) */
         $this->port = $port ?: 389;
-        $this->version = $version;
-        $this->bindDn = $bindDn;
-        $this->bindPassword = $bindPassword;
     }
 
     /**
@@ -53,7 +43,7 @@ class Client
      * @return bool to indicate (prior) success
      * @throws ConnectionException
      */
-    public function bind()
+    public function bind(): bool
     {
         if (!$this->connection && $this->host) {
             $dsn = "ldap://{$this->host}:{$this->port}";
@@ -74,7 +64,7 @@ class Client
     /**
      * @return string
      */
-    public function getDsn()
+    public function getDsn(): string
     {
         /** @todo: TLS support (active TLS should change protocol prefix to 'ldaps') */
         return "ldap://{$this->host}:{$this->port}";
@@ -92,7 +82,7 @@ class Client
      * @param string $filter
      * @return array[][]
      */
-    public function getObjects($baseDn, $filter)
+    public function getObjects($baseDn, $filter): array
     {
         if ($this->bind()) {
             $listResponse = @ldap_list($this->connection, $baseDn, $filter);
@@ -100,14 +90,14 @@ class Client
                 throw new \InvalidArgumentException("Can't list {$baseDn} objects with filter {$filter}: " . ldap_error($this->connection));
             }
             $rawResponse = ldap_get_entries($this->connection, $listResponse);
-            $result = array();
+            $result = [];
             unset($rawResponse['count']);
             if (!empty($rawResponse)) {
                 foreach ($rawResponse as $rawEntry) {
                     if (!is_array($rawEntry)) {
                         continue;
                     }
-                    $entry = array();
+                    $entry = [];
                     foreach ($rawEntry as $attributeName => $attributeData) {
                         if (is_array($attributeData)) {
                             unset($attributeData['count']);
@@ -120,7 +110,7 @@ class Client
             ldap_free_result($listResponse);
             return $result;
         } else {
-            return array();
+            return [];
         }
     }
 }

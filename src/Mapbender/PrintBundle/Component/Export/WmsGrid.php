@@ -7,7 +7,7 @@ namespace Mapbender\PrintBundle\Component\Export;
 class WmsGrid
 {
     /** @var WmsTile[] */
-    protected $tiles = array();
+    protected $tiles = [];
     /** @var int */
     protected $width = 0;
     /** @var int */
@@ -18,7 +18,7 @@ class WmsGrid
      * Return pixel-space width
      * @return int
      */
-    public function getWidth()
+    public function getWidth(): int
     {
         return intval($this->width);
     }
@@ -27,7 +27,7 @@ class WmsGrid
      * Return pixel-space height
      * @return int
      */
-    public function getHeight()
+    public function getHeight(): int
     {
         return intval($this->height);
     }
@@ -35,7 +35,7 @@ class WmsGrid
     /**
      * @param WmsTile $tile
      */
-    public function addTile(WmsTile $tile)
+    public function addTile(WmsTile $tile): void
     {
         $offsetBox = $tile->getOffsetBox();
         $boxWidth = abs($offsetBox->getWidth());

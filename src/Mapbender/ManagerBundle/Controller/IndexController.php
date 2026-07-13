@@ -2,6 +2,7 @@
 
 namespace Mapbender\ManagerBundle\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Mapbender\ManagerBundle\Extension\Twig\MenuExtension;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -32,7 +33,7 @@ class IndexController extends AbstractController
      * @return Response
      */
     #[ManagerRoute('/', methods: ['GET'])]
-    public function index()
+    public function index(): RedirectResponse
     {
         return $this->redirectToRoute($this->defaultRoute);
     }

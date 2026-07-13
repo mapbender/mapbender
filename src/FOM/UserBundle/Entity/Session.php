@@ -42,19 +42,19 @@ class Session
         return $this->session_time;
     }
 
-    public function setSession_id($session_id)
+    public function setSession_id($session_id): static
     {
         $this->session_id = $session_id;
         return $this;
     }
 
-    public function setSession_value($session_value)
+    public function setSession_value($session_value): static
     {
         $this->session_value = $session_value;
         return $this;
     }
 
-    public function setSession_time($session_time)
+    public function setSession_time($session_time): static
     {
         $this->session_time = $session_time;
         return $this;

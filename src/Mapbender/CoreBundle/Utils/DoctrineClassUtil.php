@@ -21,7 +21,7 @@ class DoctrineClassUtil
      */
     public static function getRealClass(object|string $objectOrClass): string
     {
-        $className = is_object($objectOrClass) ? get_class($objectOrClass) : $objectOrClass;
+        $className = is_object($objectOrClass) ? $objectOrClass::class : $objectOrClass;
         if (str_contains($className, Proxy::MARKER)) {
             return get_parent_class($className) ?: $className;
         }

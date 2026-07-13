@@ -22,7 +22,7 @@ class MemoryUtil
      * @param string $memoryLimitStr
      * @return float|null
      */
-    public static function parseMemoryLimitMegs($memoryLimitStr)
+    public static function parseMemoryLimitMegs($memoryLimitStr): ?float
     {
         if ($memoryLimitStr == '-1' || $memoryLimitStr == '0' || !strlen($memoryLimitStr)) {
             return null;
@@ -32,16 +32,12 @@ class MemoryUtil
                 // bytes, no suffix
                 return floatval($memoryLimitStr) / 1024 / 1024;
             }
-            switch (strtoupper($suffix)) {
-                case 'G':
-                    return floatval(substr($memoryLimitStr, 0, -1)) * 1024;
-                case 'M':
-                    return floatval(substr($memoryLimitStr, 0, -1));
-                case 'K':
-                    return floatval(substr($memoryLimitStr, 0, -1)) / 1024;
-                default:
-                    throw new \UnexpectedValueException("Unrecognized memory limit suffix " . var_export($memoryLimitStr, true));
-            }
+            return match (strtoupper($suffix)) {
+                'G' => floatval(substr($memoryLimitStr, 0, -1)) * 1024,
+                'M' => floatval(substr($memoryLimitStr, 0, -1)),
+                'K' => floatval(substr($memoryLimitStr, 0, -1)) / 1024,
+                default => throw new \UnexpectedValueException("Unrecognized memory limit suffix " . var_export($memoryLimitStr, true)),
+            };
         }
     }
 
@@ -52,7 +48,7 @@ class MemoryUtil
      *
      * @param string $target
      */
-    public static function increaseMemoryLimit($target)
+    public static function increaseMemoryLimit($target): void
     {
         $currentMegs = static::getMemoryLimitMegs();
         $targetMegs = static::parseMemoryLimitMegs($target);

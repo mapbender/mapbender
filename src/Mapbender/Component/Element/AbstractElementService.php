@@ -32,7 +32,7 @@ abstract class AbstractElementService
      */
     public function getClientConfiguration(Element $element)
     {
-        return $element->getConfiguration() ?: array();
+        return $element->getConfiguration() ?: [];
     }
 
     /**

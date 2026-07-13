@@ -27,17 +27,17 @@ class AccountStatusCheckSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             AuthenticationSuccessEvent::class => 'onAuthenticationSuccess',
-        );
+        ];
     }
 
-    public function onAuthenticationSuccess(AuthenticationEvent $evt)
+    public function onAuthenticationSuccess(AuthenticationEvent $evt): void
     {
         $this->check($evt);
     }
 
-    public function check(AuthenticationEvent $evt)
+    public function check(AuthenticationEvent $evt): void
     {
         $user = $evt->getAuthenticationToken()->getUser();
         if (\is_object($user)) {

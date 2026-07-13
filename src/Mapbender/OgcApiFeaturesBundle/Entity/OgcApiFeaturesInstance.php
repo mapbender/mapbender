@@ -24,10 +24,10 @@ class OgcApiFeaturesInstance extends SourceInstance
     protected ?int $opacity = 100;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    protected ?float $minScale;
+    protected ?float $minScale = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    protected ?float $maxScale;
+    protected ?float $maxScale = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     protected ?int $featureLimit = 1000;
@@ -39,10 +39,10 @@ class OgcApiFeaturesInstance extends SourceInstance
     protected ?bool $selected = true;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    protected ?bool $allowToggle;
+    protected ?bool $allowToggle = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    protected ?bool $toggle;
+    protected ?bool $toggle = null;
 
     #[ORM\Column(name: 'feature_info_property_map', type: 'text', nullable: true)]
     protected ?string $featureInfoPropertyMap = "";

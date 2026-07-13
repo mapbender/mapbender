@@ -25,7 +25,7 @@ class OgcApiFeaturesSource extends Source
     protected ?string $version = "";
 
     #[ORM\Column(name: 'attribution', type: 'string', nullable: true)]
-    private ?string $attribution;
+    private ?string $attribution = null;
 
     public function __construct()
     {

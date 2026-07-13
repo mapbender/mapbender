@@ -13,10 +13,8 @@ namespace Mapbender\IntrospectionBundle\Entity\Utils\Command;
  */
 class DataItem
 {
-    /** @var string */
-    protected $id;
-    /** @var string  */
-    protected $name;
+    protected string $id;
+    protected string $name;
     /** @var string */
     protected $wrapStyle;
     /** @var string[] */
@@ -30,11 +28,11 @@ class DataItem
      * @param string[] $flags
      * @param string|null $wrapStyle Symfony OutputFormatter style reference, try "comment", "info", "error" etc.
      */
-    public function __construct($id, $name, $flags = array(), $wrapStyle = null)
+    public function __construct($id, $name, $flags = [], $wrapStyle = null)
     {
         $this->id = strval($id);
         $this->name = strval($name);
-        $this->flags = $flags ?: array();
+        $this->flags = $flags ?: [];
         $this->setWrapStyle($wrapStyle);
     }
 
@@ -53,7 +51,7 @@ class DataItem
      * @param string|null $wrapStyle Symfony OutputFormatter style reference, try "comment", "info", "error" etc.
      * @param string|null $explanation will be displayed in brackets to explain the highlighting
      */
-    public function setWrapStyle($wrapStyle = null, $explanation = null)
+    public function setWrapStyle($wrapStyle = null, $explanation = null): void
     {
         $this->wrapStyle = $wrapStyle;
         if ($wrapStyle && $explanation) {
@@ -64,7 +62,7 @@ class DataItem
     /**
      * @param string|null $note
      */
-    public function setNote($note)
+    public function setNote($note): void
     {
         $this->note = $note;
     }
@@ -82,7 +80,7 @@ class DataItem
      * @param string|null $falsyStyle applied in table cell if $rawValue falsy
      * @param string|null $explanation displayed in table cell if any style applied
      */
-    public function addFlag($name, $rawValue, $truthyStyle, $falsyStyle, $explanation)
+    public function addFlag($name, $rawValue, $truthyStyle, $falsyStyle, $explanation): void
     {
         $this->flags[$name] = $rawValue;
         if ($rawValue && $truthyStyle) {
@@ -126,9 +124,9 @@ class DataItem
      *
      * @return string[][]
      */
-    public function toGrid()
+    public function toGrid(): array
     {
-        return array(array($this->toDisplayable()));
+        return [[$this->toDisplayable()]];
     }
 
     /**

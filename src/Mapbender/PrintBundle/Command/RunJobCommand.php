@@ -19,12 +19,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 class RunJobCommand extends Command
 {
-    /** @var PrintServiceInterface */
-    protected $printService;
-
-    public function __construct(PrintServiceInterface $printService)
+    public function __construct(protected PrintServiceInterface $printService)
     {
-        $this->printService = $printService;
         parent::__construct(null);
     }
 
@@ -66,12 +62,12 @@ class RunJobCommand extends Command
      * @return mixed
      * @throws \InvalidArgumentException
      */
-    protected function getChoiceOption(InputInterface $input, $optionName, $allowedChoices, $caseInsensitive=true)
+    protected function getChoiceOption(InputInterface $input, string $optionName, $allowedChoices, $caseInsensitive=true)
     {
         $requestedMode = $input->getOption($optionName);
         foreach ($allowedChoices as $validChoice) {
             if ($caseInsensitive) {
-                $match = mb_strtolower($requestedMode) == mb_strtolower($validChoice);
+                $match = mb_strtolower((string) $requestedMode) == mb_strtolower($validChoice);
             } else {
                 $match = $requestedMode == $validChoice;
             }

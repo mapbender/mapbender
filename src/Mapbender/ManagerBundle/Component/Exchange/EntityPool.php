@@ -42,9 +42,9 @@ class EntityPool extends ObjectIdentityPool implements Mapper
     }
     public function getMappedEntity($className, $id, $isSuperClass = false): ?object
     {
-        $identValues = array(
+        $identValues = [
             'id' => $id,
-        );
+        ];
         $entity = $this->get($className, $identValues);
         if (!$entity && $isSuperClass) {
             $realBaseClass = DoctrineClassUtil::getRealClass($className);

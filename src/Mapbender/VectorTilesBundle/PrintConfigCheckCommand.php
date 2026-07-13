@@ -68,8 +68,6 @@ class PrintConfigCheckCommand implements ConfigCheckExtension
         $browsers = explode("\n", $browserString);
 
         // strip away path to browser executables (too much information)
-        return array_map(function ($browser) {
-            return implode(" ", explode(" ", $browser, -1));
-        }, $browsers);
+        return array_map(fn($browser): string => implode(" ", explode(" ", (string) $browser, -1)), $browsers);
     }
 }

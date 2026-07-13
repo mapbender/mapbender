@@ -81,7 +81,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      * @param mixed $id (integer, might be a string in Yaml-defined applications)
      * @return $this
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
 
@@ -100,7 +100,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      * @param string $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
 
@@ -119,7 +119,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      * @param string $class
      * @return $this
      */
-    public function setClass($class)
+    public function setClass($class): static
     {
         $this->class = $class;
         return $this;
@@ -137,7 +137,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      * @param array $configuration
      * @return $this
      */
-    public function setConfiguration($configuration)
+    public function setConfiguration($configuration): static
     {
         $this->configuration = $configuration;
         return $this;
@@ -155,7 +155,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      * @param string $region
      * @return $this
      */
-    public function setRegion($region)
+    public function setRegion($region): static
     {
         $this->region = $region;
         return $this;
@@ -173,7 +173,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      * @param boolean $enabled
      * @return $this
      */
-    public function setEnabled($enabled)
+    public function setEnabled($enabled): static
     {
         $this->enabled = $enabled;
         return $this;
@@ -191,7 +191,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      * @param integer $weight
      * @return $this
      */
-    public function setWeight($weight)
+    public function setWeight($weight): static
     {
         $this->weight = $weight;
         return $this;
@@ -209,7 +209,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      * @param Application $application
      * @return $this
      */
-    public function setApplication(Application $application)
+    public function setApplication(Application $application): static
     {
         $this->application = $application;
         return $this;
@@ -251,7 +251,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      * @param string $screenType
      * @throws \InvalidArgumentException
      */
-    public function setScreenType($screenType)
+    public function setScreenType($screenType): void
     {
         if (!in_array($screenType, ScreenTypes::getValidValues(), true)) {
             throw new \InvalidArgumentException("Unsupported screen type value " . print_r($screenType, true));
@@ -294,7 +294,7 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      */
     public function getTargetElement($configPropertyName = 'target')
     {
-        $config = $this->getConfiguration() ?: array();
+        $config = $this->getConfiguration() ?: [];
         if (isset($config[$configPropertyName])) {
             return $this->getSiblingElement($config[$configPropertyName], false);
         } else {

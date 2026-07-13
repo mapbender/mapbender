@@ -32,22 +32,22 @@ class WmtsInstanceLayerType extends AbstractType
     {
         $builder->addEventSubscriber($this);
         $builder
-            ->add('info', CheckboxType::class, array(
+            ->add('info', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.infotoc',
-            ))
-            ->add('toggle', CheckboxType::class, array(
+            ])
+            ->add('toggle', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.toggletoc',
-            ))
-            ->add('allowinfo', CheckboxType::class, array(
+            ])
+            ->add('allowinfo', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowinfotoc',
-            ))
-            ->add('allowtoggle', CheckboxType::class, array(
+            ])
+            ->add('allowtoggle', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowtoggletoc',
-            ))
+            ])
         ;
     }
 
@@ -83,12 +83,12 @@ class WmtsInstanceLayerType extends AbstractType
 
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'preSetData',
-        );
+        ];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         if ($event->getData()) {
             $this->reconfigureFields($event->getForm(), $event->getData());
@@ -97,16 +97,16 @@ class WmtsInstanceLayerType extends AbstractType
 
     protected function reconfigureFields(FormInterface $form, WmtsInstanceLayer $data)
     {
-        $choices = array();
+        $choices = [];
         foreach ($data->getSourceItem()->getStyles() as $style) {
             $label = $style->getTitle() ?: $style->getIdentifier();
             $choices[$label] = $style->getIdentifier();
         }
-        $form->add('style', ChoiceType::class, array(
+        $form->add('style', ChoiceType::class, [
             'label' => 'mb.wmts.wmtsloader.repo.instance.label.style',
             'choices' => $choices,
             "required" => false,
             'placeholder' => false,
-        ));
+        ]);
     }
 }

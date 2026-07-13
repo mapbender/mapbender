@@ -4,7 +4,6 @@
 namespace Mapbender\FrameworkBundle\Component;
 
 
-use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -17,12 +16,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class UserInfoProvider
 {
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-
-    public function __construct(TokenStorageInterface $tokenStorage)
+    public function __construct(protected TokenStorageInterface $tokenStorage)
     {
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -30,21 +25,21 @@ class UserInfoProvider
      *
      * @return mixed[]
      */
-    public function getValues()
+    public function getValues(): array
     {
         $token = $this->tokenStorage->getToken();
         if ($token === null) {
-            return array(
+            return [
                 'name' => null,
-                'roles' => array(),
+                'roles' => [],
                 'isAnonymous' => true,
-            );
+            ];
         } else {
-            return array(
+            return [
                 'name' => $token->getUserIdentifier(),
                 'roles' => $token->getRoleNames(),
                 'isAnonymous' => false,
-            );
+            ];
         }
     }
 }

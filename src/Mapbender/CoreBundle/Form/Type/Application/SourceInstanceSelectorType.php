@@ -25,18 +25,18 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
-        $resolver->setRequired(array(
+        $resolver->setRequired([
             'application',
-        ));
+        ]);
         // no use ($this) on lambdas in PHP5.4
         $self = $this;
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'label_with_layerset_prefix' => true,
-            'choice_label' => function(Options $options) use ($self) {
+            'choice_label' => function(Options $options) use ($self): \Closure|string {
                 if ($options['label_with_layerset_prefix']) {
                     $instanceIdToLayersetMap = $self->getInstanceIdToLayersetMap($options['application']);
 
-                    return function($choice) use ($instanceIdToLayersetMap) {
+                    return function($choice) use ($instanceIdToLayersetMap): string {
                         /** @var SourceInstance $choice*/
                         $layerset = $instanceIdToLayersetMap[$choice->getId()];
                         $label = ltrim($layerset->getTitle() . ': ', ' :');
@@ -47,10 +47,8 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
                     return 'title';
                 }
             },
-            'parent_object' => function(Options $options) {
-                return $options['application'];
-            },
-        ));
+            'parent_object' => fn(Options $options) => $options['application'],
+        ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -58,9 +56,12 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         $builder->addModelTransformer($this);
     }
 
-    protected function getRelatedObjectCollection($parentObject)
+    /**
+     * @return mixed[]
+     */
+    protected function getRelatedObjectCollection($parentObject): array
     {
-        $instances = array();
+        $instances = [];
         /** @var Application $parentObject */
         foreach ($parentObject->getLayersets() as $layerset) {
             foreach ($layerset->getCombinedInstances() as $instance) {
@@ -76,7 +77,7 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
         if ($value && is_object($value)) {
             return $value->getId();
         } elseif (is_array($value)) {
-            $valueOut = array();
+            $valueOut = [];
             foreach ($value as $k => $v) {
                 $valueOut[$k] = $this->reverseTransform($v);
             }
@@ -94,9 +95,9 @@ class SourceInstanceSelectorType extends RelatedObjectChoiceType implements Data
      * @param Application $application
      * @return Layerset[] keyed on source instance id
      */
-    protected function getInstanceIdToLayersetMap(Application $application)
+    protected function getInstanceIdToLayersetMap(Application $application): array
     {
-        $map = array();
+        $map = [];
         foreach ($application->getLayersets() as $layerset) {
             foreach ($layerset->getCombinedInstances() as $instance) {
                 $map[$instance->getId()] = $layerset;

@@ -15,21 +15,17 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  */
 class ArrayToCsvScalarTransformer implements DataTransformerInterface
 {
-    /** @var bool */
-    protected $trim;
-
     /**
      * @param bool $trim
      */
-    public function __construct($trim = true)
+    public function __construct(protected $trim = true)
     {
-        $this->trim = $trim;
     }
 
     public function transform($value): string
     {
         if ($value === null) {
-            $value = array();
+            $value = [];
         }
         if (!is_array($value)) {
             throw new TransformationFailedException('Expected an array');

@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Asset;
 
 
+use Twig\Environment;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig;
@@ -18,9 +19,7 @@ use Twig;
 class TranslationCompiler
 {
     /** @var TranslatorInterface|TranslatorBagInterface */
-    protected $translator;
-    /** @var Twig\Environment */
-    protected $templateEngine;
+    protected TranslatorInterface $translator;
     /** @var string[]|null */
     protected ?array $allMessages = null;
     /** @var string[]|null */
@@ -34,13 +33,12 @@ class TranslationCompiler
      * @param TranslatorInterface $translator
      * @param Twig\Environment $templateEngine
      */
-    public function __construct(TranslatorInterface $translator, Twig\Environment $templateEngine, ?string $fallbackLocale = null)
+    public function __construct(TranslatorInterface $translator, protected Environment $templateEngine, ?string $fallbackLocale = null)
     {
         if (!($translator instanceof TranslatorBagInterface)) {
             throw new \InvalidArgumentException("Given translator does not implement required TranslatorBagInterface");
         }
         $this->translator = $translator;
-        $this->templateEngine = $templateEngine;
         $this->fallbackLocale = $fallbackLocale ?? "en";
     }
 
@@ -48,9 +46,9 @@ class TranslationCompiler
      * @param string[] $inputs names of json.twig files
      * @return string JavaScript initialization code
      */
-    public function compile($inputs)
+    public function compile($inputs): string
     {
-        $translations = array();
+        $translations = [];
         foreach ($inputs as $input) {
             if (preg_match('/\.json\.twig$/', $input)) {
                 $values = $this->extractFromTemplate($input);
@@ -67,7 +65,7 @@ class TranslationCompiler
     /**
      * @return string a twig path
      */
-    protected function getTemplate()
+    protected function getTemplate(): string
     {
         return '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
     }
@@ -82,7 +80,7 @@ class TranslationCompiler
             $rendered = $this->templateEngine->render($template);
         } catch (\InvalidArgumentException $e) {
             if ($this->treatTemplatesAsOptional) {
-                return array();
+                return [];
             } else {
                 throw $e;
             }
@@ -94,9 +92,9 @@ class TranslationCompiler
      * @param string $input translation key or prefix pattern ending in '.*'
      * @return string[]
      */
-    protected function translatePattern($input, $locale = null)
+    protected function translatePattern($input, $locale = null): array
     {
-        $values = array();
+        $values = [];
         if (preg_match('/\*$/', $input)) {
             $wildcardPrefix = rtrim($input, '*');
             if (!$wildcardPrefix || str_contains($wildcardPrefix, '*')) {
@@ -108,12 +106,12 @@ class TranslationCompiler
             }
 
             foreach ($this->allMessages as $translationKey => $message) {
-                if (str_starts_with($translationKey, $wildcardPrefix)) {
+                if (str_starts_with((string) $translationKey, $wildcardPrefix)) {
                     $values[$translationKey] = $message;
                 }
             }
             foreach ($this->allMessagesFallbackLocale as $translationKey => $message) {
-                if (str_starts_with($translationKey, $wildcardPrefix) && !array_key_exists($translationKey, $values)) {
+                if (str_starts_with((string) $translationKey, $wildcardPrefix) && !array_key_exists($translationKey, $values)) {
                     $values[$translationKey] = $message;
                 }
             }

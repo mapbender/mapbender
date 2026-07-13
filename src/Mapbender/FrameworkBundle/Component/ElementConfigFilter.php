@@ -4,6 +4,7 @@
 namespace Mapbender\FrameworkBundle\Component;
 
 
+use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\Exception\UndefinedElementClassException;
 use Mapbender\CoreBundle\Entity\Element;
@@ -21,7 +22,7 @@ class ElementConfigFilter
             throw new UndefinedElementClassException($handlingClass);
         }
         if (\is_a($handlingClass, 'Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface', true)) {
-            /** @var string|\Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface $handlingClass */
+            /** @var string|ConfigMigrationInterface $handlingClass */
             $handlingClass::updateEntityConfig($element);
         }
     }

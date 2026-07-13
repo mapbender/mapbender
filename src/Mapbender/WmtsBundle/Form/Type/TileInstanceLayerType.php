@@ -23,22 +23,22 @@ class TileInstanceLayerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('supportedCrs', TextType::class, array(
+            ->add('supportedCrs', TextType::class, [
                 'mapped' => false,
                 'required' => false,
-                'attr' => array(
+                'attr' => [
                     'readonly' => 'readonly',
-                ),
+                ],
                 'label' => 'mb.wmts.wmtsloader.repo.tilematrixset.label.supportedcrs',
-            ))
-            ->add('toggle', CheckboxType::class, array(
+            ])
+            ->add('toggle', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.toggletoc',
-            ))
-            ->add('allowtoggle', CheckboxType::class, array(
+            ])
+            ->add('allowtoggle', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowtoggletoc',
-            ))
+            ])
         ;
     }
 

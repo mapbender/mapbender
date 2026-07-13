@@ -9,12 +9,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class RegisterMenuRoutesPass implements CompilerPassInterface
 {
-    /** @var MenuItem */
-    protected $item;
-
-    public function __construct(MenuItem $item)
+    public function __construct(protected MenuItem $item)
     {
-        $this->item = $item;
     }
 
     public function process(ContainerBuilder $container): void

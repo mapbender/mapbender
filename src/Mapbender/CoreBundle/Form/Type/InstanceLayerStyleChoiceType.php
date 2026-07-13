@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Form\Type;
 
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
@@ -13,24 +14,24 @@ class InstanceLayerStyleChoiceType extends AbstractType
 {
     public function getParent(): string
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
+        return ChoiceType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setRequired(array(
+        $resolver->setRequired([
              'layer'
-        ));
-        $resolver->setAllowedTypes('layer', 'Mapbender\WmsBundle\Entity\WmsInstanceLayer');
-        $resolver->setDefaults(array(
-            'choices' => function(Options $options) use ($resolver) {
+        ]);
+        $resolver->setAllowedTypes('layer', WmsInstanceLayer::class);
+        $resolver->setDefaults([
+            'choices' => function(Options $options) use ($resolver): array {
                 /** @var WmsInstanceLayer $layer */
                 $layer = $options['layer'];
                 $arrStyles = $layer->getSourceItem()->getStyles(true);
-                $styleOpt = array('default' => '');
+                $styleOpt = ['default' => ''];
                 if (!$layer->getSublayer()->count()) {
                     foreach ($arrStyles as $style) {
-                        if(strtolower($style->getName()) !== 'default') {
+                        if(strtolower((string) $style->getName()) !== 'default') {
                             $styleOpt[$style->getTitle()] = $style->getName();
                         }
 
@@ -38,6 +39,6 @@ class InstanceLayerStyleChoiceType extends AbstractType
                 }
                 return $styleOpt;
             },
-        ));
+        ]);
     }
 }

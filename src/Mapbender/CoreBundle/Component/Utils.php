@@ -33,7 +33,7 @@ class Utils
      * @param string $sourceOrder path to source order
      * @param string $destinationOrder path to destination order
      */
-    public static function copyOrderRecursive($sourceOrder, $destinationOrder)
+    public static function copyOrderRecursive($sourceOrder, $destinationOrder): void
     {
         $dir  = opendir($sourceOrder);
         @mkdir($destinationOrder);
@@ -53,7 +53,7 @@ class Utils
      * Generates an UUID.
      * @return string uuid
      */
-    public static function guidv4()
+    public static function guidv4(): string
     {
         $data = openssl_random_pseudo_bytes(16);
 

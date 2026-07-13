@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
@@ -20,39 +21,39 @@ class BaseSourceSwitcherAdminType extends AbstractType implements EventSubscribe
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('tooltip', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('tooltip', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.basesourceswitcher.admin.tooltip',
-                ));
+                ]);
         $builder->addEventSubscriber($this);
     }
 
     public static function getSubscribedEvents(): array
     {
-        return array(FormEvents::PRE_SET_DATA => 'preSetData');
+        return [FormEvents::PRE_SET_DATA => 'preSetData'];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         /** @var Application $application */
         $application = $event->getForm()->getParent()->getData()->getApplication();
         if ($application) {
             $sourceInstanceIds = $this->getSourceInstanceIds($application);
             $event->getForm()
-                ->add('instancesets', SortableCollectionType::class, array(
-                    'entry_type' => 'Mapbender\CoreBundle\Element\Type\InstanceSetAdminType',
+                ->add('instancesets', SortableCollectionType::class, [
+                    'entry_type' => InstanceSetAdminType::class,
                     'label' => 'mb.core.basesourceswitcher.admin.instancesets',
                     'allow_add' => true,
                     'allow_delete' => true,
-                    'entry_options' => array(
+                    'entry_options' => [
                         'application' => $application,
-                        'choice_filter' => function($choice) use ($sourceInstanceIds) {
+                        'choice_filter' => function($choice) use ($sourceInstanceIds): bool {
                             /** @var SourceInstance|int $choice*/
                             $choiceId = $choice instanceof SourceInstance ? $choice->getId() : $choice;
                             return \in_array($choiceId, $sourceInstanceIds, false);
                         },
-                    ),
-                ))
+                    ],
+                ])
             ;
         }
     }
@@ -61,9 +62,9 @@ class BaseSourceSwitcherAdminType extends AbstractType implements EventSubscribe
      * @param Application $application
      * @return array
      */
-    protected function getSourceInstanceIds(Application $application)
+    protected function getSourceInstanceIds(Application $application): array
     {
-        $sourceInstanceIds = array();
+        $sourceInstanceIds = [];
         foreach (ApplicationUtil::getMapLayersets($application) as $layerset) {
             foreach ($layerset->getCombinedInstanceAssignments() as $assignment) {
                 if ($assignment->getEnabled() && $assignment->getInstance()->isBasesource()) {

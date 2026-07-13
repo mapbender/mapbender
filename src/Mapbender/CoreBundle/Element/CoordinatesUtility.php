@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\CoordinatesUtilityAdminType;
 use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
@@ -11,18 +12,14 @@ use Mapbender\CoreBundle\Entity\SRS;
 
 class CoordinatesUtility extends AbstractElementService implements ConfigMigrationInterface
 {
-    /** @var ManagerRegistry */
-    protected $doctrineRegistry;
-
-    public function __construct(ManagerRegistry $doctrineRegistry)
+    public function __construct(protected ManagerRegistry $doctrineRegistry)
     {
-        $this->doctrineRegistry = $doctrineRegistry;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.coordinatesutility.class.title";
     }
@@ -30,7 +27,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.coordinatesutility.class.description";
     }
@@ -38,7 +35,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
         return [
             'js' => [
@@ -56,10 +53,10 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
         return [
-            'srsList' => array(),
+            'srsList' => [],
             'addMapSrsList' => true,
             'zoomlevel' => 6,
             'element_icon' => self::getDefaultIcon(),
@@ -69,7 +66,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbCoordinatesUtility';
     }
@@ -77,31 +74,31 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\CoordinatesUtilityAdminType';
+        return CoordinatesUtilityAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/coordinatesutility.html.twig';
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/coordinatesutility.html.twig');
         $view->attributes['class'] = 'mb-element-coordinatesutility';
-        $view->attributes['data-title'] = $element->getTitle() ?: $this->getClassTitle();
-        $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', $element->getRegion());
+        $view->attributes['data-title'] = $element->getTitle() ?: static::getClassTitle();
+        $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', (string) $element->getRegion());
         return $view;
     }
 
     public function getClientConfiguration(Element $element)
     {
-        $conf = $element->getConfiguration() ?: array();
+        $conf = $element->getConfiguration() ?: [];
 
         if (!empty($conf['srsList'])) {
             $conf['srsList'] = $this->addSrsDefinitions($conf['srsList']);
@@ -139,7 +136,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
      * @param mixed[] $srsList strings or arrays
      * @return mixed[][]
      */
-    protected function normalizeSrsList($srsList)
+    protected function normalizeSrsList(array $srsList): array
     {
         // Tolerate both arrays + scalars
         /** @see Type\CoordinatesUtilityAdminType::reverseTransform */
@@ -152,10 +149,10 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
                 $name = $srsSpec['name'];
                 $title = !empty($srsSpec['title']) ? $srsSpec['title'] : null;
             }
-            $srsList[$k] = array(
+            $srsList[$k] = [
                 'name' => $name,
-                'title' => trim($title) ?: null,
-            );
+                'title' => trim((string) $title) ?: null,
+            ];
         }
         foreach ($srsList as $k => $srsSpec) {
             if (empty($srsSpec['name'])) {
@@ -169,23 +166,21 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
      * @param $srsList
      * @return SRS[] keyed on name
      */
-    public function getSrsDefinitionsFromDatabase($srsList)
+    public function getSrsDefinitionsFromDatabase($srsList): array
     {
-        $srsNames = array_map(function($srs) {
-            return $srs['name'];
-        }, $srsList);
+        $srsNames = array_map(fn(array $srs) => $srs['name'], $srsList);
         /** @var SRS[] $entities */
-        $entities = $this->doctrineRegistry->getRepository(SRS::class)->findBy(array(
+        $entities = $this->doctrineRegistry->getRepository(SRS::class)->findBy([
             'name' => $srsNames,
-        ));
-        $entityMap = array();
+        ]);
+        $entityMap = [];
         foreach ($entities as $srs) {
             $entityMap[$srs->getName()] = $srs;
         }
         return $entityMap;
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         $conf = $entity->getConfiguration();
         // Coords utility doesn't have an autoOpen backend option, and doesn't support it in the frontend
@@ -201,7 +196,7 @@ class CoordinatesUtility extends AbstractElementService implements ConfigMigrati
         $entity->setConfiguration($conf);
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconCoordinates';
     }

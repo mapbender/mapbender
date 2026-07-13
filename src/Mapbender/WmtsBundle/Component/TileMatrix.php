@@ -71,7 +71,7 @@ class TileMatrix implements MutableUrlTarget
     /**
      * @param string $value
      */
-    public function setIdentifier($value)
+    public function setIdentifier($value): void
     {
         $this->identifier = $value;
     }
@@ -87,7 +87,7 @@ class TileMatrix implements MutableUrlTarget
     /**
      * @param float $value
      */
-    public function setScaledenominator($value)
+    public function setScaledenominator($value): void
     {
         $this->scaledenominator = floatval($value);
     }
@@ -103,7 +103,7 @@ class TileMatrix implements MutableUrlTarget
     /**
      * @param string $href
      */
-    public function setHref($href)
+    public function setHref($href): void
     {
         $this->href = $href;
     }
@@ -120,7 +120,7 @@ class TileMatrix implements MutableUrlTarget
     /**
      * @param float[] $value
      */
-    public function setTopleftcorner($value)
+    public function setTopleftcorner($value): void
     {
         $this->topleftcorner = $value;
     }
@@ -136,7 +136,7 @@ class TileMatrix implements MutableUrlTarget
     /**
      * @param string $value
      */
-    public function setTilewidth($value)
+    public function setTilewidth($value): void
     {
         $this->tilewidth = intval($value);
     }
@@ -152,7 +152,7 @@ class TileMatrix implements MutableUrlTarget
     /**
      * @param string $value
      */
-    public function setTileheight($value)
+    public function setTileheight($value): void
     {
         $this->tileheight = intval($value);
     }
@@ -168,7 +168,7 @@ class TileMatrix implements MutableUrlTarget
     /**
      * @param string $value
      */
-    public function setMatrixwidth($value)
+    public function setMatrixwidth($value): void
     {
         $this->matrixwidth = intval($value);
     }
@@ -184,12 +184,12 @@ class TileMatrix implements MutableUrlTarget
     /**
      * @param string $value
      */
-    public function setMatrixheight($value)
+    public function setMatrixheight($value): void
     {
         $this->matrixheight = intval($value);
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
         if ($url = $this->getHref()) {
             $this->setHref($transformer->process($url));

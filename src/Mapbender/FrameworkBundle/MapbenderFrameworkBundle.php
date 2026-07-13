@@ -4,6 +4,7 @@
 namespace Mapbender\FrameworkBundle;
 
 
+use Mapbender\CoreBundle\Command\ConfigCheckCommand;
 use Mapbender\FrameworkBundle\DependencyInjection\Compiler\ConfigCheckExtensionPass;
 use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterApplicationTemplatesPass;
 use Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterDataSourcesPass;
@@ -35,7 +36,7 @@ class MapbenderFrameworkBundle extends Bundle
         /** @see \Mapbender\CoreBundle\Component\Source\TypeDirectoryService */
         $container->addCompilerPass(new RegisterDataSourcesPass('mapbender.source.typedirectory.service'));
         /** @see \Mapbender\CoreBundle\Command\ConfigCheckCommand */
-        $container->addCompilerPass(new ConfigCheckExtensionPass('Mapbender\CoreBundle\Command\ConfigCheckCommand'));
+        $container->addCompilerPass(new ConfigCheckExtensionPass(ConfigCheckCommand::class));
         /** @see \Mapbender\FrameworkBundle\Component\ApplicationTemplateRegistry */
         $container->addCompilerPass(new RegisterApplicationTemplatesPass('mapbender.application_template_registry'));
         // Forward available icon packages to icon index

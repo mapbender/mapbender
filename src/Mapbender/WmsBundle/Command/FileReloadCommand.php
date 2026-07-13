@@ -3,6 +3,7 @@
 
 namespace Mapbender\WmsBundle\Command;
 
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Component\Source\BaseSourceLoaderSettings;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -55,7 +56,7 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
         return 0;
     }
 
-    protected function getReloadSource($path, InputInterface $input)
+    protected function getReloadSource($path, InputInterface $input): Source
     {
         if (!\file_exists($path) || !\is_readable($path)) {
             throw new \LogicException("No such file or file not readable");
@@ -67,7 +68,7 @@ class FileReloadCommand extends AbstractCapabilitiesProcessingCommand
         return $this->getImporter()->parseResponseContent($content);
     }
 
-    protected function getValidationOption(InputInterface $input)
+    protected function getValidationOption(InputInterface $input): mixed
     {
         return $input->getOption('validate');
     }

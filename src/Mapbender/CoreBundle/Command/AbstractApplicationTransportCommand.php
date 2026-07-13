@@ -14,21 +14,11 @@ use Symfony\Component\Console\Command\Command;
 
 abstract class AbstractApplicationTransportCommand extends Command
 {
-    /** @var EntityManagerInterface */
-    protected $defaultEntityManager;
-    /** @var ImportHandler */
-    protected $importHandler;
-    /** @var ApplicationYAMLMapper */
-    protected $yamlRepository;
-
-    public function __construct(EntityManagerInterface $defaultEntityManager,
-                                ImportHandler $importHandler,
-                                ApplicationYAMLMapper $yamlRepository)
+    public function __construct(protected EntityManagerInterface $defaultEntityManager,
+                                protected ImportHandler $importHandler,
+                                protected ApplicationYAMLMapper $yamlRepository)
     {
         parent::__construct(null);
-        $this->defaultEntityManager = $defaultEntityManager;
-        $this->importHandler = $importHandler;
-        $this->yamlRepository = $yamlRepository;
     }
 
     /**
@@ -59,7 +49,7 @@ abstract class AbstractApplicationTransportCommand extends Command
      * @param string $className
      * @return EntityRepository
      */
-    protected function getEntityRepository($className)
+    protected function getEntityRepository(string $className)
     {
         /** @var EntityRepository $repository */
         $repository = $this->getDefaultEntityManager()->getRepository($className);

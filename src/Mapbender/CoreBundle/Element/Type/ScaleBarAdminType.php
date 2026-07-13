@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;
@@ -15,22 +17,22 @@ class ScaleBarAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('maxWidth', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('maxWidth', TextType::class, [
                     'label' => 'mb.core.scalebar.admin.maxwidth',
                     'constraints' => [
                         new Type('numeric'),
                         new PositiveOrZero(),
                     ],
-                )
+                ]
             )
-            ->add('units', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            ->add('units', ChoiceType::class, [
                 'required' => true,
                 'label' => 'mb.core.scalebar.admin.units',
-                'choices' => array(
+                'choices' => [
                     'Kilometer' => 'km',
                     'Mile' => 'ml',
-                ),
-            ))
+                ],
+            ])
         ;
     }
 

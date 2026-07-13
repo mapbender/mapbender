@@ -8,14 +8,11 @@ namespace Mapbender\Utils;
  */
 class InfiniteCyclicArrayIterator implements \Iterator
 {
-    /** @var array */
-    protected $elements;
-    /** @var array */
-    protected $keys;
+    protected array $elements;
+    protected array $keys;
     /** @var int */
     protected $index = 0;
-    /** @var int */
-    protected $nTotal;
+    protected int $nTotal;
 
     public function __construct(array $elements)
     {

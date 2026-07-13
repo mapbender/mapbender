@@ -16,7 +16,7 @@ class PDF_Extensions extends Fpdi
         if (!is_array($customFonts)) return;
         foreach($customFonts as $fontFamily => $configuration) {
             foreach($configuration as $fontStyle => $fileName) {
-                $fontStyleFpdf = match(strtolower($fontStyle)) {
+                $fontStyleFpdf = match(strtolower((string) $fontStyle)) {
                     'bold' => 'B',
                     'italic' => 'I',
                     'bolditalic', 'italicbold' => 'BI',
@@ -52,7 +52,7 @@ class PDF_Extensions extends Fpdi
     }
 
 
-    function TextWithDirection($x, $y, $txt, $direction = 'R')
+    function TextWithDirection($x, $y, $txt, $direction = 'R'): void
     {
         if ($direction == 'R')
             $s = sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET', 1, 0, 0, 1, $x * $this->k, ($this->h - $y) * $this->k, $this->_escape($txt));

@@ -2,6 +2,8 @@
 
 namespace Mapbender\WmsBundle\Element;
 
+use Doctrine\Persistence\ObjectRepository;
+use Mapbender\WmsBundle\Element\Type\WmsLoaderAdminType;
 use Doctrine\Persistence\ManagerRegistry;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\Component\Element\AbstractElementService;
@@ -29,35 +31,24 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class WmsLoader extends AbstractElementService implements ElementHttpHandlerInterface
 {
 
-    /** @var \Doctrine\Persistence\ObjectRepository */
-    protected $instanceRepository;
-    /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
-    /** @var TypeDirectoryService */
-    protected $sourceTypeDirectory;
-    /** @var Importer */
-    protected $sourceImporter;
+    protected ObjectRepository $instanceRepository;
 
-    /** @var string */
-    protected $exampleUrl;
-
+    /**
+     * @param string $exampleUrl
+     */
     public function __construct(ManagerRegistry               $managerRegistry,
-                                AuthorizationCheckerInterface $authorizationChecker,
-                                TypeDirectoryService          $sourceTypeDirectory,
-                                Importer                      $sourceImporter,
-                                                              $exampleUrl)
+                                protected AuthorizationCheckerInterface $authorizationChecker,
+                                protected TypeDirectoryService          $sourceTypeDirectory,
+                                protected Importer                      $sourceImporter,
+                                                              protected $exampleUrl)
     {
         $this->instanceRepository = $managerRegistry->getRepository(SourceInstance::class);
-        $this->authorizationChecker = $authorizationChecker;
-        $this->sourceTypeDirectory = $sourceTypeDirectory;
-        $this->sourceImporter = $sourceImporter;
-        $this->exampleUrl = $exampleUrl;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.wms.wmsloader.class.title";
     }
@@ -65,7 +56,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.wms.wmsloader.class.description";
     }
@@ -73,58 +64,58 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             "autoOpen" => false,
             "defaultFormat" => "image/png",
             "defaultInfoFormat" => "text/html",
             "splitLayers" => false,
             "element_icon" => self::getDefaultIcon(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbWmsLoader';
     }
 
 
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderWmsBundle/Resources/public/MbWmsLoader.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.wms.wmsloader.error.*',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\WmsBundle\Element\Type\WmsLoaderAdminType';
+        return WmsLoaderAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderWms/ElementAdmin/wmsloader.html.twig';
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderWms/Element/wmsloader.html.twig');
         $view->attributes['class'] = 'mb-element-wmsloader';
@@ -133,7 +124,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         return $view;
     }
 
-    public function getHttpHandler(Element $element)
+    public function getHttpHandler(Element $element): static
     {
         return $this; // :)
     }
@@ -144,10 +135,10 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         $action = $request->attributes->get('action');
         switch ($action) {
             case 'getInstances':
-                $instanceIds = array_filter(explode(',', $request->get('instances', '')));
-                return new JsonResponse(array(
+                $instanceIds = array_filter(explode(',', (string) $request->get('instances', '')));
+                return new JsonResponse([
                     'success' => $this->getDatabaseInstanceConfigs($element, $instanceIds),
-                ));
+                ]);
             case 'loadWms':
                 return $this->loadWms($element, $request);
             default:
@@ -155,7 +146,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         }
     }
 
-    protected function loadWms(Element $element, Request $request)
+    protected function loadWms(Element $element, Request $request): JsonResponse
     {
         $id = "wmsloader_" . uniqid();
         $source = $this->getSource($request);
@@ -173,7 +164,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
 
         $configGenerator = $this->getConfigGenerator($instance);
         $layerConfiguration = $configGenerator->getConfiguration($element->getApplication(), $instance);
-        $config = array_replace($this->getDefaultConfiguration(), $element->getConfiguration());
+        $config = array_replace(static::getDefaultConfiguration(), $element->getConfiguration());
         if ($config['splitLayers']) {
             $layerConfigurations = $this->splitLayers($layerConfiguration);
         } else {
@@ -199,10 +190,13 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         return $source;
     }
 
-    protected function splitLayers($layerConfiguration)
+    /**
+     * @return mixed[]
+     */
+    protected function splitLayers(array $layerConfiguration): array
     {
         $children = $layerConfiguration['configuration']['children'][0]['children'];
-        $layerConfigurations = array();
+        $layerConfigurations = [];
         foreach ($children as $child) {
             $layerConfiguration['configuration']['children'][0]['children'] = [$child];
             $layerConfiguration['configuration']['children'][0]['options']['title'] = $child['options']['title']
@@ -219,7 +213,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
      */
     protected function getDatabaseInstanceConfigs(Element $element, array $instanceIds): array
     {
-        $instanceConfigs = array();
+        $instanceConfigs = [];
         foreach ($instanceIds as $instanceId) {
             /** @var SourceInstance $instance */
             $instance = $this->instanceRepository->find($instanceId);
@@ -242,7 +236,7 @@ class WmsLoader extends AbstractElementService implements ElementHttpHandlerInte
         return $this->getSourceTypeDirectory()->getConfigGenerator($instance);
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconWms';
     }

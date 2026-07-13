@@ -6,10 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry as DoctrineRegistry;
 
 class SqlDriver
 {
-    protected DoctrineRegistry $doctrine;
-
-    public function __construct(DoctrineRegistry $doctrine)
+    public function __construct(protected DoctrineRegistry $doctrine)
     {
-        $this->doctrine = $doctrine;
     }
 }

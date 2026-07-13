@@ -30,7 +30,7 @@ class IdentifierAuthority
      * @param Authority $authority
      * @return IdentifierAuthority
      */
-    public function setAuthority(Authority $authority)
+    public function setAuthority(Authority $authority): static
     {
         $this->authority = $authority;
         return $this;
@@ -52,7 +52,7 @@ class IdentifierAuthority
      * @param Identifier $identifier
      * @return IdentifierAuthority
      */
-    public function setIdentifier(Identifier $identifier)
+    public function setIdentifier(Identifier $identifier): static
     {
         $this->identifier = $identifier;
         return $this;

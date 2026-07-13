@@ -4,23 +4,21 @@
 namespace Mapbender\IntrospectionBundle\Component\Aggregator;
 
 
+use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 
 abstract class Base
 {
-    /** @var \Mapbender\CoreBundle\Entity\Source[] */
-    protected $unusedSources;
-
     /**
-     * @param \Mapbender\CoreBundle\Entity\Source[] $unusedSources
+     * @param Source[] $unusedSources
      */
-    protected function __construct($unusedSources)
+    protected function __construct(protected $unusedSources)
     {
-        $this->unusedSources = $unusedSources;
     }
 
     /**
-     * @return \Mapbender\CoreBundle\Entity\Source[]
+     * @return Source[]
      */
     public function getUnusedSources()
     {
@@ -28,12 +26,12 @@ abstract class Base
     }
 
     /**
-     * @param \Mapbender\CoreBundle\Entity\Application $application
+     * @param Application $application
      * @return SourceInstance[]
      */
     protected static function getLayerSetInstances($application)
     {
-        $rv = array();
+        $rv = [];
         foreach ($application->getLayersets() as $layerset) {
             foreach ($layerset->getInstances() as $instance) {
                 $rv[] = $instance;

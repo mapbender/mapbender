@@ -3,13 +3,13 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -25,17 +25,14 @@ class PaintType extends AbstractType
 {
     use MapbenderTypeTrait;
 
-    private TranslatorInterface $trans;
-
-    public function __construct(TranslatorInterface $trans)
+    public function __construct(private TranslatorInterface $trans)
     {
-        $this->trans = $trans;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
-            ->setDefaults(array(
+            ->setDefaults([
                 'hasStroke' => true,
                 'hasFill' => true,
                 'hasFont' => false,
@@ -52,7 +49,7 @@ class PaintType extends AbstractType
                 'strokeWidthHelp' => null,
                 'fontColorHelp' => null,
                 'fontSizeHelp' => null,
-            ))
+            ])
         ;
     }
 
@@ -71,7 +68,7 @@ class PaintType extends AbstractType
                 'label' => 'mb.core.admin.featureinfo.label.stroke_width_px',
                 'attr' => ['min' => 0, 'inputmode' => 'numeric'],
                 'help' => $options['strokeWidthHelp'],
-                'constraints' => [new Constraints\Range(['min' => 0])],
+                'constraints' => [new Range(min: 0)],
             ], $this->trans));
         }
 
@@ -97,7 +94,7 @@ class PaintType extends AbstractType
                 'label' => 'mb.core.admin.featureinfo.label.fontSize',
                 'attr' => ['min' => 1],
                 'help' => $options['fontSizeHelp'],
-                'constraints' => [new Constraints\Range(['min' => 1])],
+                'constraints' => [new Range(min: 1)],
             ], $this->trans));
         }
 
@@ -106,7 +103,7 @@ class PaintType extends AbstractType
                 'required' => false,
                 'label' => 'mb.core.admin.featureinfo.label.point_radius_px',
                 'attr' => ['min' => 0, 'inputmode' => 'numeric'],
-                'constraints' => [new Constraints\Range(['min' => 0])],
+                'constraints' => [new Range(min: 0)],
             ], $this->trans));
         }
 

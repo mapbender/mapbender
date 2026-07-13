@@ -3,6 +3,7 @@
 namespace Mapbender\IntrospectionBundle\Component\Aggregator;
 
 
+use Mapbender\IntrospectionBundle\Component\Aggregator\Relation\SourceToApplications;
 use Mapbender\IntrospectionBundle\Component\WorkingSet;
 
 /**
@@ -11,16 +12,12 @@ use Mapbender\IntrospectionBundle\Component\WorkingSet;
  */
 class Source extends Base
 {
-    /** @var Relation\SourceToApplications[] */
-    protected $relations;
-
     /**
-     * @param Relation\SourceToApplications[] $relationBuckets
+     * @param Relation\SourceToApplications[] $relations
      * @param \Mapbender\CoreBundle\Entity\Source[] $unusedSources
      */
-    protected function __construct($relationBuckets, $unusedSources)
+    protected function __construct(protected $relations, $unusedSources)
     {
-        $this->relations = $relationBuckets;
         parent::__construct($unusedSources);
     }
 
@@ -28,13 +25,13 @@ class Source extends Base
      * @param WorkingSet $workingSet
      * @return static
      */
-    public static function build(WorkingSet $workingSet)
+    public static function build(WorkingSet $workingSet): static
     {
         /** @var \Mapbender\CoreBundle\Entity\Source[] $unusedSources */
-        $unusedSources = array();
+        $unusedSources = [];
         /** @var Relation\SourceToApplications[] $relations */
-        $relations = array(
-        );
+        $relations = [
+        ];
         foreach ($workingSet->getSources() as $source) {
             $sourceId = $source->getId();
             $unusedSources[$sourceId] = $source;
@@ -44,7 +41,7 @@ class Source extends Base
                 $source = $lsi->getSource();
                 $sourceId = $source->getId();
                 if (!array_key_exists($sourceId, $relations)) {
-                    $relations[$sourceId] = new Relation\SourceToApplications($source);
+                    $relations[$sourceId] = new SourceToApplications($source);
                 }
                 $relations[$sourceId]->addSourceInstanceApplicationPair($lsi, $applicationEntity);
                 unset($unusedSources[$sourceId]);

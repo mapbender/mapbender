@@ -13,13 +13,8 @@ use Psr\Log\LoggerInterface;
  */
 class ImageTransport
 {
-    protected HttpTransportInterface $baseTransport;
-    protected LoggerInterface $logger;
-
-    public function __construct(HttpTransportInterface $baseTransport, LoggerInterface $logger)
+    public function __construct(protected HttpTransportInterface $baseTransport, protected LoggerInterface $logger)
     {
-        $this->baseTransport = $baseTransport;
-        $this->logger = $logger;
     }
 
     /**
@@ -52,7 +47,7 @@ class ImageTransport
             } else {
                 return $image;
             }
-        } catch (\ErrorException $e) {
+        } catch (\ErrorException) {
             return null;
         }
     }

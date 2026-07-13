@@ -19,14 +19,7 @@ use Psr\Log\NullLogger;
 
 class YamlElementCollection extends AbstractLazyCollection implements Selectable
 {
-    /** @var ElementEntityFactory */
-    protected $factory;
-    /** @var Application */
-    protected $application;
-    /** @var array */
-    protected $data;
-    /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /**
      * @param ElementEntityFactory $factory
@@ -34,11 +27,8 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
      * @param array $data
      * @param LoggerInterface|null $logger
      */
-    public function __construct(ElementEntityFactory $factory, Application $application, $data, ?LoggerInterface $logger = null)
+    public function __construct(protected ElementEntityFactory $factory, protected Application $application, protected $data, ?LoggerInterface $logger = null)
     {
-        $this->factory = $factory;
-        $this->application = $application;
-        $this->data = $data;
         $this->logger = $logger ?: new NullLogger();
     }
 
@@ -47,14 +37,14 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
         $this->collection = new ArrayCollection();
         foreach ($this->data as $region => $elementsDefinition) {
             $weight = 0;
-            foreach ($elementsDefinition ?: array() as $id => $elementDefinition) {
+            foreach ($elementsDefinition ?: [] as $id => $elementDefinition) {
                 $element = $this->createElement($id, $region, $elementDefinition);
                 if (!$element) {
                     continue;
                 }
                 $element->setWeight($weight++);
                 $element->setApplication($this->application);
-                $element->setYamlRoles(array_key_exists('roles', $elementDefinition) ? $elementDefinition['roles'] : array());
+                $element->setYamlRoles(array_key_exists('roles', $elementDefinition) ? $elementDefinition['roles'] : []);
                 $this->collection->add($element);
             }
         }
@@ -66,7 +56,7 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
      * @param mixed[] $configuration
      * @return Element
      */
-    protected function createElement($id, $region, $configuration)
+    protected function createElement($id, $region, array $configuration)
     {
         $title = ArrayUtil::getDefault($configuration, 'title', false);
         $className = $configuration['class'];
@@ -104,13 +94,11 @@ class YamlElementCollection extends AbstractLazyCollection implements Selectable
      * @param Element $element
      * @param mixed[] $configuration
      */
-    protected function configureElement(Element $element, $configuration)
+    protected function configureElement(Element $element, array $configuration)
     {
-        $defaults = $element->getConfiguration() ?: array();
+        $defaults = $element->getConfiguration() ?: [];
         // Replace non-null top level values
-        $mergedConfig = array_replace($defaults, array_filter($configuration, function($v) {
-            return $v !== null;
-        }));
+        $mergedConfig = array_replace($defaults, array_filter($configuration, fn($v): bool => $v !== null));
         // Quirks mode: add back NULL values where the defaults didn't even have the corresponding key
         foreach (array_keys($configuration) as $key) {
             if (!array_key_exists($key, $mergedConfig)) {

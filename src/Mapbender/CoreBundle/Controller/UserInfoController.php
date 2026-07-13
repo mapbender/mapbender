@@ -11,12 +11,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class UserInfoController
 {
-    /** @var UserInfoProvider */
-    protected $provider;
-
-    public function __construct(UserInfoProvider $provider)
+    public function __construct(protected UserInfoProvider $provider)
     {
-        $this->provider = $provider;
     }
 
     /**
@@ -29,8 +25,8 @@ class UserInfoController
     #[Route(path: '/userinfo.json')]
     public function userinfoAction(): JsonResponse
     {
-        return new JsonResponse($this->provider->getValues(), Response::HTTP_OK, array(
+        return new JsonResponse($this->provider->getValues(), Response::HTTP_OK, [
             'Vary' => 'Cookie',
-        ));
+        ]);
     }
 }

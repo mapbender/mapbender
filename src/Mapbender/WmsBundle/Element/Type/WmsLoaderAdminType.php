@@ -2,6 +2,8 @@
 
 namespace Mapbender\WmsBundle\Element\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -17,30 +19,30 @@ class WmsLoaderAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('defaultFormat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            ->add('defaultFormat', ChoiceType::class, [
                 'label' => 'mb.core.wmsloader.admin.defaultformat',
-                "choices" => array(
+                "choices" => [
                     "image/png" => "image/png",
                     "image/gif" => "image/gif",
                     "image/jpeg" => "image/jpeg",
-                ),
-            ))
-            ->add('defaultInfoFormat', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+                ],
+            ])
+            ->add('defaultInfoFormat', ChoiceType::class, [
                 'label' => 'mb.core.wmsloader.admin.defaultinfoformat',
-                "choices" => array(
+                "choices" => [
                     "text/html" => "text/html",
                     "text/xml" => "text/xml",
                     "text/plain" => "text/plain",
-                ),
-            ))
-            ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                ],
+            ])
+            ->add('autoOpen', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.autoOpen',
-            ))
-            ->add('splitLayers', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ])
+            ->add('splitLayers', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.admin.label.splitlayers',
-            ))
+            ])
         ;
     }
 

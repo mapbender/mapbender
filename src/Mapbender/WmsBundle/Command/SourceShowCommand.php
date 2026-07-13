@@ -4,7 +4,6 @@
 namespace Mapbender\WmsBundle\Command;
 
 
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -51,9 +50,7 @@ class SourceShowCommand extends AbstractSourceCommand
         }
 
         if ($json) {
-            $output->writeln(json_encode(array_map(function($source) {
-                return $this->getSourceDetails($source);
-            }, $sources), JSON_PRETTY_PRINT));
+            $output->writeln(json_encode(array_map(fn(WmsSource $source): array => $this->getSourceDetails($source), $sources), JSON_PRETTY_PRINT));
         } else {
             foreach ($sources as $source) {
                 $this->showSource($output, $source);
@@ -67,7 +64,7 @@ class SourceShowCommand extends AbstractSourceCommand
     {
         try {
             $source = $this->getSourceById($id);
-        } catch (\LogicException $e) {
+        } catch (\LogicException) {
             $io = new SymfonyStyle($input, $output);
             $io->error("Could not find a wms with id $id");
             return Command::FAILURE;
@@ -89,12 +86,10 @@ class SourceShowCommand extends AbstractSourceCommand
         $sources = $this->getEntityManager()->getRepository(WmsSource::class)->findAll();
 
         if ($json) {
-            $output->writeln(json_encode(array_map(function ($source) {
-                return $this->getSourceDetails($source);
-            }, $sources), JSON_PRETTY_PRINT));
+            $output->writeln(json_encode(array_map(fn(WmsSource $source): array => $this->getSourceDetails($source), $sources), JSON_PRETTY_PRINT));
         } else {
             foreach ($sources as $source) {
-                $this->showSource($output, $source, $json);
+                $this->showSource($output, $source);
                 $output->writeln('');
             }
         }

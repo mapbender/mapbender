@@ -45,9 +45,9 @@ abstract class ApplicationControllerBase extends AbstractController
     protected function requireDbApplication($slug)
     {
         /** @var Application|null $application */
-        $application = $this->em->getRepository(Application::class)->findOneBy(array(
+        $application = $this->em->getRepository(Application::class)->findOneBy([
             'slug' => $slug,
-        ));
+        ]);
         if (!$application) {
             throw $this->createNotFoundException("No such application");
         }

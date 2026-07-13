@@ -42,7 +42,7 @@ class TileMatrixSetLink
      * @param string $tileMatrixSet
      * @return TileMatrixSetLink
      */
-    public function setTileMatrixSet($tileMatrixSet)
+    public function setTileMatrixSet($tileMatrixSet): static
     {
         $this->tileMatrixSet = $tileMatrixSet;
         return $this;
@@ -52,7 +52,7 @@ class TileMatrixSetLink
      * @param integer $tileMatrixSetLimits
      * @return TileMatrixSetLink
      */
-    public function setTileMatrixSetLimits($tileMatrixSetLimits)
+    public function setTileMatrixSetLimits($tileMatrixSetLimits): static
     {
         $this->tileMatrixSetLimits = $tileMatrixSetLimits;
         return $this;

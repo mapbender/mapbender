@@ -15,24 +15,16 @@ use Symfony\Component\Config\FileLocatorInterface;
  */
 class AssetFactoryBase
 {
-    /** @var string */
-    protected $webDir;
-    /** @var FileLocatorInterface */
-    protected $fileLocator;
     /** @var string[] */
     protected $publishedBundleNameMap;
-    protected LoggerInterface $logger;
 
     /**
      * @param FileLocatorInterface $fileLocator
      * @param string $webDir
      * @param string[] $bundleClassMap
      */
-    public function __construct(FileLocatorInterface $fileLocator, LoggerInterface $logger, $webDir, $bundleClassMap)
+    public function __construct(protected FileLocatorInterface $fileLocator, protected LoggerInterface $logger, protected $webDir, $bundleClassMap)
     {
-        $this->fileLocator = $fileLocator;
-        $this->logger = $logger;
-        $this->webDir = $webDir;
         $this->publishedBundleNameMap = $this->initPublishedBundlePaths($bundleClassMap);
     }
 
@@ -43,10 +35,10 @@ class AssetFactoryBase
      * @param ?string $sourceMapRoute
      * @return string
      */
-    protected function concatenateContents($inputs, $sourceMapRoute)
+    protected function concatenateContents($inputs, $sourceMapRoute): string
     {
-        $parts = array();
-        $uniqueRefs = array();
+        $parts = [];
+        $uniqueRefs = [];
         $migratedRefMapping = $this->getMigratedReferencesMapping();
 
         foreach ($inputs as $input) {
@@ -66,7 +58,7 @@ class AssetFactoryBase
     public function createMap($inputs): string
     {
         $bundler = new SourceMapBundler();
-        $uniqueRefs = array();
+        $uniqueRefs = [];
         $migratedRefMapping = $this->getMigratedReferencesMapping();
 
         foreach ($inputs as $input) {
@@ -90,13 +82,13 @@ class AssetFactoryBase
      * @param bool $namesOnly
      * @return string|array the contents of the provides files or an array of their paths in the filesystem if $namesOnly is set to true
      */
-    protected function loadFileReference($input, $migratedRefMapping, &$uniqueRefs, bool $namesOnly = false)
+    protected function loadFileReference($input, $migratedRefMapping, array &$uniqueRefs, bool $namesOnly = false)
     {
-        $parts = array();
+        $parts = [];
         $normalizedReferenceBeforeRemap = $this->normalizeReference($input);
 
         if (!empty($uniqueRefs[$normalizedReferenceBeforeRemap])) {
-            $normalizedReferences = array();
+            $normalizedReferences = [];
         } else {
             $normalizedReferences = $this->rewriteReference($normalizedReferenceBeforeRemap, $migratedRefMapping);
         }
@@ -119,9 +111,9 @@ class AssetFactoryBase
      * @param array $migratedRefMapping
      * @return string[]
      */
-    protected function rewriteReference($normalizedReference, $migratedRefMapping)
+    protected function rewriteReference($normalizedReference, array $migratedRefMapping): array
     {
-        $refsOut = array();
+        $refsOut = [];
         if (isset($migratedRefMapping[$normalizedReference])) {
             $replacements = (array)$migratedRefMapping[$normalizedReference];
             foreach ($replacements as $replacement) {
@@ -147,11 +139,11 @@ class AssetFactoryBase
      * @param string[] $bundleClassMap
      * @return string[]
      */
-    protected function initPublishedBundlePaths($bundleClassMap)
+    protected function initPublishedBundlePaths($bundleClassMap): array
     {
-        $nameMap = array();
+        $nameMap = [];
         foreach (array_keys($bundleClassMap) as $bundleName) {
-            $publishedPath = 'bundles/' . strtolower(preg_replace('#Bundle$#', '', $bundleName));
+            $publishedPath = 'bundles/' . strtolower((string) preg_replace('#Bundle$#', '', (string) $bundleName));
             $nameMap[$publishedPath] = $bundleName;
         }
         return $nameMap;
@@ -218,8 +210,8 @@ class AssetFactoryBase
      *   known old, no longer valid asset file reference => new, valid reference
      * @return string[]
      */
-    protected function getMigratedReferencesMapping()
+    protected function getMigratedReferencesMapping(): array
     {
-        return array();
+        return [];
     }
 }

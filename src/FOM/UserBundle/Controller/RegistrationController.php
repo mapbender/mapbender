@@ -2,7 +2,8 @@
 
 namespace FOM\UserBundle\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use FOM\UserBundle\Form\Type\UserRegistrationType;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Security\TokenGenerator;
@@ -27,9 +28,9 @@ class RegistrationController extends AbstractEmailProcessController
                                 TranslatorInterface $translator,
                                 protected UserHelperService $userHelper,
                                 ManagerRegistry $doctrine,
-                                $userEntityClass,
-                                $emailFromAddress,
-                                $emailFromName,
+                                string $userEntityClass,
+                                ?string $emailFromAddress,
+                                ?string $emailFromName,
                                 protected $enableRegistration,
                                 protected $maxTokenAge,
                                 protected array $groupTitles,
@@ -57,12 +58,12 @@ class RegistrationController extends AbstractEmailProcessController
      * @return Response
      */
     #[Route(path: '/user/registration', methods: ['GET', 'POST'])]
-    public function form(Request $request)
+    public function form(Request $request): RedirectResponse|Response
     {
         $userClass = $this->userEntityClass;
         /** @var User $user */
         $user = new $userClass();
-        $form = $this->createForm('FOM\UserBundle\Form\Type\UserRegistrationType', $user);
+        $form = $this->createForm(UserRegistrationType::class, $user);
 
         $form->handleRequest($request);
 
@@ -73,9 +74,9 @@ class RegistrationController extends AbstractEmailProcessController
             $groupRepository = $this->getEntityManager()->getRepository(Group::class);
             foreach ($this->groupTitles as $groupTitle) {
                 /** @var Group|null $group */
-                $group = $groupRepository->findOneBy(array(
+                $group = $groupRepository->findOneBy([
                     'title' => $groupTitle,
-                ));
+                ]);
                 if ($group) {
                     $user->addGroup($group);
                 } else {
@@ -92,9 +93,9 @@ class RegistrationController extends AbstractEmailProcessController
             return $this->redirectToRoute('fom_user_registration_send');
         }
 
-        return $this->render('@FOMUser/Registration/form.html.twig', array(
+        return $this->render('@FOMUser/Registration/form.html.twig', [
             'form' => $form->createView(),
-        ));
+        ]);
     }
 
     /**
@@ -104,22 +105,22 @@ class RegistrationController extends AbstractEmailProcessController
      * @return Response
      */
     #[Route(path: '/user/activate', methods: ['GET'])]
-    public function confirm(Request $request)
+    public function confirm(Request $request): Response|RedirectResponse
     {
         $token = $request->query->get('token');
         $user = $this->getUserFromRegistrationToken($token);
         if (!$user) {
-            return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
+            return $this->render('@FOMUser/Login/error-notoken.html.twig', [
                 'site_email' => $this->emailFromAddress,
-            ));
+            ]);
         }
 
         if(!$this->checkTimeInterval($user->getRegistrationTime(), $this->maxTokenAge)) {
-            return $this->render('@FOMUser/Login/error-tokenexpired.html.twig', array(
-                'url' => $this->generateUrl('fom_user_registration_reset', array(
+            return $this->render('@FOMUser/Login/error-tokenexpired.html.twig', [
+                'url' => $this->generateUrl('fom_user_registration_reset', [
                     'token' => $user->getRegistrationToken(),
-                )),
-            ));
+                ]),
+            ]);
         }
 
         // Unset token
@@ -138,14 +139,14 @@ class RegistrationController extends AbstractEmailProcessController
      * @return Response
      */
     #[Route(path: '/user/registration/reset')]
-    public function reset(Request $request)
+    public function reset(Request $request): Response|RedirectResponse
     {
         $token = $request->query->get('token');
         $user = $this->getUserFromRegistrationToken($token);
         if(!$user) {
-            return $this->render('@FOMUser/Login/error-notoken.html.twig', array(
+            return $this->render('@FOMUser/Login/error-notoken.html.twig', [
                 'site_email' => $this->emailFromAddress,
-            ));
+            ]);
         }
 
         $user->setRegistrationToken(TokenGenerator::generateSecureToken());
@@ -176,8 +177,8 @@ class RegistrationController extends AbstractEmailProcessController
      */
     protected function sendRegistrationMail($user)
     {
-       $text = $this->renderView('@FOMUser/Registration/email-body.text.twig', array("user" => $user));
-       $html = $this->renderView('@FOMUser/Registration/email-body.html.twig', array("user" => $user));
+       $text = $this->renderView('@FOMUser/Registration/email-body.text.twig', ["user" => $user]);
+       $html = $this->renderView('@FOMUser/Registration/email-body.html.twig', ["user" => $user]);
         $subject = $this->translator->trans('fom.user.registration.email_subject');
         $this->sendEmail($user->getEmail(), $subject, $text, $html);
     }
@@ -190,9 +191,9 @@ class RegistrationController extends AbstractEmailProcessController
     {
         if ($token) {
             /** @var User|null $user */
-            $user = $this->getUserRepository()->findOneBy(array(
+            $user = $this->getUserRepository()->findOneBy([
                 'registrationToken' => $token,
-            ));
+            ]);
             return $user;
         } else {
             return null;

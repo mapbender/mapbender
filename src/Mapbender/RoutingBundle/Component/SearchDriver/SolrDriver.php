@@ -7,22 +7,20 @@ use Mapbender\Component\Transport\HttpTransportInterface;
 
 class SolrDriver {
 
-    protected HttpTransportInterface $httpTransport;
-
-    public function __construct(HttpTransportInterface $httpTransport) {
-        $this->httpTransport = $httpTransport;
+    public function __construct(protected HttpTransportInterface $httpTransport)
+    {
     }
 
     /**
      * @throws ConnectionErrorException
      */
-    public function search($requestParams, $searchConfig)
+    public function search(array $requestParams, array $searchConfig)
     {
         $queryFormat = $searchConfig['query_format'] ?? '%s';
         $query = $this->createSolrQuery($searchConfig, $requestParams['terms']);
         $encodedQuery = urlencode($query);
         $url = $searchConfig['url'];
-        $url .= (!str_contains($url, '?') ? '?' : '&');
+        $url .= (!str_contains((string) $url, '?') ? '?' : '&');
         $url .= $searchConfig['query_key'] . '=' . sprintf($queryFormat, $encodedQuery);
         $searchEngineResponse = $this->httpTransport->getUrl($url);
         $statusCode = $searchEngineResponse->getStatusCode();
@@ -46,7 +44,7 @@ class SolrDriver {
         return $response;
     }
 
-    protected function createSolrQuery($configuration, $terms): string
+    protected function createSolrQuery(array $configuration, $terms): string
     {
         $query = '';
         $q = trim(urldecode($terms));
@@ -61,10 +59,10 @@ class SolrDriver {
             // check SplitPattern
             if (isset($configuration['token_regex'])) {
                 $splitPattern = $configuration['token_regex'];
-                $q = preg_replace('/' . $splitPattern . '/', ' ', $q);
+                $q = preg_replace('/' . $splitPattern . '/', ' ', (string) $q);
             }
 
-            $tokens = explode(" ", $q);
+            $tokens = explode(" ", (string) $q);
             $searchPattern = $configuration['token_regex_in'];
             $replacePattern = $configuration['token_regex_out'];
 
@@ -82,21 +80,21 @@ class SolrDriver {
             // not set then take Default[^a-zA-Z0-9äöüÄÖÜß] as Pattern
             if (isset($configuration['token_regex'])) {
                 $pattern = $configuration['token_regex'];
-                $q = preg_replace('/' . $pattern . '/', ' ', $q);
+                $q = preg_replace('/' . $pattern . '/', ' ', (string) $q);
             } else {
-                $q = preg_replace("/[^a-zA-Z0-9äöüÄÖÜß]/", ' ', $q);
+                $q = preg_replace("/[^a-zA-Z0-9äöüÄÖÜß]/", ' ', (string) $q);
             }
 
             // Replace Whitespace if desired
             // Example= 'Anne Frank' => 'Anne+Frank'
             if (array_key_exists('query_ws_replace', $configuration)) {
                 $pattern = $configuration['query_ws_replace'];
-                if ('' !== trim($pattern)) {
-                    $q = preg_replace('/\s+/', $pattern, $q);
+                if ('' !== trim((string) $pattern)) {
+                    $q = preg_replace('/\s+/', (string) $pattern, (string) $q);
                 }
             }
         }
 
-        return trim($q);
+        return trim((string) $q);
     }
 }

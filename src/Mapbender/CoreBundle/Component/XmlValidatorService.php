@@ -10,20 +10,14 @@ use Psr\Log\NullLogger;
 
 class XmlValidatorService
 {
-    /** @var HttpTransportInterface */
-    protected $httpTransport;
-    /** @todo: static schema files are currently in web, in mapbender-starter; they should be part of (a) Resources package(s) */
-    /** @var string */
-    protected $staticSchemaPath;
-    /** @var LoggerInterface */
-    protected $logger;
-    /** @var string */
-    protected $tempDir;
+    protected LoggerInterface $logger;
+    protected string $tempDir;
 
-    public function __construct(HttpTransportInterface $httpTransport, $staticSchemaPath, ?LoggerInterface $logger = null)
+    /**
+     * @param string $staticSchemaPath
+     */
+    public function __construct(protected HttpTransportInterface $httpTransport, protected $staticSchemaPath, ?LoggerInterface $logger = null)
     {
-        $this->httpTransport = $httpTransport;
-        $this->staticSchemaPath = $staticSchemaPath;
         $this->logger = $logger ?: new NullLogger();
         $this->tempDir = sys_get_temp_dir() . '/mapbender/xmlvalidator';
     }
@@ -33,7 +27,7 @@ class XmlValidatorService
      * @param string|false|null $staticSchemaPath
      * @throws Exception\XmlParseException
      */
-    public function validateXmlString($xml, $staticSchemaPath = null)
+    public function validateXmlString($xml, $staticSchemaPath = null): void
     {
         $doc = new \DOMDocument();
         // Security: LIBXML_NONET disables network access during XML parsing to prevent XXE attacks
@@ -46,7 +40,7 @@ class XmlValidatorService
      * @param string|false|null $staticSchemaPath
      * @throws Exception\XmlParseException
      */
-    public function validateDocument(\DOMDocument $document, $staticSchemaPath = null)
+    public function validateDocument(\DOMDocument $document, $staticSchemaPath = null): void
     {
         $this->getValidator($staticSchemaPath)->validate($document);
     }
@@ -55,7 +49,7 @@ class XmlValidatorService
      * @param string|false|null $staticSchemaPath
      * @return XmlValidator
      */
-    protected function getValidator($staticSchemaPath = null)
+    protected function getValidator($staticSchemaPath = null): XmlValidator
     {
         if ($staticSchemaPath === null) {
             $staticSchemaPath = $this->staticSchemaPath;

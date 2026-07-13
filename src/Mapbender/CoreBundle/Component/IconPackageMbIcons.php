@@ -42,18 +42,18 @@ class IconPackageMbIcons implements IconPackageInterface
 
     public function getIconMarkup($iconCode, $additionalClass = '')
     {
-        return HtmlUtil::renderTag('span', '', array(
+        return HtmlUtil::renderTag('span', '', [
             'class' => 'mb-glyphicon ' . $iconCode . ' ' . $additionalClass
-        ));
+        ]);
     }
 
-    public function isHandled($iconCode)
+    public function isHandled($iconCode): bool
     {
         return \in_array($iconCode, $this->getChoices());
     }
 
-    public function getAliases()
+    public function getAliases(): array
     {
-        return array();
+        return [];
     }
 }

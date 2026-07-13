@@ -2,12 +2,13 @@
 
 namespace Mapbender\ManagerBundle\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Doctrine\DBAL\ConnectionException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use FOM\UserBundle\Form\Type\PermissionListType;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
@@ -18,7 +19,6 @@ use Mapbender\FrameworkBundle\Component\ElementEntityFactory;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\ManagerBundle\Component\ElementFormFactory;
 use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,14 +59,14 @@ class ElementController extends ApplicationControllerBase
      * @return Response
      */
     #[ManagerRoute('/application/{slug}/element/select', methods: ['GET', 'POST'])]
-    public function select(Request $request, $slug)
+    public function select(Request $request, $slug): Response
     {
         $application = $this->requireDbApplication($slug);
         $region = $request->get('region');
 
         $classNames = $this->inventory->getActiveInventory();
 
-        $elements = array();
+        $elements = [];
 
         /** @var MinimalInterface|string $elementClassName */
         foreach ($classNames as $elementClassName) {
@@ -76,18 +76,18 @@ class ElementController extends ApplicationControllerBase
 
             $fqcnComponents = explode("\\", $elementClassName);
             $elementName = end($fqcnComponents);
-            $elements[] = array(
+            $elements[] = [
                 'class' => $elementClassName,
                 'title' => $elementClassName::getClassTitle(),
                 'description' => $elementClassName::getClassDescription(),
                 'testName' => $elementName,
-            );
+            ];
         }
 
-        return $this->render('@MapbenderManager/Element/select.html.twig', array(
+        return $this->render('@MapbenderManager/Element/select.html.twig', [
             'elements' => $elements,
             'region' => $region,
-        ));
+        ]);
     }
 
     /**
@@ -97,7 +97,7 @@ class ElementController extends ApplicationControllerBase
      */
     private function checkRegionCompatibility($className, $regionName)
     {
-        if (false === strpos($regionName, 'content')) {
+        if (!str_contains($regionName, 'content')) {
             return !\is_a($className, 'Mapbender\CoreBundle\Component\ElementBase\FloatingElement', true);
         }
         return true;
@@ -143,10 +143,10 @@ class ElementController extends ApplicationControllerBase
             return new Response('', Response::HTTP_CREATED);
         }
 
-        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
+        return $this->render('@MapbenderManager/Element/edit.html.twig', [
             'form' => $form->createView(),
             'theme' => $formInfo['theme'],
-        ));
+        ]);
     }
 
     /**
@@ -189,10 +189,10 @@ class ElementController extends ApplicationControllerBase
             # return new Response('', 205);
             return new Response('', Response::HTTP_NO_CONTENT);
         }
-        return $this->render('@MapbenderManager/Element/edit.html.twig', array(
+        return $this->render('@MapbenderManager/Element/edit.html.twig', [
             'form' => $form->createView(),
             'theme' => $formInfo['theme'],
-        ));
+        ]);
     }
 
     /**
@@ -202,11 +202,11 @@ class ElementController extends ApplicationControllerBase
      * @param $slug string Application short name
      * @param $id int Element ID
      * @return Response
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws ConnectionException
      * @throws \Exception
      */
     #[ManagerRoute('/application/{slug}/element/{id}/security', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function security(Request $request, $slug, $id)
+    public function security(Request $request, $slug, $id): RedirectResponse|Response
     {
         /** @var Element|null $element */
         $element = $this->getRepository()->find($id);
@@ -231,19 +231,19 @@ class ElementController extends ApplicationControllerBase
                 $this->em->flush();
                 $this->em->commit();
                 $this->addFlash('success', "Your element's access has been changed.");
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $this->addFlash('error', "There was an error trying to change your element's access.");
                 $this->em->rollback();
                 $this->em->close();
             }
-            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+            return $this->redirectToRoute('mapbender_manager_application_edit', [
                 'slug' => $slug,
                 '_fragment' => 'tabLayout',
-            ));
+            ]);
         }
-        return $this->render('@MapbenderManager/fragments/security.html.twig', array(
+        return $this->render('@MapbenderManager/fragments/security.html.twig', [
             'form' => $form->createView(),
-        ));
+        ]);
     }
 
     /**
@@ -317,20 +317,20 @@ class ElementController extends ApplicationControllerBase
         $number = intval($request->get("number"));
         $targetRegionName = $request->get("region");
         if ($number === $element->getWeight() && $element->getRegion() === $targetRegionName) {
-            return new JsonResponse(array(
+            return new JsonResponse([
                 'error' => '',      // why?
                 'result' => 'ok',   // why?
-            ));
+            ]);
         }
         $application = $element->getApplication();
         $currentRegionName = $element->getRegion();
-        $affectedRegionNames = array(
+        $affectedRegionNames = [
             $currentRegionName,
             $targetRegionName,
-        );
+        ];
 
         /** @var ArrayCollection[]|Element[][] $partitions */
-        $partitions = $application->getElements()->partition(function ($_, $entity) use ($affectedRegionNames) {
+        $partitions = $application->getElements()->partition(function ($_, $entity) use ($affectedRegionNames): bool {
             /** @var Element $entity */
             return in_array($entity->getRegion(), $affectedRegionNames, true);
         });
@@ -339,7 +339,7 @@ class ElementController extends ApplicationControllerBase
         if ($currentRegionName === $targetRegionName) {
             WeightSortedCollectionUtil::updateSingleWeight($affectedRegions, $element, $number);
         } else {
-            $partitions = $affectedRegions->partition(function ($_, $entity) use ($targetRegionName) {
+            $partitions = $affectedRegions->partition(function ($_, $entity) use ($targetRegionName): bool {
                 /** @var Element $entity */
                 return $entity->getRegion() === $targetRegionName;
             });
@@ -355,10 +355,10 @@ class ElementController extends ApplicationControllerBase
         $application->setUpdated(new \DateTime());
         $this->em->persist($application);
         $this->em->flush();
-        return new JsonResponse(array(
+        return new JsonResponse([
             'error' => '',      // why?
             'result' => 'ok',   // why?
-        ));
+        ]);
     }
 
     /**
@@ -417,7 +417,7 @@ class ElementController extends ApplicationControllerBase
     }
 
     #[ManagerRoute('/application/{slug}/element/{id}/duplicate', name: 'mapbender_manager_element_duplicate', methods: ['POST'])]
-    public function duplicateAction(Request $request, $slug, $id): Response
+    public function duplicate(Request $request, $slug, $id): Response
     {
         $element = $this->getRepository()->find($id);
 
@@ -431,10 +431,10 @@ class ElementController extends ApplicationControllerBase
         if ($this->isCsrfTokenValid('element_duplicate', $request->request->get('token')) === false) {
             $this->addFlash('error', $this->translator->trans('mb.manager.admin.csrf_token_invalid'));
 
-            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+            return $this->redirectToRoute('mapbender_manager_application_edit', [
                 'slug' => $slug,
                 '_fragment' => 'tabLayout',
-            ));
+            ]);
         }
 
         try {
@@ -456,14 +456,11 @@ class ElementController extends ApplicationControllerBase
 
             return new Response(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
-            return new Response($e->getMessage(), 500);
+            return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    /**
-     * @return EntityRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): EntityRepository
     {
         /** @var EntityRepository $repository */
         $repository = $this->em->getRepository(Element::class);

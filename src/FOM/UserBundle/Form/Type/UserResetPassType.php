@@ -10,7 +10,7 @@ class UserResetPassType extends AbstractType
 {
     public function getParent(): string
     {
-        return 'FOM\UserBundle\Form\Type\UserPasswordMixinType';
+        return UserPasswordMixinType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

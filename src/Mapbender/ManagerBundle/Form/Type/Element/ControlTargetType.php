@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Form\Type\Element;
 
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Mapbender\Component\ClassUtil;
 use Mapbender\CoreBundle\Component\ElementBase\FloatingElement;
 use Mapbender\CoreBundle\Entity\Element;
@@ -34,23 +35,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ControlTargetType extends AbstractType implements EventSubscriberInterface
 {
-    /** @var ElementFilter */
-    protected $elementFilter;
-    /** @var TranslatorInterface */
-    protected $translator;
-
-    public function __construct(TranslatorInterface $translator,
-                                ElementFilter $elementFilter)
+    public function __construct(protected TranslatorInterface $translator, protected ElementFilter $elementFilter)
     {
-        $this->translator = $translator;
-        $this->elementFilter = $elementFilter;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'element_filter_function' => null,
-            'region_name_pattern' => function(Options $options) {
+            'region_name_pattern' => function(Options $options): ?string {
                 if ($options['include_buttons']) {
                     return null;
                 } else {
@@ -61,12 +54,10 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
             'include_floatable' => false,
             // placeholder = same as ChoiceType
             /* @see \Symfony\Component\Form\Extension\Core\Type\ChoiceType::configureOptions() */
-            'placeholder' => function (Options $options) {
-                return $options['required'] ? null : '';
-            },
-        ));
-        $resolver->setAllowedTypes('element_filter_function', array('null', 'callable'));
-        $resolver->setAllowedTypes('include_buttons', array('bool'));
+            'placeholder' => fn(Options $options): ?string => $options['required'] ? null : '',
+        ]);
+        $resolver->setAllowedTypes('element_filter_function', ['null', 'callable']);
+        $resolver->setAllowedTypes('include_buttons', ['bool']);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -76,12 +67,12 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'preSetData',
-        );
+        ];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         $element = $event->getForm()->getParent()->getParent()->getData();
         $config = $event->getForm()->getConfig();
@@ -89,9 +80,9 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
         $elements = $this->getTargets($element, $options);
         // REPLACE entire type with a ChoiceType
         $name = $event->getForm()->getName();
-        $choiceOptions = array(
+        $choiceOptions = [
             'choices' => $this->formatChoices($elements),
-            'choice_value' => function($choice) {
+            'choice_value' => function($choice): ?int {
                 if ($choice) {
                     return \intval($choice);
                 } else {
@@ -102,9 +93,9 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
             'placeholder' => $config->getOption('placeholder'),
             'required' => $config->getOption('required'),
             'constraints' => $config->getOption('constraints'),
-        );
+        ];
         $parentForm = $event->getForm()->getParent();
-        $parentForm->add($name, 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $choiceOptions);
+        $parentForm->add($name, ChoiceType::class, $choiceOptions);
     }
 
     /**
@@ -112,9 +103,9 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
      * @param array $options
      * @return Element[]
      */
-    protected function getTargets(Element $element, array $options)
+    protected function getTargets(Element $element, array $options): array
     {
-        $elementMap = array();
+        $elementMap = [];
         $elements = $element->getApplication()->getElements();
         $filterFunction = $this->getFilterFunction($options);
         foreach ($elements as $other) {
@@ -131,7 +122,7 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
      */
     protected function formatChoices($elements)
     {
-        $choices = array();
+        $choices = [];
         foreach ($elements as $element) {
             $title = $element->getTitle() ?: $this->elementFilter->getDefaultTitle($element);
             $choices[$title] = $element->getId();
@@ -143,9 +134,9 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
      * @param array $options
      * @return \Closure
      */
-    protected function getFilterFunction($options)
+    protected function getFilterFunction(array $options)
     {
-        $baseFilter = function(Element $element) use ($options) {
+        $baseFilter = function(Element $element) use ($options): bool {
             $className = $element->getClass();
             if (!$className || !ClassUtil::exists($className)) {
                 return false;
@@ -159,7 +150,7 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
                     return false;
                 }
             }
-            if ($options['region_name_pattern'] && !preg_match($options['region_name_pattern'], $element->getRegion())) {
+            if ($options['region_name_pattern'] && !preg_match($options['region_name_pattern'], (string) $element->getRegion())) {
                 return false;
             }
             if (!$options['include_floatable'] && \is_a($className, FloatingElement::class, true)) {
@@ -174,9 +165,7 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
             return true;
         };
         if (!empty($options['element_filter_function'])) {
-            return function(Element $element) use ($baseFilter, $options) {
-                return $baseFilter($element) && ($options['element_filter_function']($element));
-            };
+            return fn(Element $element): bool => $baseFilter($element) && ($options['element_filter_function']($element));
         } else {
             return $baseFilter;
         }
@@ -186,13 +175,13 @@ class ControlTargetType extends AbstractType implements EventSubscriberInterface
      * @param array $choices
      * @return array
      */
-    protected function sortChoices(array $choices)
+    protected function sortChoices(array $choices): array
     {
-        $titles = array();
+        $titles = [];
         foreach (array_keys($choices) as $title) {
             $titles[] = $this->translator->trans($title);
         }
-        $choices = array() + $choices;
+        $choices = [] + $choices;
         \array_multisort($titles, $choices);
         return $choices;
     }

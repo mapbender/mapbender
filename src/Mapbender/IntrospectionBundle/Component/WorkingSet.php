@@ -46,15 +46,15 @@ class WorkingSet
     /**
      * @param Application[]|null $applications
      */
-    public function setApplications(array $applications = null)
+    public function setApplications(array $applications = null): void
     {
-        $this->applications = $applications ?: array();
+        $this->applications = $applications ?: [];
     }
 
     /**
      * @param Application $application
      */
-    public function addApplication(Application $application)
+    public function addApplication(Application $application): void
     {
         $this->applications[] = $application;
     }
@@ -62,7 +62,7 @@ class WorkingSet
     /**
      * @param Source $source
      */
-    public function addSource(Source $source)
+    public function addSource(Source $source): void
     {
         $this->sources[] = $source;
     }
@@ -70,8 +70,8 @@ class WorkingSet
     /**
      * @param Source[]|null $sources
      */
-    public function setSources(array $sources = null)
+    public function setSources(array $sources = null): void
     {
-        $this->sources = $sources ?: array();
+        $this->sources = $sources ?: [];
     }
 }

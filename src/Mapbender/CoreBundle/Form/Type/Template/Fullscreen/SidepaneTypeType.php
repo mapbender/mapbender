@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -15,20 +16,20 @@ class SidepaneTypeType extends AbstractType
 {
     public function getParent(): string
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
+        return ChoiceType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'required' => false,
             'placeholder' => false,
-            'choices' => array(
+            'choices' => [
                 'mb.core.admin.template.sidepane.type.choice.tabs' => 'tabs',
                 'mb.core.admin.template.sidepane.type.choice.accordion' => 'accordion',
                 'mb.core.admin.template.sidepane.type.choice.list' => 'list',
                 'mb.core.admin.template.sidepane.type.choice.unstyled' => '',
-            ),
-        ));
+            ],
+        ]);
     }
 }

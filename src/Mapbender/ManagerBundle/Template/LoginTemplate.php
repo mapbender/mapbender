@@ -5,17 +5,14 @@ class LoginTemplate extends ManagerTemplate
 {
     public function getAssets($type)
     {
-        switch ($type) {
-            case 'css':
-                return array(
-                    '@MapbenderCoreBundle/Resources/public/sass/libs/_variables.scss',
-                    '@MapbenderManagerBundle/Resources/public/sass/manager/variables.scss',
-                    '@MapbenderManagerBundle/Resources/public/sass/manager/login.scss',
-                );
-            case 'trans':
-                return array();
-            default:
-                return parent::getAssets($type);
-        }
+        return match ($type) {
+            'css' => [
+                '@MapbenderCoreBundle/Resources/public/sass/libs/_variables.scss',
+                '@MapbenderManagerBundle/Resources/public/sass/manager/variables.scss',
+                '@MapbenderManagerBundle/Resources/public/sass/manager/login.scss',
+            ],
+            'trans' => [],
+            default => parent::getAssets($type),
+        };
     }
 }

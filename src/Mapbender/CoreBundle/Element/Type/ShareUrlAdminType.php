@@ -11,7 +11,7 @@ class ShareUrlAdminType extends AbstractType
 {
     public function getParent(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\BaseButtonAdminType';
+        return BaseButtonAdminType::class;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

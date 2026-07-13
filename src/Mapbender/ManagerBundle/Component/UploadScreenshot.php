@@ -15,9 +15,9 @@ class UploadScreenshot
      * @param $application
      * @return string
      */
-    public function upload($filePath, File $screenShotFile, Application $application)
+    public function upload(string $filePath, File $screenShotFile, Application $application): string
     {
-        $fileExtension = strtolower($screenShotFile->guessExtension());
+        $fileExtension = strtolower((string) $screenShotFile->guessExtension());
         $fileName = "screenshot-{$application->getId()}.{$fileExtension}";
         $fullFilePath = $filePath . "/" . $fileName;
 
@@ -48,7 +48,7 @@ class UploadScreenshot
      * @param $height
      * @return resource
      */
-    static function resizeImage($sourceImage, $width, $height)
+    static function resizeImage($sourceImage, $width, $height): \GdImage|false
     {
         $sourceWidth         = imagesx($sourceImage);
         $sourceHeight        = imagesy($sourceImage);

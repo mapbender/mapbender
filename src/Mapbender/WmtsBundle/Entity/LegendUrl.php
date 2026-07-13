@@ -29,13 +29,13 @@ class LegendUrl
         return $this->href;
     }
 
-    public function setFormat($format)
+    public function setFormat($format): static
     {
         $this->format = $format;
         return $this;
     }
 
-    public function setHref($href)
+    public function setHref($href): static
     {
         $this->href = $href;
         return $this;

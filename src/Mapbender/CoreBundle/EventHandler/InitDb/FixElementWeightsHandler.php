@@ -22,15 +22,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class FixElementWeightsHandler extends AbstractInitDbHandler
 {
-    /** @var EntityManagerInterface */
-    protected $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(protected EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
-    public function onInitDb(InitDbEvent $event)
+    public function onInitDb(InitDbEvent $event): void
     {
         $affected = $this->scanApplications();
         if ($affected) {
@@ -58,13 +54,13 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
     protected function processApplication(Application $application, $regionNames, OutputInterface $output)
     {
         $output->writeln("Fixing element weights in Application {$application->getSlug()}", OutputInterface::VERBOSITY_NORMAL);
-        $allElements = $application->getElements()->matching(Criteria::create()->orderBy(array(
+        $allElements = $application->getElements()->matching(Criteria::create()->orderBy([
             'region' => Criteria::ASC,
             'weight' => Criteria::ASC,
             'id' => Criteria::ASC,  // If all else fails...
-        )));
+        ]));
         foreach ($regionNames as $regionName) {
-            $partitions = $allElements->partition(function($_, $element) use ($regionName) {
+            $partitions = $allElements->partition(function($_, $element) use ($regionName): bool {
                 /** @var Element $element */
                 return $element->getRegion() === $regionName;
             });
@@ -76,7 +72,7 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
      * Returns set of Application ids and region names where element weights need fixing
      * @return array
      */
-    protected function scanApplications()
+    protected function scanApplications(): array
     {
         $connection = $this->em->getConnection();
         $tn = $this->em->getClassMetadata(Element::class)->getTableName();
@@ -87,7 +83,7 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
                  . ' GROUP BY application_id, region'
         ;
         $results = $connection->fetchAllAssociative($scanSql);
-        $applicationMap = array();
+        $applicationMap = [];
         foreach ($results as $row) {
             $needReorder = $row['c1'] != $row['c0'];
             $needReorder = $needReorder || ($row['weight0'] < 0);
@@ -95,10 +91,10 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
             if ($needReorder) {
                 $id = $row['application_id'];
                 if (empty($applicationMap[$id])) {
-                    $applicationMap[$id] = array(
+                    $applicationMap[$id] = [
                         'id' => $id,
-                        'regions' => array(),
-                    );
+                        'regions' => [],
+                    ];
                 }
                 $applicationMap[$id]['regions'][] = $row['region'];
             }

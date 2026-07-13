@@ -6,13 +6,16 @@ namespace Mapbender\ManagerBundle\Component\Exchange;
 
 class ExportDataPool extends ObjectIdentityPool
 {
-    public function getAllGroupedByClassName()
+    /**
+     * @return \non-empty-list<mixed>[]
+     */
+    public function getAllGroupedByClassName(): array
     {
-        $dataOut = array();
+        $dataOut = [];
         foreach ($this->uniqueClassNames as $ucn) {
-            $ucnEntries = array();
+            $ucnEntries = [];
             foreach ($this->entries as $key => $data) {
-                if (preg_replace('/#.*$/', '', $key) === $ucn) {
+                if (preg_replace('/#.*$/', '', (string) $key) === $ucn) {
                     $ucnEntries[] = $data;
                 }
             }

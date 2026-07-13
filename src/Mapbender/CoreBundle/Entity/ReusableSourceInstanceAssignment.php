@@ -53,7 +53,7 @@ class ReusableSourceInstanceAssignment implements WeightSortedCollectionMember
      * @param int|null $id
      * @return $this;
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
         return $this;
@@ -71,7 +71,7 @@ class ReusableSourceInstanceAssignment implements WeightSortedCollectionMember
      * @param SourceInstance $instance
      * @return $this
      */
-    public function setInstance($instance)
+    public function setInstance($instance): static
     {
         $this->instance = $instance;
         return $this;
@@ -89,7 +89,7 @@ class ReusableSourceInstanceAssignment implements WeightSortedCollectionMember
      * @param Layerset $layerset
      * @return $this
      */
-    public function setLayerset($layerset)
+    public function setLayerset($layerset): static
     {
         $this->layerset = $layerset;
         return $this;

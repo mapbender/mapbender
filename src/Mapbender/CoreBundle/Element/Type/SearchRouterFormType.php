@@ -22,12 +22,12 @@ class SearchRouterFormType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
-            'fields' => array(),
-        ));
+        $resolver->setDefaults([
+            'fields' => [],
+        ]);
     }
 
-    private function escapeName($name)
+    private function escapeName($name): string|array
     {
         return str_replace('"', '', $name);
     }

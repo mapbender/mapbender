@@ -12,12 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class OwsProxyTransport implements HttpTransportInterface
 {
-    /** @var HttpFoundationClient */
-    protected $client;
-
-    public function __construct(HttpFoundationClient $client)
+    public function __construct(protected HttpFoundationClient $client)
     {
-        $this->client = $client;
     }
 
     /**

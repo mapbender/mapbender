@@ -31,9 +31,9 @@ class DbAndYamlApplicationResolver implements ApplicationResolver
     public function getApplicationEntityUnsecure(string $slug): Application
     {
         /** @var Application|null $application */
-        $application = $this->em->getRepository(Application::class)->findOneBy(array(
+        $application = $this->em->getRepository(Application::class)->findOneBy([
             'slug' => $slug,
-        ));
+        ]);
 
         $application = $application ?: $this->yamlRepository->getApplication($slug);
         if (!$application) {

@@ -4,13 +4,8 @@ namespace Mapbender\CoreBundle\Component\Source;
 
 class BaseSourceLoaderSettings implements SourceLoaderSettings
 {
-    private bool $activateNewLayers;
-    private bool $selectNewLayers;
-
-    public function __construct($activateNewLayers, $selectNewLayers)
+    public function __construct(private readonly bool $activateNewLayers, private readonly bool $selectNewLayers)
     {
-        $this->activateNewLayers = $activateNewLayers;
-        $this->selectNewLayers = $selectNewLayers;
     }
 
     public function activateNewLayers(): bool

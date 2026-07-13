@@ -32,7 +32,7 @@ class ImageExportService
     /**
      * @return LoggerInterface
      */
-    protected function getLogger()
+    protected function getLogger(): LoggerInterface
     {
         return $this->logger;
     }
@@ -43,7 +43,7 @@ class ImageExportService
      * @param $jobData
      * @return Box
      */
-    protected function getJobExtent($jobData)
+    protected function getJobExtent(array $jobData)
     {
         $ext = $jobData['extent'];
         $cnt = $jobData['center'];
@@ -54,7 +54,7 @@ class ImageExportService
      * @param array $jobData
      * @return resource
      */
-    protected function buildExportImage($jobData)
+    protected function buildExportImage(array $jobData)
     {
         // NOTE: gd pixel coords are top down
         $targetBox = new Box(0, $jobData['height'], $jobData['width'], 0);
@@ -64,13 +64,13 @@ class ImageExportService
             $expandedCanvas = $targetBox->getExpandedForRotation($rotation);
             $expandedCanvas->roundToIntegerBoundaries();
 
-            $rotatedJob = array_replace($jobData, array(
+            $rotatedJob = array_replace($jobData, [
                 'rotation' => 0,
                 'width' => abs($expandedCanvas->getWidth()),
                 'height' => abs($expandedCanvas->getHeight()),
                 'extent' => $extentBox->getAbsWidthAndHeight(),
                 'center' => $extentBox->getCenterXy(),
-            ));
+            ]);
             // self-delegate
             $rotatedImage = $this->buildExportImage($rotatedJob);
             return $this->rotateAndCrop($rotatedImage, $targetBox, $rotation, true);
@@ -87,18 +87,12 @@ class ImageExportService
      * @param resource $image
      * @param string $format
      */
-    public function echoImage($image, $format)
+    public function echoImage($image, $format): void
     {
-        switch ($format) {
-            case 'png':
-                imagepng($image);
-                break;
-            case 'jpeg':
-            case 'jpg':
-            default:
-                imagejpeg($image, null, 85);
-                break;
-        }
+        match ($format) {
+            'png' => imagepng($image),
+            default => imagejpeg($image, null, 85),
+        };
     }
 
     /**
@@ -106,7 +100,7 @@ class ImageExportService
      * @param string $format
      * @return string
      */
-    public function dumpImage($image, $format)
+    public function dumpImage($image, $format): string|false
     {
         ob_start();
         try {
@@ -131,7 +125,7 @@ class ImageExportService
      * @param array $jobData
      * @return ExportCanvas
      */
-    protected function canvasFactory($jobData)
+    protected function canvasFactory(array $jobData): ExportCanvas
     {
         $dpi = ArrayUtil::getDefault($jobData, 'quality', null);
         $featureTransform = $this->initializeFeatureTransform($jobData);
@@ -144,7 +138,7 @@ class ImageExportService
      * @param array $jobData
      * @return float
      */
-    protected function getLineScale($jobData)
+    protected function getLineScale($jobData): float
     {
         return 1.0;
     }
@@ -153,7 +147,7 @@ class ImageExportService
      * @param $jobData
      * @return FeatureTransform
      */
-    protected function initializeFeatureTransform($jobData)
+    protected function initializeFeatureTransform(array $jobData)
     {
         $projectedBox = Box::fromCenterAndSize(
             $jobData['center']['x'], $jobData['center']['y'],
@@ -206,9 +200,9 @@ class ImageExportService
      * @param Resolution $resolution
      * @return mixed[][]
      */
-    protected function squashLayers($layers, $resolution)
+    protected function squashLayers($layers, Resolution $resolution): array
     {
-        $layersOut = array();
+        $layersOut = [];
         $previous = null;
         foreach ($layers as $layerDef) {
             if (empty($layerDef['type'])) {
@@ -262,9 +256,9 @@ class ImageExportService
         }
     }
 
-    protected function getColor($color, $alpha, $image)
+    protected function getColor($color, $alpha, $image): int|false
     {
-        list($r, $g, $b) = CSSColorParser::parse($color);
+        [$r, $g, $b] = CSSColorParser::parse($color);
         $a = (1 - $alpha) * 127.0;
         return imagecolorallocatealpha($image, $r, $g, $b, $a);
     }
@@ -278,7 +272,7 @@ class ImageExportService
      * @param bool $destructive set to true to discard original image resource (saves memory)
      * @return bool|resource a NEW image resource
      */
-    protected function cropImage($image, $x0, $y0, $width, $height, $destructive = false)
+    protected function cropImage($image, $x0, $y0, $width, $height, $destructive = false): \GdImage|false
     {
         // NOTE GD deficiency: imagecrop cannot be used because it COPIES onto a new black image and cannot disable blending
         // This effectively converts transparent pixels to black.

@@ -19,7 +19,7 @@ use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 class OgcApiFeaturesInstanceLayerType extends AbstractType
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        private readonly EntityManagerInterface $em,
     )
     {
     }

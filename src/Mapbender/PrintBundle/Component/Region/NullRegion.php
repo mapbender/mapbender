@@ -12,7 +12,7 @@ use Mapbender\PrintBundle\Component\TemplateRegion;
  */
 class NullRegion extends TemplateRegion
 {
-    private static $instance;
+    private static ?NullRegion $instance = null;
 
     public function __construct()
     {

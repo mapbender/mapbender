@@ -40,7 +40,7 @@ class TranslationGetCommand extends AbstractTranslationCommand
 
         $domain = $input->getOption('domain') ?: null;
         $translatorInput = $input->getArgument('input');
-        $translated = $this->translator->trans($translatorInput, array(), $domain, $locale);
+        $translated = $this->translator->trans($translatorInput, [], $domain, $locale);
         $localeHit = $catalog && $input != $translatorInput && $catalog->defines($translatorInput, $domain);
         if ($localeHit) {
             $displayLocale = "locale catalog " . ($locale ?: $this->translator->getLocale());

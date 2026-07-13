@@ -28,7 +28,7 @@ class ImportJob extends ExchangeJob
      * @param File|UploadedFile $importFile
      * @return $this
      */
-    public function setImportFile(File $importFile)
+    public function setImportFile(File $importFile): static
     {
         $this->importFile = $importFile;
         return $this;

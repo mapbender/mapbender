@@ -20,10 +20,10 @@ class CapabilitiesDomParser
      * @param string $localName
      * @return \DOMElement[]
      */
-    public static function getChildNodesByTagName(\DOMElement $parent, $localName)
+    public static function getChildNodesByTagName(\DOMElement $parent, $localName): array
     {
-        $children = array();
-        foreach ($parent->childNodes ?: array() as $child) {
+        $children = [];
+        foreach ($parent->childNodes ?: [] as $child) {
             if ($child->nodeType === XML_ELEMENT_NODE && $child->localName === $localName) {
                 $children[] = $child;
             }
@@ -40,7 +40,7 @@ class CapabilitiesDomParser
      * @param string $localName
      * @return \DOMElement|null
      */
-    public static function getFirstChildNode(\DOMElement $parent, $localName)
+    public static function getFirstChildNode(\DOMElement $parent, $localName): ?\DOMElement
     {
         $matches = static::getChildNodesByTagName($parent, $localName);
         return count($matches) && ($matches[0] instanceof \DOMElement)
@@ -74,27 +74,27 @@ class CapabilitiesDomParser
      * @param \DOMElement $element
      * @return Contact
      */
-    protected function parseContactInformation(\DOMElement $element)
+    protected function parseContactInformation(\DOMElement $element): Contact
     {
-        $personPrimaryEl = $this->getFirstChildNode($element, 'ContactPersonPrimary');
-        $addressEl = $this->getFirstChildNode($element, 'ContactAddress');
+        $personPrimaryEl = static::getFirstChildNode($element, 'ContactPersonPrimary');
+        $addressEl = static::getFirstChildNode($element, 'ContactAddress');
         $contact = new Contact();
         if ($personPrimaryEl) {
-            $contact->setPerson($this->getFirstChildNodeText($personPrimaryEl, 'ContactPerson'));
-            $contact->setOrganization($this->getFirstChildNodeText($personPrimaryEl, 'ContactOrganization'));
+            $contact->setPerson(static::getFirstChildNodeText($personPrimaryEl, 'ContactPerson'));
+            $contact->setOrganization(static::getFirstChildNodeText($personPrimaryEl, 'ContactOrganization'));
         }
-        $contact->setPosition($this->getFirstChildNodeText($element, 'ContactPosition'));
+        $contact->setPosition(static::getFirstChildNodeText($element, 'ContactPosition'));
         if ($addressEl) {
-            $contact->setAddressType($this->getFirstChildNodeText($addressEl, 'AddressType'));
-            $contact->setAddress($this->getFirstChildNodeText($addressEl, 'Address'));
-            $contact->setAddressCity($this->getFirstChildNodeText($addressEl, 'City'));
-            $contact->setAddressStateOrProvince($this->getFirstChildNodeText($addressEl, 'StateOrProvince'));
-            $contact->setAddressPostCode($this->getFirstChildNodeText($addressEl, 'PostCode'));
-            $contact->setAddressCountry($this->getFirstChildNodeText($addressEl, 'Country'));
+            $contact->setAddressType(static::getFirstChildNodeText($addressEl, 'AddressType'));
+            $contact->setAddress(static::getFirstChildNodeText($addressEl, 'Address'));
+            $contact->setAddressCity(static::getFirstChildNodeText($addressEl, 'City'));
+            $contact->setAddressStateOrProvince(static::getFirstChildNodeText($addressEl, 'StateOrProvince'));
+            $contact->setAddressPostCode(static::getFirstChildNodeText($addressEl, 'PostCode'));
+            $contact->setAddressCountry(static::getFirstChildNodeText($addressEl, 'Country'));
         }
-        $contact->setVoiceTelephone($this->getFirstChildNodeText($element, 'ContactVoiceTelephone'));
-        $contact->setFacsimileTelephone($this->getFirstChildNodeText($element, 'ContactFacsimileTelephone'));
-        $contact->setElectronicMailAddress($this->getFirstChildNodeText($element, 'ContactElectronicMailAddress'));
+        $contact->setVoiceTelephone(static::getFirstChildNodeText($element, 'ContactVoiceTelephone'));
+        $contact->setFacsimileTelephone(static::getFirstChildNodeText($element, 'ContactFacsimileTelephone'));
+        $contact->setElectronicMailAddress(static::getFirstChildNodeText($element, 'ContactElectronicMailAddress'));
         return $contact;
     }
 }

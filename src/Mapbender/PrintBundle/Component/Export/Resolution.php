@@ -8,19 +8,12 @@ namespace Mapbender\PrintBundle\Component\Export;
  */
 class Resolution
 {
-    /** @var float */
-    protected $horizontal;
-    /** @var float */
-    protected $vertical;
-
     /**
      * @param float $horizontal
      * @param float $vertical
      */
-    public function __construct($horizontal, $vertical)
+    public function __construct(protected $horizontal, protected $vertical)
     {
-        $this->horizontal = $horizontal;
-        $this->vertical = $vertical;
     }
 
     /**

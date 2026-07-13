@@ -49,7 +49,7 @@ class SourceToApplications
      * @param Source $source
      * @throws \InvalidArgumentException
      */
-    public function setSource($source)
+    public function setSource($source): void
     {
         if (!$source || !($source instanceof Source)) {
             throw new \InvalidArgumentException("Not a source entity");
@@ -69,7 +69,7 @@ class SourceToApplications
     /**
      * @return SourceInstance[]
      */
-    public function getSourceInstances()
+    public function getSourceInstances(): array
     {
         $this->ensureSort();
         $enabled = array_values($this->sourceInstances['enabled']);
@@ -82,7 +82,7 @@ class SourceToApplications
      * @param Application $application
      * @return bool if instance added (instances not related to bound source will be filtered and dropped)
      */
-    public function addSourceInstanceApplicationPair(SourceInstance $instance, $application)
+    public function addSourceInstanceApplicationPair(SourceInstance $instance, $application): bool
     {
         if ($instance->getSource()->getId() != $this->source->getId()) {
             return false;
@@ -108,14 +108,14 @@ class SourceToApplications
      */
     protected function initSourceInstances()
     {
-        $this->sourceInstances = array(
-            'enabled' => array(),
-            'disabled' => array(),
-        );
-        $this->applications = array(
-            'enabled' => array(),
-            'disabled'=> array(),
-        );
+        $this->sourceInstances = [
+            'enabled' => [],
+            'disabled' => [],
+        ];
+        $this->applications = [
+            'enabled' => [],
+            'disabled'=> [],
+        ];
         $this->appRelations = [];
     }
 

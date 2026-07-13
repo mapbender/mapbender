@@ -11,30 +11,23 @@ namespace Mapbender\PrintBundle\Component;
  */
 class GdSubCanvas extends GdCanvas
 {
-    /** @var GdCanvas */
-    protected $parent;
-
-    /** @var int */
-    protected $offsetX;
-    /** @var int */
-    protected $offsetY;
-
-    public function __construct(GdCanvas $parent, $offsetX, $offsetY, $width, $height)
+    /**
+     * @param int $offsetX
+     * @param int $offsetY
+     */
+    public function __construct(protected GdCanvas $parent, protected $offsetX, protected $offsetY, $width, $height)
     {
-        $this->parent = $parent;
         parent::__construct($width, $height);
         imagesavealpha($this->resource, true);
         imagealphablending($this->resource, false);
         imagefilledrectangle($this->resource, 0, 0, $width, $height, IMG_COLOR_TRANSPARENT);
-        $this->offsetX = $offsetX;
-        $this->offsetY = $offsetY;
     }
 
     /**
      * Blends image back onto the parent canvas at the appropriate offset.
      * (see constructor)
      */
-    public function mergeBack()
+    public function mergeBack(): void
     {
         imagealphablending($this->parent->resource, true);
         imagecopyresampled($this->parent->resource, $this->resource,
@@ -63,7 +56,7 @@ class GdSubCanvas extends GdCanvas
      * @param float[][] $coordinates (in parent canvas pixel space)
      * @param int $color
      */
-    public function drawPolygonOutline($coordinates, $color)
+    public function drawPolygonOutline($coordinates, $color): void
     {
         parent::drawPolygonOutline($this->translatePoints($coordinates), $color);
     }
@@ -72,7 +65,7 @@ class GdSubCanvas extends GdCanvas
      * @param float[][] $coordinates (in parent canvas pixel space)
      * @param int $color
      */
-    public function drawPolygonBody($coordinates, $color)
+    public function drawPolygonBody($coordinates, $color): void
     {
         parent::drawPolygonBody($this->translatePoints($coordinates), $color);
     }
@@ -81,7 +74,7 @@ class GdSubCanvas extends GdCanvas
      * @param float[][] $coordinates (in parent canvas pixel space)
      * @param int $color
      */
-    public function drawLineString($coordinates, $color)
+    public function drawLineString($coordinates, $color): void
     {
         parent::drawLineString($this->translatePoints($coordinates), $color);
     }
@@ -93,9 +86,9 @@ class GdSubCanvas extends GdCanvas
      * @param float $diameterX
      * @param float $diameterY
      */
-    public function drawFilledEllipse($centerX, $centerY, $color, $diameterX, $diameterY)
+    public function drawFilledEllipse($centerX, $centerY, $color, $diameterX, $diameterY): void
     {
-        $translatedCenter = $this->translatePoints(array(array($centerX, $centerY)));
+        $translatedCenter = $this->translatePoints([[$centerX, $centerY]]);
         parent::drawFilledEllipse($translatedCenter[0][0], $translatedCenter[0][1], $color, $diameterX, $diameterY);
     }
 
@@ -105,17 +98,17 @@ class GdSubCanvas extends GdCanvas
      * @param float[][] $points
      * @return float[][]
      */
-    protected function translatePoints($points)
+    protected function translatePoints($points): array
     {
-        $pointsOut = array();
+        $pointsOut = [];
         foreach ($points as $pair) {
             // we don't know if $pair contains numeric or 'x' / 'y' keys
             // => normalize to numeric
             $pairNumeric = array_values($pair);
-            $pointsOut[] = array(
+            $pointsOut[] = [
                 $pairNumeric[0] - $this->offsetX,
                 $pairNumeric[1] - $this->offsetY,
-            );
+            ];
         }
         return $pointsOut;
     }

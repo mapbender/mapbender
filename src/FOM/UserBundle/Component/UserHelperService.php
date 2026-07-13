@@ -4,10 +4,10 @@
 namespace FOM\UserBundle\Component;
 
 
+use Symfony\Component\Validator\Constraints\Length;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints;
 
 /**
  * Default implementation for service with id fom.user_helper.service
@@ -26,7 +26,7 @@ class UserHelperService
      * @param User $user User object to manipulate
      * @param string $password Password to encrypt and store
      */
-    public function setPassword(User $user, $password)
+    public function setPassword(User $user, string $password): void
     {
         $encoder = $this->passwordHasherFactory->getPasswordHasher($user);
 
@@ -44,7 +44,7 @@ class UserHelperService
      * @param int $length
      * @return string
      */
-    public function generateSalt($length)
+    public function generateSalt($length): string
     {
         if ($length <= 0) {
             throw new \InvalidArgumentException("Invalid $length " . \var_export($length, true));
@@ -63,13 +63,11 @@ class UserHelperService
     /**
      * @return Constraint[]
      */
-    public function getPasswordConstraints()
+    public function getPasswordConstraints(): array
     {
-        return array(
-            new Constraints\Length(array(
-                'min' => 8,
-            )),
-        );
+        return [
+            new Length(min: 8),
+        ];
     }
 
 }

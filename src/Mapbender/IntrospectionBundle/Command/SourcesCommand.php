@@ -24,14 +24,11 @@ use Symfony\Component\Yaml\Yaml;
 
 class SourcesCommand extends Command
 {
-    /** @var ManagerRegistry */
-    protected $managerRegistry;
-    protected $buckets = array();
+    protected $buckets = [];
     protected $bucketBy = 'application';
 
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(protected ManagerRegistry $managerRegistry)
     {
-        $this->managerRegistry = $managerRegistry;
         parent::__construct(null);
     }
 
@@ -48,7 +45,7 @@ class SourcesCommand extends Command
     {
         $formatOption = $input->getOption('format');
         if ($formatOption) {
-            if (!in_array($formatOption, array('table', 'yaml', 'yml', 'json'))) {
+            if (!in_array($formatOption, ['table', 'yaml', 'yml', 'json'])) {
                 throw new \UnexpectedValueException("Unsupported format " . var_export($formatOption, true));
             }
         } else {
@@ -66,7 +63,7 @@ class SourcesCommand extends Command
             throw new \RuntimeException("Options --unused-only and --no-unused are mutually exclusive!");
         }
 
-        $this->buckets = array();
+        $this->buckets = [];
         $noteStyle = new OutputFormatterStyle('white', 'blue');
         $output->getFormatter()->setStyle('note', $noteStyle);
     }
@@ -75,39 +72,39 @@ class SourcesCommand extends Command
      * @param Collector $collector
      * @return array
      */
-    protected function buildAppTree(Collector $collector)
+    protected function buildAppTree(Collector $collector): array
     {
         $aggregate = $collector->collectApplicationInfo();
-        $headers = array(
+        $headers = [
             'Application',
             'Sources',
             'Instances',
-        );
+        ];
         $appList = new DataItemList('applications');
         foreach ($aggregate->getRelations() as $appInfo) {
             $appList->addItem($this->collectAppRelation($appInfo));
         }
         $unusedList = $this->buildUnusedSourcesTree($aggregate);
 
-        return array(
+        return [
             'tableHeaders'   => $headers,
             'mainList'   => $appList,
             'unusedSources' => $unusedList,
-        );
+        ];
     }
 
     /**
      * @param Collector $collector
      * @return array
      */
-    protected function buildSourcesTree(Collector $collector)
+    protected function buildSourcesTree(Collector $collector): array
     {
         $aggregate = $collector->collectSourceInfo();
-        $headers = array(
+        $headers = [
             'Source',
             'Applications',
             'Instances',
-        );
+        ];
 
         $usedSourceList = new DataItemList('sources');
         foreach ($aggregate->getRelations() as $srcInfo) {
@@ -118,11 +115,11 @@ class SourcesCommand extends Command
         $dataTree->addItem($usedSourceList);
         $dataTree->addItem($unusedList);
 
-        return array(
+        return [
             'tableHeaders'  => $headers,
             'mainList'      => $usedSourceList,
             'unusedSources' => $unusedList,
-        );
+        ];
     }
 
 
@@ -130,7 +127,7 @@ class SourcesCommand extends Command
      * @param Base $aggregator
      * @return DataTreeNode
      */
-    protected function buildUnusedSourcesTree($aggregator)
+    protected function buildUnusedSourcesTree($aggregator): DataItemList
     {
         $itemTree = new DataItemList('unused');
         foreach ($aggregator->getUnusedSources() as $source) {
@@ -206,7 +203,7 @@ class SourcesCommand extends Command
      * @param ApplicationToSources $appInfo
      * @return DataTreeNode
      */
-    protected function collectAppRelation(ApplicationToSources $appInfo)
+    protected function collectAppRelation(ApplicationToSources $appInfo): DataTreeNode
     {
         $application = $appInfo->getApplication();
         $appItem = new DataTreeNode($application->getId(), $application->getTitle());
@@ -232,7 +229,7 @@ class SourcesCommand extends Command
      * @param SourceToApplications $relation
      * @return DataTreeNode
      */
-    protected function collectSourceRelation(SourceToApplications $relation)
+    protected function collectSourceRelation(SourceToApplications $relation): DataTreeNode
     {
         $source = $relation->getSource();
 
@@ -261,7 +258,7 @@ class SourcesCommand extends Command
      * @param string[] $headers
      * @param string[][] $rows
      */
-    protected function renderTable(InputInterface $input, OutputInterface $output, $headers, $rows)
+    protected function renderTable(InputInterface $input, OutputInterface $output, array $headers, array $rows)
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
         $symfonyStyle->table($headers, $rows);

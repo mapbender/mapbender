@@ -38,7 +38,7 @@ class Box
      * @param float $height
      * @return Box
      */
-    public static function fromCenterAndSize($centerX, $centerY, $width, $height)
+    public static function fromCenterAndSize($centerX, $centerY, $width, $height): static
     {
         $left = $centerX - 0.5 * $width;
         $bottom = $centerY - 0.5 * $height;
@@ -71,19 +71,19 @@ class Box
      */
     public function getScaled($widthFactor, $heightFactor)
     {
-        $center = array(
+        $center = [
             ($this->right - $this->left) * 0.5 + $this->left,
             ($this->top - $this->bottom) * 0.5 + $this->bottom,
-        );
+        ];
         $newWidth = $widthFactor * $this->getWidth();
         $newHeight = $heightFactor * $this->getHeight();
-        return $this->fromCenterAndSize($center[0], $center[1], $newWidth, $newHeight);
+        return static::fromCenterAndSize($center[0], $center[1], $newWidth, $newHeight);
     }
 
     /**
      * @return float
      */
-    public function getWidth()
+    public function getWidth(): int|float
     {
         return $this->right - $this->left;
     }
@@ -91,7 +91,7 @@ class Box
     /**
      * @return float
      */
-    public function getHeight()
+    public function getHeight(): int|float
     {
         return $this->top - $this->bottom;
     }
@@ -99,12 +99,12 @@ class Box
     /**
      * @return float[] array with keys 'x' and 'y'
      */
-    public function getCenterXy()
+    public function getCenterXy(): array
     {
-        return array(
+        return [
             'x' => 0.5 * ($this->left + $this->right),
             'y' => 0.5 * ($this->top + $this->bottom),
-        );
+        ];
     }
 
     /**
@@ -113,27 +113,27 @@ class Box
      *
      * @return float[]
      */
-    public function getAbsWidthAndHeight()
+    public function getAbsWidthAndHeight(): array
     {
-        return array(
+        return [
             'width' => abs($this->getWidth()),
             'height' => abs($this->getHeight()),
-        );
+        ];
     }
 
     /**
      * Self-modifying; quantize left / right / bottom / top to integers
      */
-    public function roundToIntegerBoundaries()
+    public function roundToIntegerBoundaries(): void
     {
         // base calculations on width / height and current center to minimize drift
         $roundWidth = round($this->getWidth());
         $roundHeight = round($this->getHeight());
         // try to hit a half-integer at the center
-        $center = array(
+        $center = [
             ($this->right - $this->left) * 0.5 + $this->left,
             ($this->top - $this->bottom) * 0.5 + $this->bottom,
-        );
+        ];
         $this->left = round($center[0] - 0.5 * $roundWidth);
         $this->bottom = round($center[1] - 0.5 * $roundHeight);
         $this->right = $this->left + $roundWidth;

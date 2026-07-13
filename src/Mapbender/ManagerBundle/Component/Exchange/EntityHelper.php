@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Component\Exchange;
 
 
+use Doctrine\ORM\Mapping\ClassMetaDataFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\MappingException;
@@ -11,19 +12,15 @@ use Mapbender\CoreBundle\Utils\DoctrineClassUtil;
 
 class EntityHelper extends AbstractObjectHelper
 {
-    /** @var ClassMetadata */
-    protected $classMeta;
-
     /** @var static[] */
-    protected static $instances = array();
+    protected static $instances = [];
 
     /**
      * @param ClassMetadata $classMeta
      * @param string $className
      */
-    public function __construct(ClassMetadata $classMeta, $className)
+    public function __construct(protected ClassMetadata $classMeta, $className)
     {
-        $this->classMeta = $classMeta;
         parent::__construct(DoctrineClassUtil::getRealClass($className));
     }
 
@@ -33,9 +30,9 @@ class EntityHelper extends AbstractObjectHelper
      * @return static|null
      * @throws \ReflectionException
      */
-    public static function getInstance(EntityManagerInterface $em, $objectOrClassName)
+    public static function getInstance(EntityManagerInterface $em, $objectOrClassName): ?EntityHelper
     {
-        $className = is_string($objectOrClassName) ? $objectOrClassName : get_class($objectOrClassName);
+        $className = is_string($objectOrClassName) ? $objectOrClassName : $objectOrClassName::class;
         if (!array_key_exists($className, static::$instances)) {
             static::$instances[$className] = static::factory($em, $objectOrClassName) ?: false;
         }
@@ -52,15 +49,15 @@ class EntityHelper extends AbstractObjectHelper
      * @return static|null
      * @throws \ReflectionException
      */
-    protected static function factory(EntityManagerInterface $em, $objectOrClassName)
+    protected static function factory(EntityManagerInterface $em, $objectOrClassName): ?self
     {
-        $className = is_string($objectOrClassName) ? $objectOrClassName : get_class($objectOrClassName);
-        /** @var \Doctrine\ORM\Mapping\ClassMetaDataFactory $factory */
+        $className = is_string($objectOrClassName) ? $objectOrClassName : $objectOrClassName::class;
+        /** @var ClassMetaDataFactory $factory */
         $factory = $em->getMetadataFactory();
         try {
             $classMeta = $factory->getMetadataFor($className);
             return new static($classMeta, $className);
-        } catch (MappingException $e) {
+        } catch (MappingException) {
             return null;
         }
     }
@@ -76,7 +73,7 @@ class EntityHelper extends AbstractObjectHelper
     /**
      * @return string
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->classMeta->getName();
     }

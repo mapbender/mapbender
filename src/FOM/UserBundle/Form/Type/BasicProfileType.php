@@ -2,6 +2,8 @@
 
 namespace FOM\UserBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use FOM\UserBundle\Entity\BasicProfile;
@@ -14,55 +16,55 @@ class BasicProfileType extends AbstractType
         $roles = BasicProfile::getOrganizationRoleChoices();
 
         $builder
-            ->add('firstName', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('firstName', TextType::class, [
                 'required' => false,
                 'label' => 'form.profile.basic.firstname',
-            ))
-            ->add('lastName', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('lastName', TextType::class, [
                 'required' => false,
                 'label' => 'form.profile.basic.lastName',
-            ))
-            ->add('notes', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('notes', TextType::class, [
                 'required' => false,
                 'label' => 'form.profile.basic.notes',
-            ))
-            ->add('phone', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('phone', TextType::class, [
                 'required' => false,
                 'label' => 'form.profile.basic.phone',
-            ))
-            ->add('street', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('street', TextType::class, [
                 'required' => false,
                 'label' => 'form.profile.basic.street',
-            ))
-            ->add('zipCode', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('zipCode', TextType::class, [
                 'required' => false,
                 'label' => 'form.profile.basic.zipCode',
-            ))
-            ->add('city', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('city', TextType::class, [
                 'required' => false,
                 'label' => 'form.profile.basic.city',
-            ))
-            ->add('country', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('country', TextType::class, [
                 'required' => false,
                 'label' => 'form.profile.basic.country',
-            ))
-            ->add('organizationName', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('organizationName', TextType::class, [
                 'required' => false,
                 'label' => 'form.profile.basic.organizationName',
-            ))
-            ->add('organizationRole', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            ])
+            ->add('organizationRole', ChoiceType::class, [
                 'choices' => array_flip($roles),
                 'placeholder' => 'mb.form.choice_optional',
                 'required' => false,
                 'label' => 'form.profile.basic.organizationRole',
-            ))
+            ])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'FOM\UserBundle\Entity\BasicProfile',
-        ));
+        $resolver->setDefaults([
+            'data_class' => BasicProfile::class,
+        ]);
     }
 }

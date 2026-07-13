@@ -2,6 +2,10 @@
 
 namespace Mapbender\WmsBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -17,9 +21,9 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setRequired(array('instance'));
-        $resolver->setAllowedTypes('instance', array('Mapbender\WmsBundle\Entity\WmsInstance'));
-        $resolver->setDefault('data_class', 'Mapbender\WmsBundle\Component\DimensionInst');
+        $resolver->setRequired(['instance']);
+        $resolver->setAllowedTypes('instance', [WmsInstance::class]);
+        $resolver->setDefault('data_class', DimensionInst::class);
     }
 
     /**
@@ -29,64 +33,64 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
     {
         $builder->addEventSubscriber($this);
         $builder
-            ->add('active', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('active', CheckboxType::class, [
                 'required' => true,
                 'label' => 'active',
-            ))
-            ->add('name', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('name', TextType::class, [
                 'auto_initialize' => false,
                 'required' => true,
-                'attr' => array(
+                'attr' => [
                     'readonly' => 'readonly',
-                ),
-            ))
-            ->add('units', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                ],
+            ])
+            ->add('units', TextType::class, [
                 'auto_initialize' => false,
                 'required' => false,
-                'attr' => array(
+                'attr' => [
                     'readonly' => 'readonly',
-                ),
-            ))
-            ->add('unitSymbol', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+                ],
+            ])
+            ->add('unitSymbol', TextType::class, [
                 'auto_initialize' => false,
                 'required' => false,
-                'attr' => array(
+                'attr' => [
                     'readonly' => 'readonly',
-                ),
-            ))
-            ->add('multipleValues', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+                ],
+            ])
+            ->add('multipleValues', CheckboxType::class, [
                 'auto_initialize' => false,
                 'label' => 'multiple',
-                'attr' => array(
+                'attr' => [
                     'readonly' => 'readonly',
-                ),
+                ],
                 'required' => false,
-            ))
-            ->add('nearestValue', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ])
+            ->add('nearestValue', CheckboxType::class, [
                 'auto_initialize' => false,
                 'label' => 'nearest',
-                'attr' => array(
+                'attr' => [
                     'readonly' => 'readonly',
-                ),
+                ],
                 'required' => false,
-            ))
-            ->add('current', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ])
+            ->add('current', CheckboxType::class, [
                 'auto_initialize' => false,
                 'label' => 'current',
-                'attr' => array(
+                'attr' => [
                     'readonly' => 'readonly',
-                ),
+                ],
                 'required' => false,
-            ))
+            ])
         ;
     }
 
     public static function getSubscribedEvents(): array
     {
-        return array(FormEvents::PRE_SET_DATA => 'preSetData');
+        return [FormEvents::PRE_SET_DATA => 'preSetData'];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         $data = $event->getData();
         $form = $event->getForm();
@@ -105,42 +109,42 @@ class DimensionInstType extends AbstractType implements EventSubscriberInterface
     {
         $instance = $form->getConfig()->getOption('instance');
         $originalExtent = $this->getOriginalExtent($instance, $data->getName());
-        $ranges = explode(',', $originalExtent);
+        $ranges = explode(',', (string) $originalExtent);
 
         $multipleRanges = count($ranges) > 1;
         if ($multipleRanges) {
-            $extentType = 'Symfony\Component\Form\Extension\Core\Type\HiddenType';
+            $extentType = HiddenType::class;
         } else {
-            $extentType = 'Symfony\Component\Form\Extension\Core\Type\TextType';
+            $extentType = TextType::class;
         }
         $form
-            ->add('extent', $extentType, array(
+            ->add('extent', $extentType, [
                 'required' => true,
-                'attr' => array(
+                'attr' => [
                     'readonly' => 'readonly',
-                ),
+                ],
                 'label' => 'Extent',
-            ))
+            ])
         ;
         if ($multipleRanges) {
             $choices = array_combine($ranges, $ranges);
-            $form->add('extentRanges', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
-                'data' => explode(',', $data->getExtent()),
+            $form->add('extentRanges', ChoiceType::class, [
+                'data' => explode(',', (string) $data->getExtent()),
                 'mapped' => false,
                 'choices' => $choices,
                 'label' => $form->get('extent')->getConfig()->getOption('label'),
                 'auto_initialize' => false,
                 'multiple' => true,
                 'required' => true,
-            ));
+            ]);
         }
 
-        $form->add('default', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+        $form->add('default', TextType::class, [
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 'readonly' => 'readonly',
-            ),
-        ));
+            ],
+        ]);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void

@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Mapbender\FrameworkBundle\Component\IconIndex;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
@@ -15,14 +16,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IconClassType extends AbstractType implements EventSubscriberInterface
 {
-    /** @var IconIndex */
-    protected $iconIndex;
-    protected TranslatorInterface $translator;
-
-    public function __construct(IconIndex $iconIndex, TranslatorInterface $translator)
+    public function __construct(protected IconIndex $iconIndex, protected TranslatorInterface $translator)
     {
-        $this->iconIndex = $iconIndex;
-        $this->translator = $translator;
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
@@ -33,7 +28,7 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
 
     public function getParent(): string
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
+        return ChoiceType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -46,8 +41,8 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
             $choices[$this->iconIndex->getIconMarkup($code) . '&nbsp;&nbsp;' . $label] = $code;
         }
 
-        $resolver->setDefaults(array(
-            'placeholder' => function(Options $options) {
+        $resolver->setDefaults([
+            'placeholder' => function(Options $options): string {
                 if ($options['required']) {
                     return 'mb.form.choice_required';
                 } else {
@@ -55,7 +50,7 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
                 }
             },
             'choices' => $choices,
-        ));
+        ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -65,12 +60,12 @@ class IconClassType extends AbstractType implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'preSetData',
-        );
+        ];
     }
 
-    public function preSetData(FormEvent $evt)
+    public function preSetData(FormEvent $evt): void
     {
         $value = $evt->getData();
         if ($value) {

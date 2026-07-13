@@ -10,23 +10,15 @@ class LegendUrl
     /** @var OnlineResource|null */
     public $onlineResource;
 
-    /** @var int|null */
-    public $width;
-
-    /** @var int|null */
-    public $height;
-
     /**
      *
      * @param OnlineResource|null $onlineResource
      * @param int $width
      * @param int $height
      */
-    public function __construct(?OnlineResource $onlineResource = null, $width = null, $height = null)
+    public function __construct(?OnlineResource $onlineResource = null, public $width = null, public $height = null)
     {
         $this->onlineResource = $onlineResource;
-        $this->width = $width;
-        $this->height = $height;
     }
 
     /**
@@ -35,7 +27,7 @@ class LegendUrl
      * @param OnlineResource $onlineResource
      * @return $this
      */
-    public function setOnlineResource(OnlineResource $onlineResource)
+    public function setOnlineResource(OnlineResource $onlineResource): static
     {
         $this->onlineResource = $onlineResource;
         return $this;
@@ -57,7 +49,7 @@ class LegendUrl
      * @param int|null $width
      * @return $this
      */
-    public function setWidth($width)
+    public function setWidth($width): static
     {
         $this->width = $width;
         return $this;
@@ -79,7 +71,7 @@ class LegendUrl
      * @param int|null $height
      * @return $this
      */
-    public function setHeight($height)
+    public function setHeight($height): static
     {
         $this->height = $height;
         return $this;

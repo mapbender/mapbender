@@ -26,9 +26,9 @@ class JsCompiler extends AssetFactoryBase
         return $this->concatenateContents($inputs, $debug ? $sourceMapRoute : null);
     }
 
-    protected function getMigratedReferencesMapping()
+    protected function getMigratedReferencesMapping(): array
     {
-        return array(
+        return [
             '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
             '@MapbenderCoreBundle/Resources/public/widgets/mapbender.checkbox.js' => '@MapbenderCoreBundle/Resources/public/widgets/checkbox.js',
             '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js' => '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
@@ -41,7 +41,7 @@ class JsCompiler extends AssetFactoryBase
             // Select2: sourcing from vendor makes i18n sub-path inaccessible; this is ok, because the legacy robloach build does not contain i18n either
             '/components/select2/select2-built.js' => '/../vendor/select2/select2/dist/js/select2.js',
             // Bootstrap colorpicker (from abandoned debugteam fork) absorbed into Mapbender, pre-provided in template
-            '/components/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' => array(),
-        );
+            '/components/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js' => [],
+        ];
     }
 }

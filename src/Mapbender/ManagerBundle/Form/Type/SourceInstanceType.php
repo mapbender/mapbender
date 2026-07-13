@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Form\Type;
 
 
+use Symfony\Component\Validator\Constraints\Range;
 use Mapbender\CoreBundle\Entity\SupportsOpacity;
 use Mapbender\CoreBundle\Entity\SupportsProxy;
 use Symfony\Component\Form\AbstractType;
@@ -11,7 +12,6 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints;
 
 class SourceInstanceType extends AbstractType
 {
@@ -49,10 +49,7 @@ class SourceInstanceType extends AbstractType
                     'max' => 100,
                 ],
                 'constraints' => [
-                    new Constraints\Range([
-                        'min' => 0,
-                        'max' => 100,
-                    ]),
+                    new Range(min: 0, max: 100),
                 ],
                 'required' => false,
             ]);

@@ -2,7 +2,8 @@
 
 namespace FOM\UserBundle\Command;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use FOM\UserBundle\Component\UserHelperService;
@@ -21,44 +22,38 @@ use Symfony\Component\Console\Question\Question;
  *
  * @author Christian Wygoda
  */
-#[AsCommand('fom:user:resetroot')]
+#[AsCommand('fom:user:resetroot', help: <<<'TXT'
+The <info>fom:user:resetroot</info> command can be used to create or update
+the root user account. This account is identified by id 1, username, e-mail
+and password can be set.
+TXT)]
 class ResetRootAccountCommand extends Command
 {
-    /** @var UserHelperService */
-    protected $userHelper;
-    /** @var EntityManagerInterface */
-    protected $entityManager;
+    protected ?ObjectManager $entityManager;
     /** @var EntityRepository */
-    protected $userRepository;
+    protected ObjectRepository $userRepository;
     /** @var string */
     protected $userEntityClass;
 
     public function __construct(ManagerRegistry $managerRegistry,
-                                UserHelperService $userHelper,
+                                protected UserHelperService $userHelper,
                                 $userEntityClass)
     {
         parent::__construct('fom:user:resetroot');
         $this->userRepository = $managerRegistry->getRepository($userEntityClass);
         $this->entityManager = $managerRegistry->getManagerForClass($userEntityClass);
-        $this->userHelper = $userHelper;
         $this->userEntityClass = $userEntityClass;
     }
 
     protected function configure(): void
     {
         $this
-            ->setDefinition(array(
+            ->setDefinition([
                 new InputOption('username', '', InputOption::VALUE_REQUIRED, 'The username to use for the root account'),
                 new InputOption('email', '', InputOption::VALUE_REQUIRED, 'The e-mail address for the root account'),
                 new InputOption('password', '', InputOption::VALUE_REQUIRED, 'The password to set for the root account'),
-                new InputOption('silent', '', InputOption::VALUE_NONE, 'Perform a silent reset')))
-            ->setDescription('Resets the root account')
-            ->setHelp(<<<EOT
-The <info>fom:user:resetroot</info> command can be used to create or update
-the root user account. This account is identified by id 1, username, e-mail
-and password can be set.
-EOT
-            );
+                new InputOption('silent', '', InputOption::VALUE_NONE, 'Perform a silent reset')])
+            ->setDescription('Resets the root account');
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
@@ -80,7 +75,7 @@ EOT
             $root = new $userClass();
             $root->setId(1);
             $mode = 'created';
-            foreach (array('username', 'email', 'password') as $option) {
+            foreach (['username', 'email', 'password'] as $option) {
                 if (!$input->getOption($option)) {
                     throw new \RuntimeException(
                         sprintf('The %s option must be provided.', $option));

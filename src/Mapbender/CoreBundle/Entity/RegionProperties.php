@@ -46,7 +46,7 @@ class RegionProperties
      */
     public function __construct()
     {
-        $this->properties = array();
+        $this->properties = [];
     }
 
     /**
@@ -55,7 +55,7 @@ class RegionProperties
      * @param integer $id
      * @return $this
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
 
@@ -78,7 +78,7 @@ class RegionProperties
      * @param string $name
      * @return $this
      */
-    public function setName($name)
+    public function setName($name): static
     {
         $this->name = $name;
 
@@ -101,7 +101,7 @@ class RegionProperties
      * @param Application $application
      * @return $this
      */
-    public function setApplication(Application $application)
+    public function setApplication(Application $application): static
     {
         $this->application = $application;
 
@@ -124,9 +124,9 @@ class RegionProperties
      * @param array $properties
      * @return $this
      */
-    public function setProperties(array $properties = array())
+    public function setProperties(array $properties = []): static
     {
-        $this->properties = $properties === null || !is_array($properties) ? array() : $properties;
+        $this->properties = $properties === null || !is_array($properties) ? [] : $properties;
 
         return $this;
     }
@@ -146,7 +146,7 @@ class RegionProperties
                 $properties['generate_button_menu'] = 'menu_mobile_desktop';
             } elseif ($value === false || $value === 0 || $value === '') {
                 $properties['generate_button_menu'] = 'no_menu';
-            } elseif (!in_array($value, array('no_menu', 'menu_mobile_desktop', 'menu_mobile', 'menu_desktop'))) {
+            } elseif (!in_array($value, ['no_menu', 'menu_mobile_desktop', 'menu_mobile', 'menu_desktop'])) {
                 $properties['generate_button_menu'] = 'no_menu';
             }
         }

@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmsBundle\Component\Wms;
 
-use Doctrine\Common\Util\ClassUtils;
+use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Doctrine\ORM\EntityManager;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
@@ -93,7 +93,7 @@ class Importer extends HttpSourceLoader
      * @param Source $reloaded
      * @throws \Exception
      */
-    public function updateSource(Source $target, Source $reloaded, ?SourceLoaderSettings $settings = null)
+    public function updateSource(Source $target, Source $reloaded, ?SourceLoaderSettings $settings = null): void
     {
         /** @var WmsSource $target */
         /** @var WmsSource $reloaded */
@@ -108,9 +108,9 @@ class Importer extends HttpSourceLoader
 
         $this->replaceSourceLayers($target, $reloaded);
 
-        $this->copyKeywords($target, $reloaded, 'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
+        $this->copyKeywords($target, $reloaded, WmsSourceKeyword::class);
         /** @var ApplicationRepository $applicationRepository */
-        $applicationRepository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
+        $applicationRepository = $this->entityManager->getRepository(Application::class);
         foreach ($applicationRepository->findWithInstancesOf($target) as $application) {
             $application->setUpdated(new \DateTime('now'));
             $this->entityManager->persist($application);
@@ -130,15 +130,15 @@ class Importer extends HttpSourceLoader
             return $persistedUrl;
         } else {
             /** @var WmsSource $target */
-            return UrlUtil::validateUrl($persistedUrl, array(
+            return UrlUtil::validateUrl($persistedUrl, [
                 'VERSION' => $target->getVersion(),
-            ));
+            ]);
         }
     }
 
     protected function capabilitiesRequest(HttpOriginInterface $serviceOrigin): Response
     {
-        $addParams = array();
+        $addParams = [];
         $url = $serviceOrigin->getOriginUrl();
         $addParams['REQUEST'] = 'GetCapabilities';
         if (!UrlUtil::getQueryParameterCaseInsensitive($url, 'service')) {
@@ -149,7 +149,7 @@ class Importer extends HttpSourceLoader
         return $this->httpTransport->getUrl($url);
     }
 
-    private function replaceSourceLayers(WmsSource $target, WmsSource $source)
+    private function replaceSourceLayers(WmsSource $target, WmsSource $source): void
     {
         foreach ($target->getLayers() as $oldLayer) {
             $this->entityManager->remove($oldLayer);
@@ -161,7 +161,7 @@ class Importer extends HttpSourceLoader
         $this->setLayerSourceRecursive($target->getRootlayer(), $target);
     }
 
-    private function setLayerSourceRecursive(WmsLayerSource $layer, WmsSource $source)
+    private function setLayerSourceRecursive(WmsLayerSource $layer, WmsSource $source): void
     {
         $layer->setSource($source);
         if (!$source->getLayers()->contains($layer)) {
@@ -172,7 +172,7 @@ class Importer extends HttpSourceLoader
         }
     }
 
-    private function updateInstance(WmsInstance $instance, ?SourceLoaderSettings $settings = null)
+    private function updateInstance(WmsInstance $instance, ?SourceLoaderSettings $settings = null): void
     {
         $source = $instance->getSource();
 
@@ -207,18 +207,18 @@ class Importer extends HttpSourceLoader
         $oldInstanceRoot = $instance->getRootlayer();
         // Store / "index" old instance layers so we may copy some manually
         // configured properties over
-        $nameMap = array();
-        $titleMap = array();
+        $nameMap = [];
+        $titleMap = [];
         foreach ($instance->getLayers() as $oldInstanceLayer) {
             $sourceItem = $oldInstanceLayer->getSourceItem();
             if (!$sourceItem) {
                 continue;
             }
             if ($sourceItem->getName()) {
-                $nameMap += array($sourceItem->getName() => $oldInstanceLayer);
+                $nameMap += [$sourceItem->getName() => $oldInstanceLayer];
             }
             if ($sourceItem->getTitle()) {
-                $titleMap += array($sourceItem->getTitle() => $oldInstanceLayer);
+                $titleMap += [$sourceItem->getTitle() => $oldInstanceLayer];
             }
         }
 
@@ -257,11 +257,11 @@ class Importer extends HttpSourceLoader
     /**
      * @param WmsInstance $instance
      */
-    private function updateInstanceDimensions(WmsInstance $instance)
+    private function updateInstanceDimensions(WmsInstance $instance): void
     {
         $dimensionsOld = $instance->getDimensions();
         $sourceDimensions = $instance->getSource()->getDimensions();
-        $dimensions = array();
+        $dimensions = [];
         foreach ($sourceDimensions as $sourceDimension) {
             $newDimension = null;
             foreach ($dimensionsOld as $oldDimension) {
@@ -289,7 +289,7 @@ class Importer extends HttpSourceLoader
      * @param ContainingKeyword $source
      * @param string $keywordClass
      */
-    private function copyKeywords(ContainingKeyword $target, ContainingKeyword $source, $keywordClass)
+    private function copyKeywords(ContainingKeyword $target, ContainingKeyword $source, string $keywordClass): void
     {
         KeywordUpdater::updateKeywords($target, $source, $this->entityManager, $keywordClass);
     }
@@ -299,7 +299,7 @@ class Importer extends HttpSourceLoader
      * @param integer $value
      * @return int|mixed
      */
-    protected function assignLayerPriorities($layer, $value)
+    protected function assignLayerPriorities($layer, $value): int|float
     {
         $layer->setPriority($value);
         $offset = 1;

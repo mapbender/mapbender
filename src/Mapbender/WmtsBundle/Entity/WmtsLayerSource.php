@@ -40,13 +40,13 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     protected $latlonBounds;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $boundingBoxes;
+    protected array $boundingBoxes;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $styles;
+    protected array $styles;
 
     #[ORM\Column(type: 'json', nullable: true)]
-    protected $infoformats;
+    protected array $infoformats;
 
     #[ORM\Column(type: 'json', nullable: true)]
     protected $tilematrixSetlinks;
@@ -82,17 +82,17 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     public function __construct()
     {
         $this->sublayer = new ArrayCollection();
-        $this->infoformats = array();
-        $this->styles = array();
-        $this->resourceUrl = array();
-        $this->tilematrixSetlinks = array();
-        $this->boundingBoxes = array();
+        $this->infoformats = [];
+        $this->styles = [];
+        $this->resourceUrl = [];
+        $this->tilematrixSetlinks = [];
+        $this->boundingBoxes = [];
     }
 
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
@@ -108,7 +108,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @param string $identifier
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier): void
     {
         $this->identifier = $identifier;
     }
@@ -124,7 +124,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @param string $abstract
      */
-    public function setAbstract($abstract)
+    public function setAbstract($abstract): void
     {
         $this->abstract = $abstract;
     }
@@ -141,7 +141,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param BoundingBox|null $latlonBounds
      * @return $this
      */
-    public function setLatlonBounds(?BoundingBox $latlonBounds = NULL)
+    public function setLatlonBounds(?BoundingBox $latlonBounds = NULL): static
     {
         $this->latlonBounds = $latlonBounds;
         return $this;
@@ -162,7 +162,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param BoundingBox $boundingBoxes
      * @return $this
      */
-    public function addBoundingBox(BoundingBox $boundingBoxes)
+    public function addBoundingBox(BoundingBox $boundingBoxes): static
     {
         $this->boundingBoxes[] = $boundingBoxes;
         return $this;
@@ -171,15 +171,15 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @param BoundingBox[] $boundingBoxes
      */
-    public function setBoundingBoxes($boundingBoxes)
+    public function setBoundingBoxes($boundingBoxes): void
     {
-        $this->boundingBoxes = $boundingBoxes ?: array();
+        $this->boundingBoxes = $boundingBoxes ?: [];
     }
 
     /**
      * @return BoundingBox[]
      */
-    public function getBoundingBoxes()
+    public function getBoundingBoxes(): array
     {
         $result = [];
         foreach ($this->boundingBoxes ?? [] as $item) {
@@ -196,7 +196,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param array $styles
      * @return $this
      */
-    public function setStyles($styles)
+    public function setStyles($styles): static
     {
         $this->styles = $styles;
         return $this;
@@ -206,7 +206,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param Style $style
      * @return $this
      */
-    public function addStyle($style)
+    public function addStyle($style): static
     {
         $this->styles[] = $style;
         return $this;
@@ -215,7 +215,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @return Style[]
      */
-    public function getStyles()
+    public function getStyles(): array
     {
         $result = [];
         foreach ($this->styles ?? [] as $item) {
@@ -244,7 +244,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param array $infoformats
      * @return $this
      */
-    public function setInfoformats($infoformats)
+    public function setInfoformats($infoformats): static
     {
         $this->infoformats = $infoformats;
         return $this;
@@ -254,7 +254,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param string $infoformat
      * @return $this
      */
-    public function addInfoformat($infoformat)
+    public function addInfoformat($infoformat): static
     {
         $this->infoformats[] = $infoformat;
         return $this;
@@ -271,7 +271,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @return TileMatrixSetLink[]
      */
-    public function getTilematrixSetlinks()
+    public function getTilematrixSetlinks(): array
     {
         $result = [];
         foreach ($this->tilematrixSetlinks ?? [] as $item) {
@@ -291,7 +291,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param TileMatrixSetLink[] $tilematrixSetlinks
      * @return $this
      */
-    public function setTilematrixSetlinks(array $tilematrixSetlinks = array())
+    public function setTilematrixSetlinks(array $tilematrixSetlinks = []): static
     {
         $this->tilematrixSetlinks = $tilematrixSetlinks;
         return $this;
@@ -301,7 +301,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param TileMatrixSetLink $tilematrixSetlink
      * @return $this
      */
-    public function addTilematrixSetlinks(TileMatrixSetLink $tilematrixSetlink)
+    public function addTilematrixSetlinks(TileMatrixSetLink $tilematrixSetlink): static
     {
         $this->tilematrixSetlinks[] = $tilematrixSetlink;
         return $this;
@@ -312,7 +312,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      */
     public function getMatrixSets()
     {
-        $identifiers = array();
+        $identifiers = [];
         foreach ($this->getTilematrixSetlinks() as $tmsl) {
             $identifiers[] = $tmsl->getTileMatrixSet();
         }
@@ -322,9 +322,12 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
         return $this->getSource()->getTilematrixsets()->matching($criteria)->getValues();
     }
 
-    public function getSupportedCrsNames()
+    /**
+     * @return mixed[]
+     */
+    public function getSupportedCrsNames(): array
     {
-        $names = array();
+        $names = [];
         foreach ($this->getMatrixSets() as $matrixSet) {
             $names[] = ConfigGeneratorCommon::urnToSrsCode($matrixSet->getSupportedCrs());
         }
@@ -335,7 +338,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param UrlTemplateType[] $resourceUrls
      * @return $this
      */
-    public function setResourceUrl(array $resourceUrls = array())
+    public function setResourceUrl(array $resourceUrls = []): static
     {
         $this->resourceUrl = $resourceUrls;
         return $this;
@@ -345,7 +348,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
      * @param UrlTemplateType $resourceUrl
      * @return $this
      */
-    public function addResourceUrl(UrlTemplateType $resourceUrl)
+    public function addResourceUrl(UrlTemplateType $resourceUrl): static
     {
         $this->resourceUrl[] = $resourceUrl;
         return $this;
@@ -354,7 +357,7 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @return UrlTemplateType[]
      */
-    public function getResourceUrl()
+    public function getResourceUrl(): array
     {
         $result = [];
         foreach ($this->resourceUrl ?? [] as $item) {
@@ -391,9 +394,9 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @return UrlTemplateType[]
      */
-    public function getTileResources()
+    public function getTileResources(): array
     {
-        $matches = array();
+        $matches = [];
         foreach ($this->getResourceUrl() as $ru) {
             if ($ru->getResourceType() === 'tile') {
                 $matches[] = $ru;
@@ -405,18 +408,18 @@ class WmtsLayerSource extends SourceItem implements MutableUrlTarget
     /**
      * @return string[]
      */
-    public function getUniqueTileFormats()
+    public function getUniqueTileFormats(): array
     {
-        $formats = array();
+        $formats = [];
         foreach ($this->getTileResources() as $resourceUrl) {
             $formats[] = $resourceUrl->getFormat();
         }
         return array_unique($formats);
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
-        $newResourceUrls = array();
+        $newResourceUrls = [];
         foreach ($this->getResourceUrl() as $resourceUrl) {
             $resourceUrl->mutateUrls($transformer);
             $newResourceUrls[] = clone $resourceUrl;

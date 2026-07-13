@@ -22,7 +22,7 @@ class WmsLayerSourceKeyword extends Keyword
      * @param ContainingKeyword $wmsLayerSource
      * @return $this
      */
-    public function setReferenceObject(ContainingKeyword $wmsLayerSource)
+    public function setReferenceObject(ContainingKeyword $wmsLayerSource): static
     {
         $this->reference = $wmsLayerSource;
         return $this;

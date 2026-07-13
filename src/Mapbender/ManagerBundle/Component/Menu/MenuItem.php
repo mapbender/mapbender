@@ -10,7 +10,7 @@ class MenuItem implements \Serializable
 {
     /** @var MenuItem[] */
     protected array $children;
-    protected ?int $weight;
+    protected ?int $weight = null;
     protected bool $current = false;
     protected bool $active = false;
 
@@ -22,22 +22,22 @@ class MenuItem implements \Serializable
         protected string $title,
         protected ? string $route)
     {
-        $this->children = array();
+        $this->children = [];
     }
 
     public function __serialize()
     {
-        $data = array(
+        $data = [
             'title' => $this->title,
             'route' => $this->route,
-        );
-        $data += array_filter(array(
+        ];
+        $data += array_filter([
             'children' => $this->children,
-        ));
+        ]);
         if ($this->weight !== null) {
-            $data += array(
+            $data += [
                 'weight' => $this->weight,
-            );
+            ];
         }
         return $data;
     }
@@ -47,7 +47,7 @@ class MenuItem implements \Serializable
         return \serialize($this->__serialize());
     }
 
-    public function unserialize($data)
+    public function unserialize($data): void
     {
         $unserialized = \unserialize($data);
         $this->__unserialize($unserialized);
@@ -63,7 +63,7 @@ class MenuItem implements \Serializable
         if (isset($data['children'])) {
             $this->children = $data['children'];
         } else {
-            $this->children = array();
+            $this->children = [];
         }
     }
 
@@ -75,7 +75,7 @@ class MenuItem implements \Serializable
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -83,7 +83,7 @@ class MenuItem implements \Serializable
     /**
      * @return string|null
      */
-    public function getRoute()
+    public function getRoute(): ?string
     {
         return $this->route;
     }
@@ -91,7 +91,7 @@ class MenuItem implements \Serializable
     /**
      * @return MenuItem[]
      */
-    public function getSubroutes()
+    public function getSubroutes(): array
     {
         return $this->children;
     }
@@ -105,13 +105,13 @@ class MenuItem implements \Serializable
      * @param MenuItem[] $children
      * @return $this
      */
-    public function addChildren($children)
+    public function addChildren($children): static
     {
         $this->children = array_merge($this->children, $children);
         return $this;
     }
 
-    public function filter(AuthorizationCheckerInterface $authorizationChecker)
+    public function filter(AuthorizationCheckerInterface $authorizationChecker): bool
     {
         if (!$this->enabled($authorizationChecker)) {
             return false;
@@ -125,9 +125,9 @@ class MenuItem implements \Serializable
         }
     }
 
-    public function filterRoute($prefix)
+    public function filterRoute($prefix): bool
     {
-        if (0 === strpos($this->route, $prefix)) {
+        if (str_starts_with((string) $this->route, (string) $prefix)) {
             return false;
         } else {
             foreach ($this->children as $index => $child) {
@@ -139,7 +139,7 @@ class MenuItem implements \Serializable
         }
     }
 
-    public function checkActive($route)
+    public function checkActive($route): bool
     {
         if ($this->route !== null && $route === $this->route) {
             $this->current = true;
@@ -160,12 +160,12 @@ class MenuItem implements \Serializable
         }
     }
 
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->current || $this->active;
     }
 
-    public function getIsCurrent()
+    public function getIsCurrent(): bool
     {
         return $this->current;
     }
@@ -174,7 +174,7 @@ class MenuItem implements \Serializable
      * @param $num
      * @return $this
      */
-    public function setWeight($num)
+    public function setWeight($num): static
     {
         $this->weight = intval($num);
         return $this;
@@ -183,7 +183,7 @@ class MenuItem implements \Serializable
     /**
      * @return int|null
      */
-    public function getWeight()
+    public function getWeight(): ?int
     {
         return $this->weight;
     }
@@ -195,16 +195,12 @@ class MenuItem implements \Serializable
      */
     public static function sortItems($items)
     {
-        usort($items, function($a, $b) {
+        usort($items, function($a, $b): int {
             /** @var MenuItem $a */
             /** @var MenuItem $b */
             $weightA = $a->getWeight();
             $weightB = $b->getWeight();
-            if ($weightA == $weightB) {
-                return 0;
-            }
-
-            return ($weightA < $weightB) ? -1 : 1;
+            return $weightA <=> $weightB;
         });
         return $items;
     }
@@ -215,7 +211,7 @@ class MenuItem implements \Serializable
      * @param string[] $routePrefixBlacklist
      * @return MenuItem[]
      */
-    public static function filterBlacklistedRoutes($items, $routePrefixBlacklist)
+    public static function filterBlacklistedRoutes(array $items, $routePrefixBlacklist): array
     {
         foreach ($items as $index => $item) {
             foreach ($routePrefixBlacklist as $prefix) {

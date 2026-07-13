@@ -3,7 +3,6 @@
 namespace FOM\UserBundle\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
@@ -21,13 +20,13 @@ use FOM\UserBundle\Entity\User;
 class UserProfileListener
 {
     protected string $defaultUserEntityName = User::class;
-    protected array $patchProgress = array();
+    protected array $patchProgress = [];
     const PATCH_STARTED = 1;
     const PATCH_PERFORMED = 2;
 
     public function __construct(protected string $profileEntityName)
     {
-        $this->defaultUserEntityName = 'FOM\UserBundle\Entity\User';
+        $this->defaultUserEntityName = User::class;
     }
 
     public function loadClassMetadata(LoadClassMetadataEventArgs $args): void
@@ -64,12 +63,12 @@ class UserProfileListener
     protected function patchUserEntity(ClassMetadata $metadata): void
     {
         if (!$metadata->hasAssociation('profile')) {
-            $metadata->mapOneToOne(array(
+            $metadata->mapOneToOne([
                 'fieldName' => 'profile',
                 'targetEntity' => $this->profileEntityName,
                 'mappedBy' => 'uid',
-                'cascade' => array('persist'),
-            ));
+                'cascade' => ['persist'],
+            ]);
         }
     }
 
@@ -84,22 +83,22 @@ class UserProfileListener
 
         $metadata->setIdGenerator(new AssignedGenerator());
         if (!$metadata->getIdentifierFieldNames()) {
-            $metadata->setIdentifier(array('uid'));
+            $metadata->setIdentifier(['uid']);
         }
         if (!$metadata->hasAssociation('uid')) {
-            $metadata->mapOneToOne(array(
+            $metadata->mapOneToOne([
                 'fieldName' => 'uid',
                 'targetEntity' => $this->defaultUserEntityName,
                 'inversedBy' => 'profile',
                 'id' => true,
-                'joinColumns' => array(
-                    array(
+                'joinColumns' => [
+                    [
                         'name' => $uidColname,
                         'referencedColumnName' => 'id',
                         'unique' => true,
-                    ),
-                ),
-            ));
+                    ],
+                ],
+            ]);
         }
     }
 
@@ -107,13 +106,13 @@ class UserProfileListener
     {
         $metadata->setIdGenerator(new AssignedGenerator());
         if (!$metadata->getIdentifierFieldNames()) {
-            $metadata->setIdentifier(array('uid'));
+            $metadata->setIdentifier(['uid']);
         }
         if (!$metadata->hasField('uid')) {
-            $metadata->mapField(array(
+            $metadata->mapField([
                 'fieldName' => 'uid',
                 'type' => 'integer',
-            ));
+            ]);
         }
     }
 

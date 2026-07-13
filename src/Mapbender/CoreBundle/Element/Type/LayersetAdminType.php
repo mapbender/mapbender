@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
@@ -14,7 +15,7 @@ class LayersetAdminType extends AbstractType
      */
     public function getParent(): string
     {
-        return 'Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType';
+        return OrderAwareMultipleChoiceType::class;
     }
 
     /**
@@ -22,23 +23,23 @@ class LayersetAdminType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'application' => null,
-            'choices' => function(Options $options) {
+            'choices' => function(Options $options): array {
                 /** @var Application $application */
                 $application = $options['application'];
-                $choices = array();
+                $choices = [];
                 foreach ($application->getLayersets() as $layerset) {
                     $choices[$layerset->getTitle()] = $layerset->getId();
                 }
                 return $choices;
             },
-            'constraints' => array(
+            'constraints' => [
                 new Count(
                     min: 1,
                     minMessage: 'mb.core.map.admin.min_one_layerset',
                 ),
-            ),
-        ));
+            ],
+        ]);
     }
 }

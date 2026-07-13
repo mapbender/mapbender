@@ -16,7 +16,7 @@ class HtmlUtil
      * @param mixed[] $attributes
      * @return string
      */
-    public static function renderTag($name, $content, $attributes)
+    public static function renderTag($name, $content, $attributes): string
     {
         return static::renderOpeningTag($name, $attributes) . $content . '</' . $name . '>';
     }
@@ -26,9 +26,9 @@ class HtmlUtil
      * @return string
      * @throws \InvalidArgumentException when encountering unsafe attribute names
      */
-    public static function renderAttributes($attributes)
+    public static function renderAttributes($attributes): string
     {
-        $parts = array();
+        $parts = [];
         foreach ($attributes as $name => $value) {
             if (!$name || \is_numeric($name) || !preg_match('#^[a-z][a-z\-\d]*$#i', $name)) {
                 throw new \InvalidArgumentException("Unsafe HTML attribute name " . var_export($name, true));
@@ -41,7 +41,7 @@ class HtmlUtil
                 $value = $name;
             }
             if ($value !== false) {
-                $parts[] = $name . '="' . \htmlspecialchars($value ?: '') . '"';
+                $parts[] = $name . '="' . \htmlspecialchars((string) $value ?: '') . '"';
             }
         }
         return implode(' ', $parts);
@@ -54,7 +54,7 @@ class HtmlUtil
      * @param $attributes
      * @return string
      */
-    public static function renderOpeningTag($name, $attributes)
+    public static function renderOpeningTag($name, $attributes): string
     {
         return '<' . rtrim($name . ' ' . static::renderAttributes($attributes)) . '>';
     }
@@ -67,17 +67,17 @@ class HtmlUtil
      * @param mixed[] $b
      * @return mixed[]
      */
-    public static function mergeAttributes($a, $b)
+    public static function mergeAttributes(array $a, array $b): array
     {
         $merged = array_replace($a, $b);
         if (\array_key_exists('class', $a) && \array_key_exists('class', $b)) {
-            $merged['class'] = implode(' ', array_filter(array($a['class'], $b['class'])));
+            $merged['class'] = implode(' ', array_filter([$a['class'], $b['class']]));
         }
         if (\array_key_exists('style', $a) && \array_key_exists('style', $b)) {
-            $parts = array(
+            $parts = [
                 rtrim($a['style'], "; \n"),
                 rtrim($b['style'], "; \n"),
-            );
+            ];
 
             $merged['style'] = implode('; ', array_filter($parts)) . ';';
         }

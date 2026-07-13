@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
+use Mapbender\WmsBundle\Entity\WmsSource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Source\DataSource;
@@ -15,11 +16,11 @@ use Mapbender\CoreBundle\Component\Source\DataSource;
 // Discriminator map is filled dynamically by @see SourceMetadataListener::loadClassMetadata. However, it can't be
 // empty initially, because otherwise Doctrine will try to identify all classes inheriting from Source including
 // MappedSuperclasses, which does not work.
-#[ORM\DiscriminatorMap(['wmssource' => '\Mapbender\WmsBundle\Entity\WmsSource'])]
+#[ORM\DiscriminatorMap(['wmssource' => WmsSource::class])]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string', length: 25)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_core_source')]
-abstract class Source
+abstract class Source implements \Stringable
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
@@ -102,7 +103,7 @@ abstract class Source
      *
      * @return String Source as String
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->id;
     }

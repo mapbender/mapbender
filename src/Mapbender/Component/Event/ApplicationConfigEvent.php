@@ -14,13 +14,10 @@ class ApplicationConfigEvent extends ApplicationEvent
      */
     const EVTNAME_AFTER_CONFIG = 'mb.after_application_config';
 
-    /** @var mixed[] */
-    protected $configuration;
-
-    public function __construct(Application $application, array $configuration)
+    public function __construct(Application $application, /** @var mixed[] */
+    protected array $configuration)
     {
         parent::__construct($application);
-        $this->configuration = $configuration;
     }
 
     /**
@@ -34,7 +31,7 @@ class ApplicationConfigEvent extends ApplicationEvent
     /**
      * @param mixed[] $configuration
      */
-    public function setConfiguration(array $configuration)
+    public function setConfiguration(array $configuration): void
     {
         $this->configuration = $configuration;
     }

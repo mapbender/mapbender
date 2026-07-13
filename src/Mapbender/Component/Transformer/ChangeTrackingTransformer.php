@@ -6,23 +6,17 @@ namespace Mapbender\Component\Transformer;
 
 class ChangeTrackingTransformer implements OneWayTransformer
 {
-    /** @var OneWayTransformer */
-    protected $implementation;
-    /** @var bool */
-    protected $strictEquality;
     /** @var ChangeTrackingEntry[] */
-    protected $changes = array();
+    protected $changes = [];
     /** @var ChangeTrackingEntry[] */
-    protected $unchanged = array();
+    protected $unchanged = [];
 
     /**
      * @param OneWayTransformer $implementation
      * @param bool $strictEquality
      */
-    public function __construct(OneWayTransformer $implementation, $strictEquality = true)
+    public function __construct(protected OneWayTransformer $implementation, protected $strictEquality = true)
     {
-        $this->implementation = $implementation;
-        $this->strictEquality = $strictEquality;
     }
 
     public function process($x)
@@ -53,7 +47,7 @@ class ChangeTrackingTransformer implements OneWayTransformer
      * @param mixed $b
      * @return bool
      */
-    protected function compare($a, $b)
+    protected function compare($a, $b): bool
     {
         if ($this->strictEquality) {
             return $a === $b;

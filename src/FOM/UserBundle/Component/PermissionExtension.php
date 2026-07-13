@@ -14,10 +14,10 @@ class PermissionExtension extends AbstractExtension
 
     public function getFunctions(): array
     {
-        return array(
-            'has_public_access' => new TwigFunction('has_public_access', array($this, 'hasPublicAccess')),
-            'mapbender_has_permissions' => new TwigFunction('mapbender_has_permissions', array($this, 'hasPermissions')),
-        );
+        return [
+            'has_public_access' => new TwigFunction('has_public_access', $this->hasPublicAccess(...)),
+            'mapbender_has_permissions' => new TwigFunction('mapbender_has_permissions', $this->hasPermissions(...)),
+        ];
     }
 
     public function hasPublicAccess(mixed $resource, string $action = "view"): bool

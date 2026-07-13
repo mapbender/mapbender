@@ -20,10 +20,10 @@ class QueuedPrintJobRepository extends EntityRepository
      */
     public function findReadyForProcessing()
     {
-        return $this->findBy(array(
+        return $this->findBy([
             'started' => null,
             'created' => null,
-        ));
+        ]);
     }
 
     /**

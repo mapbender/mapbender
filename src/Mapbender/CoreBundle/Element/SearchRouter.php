@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\SearchRouterAdminType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Doctrine\Persistence\ConnectionRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
@@ -42,136 +44,136 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
     {
     }
 
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return 'mb.core.searchrouter.class.title';
     }
 
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return 'mb.core.searchrouter.class.description';
     }
 
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\SearchRouterAdminType';
+        return SearchRouterAdminType::class;
     }
 
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/search_router.html.twig';
     }
 
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbSearchRouter';
     }
 
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             "width" => 700,
             "height" => 500,
-            "routes" => array(),
+            "routes" => [],
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
 
     protected function getDefaultRouteConfiguration(): array
     {
-        return array(
+        return [
             "title" => "mb.core.searchrouter.tag.search",
-            "class" => 'Mapbender\CoreBundle\Component\SQLSearchEngine',
-            "class_options" => array(
+            "class" => SQLSearchEngine::class,
+            "class_options" => [
                 "connection" => 'default',
                 "relation" => "geometries",
-                "attributes" => array("*"),
+                "attributes" => ["*"],
                 "geometry_attribute" => "geom",
-            ),
-            "results" => array(
+            ],
+            "results" => [
                 "view" => "table",
                 "count" => "true",
                 "exportcsv" => "false",
-                "headers" => array(),
-                "callback" => array(
+                "headers" => [],
+                "callback" => [
                     "event" => "click",
-                    "options" => array(
+                    "options" => [
                         "buffer" => 1000,
                         "minScale" => null,
                         "maxScale" => null
-                    ),
-                ),
+                    ],
+                ],
                 "styleMap" => $this->getDefaultStyleMapOptions(),
-            ),
-        );
+            ],
+        ];
     }
 
-    protected function getDefaultStyleMapOptions()
+    protected function getDefaultStyleMapOptions(): array
     {
-        return array(
-            "default" => array(
+        return [
+            "default" => [
                 "strokeColor" => "#dd0000",
                 "fillColor" => "#ee2222",
                 "fillOpacity" => 0.4,
                 "strokeOpacity" => 0.8,
-            ),
-            "select" => array(
+            ],
+            "select" => [
                 "strokeColor" => "#dd0000",
                 "fillColor" => "#ee2222",
                 "fillOpacity" => 0.8,
                 "strokeOpacity" => 1.0,
-            ),
-            "temporary" => array(
+            ],
+            "temporary" => [
                 "strokeColor" => "#ee8822",
                 "fillColor" => "#ee8800",
                 "fillOpacity" => 0.8,
                 "strokeOpacity" => 1.0,
-            )
-        );
+            ]
+        ];
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/search_router.html.twig');
         $view->attributes['class'] = 'mb-element-searchrouter';
         $view->attributes['data-title'] = $element->getTitle();
 
-        $view->variables = array(
+        $view->variables = [
             'route_select_form' => $this->getRouteSelectForm($element)->createView(),
             'search_forms' => $this->getFormViews($element),
-        );
+        ];
         return $view;
     }
 
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbSearchRouter.js',
                 '@MapbenderCoreBundle/Resources/public/elements/csv-export.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/search_router.scss',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.core.searchrouter.result_counter',
                 'mb.core.searchrouter.no_results',
                 'mb.core.searchrouter.exportcsv',
-            ),
-        );
+            ],
+        ];
     }
 
-    public function getHttpHandler(Element $element)
+    public function getHttpHandler(Element $element): static
     {
         return $this;
     }
 
-    public function handleRequest(Element $element, Request $request)
+    public function handleRequest(Element $element, Request $request): Response|JsonResponse
     {
-        $actionParts = explode('/', $request->attributes->get('action'));
+        $actionParts = explode('/', (string) $request->attributes->get('action'));
         if (count($actionParts) !== 2) {
             throw new NotFoundHttpException();
         }
@@ -217,29 +219,29 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
                 $data['extent']
             );
             $results = $this->postProcessAutocomplete($results, $categoryConf, $data);
-            return new JsonResponse(array_replace($data, array(
+            return new JsonResponse(array_replace($data, [
                 'results' => $results,
-            )));
+            ]));
         }
 
         if ($action === 'search') {
             $form = $this->getForm($categoryConf, $categoryId);
             $form->submit($data['properties']);
-            $query = array(
+            $query = [
                 'form' => $form->getData(),
-            );
+            ];
             $features = $engine->search($categoryConf, $query, $data['srs'], $data['extent']);
             $features = $this->postProcessFeatures($features, $categoryConf, $data);
-            return new JsonResponse(array(
+            return new JsonResponse([
                 'type' => 'FeatureCollection',
                 'features' => $features,
-            ));
+            ]);
         }
 
         throw new NotFoundHttpException();
     }
 
-    protected function validateInputData($inputData, $categoryConf)
+    protected function validateInputData(array $inputData, array $categoryConf)
     {
         foreach ($categoryConf['form'] as $key => $formField) {
             $pattern = $formField['pattern'] ?? $this->defaultPattern;
@@ -251,7 +253,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
             if ($multiValue) {
                 $separatorPattern = SQLSearchEngine::getSeparatorPattern($formField);
                 $values = array_map('trim', preg_split($separatorPattern, $inputData[$key]));
-                $values = array_filter($values, fn($v) => $v !== '');
+                $values = array_filter($values, fn(string $v): bool => $v !== '');
                 foreach ($values as $singleValue) {
                     $this->validateRegex($singleValue, $regex);
                 }
@@ -282,18 +284,18 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
      * @param Element $element
      * @return FormInterface Search route select form
      */
-    protected function getRouteSelectForm(Element $element)
+    protected function getRouteSelectForm(Element $element): FormInterface
     {
         $defaultTitle = $this->getDefaultRouteConfiguration()['title'];
         $routeConfigs = $element->getConfiguration()['routes'];
-        $choices = array();
+        $choices = [];
         foreach (\array_values($routeConfigs) as $i => $routeConfig) {
             $title = (!empty($routeConfig['title'])) ? $routeConfig['title'] : $defaultTitle;
             $choices[$title] = $i;
         }
-        return $this->formFactory->createNamed('search_routes_route', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', null, array(
+        return $this->formFactory->createNamed('search_routes_route', ChoiceType::class, null, [
             'choices' => $choices,
-        ));
+        ]);
     }
 
     /**
@@ -301,20 +303,20 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
      * @param $categoryId
      * @return FormInterface
      */
-    protected function getForm($categoryConfig, $categoryId)
+    protected function getForm($categoryConfig, string $categoryId): FormInterface
     {
-        return $this->formFactory->createNamed($categoryId, 'Mapbender\CoreBundle\Element\Type\SearchRouterFormType', null, array(
+        return $this->formFactory->createNamed($categoryId, SearchRouterFormType::class, null, [
             'fields' => $categoryConfig,
-        ));
+        ]);
     }
 
     /**
      * @param Element $element
      * @return FormView[]
      */
-    protected function getFormViews(Element $element)
+    protected function getFormViews(Element $element): array
     {
-        $formViews = array();
+        $formViews = [];
         $routeDefaults = $this->getDefaultRouteConfiguration();
         $routeConfigs = \array_values($element->getConfiguration()['routes']);
         foreach ($routeConfigs as $i => $conf) {
@@ -324,7 +326,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         return $formViews;
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         $configuration = $entity->getConfiguration();
         foreach ($configuration['routes'] as $routeKey => $routeValue) {
@@ -348,7 +350,7 @@ class SearchRouter extends AbstractElementService implements ConfigMigrationInte
         return $config;
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconSearch';
     }

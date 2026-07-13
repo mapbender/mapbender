@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Form\Type\Template;
 
 
+use Symfony\Component\Form\FormInterface;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
@@ -23,7 +24,7 @@ class RegionSettingsType extends AbstractType implements DataMapperInterface
 
     /**
      * @param RegionProperties|null $viewData
-     * @param \Symfony\Component\Form\FormInterface[]|\Traversable $forms
+     * @param FormInterface[]|\Traversable $forms
      */
     public function mapDataToForms($viewData, $forms): void
     {
@@ -43,7 +44,7 @@ class RegionSettingsType extends AbstractType implements DataMapperInterface
     }
 
     /**
-     * @param \Symfony\Component\Form\FormInterface[]|\Traversable $forms
+     * @param FormInterface[]|\Traversable $forms
      * @param RegionProperties $viewData
      */
     public function mapFormsToData($forms, &$viewData): void

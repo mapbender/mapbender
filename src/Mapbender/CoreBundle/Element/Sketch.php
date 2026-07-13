@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\SketchAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
@@ -14,7 +15,7 @@ class Sketch extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.sketch.class.title";
     }
@@ -22,7 +23,7 @@ class Sketch extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.sketch.class.description";
     }
@@ -30,7 +31,7 @@ class Sketch extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbSketch';
     }
@@ -38,88 +39,88 @@ class Sketch extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbSketch.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/sketch.scss',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.core.sketch.*',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'autoOpen' => false,
             "deactivate_on_close" => true,
-            "geometrytypes" => array(
+            "geometrytypes" => [
                 "point",
                 "line",
                 "polygon",
                 "rectangle",
                 "circle",
-            ),
-            'colors' => array(
+            ],
+            'colors' => [
                 '#ff3333',
                 '#3333ff',
                 '#44ee44',
-            ),
+            ],
             'allow_custom_color' => true,
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\SketchAdminType';
+        return SketchAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/sketch.html.twig';
     }
 
-    public function getClientConfiguration(Element $element)
+    public function getClientConfiguration(Element $element): array
     {
-        return array_replace($element->getConfiguration(), array(
+        return array_replace($element->getConfiguration(), [
             'title' => $element->getTitle(),
             'radiusEditing' => true,
-        ));
+        ]);
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/sketch.html.twig');
         $view->attributes['class'] = 'mb-element-sketch';
         $view->variables['geometrytypes'] = $element->getConfiguration()['geometrytypes'];
         $view->variables['radiusEditing'] = true;
-        $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', $element->getRegion());
+        $view->variables['dialogMode'] = !\preg_match('#sidepane|mobilepane#i', (string) $element->getRegion());
         $view->variables['colors'] = $element->getConfiguration()['colors'];
         $view->variables['allow_custom_color'] = $element->getConfiguration()['allow_custom_color'];
         return $view;
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         // Bridge undocumented legacy "paintstyles" to "colors"
         $config = $entity->getConfiguration();
         if (!empty($config['paintstyles']['fillColor'])) {
-            $config += array('colors' => array($config['paintstyles']['fillColor']));
+            $config += ['colors' => [$config['paintstyles']['fillColor']]];
         }
         unset($config['paintstyles']);
         if (isset($config['auto_activate'])) {
@@ -146,7 +147,7 @@ class Sketch extends AbstractElementService
         $entity->setConfiguration($config);
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconEdit';
     }

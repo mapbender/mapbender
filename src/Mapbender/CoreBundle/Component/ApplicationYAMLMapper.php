@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Component;
 use FOM\UserBundle\Security\Permission\YamlApplicationVoter;
 use Mapbender\Component\Collections\YamlElementCollection;
 use Mapbender\Component\Collections\YamlSourceInstanceCollection;
-use Mapbender\CoreBundle\Component\Source\SourceInstanceFactory;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -38,9 +37,9 @@ class ApplicationYAMLMapper
      *
      * @return Application[]
      */
-    public function getApplications()
+    public function getApplications(): array
     {
-        $applications = array();
+        $applications = [];
         foreach ($this->definitions as $slug => $def) {
             $application = $this->getApplication($slug);
             if ($application !== null) {
@@ -72,7 +71,7 @@ class ApplicationYAMLMapper
      * @param string $slug
      * @return Application
      */
-    public function createApplication(array $definition, $slug)
+    public function createApplication(array $definition, $slug): Application
     {
 
         $timestamp = filemtime($definition['__filename__']);
@@ -86,8 +85,8 @@ class ApplicationYAMLMapper
         $application->setSlug($slug);
         $application->setUpdated(new \DateTime("@{$timestamp}"));
         $application
-            ->setTitle(isset($definition['title']) ? $definition['title'] : '')
-            ->setDescription(isset($definition['description']) ? $definition['description'] : '')
+            ->setTitle($definition['title'] ?? '')
+            ->setDescription($definition['description'] ?? '')
             ->setTemplate($definition['template'])
         ;
         if (!empty($definition['screenshot'])) {
@@ -141,7 +140,7 @@ class ApplicationYAMLMapper
      * @param mixed[] $layersetDefinition
      * @return Layerset
      */
-    protected function createLayerset($layersetId, $layersetDefinition)
+    protected function createLayerset($layersetId, array $layersetDefinition): Layerset
     {
         $layerset = new Layerset();
         $layerset
@@ -152,9 +151,9 @@ class ApplicationYAMLMapper
         if (isset($layersetDefinition['selected'])) {
             $layerset->setSelected($layersetDefinition['selected']);
         }
-        $layersetProps = array(
+        $layersetProps = [
             'selected',
-        );
+        ];
         $instanceDefinitions = \array_diff_key($layersetDefinition, \array_flip($layersetProps));
         $instanceCollection = new YamlSourceInstanceCollection($this->sourceTypeDirectory, $layerset, $instanceDefinitions);
         $layerset->setInstances($instanceCollection);
@@ -163,7 +162,7 @@ class ApplicationYAMLMapper
 
     protected function parseRegionProperties(Application $application, array $defs)
     {
-        $regions = array();
+        $regions = [];
         foreach ($defs as $k => $spec) {
             // NOTE: cannot detect based on "name", because Fullscreen sidepane
             // actually has a "name" property (=type accordion/tabs/unstyled)

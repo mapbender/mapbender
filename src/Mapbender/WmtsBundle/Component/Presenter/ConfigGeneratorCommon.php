@@ -48,11 +48,11 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
      */
     protected function getOptionsConfiguration(SourceInstance $sourceInstance)
     {
-        return array(
+        return [
             "proxy" => $sourceInstance->getProxy(),
             "opacity" => $sourceInstance->getOpacity() / 100,
             "iframeSandboxParams" => $this->fiIframeSandboxParams,
-        );
+        ];
     }
 
     /**
@@ -76,7 +76,7 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
      */
     protected function getLayerConfigs($sourceInstance)
     {
-        $layerConfigs = array();
+        $layerConfigs = [];
         foreach ($sourceInstance->getLayers() as $layer) {
             if ($layer->getActive()) {
                 $layerConfigs[] = $this->formatInstanceLayer($layer);
@@ -116,15 +116,15 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
         $sourceItem = $instanceLayer->getSourceItem();
         $layerId = strval($instanceLayer->getId());
         if (!$layerId) {
-            throw new \LogicException("Cannot safely generate config for " . get_class($instanceLayer) . " without an id");
+            throw new \LogicException("Cannot safely generate config for " . $instanceLayer::class . " without an id");
         }
-        $configuration = array(
+        $configuration = [
             "id" => $layerId,
-            'tileUrls' => array(),
+            'tileUrls' => [],
             "title" => $instanceLayer->getTitle(),
             "identifier" => $instanceLayer->getSourceItem()->getIdentifier(),
-            'matrixLinks' => array(),
-        );
+            'matrixLinks' => [],
+        ];
         foreach ($sourceItem->getTilematrixSetlinks() as $tmsl) {
             $configuration['matrixLinks'][] = $tmsl->getTileMatrixSet();
         }
@@ -157,7 +157,7 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
             $configuration['legend'] = $legendConfig;
         }
         $configuration['treeOptions'] = $this->getLayerTreeOptions($instanceLayer, false);
-        $bboxConfigs = array();
+        $bboxConfigs = [];
         $bbox = $sourceItem->getLatlonBounds();
         if ($bbox) {
             $bboxConfigs[$bbox->getSrs()] = $bbox->toCoordsArray();
@@ -181,7 +181,7 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
      */
     protected function getTileMatrixSetsConfiguration($sourceInstance)
     {
-        $configs = array();
+        $configs = [];
         foreach ($sourceInstance->getSource()->getTilematrixsets() as $tilematrixset) {
             $configs[] = $this->formatTileMatrixSet($tilematrixset);
         }
@@ -207,13 +207,13 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
         $tileWidth = $tileMatrices[0]->getTilewidth();
         $tileHeight = $tileMatrices[0]->getTileheight();
         $srsCodes = $this->getSrsAliases($tilematrixset->getSupportedCrs());
-        $config = array(
-            'tileSize' => array($tileWidth, $tileHeight),
+        $config = [
+            'tileSize' => [$tileWidth, $tileHeight],
             'identifier' => $tilematrixset->getIdentifier(),
             'supportedCrs' => $srsCodes,
             'origin' => $origin,
-            'tilematrices' => array(),
-        );
+            'tilematrices' => [],
+        ];
         foreach ($tilematrixset->getTilematrices() as $tilematrix) {
             $config['tilematrices'][] = $this->formatTileMatrix($tilematrix);
         }
@@ -222,28 +222,28 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
 
     protected function formatTileMatrix(TileMatrix $tilematrix)
     {
-        return array(
+        return [
             'identifier' => $tilematrix->getIdentifier(),
             'scaleDenominator' => $tilematrix->getScaledenominator(),
             'tileWidth' => $tilematrix->getTilewidth(),
             'tileHeight' => $tilematrix->getTileheight(),
             'topLeftCorner' => $tilematrix->getTopleftcorner(),
-            'matrixSize' => array($tilematrix->getMatrixwidth(), $tilematrix->getMatrixheight()),
-        );
+            'matrixSize' => [$tilematrix->getMatrixwidth(), $tilematrix->getMatrixheight()],
+        ];
     }
 
     /**
      * @param string $urlTemplate
      * @return string
      */
-    protected function proxifyTileUrlTemplate($urlTemplate)
+    protected function proxifyTileUrlTemplate(string $urlTemplate)
     {
         $proxyUrlInitial = $this->urlProcessor->proxifyUrl($urlTemplate);
         // Restore unencoded template placeholders
-        return strtr($proxyUrlInitial, array(
+        return strtr($proxyUrlInitial, [
             '%7B' => '{',
             '%7D' => '}',
-        ));
+        ]);
     }
 
     /**
@@ -252,20 +252,20 @@ abstract class ConfigGeneratorCommon extends SourceInstanceConfigGenerator
      */
     protected function getSrsAliases($urnOrCode)
     {
-        $code = $this->urnToSrsCode($urnOrCode);
-        $equivalenceGroups = array(
-            array(
+        $code = static::urnToSrsCode($urnOrCode);
+        $equivalenceGroups = [
+            [
                 'EPSG:3857',
                 'EPSG:900913',
                 'OSGEO:41001',
-            ),
-        );
+            ],
+        ];
         foreach ($equivalenceGroups as $group) {
             if (in_array($code, $group)) {
                 return $group;
             }
         }
-        return array($code);
+        return [$code];
     }
 
     /**

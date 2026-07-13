@@ -6,26 +6,20 @@ namespace Mapbender\CoreBundle\Component;
  */
 class Size
 {
-    public $width = 0;
-
-    public $height = 0;
-
     /**
      * 
      * @param integer $width Width
      * @param integer $height Height
      */
-    public function __construct($width = null, $height = null)
+    public function __construct(public $width = null, public $height = null)
     {
-        $this->width = $width;
-        $this->height = $height;
     }
 
     /**
      * @param int $width
      * @return $this
      */
-    public function setWidth($width)
+    public function setWidth($width): static
     {
         $this->width = $width;
         return $this;
@@ -43,7 +37,7 @@ class Size
      * @param int $height
      * @return $this
      */
-    public function setHeight($height)
+    public function setHeight($height): static
     {
         $this->height = $height;
         return $this;
@@ -62,9 +56,9 @@ class Size
      * 
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return array("width" => $this->width, "height" => $this->height);
+        return ["width" => $this->width, "height" => $this->height];
     }
 
 }

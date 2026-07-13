@@ -9,9 +9,9 @@ class SourceType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'is_refresh' => false,
-        ));
+        ]);
     }
 
 }

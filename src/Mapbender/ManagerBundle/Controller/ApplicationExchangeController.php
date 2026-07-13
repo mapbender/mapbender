@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
@@ -37,7 +38,7 @@ class ApplicationExchangeController extends AbstractController
      * @return Response
      */
     #[ManagerRoute('/application/import', name: 'mapbender_manager_application_import', methods: ['GET', 'POST'])]
-    public function import(Request $request)
+    public function import(Request $request): RedirectResponse|Response
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS);
         $job = new ImportJob();
@@ -62,11 +63,11 @@ class ApplicationExchangeController extends AbstractController
                 // fall through to re-rendering form
             }
         }
-        return $this->render('@MapbenderManager/Exchange/import.html.twig', array(
+        return $this->render('@MapbenderManager/Exchange/import.html.twig', [
             'form' => $form->createView(),
             'submit_text' => 'mb.manager.admin.application.import.btn.import',
             'return_path' => 'mapbender_manager_application_index',
-        ));
+        ]);
     }
 
     /**
@@ -76,9 +77,9 @@ class ApplicationExchangeController extends AbstractController
     public function copyDirectly(string $slug): Response
     {
         /** @var Application|null $sourceApplication */
-        $sourceApplication = $this->em->getRepository(Application::class)->findOneBy(array(
+        $sourceApplication = $this->em->getRepository(Application::class)->findOneBy([
             'slug' => $slug,
-        ));
+        ]);
         $sourceApplication = $sourceApplication ?: $this->yamlRepository->getApplication($slug);
         if (!$sourceApplication) {
             throw new NotFoundHttpException();
@@ -95,9 +96,9 @@ class ApplicationExchangeController extends AbstractController
             $this->em->commit();
             if ($this->isGranted(ResourceDomainApplication::ACTION_EDIT, $clonedApp)) {
                 $this->addFlash('success', 'mb.application.duplicate.success');
-                return $this->redirectToRoute('mapbender_manager_application_edit', array(
+                return $this->redirectToRoute('mapbender_manager_application_edit', [
                     'slug' => $clonedApp->getSlug(),
-                ));
+                ]);
             } else {
                 return $this->redirectToRoute('mapbender_manager_application_index');
             }
@@ -118,17 +119,17 @@ class ApplicationExchangeController extends AbstractController
     public function exportdirect($slug)
     {
         /** @var Application|null $application */
-        $application = $this->em->getRepository(Application::class)->findOneBy(array(
+        $application = $this->em->getRepository(Application::class)->findOneBy([
             'slug' => $slug,
-        ));
+        ]);
         if (!$application) {
             throw $this->createNotFoundException("No such application");
         }
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         $data = $this->exportHandler->exportApplication($application);
         $fileName = "{$application->getSlug()}.json";
-        return new JsonResponse($data, Response::HTTP_OK, array(
+        return new JsonResponse($data, Response::HTTP_OK, [
             'Content-disposition' => "attachment; filename={$fileName}",
-        ));
+        ]);
     }
 }

@@ -9,21 +9,17 @@ use Mapbender\PrintBundle\Component\Export\Box;
 abstract class TileMatrix
 {
     protected $rowSign;
-    /** @var float */
-    protected $resolution;
-    /** @var float */
-    protected $extentLeft;
-    /** @var int */
-    protected $tileWidth;
-    /** @var int */
-    protected $tileHeight;
-    /** @var string */
-    protected $identifier;
+    protected float $resolution;
+    protected int $tileWidth;
+    protected int $tileHeight;
+    protected string $identifier;
 
-    public function __construct($resolution, $identifier, $extentLeft, $tileWidth, $tileHeight)
+    /**
+     * @param float $extentLeft
+     */
+    public function __construct($resolution, $identifier, protected $extentLeft, $tileWidth, $tileHeight)
     {
         $this->resolution = floatval($resolution);
-        $this->extentLeft = $extentLeft;
         $this->tileWidth = intval($tileWidth);
         $this->tileHeight = intval($tileHeight);
         $this->identifier = strval($identifier);
@@ -45,10 +41,10 @@ abstract class TileMatrix
 
     protected function getUnitsPerTile()
     {
-        return array(
+        return [
             'x' => $this->resolution * $this->tileWidth,
             'y' => $this->resolution * $this->tileHeight,
-        );
+        ];
     }
 
     abstract public function getTileUrl($tileX, $tileY);

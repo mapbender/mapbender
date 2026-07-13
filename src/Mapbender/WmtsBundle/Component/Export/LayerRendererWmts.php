@@ -11,7 +11,7 @@ class LayerRendererWmts extends LayerRendererTiled
      * @param $resolution
      * @return TileMatrix
      */
-    protected function getTileMatrix($layerDef, $resolution)
+    protected function getTileMatrix($layerDef, $resolution): TileMatrixWmts
     {
         $matrixDef = $layerDef['matrix'];
         return new TileMatrixWmts($layerDef['url'], $layerDef['resolution'],

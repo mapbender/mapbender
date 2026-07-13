@@ -17,7 +17,7 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_wmts_wmtsinstancelayer')]
-class WmtsInstanceLayer extends SourceInstanceItem
+class WmtsInstanceLayer extends SourceInstanceItem implements \Stringable
 {
     #[ORM\ManyToOne(targetEntity: WmtsInstance::class, cascade: ['persist', 'refresh'], inversedBy: 'layers')]
     #[ORM\JoinColumn(name: 'wmtsinstance', referencedColumnName: 'id', onDelete: 'CASCADE')]
@@ -69,7 +69,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
         $this->sublayer = new ArrayCollection();
         if ($this->id) {
             $sublayers = $this->getSublayer()->getValues();
-            $newSublayers = array();
+            $newSublayers = [];
             $this->setId(null);
             foreach ($sublayers as $layer) {
                 /** @var static $layer */
@@ -81,14 +81,14 @@ class WmtsInstanceLayer extends SourceInstanceItem
         }
     }
 
-    public function populateFromSource(WmtsInstance $instance, WmtsLayerSource $layerSource)
+    public function populateFromSource(WmtsInstance $instance, WmtsLayerSource $layerSource): void
     {
         $this->setSourceInstance($instance);
         $this->setSourceItem($layerSource);
         $this->setPriority($layerSource->getPriority());
 
         $queryable = !!$layerSource->getInfoformats();
-        $this->setInfo($queryable, true);
+        $this->setInfo($queryable);
         $this->setAllowinfo($queryable);
         $instance->addLayer($this);
         if ($layerSource->getSublayer()->count() > 0) {
@@ -118,7 +118,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * @param string $infoformat
      * @return $this
      */
-    public function setInfoformat($infoformat)
+    public function setInfoformat($infoformat): static
     {
         $this->infoformat = $infoformat;
         return $this;
@@ -136,7 +136,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * @param boolean $active
      * @return $this
      */
-    public function setActive($active)
+    public function setActive($active): static
     {
         $this->active = (bool)$active;
         return $this;
@@ -154,7 +154,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * @param boolean $allowselected
      * @return $this
      */
-    public function setAllowselected($allowselected)
+    public function setAllowselected($allowselected): static
     {
         $this->allowselected = (bool)$allowselected;
         return $this;
@@ -172,7 +172,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * @param boolean $selected
      * @return $this
      */
-    public function setSelected($selected)
+    public function setSelected($selected): static
     {
         $this->selected = (bool)$selected;
         return $this;
@@ -190,7 +190,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * @param boolean $info
      * @return $this
      */
-    public function setInfo($info)
+    public function setInfo($info): static
     {
         $this->info = (bool)$info;
         return $this;
@@ -208,7 +208,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * @param boolean $allowinfo
      * @return $this
      */
-    public function setAllowinfo($allowinfo)
+    public function setAllowinfo($allowinfo): static
     {
         $this->allowinfo = (bool)$allowinfo;
         return $this;
@@ -226,7 +226,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
      * @param string $style
      * @return $this
      */
-    public function setStyle($style)
+    public function setStyle($style): static
     {
         $this->style = $style;
         return $this;
@@ -240,7 +240,7 @@ class WmtsInstanceLayer extends SourceInstanceItem
         return $this->style;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->getId();
     }

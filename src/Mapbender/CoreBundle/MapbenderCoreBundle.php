@@ -58,9 +58,9 @@ class MapbenderCoreBundle extends Bundle
     /**
      * @return string[]
      */
-    protected function getConfigs()
+    protected function getConfigs(): array
     {
-        return array(
+        return [
             'services.xml',
             'controllers.xml',
             'commands.xml',
@@ -68,7 +68,7 @@ class MapbenderCoreBundle extends Bundle
             'constraints.yaml',
             'elements.xml',
             'templates.xml',
-        );
+        ];
     }
 
     public function getContainerExtension(): ?ExtensionInterface

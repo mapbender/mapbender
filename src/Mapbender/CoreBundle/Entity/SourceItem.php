@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Paul Schmidt
  */
 #[ORM\MappedSuperclass]
-abstract class SourceItem
+abstract class SourceItem implements \Stringable
 {
     /**
      * @var integer $id
@@ -61,7 +61,7 @@ abstract class SourceItem
         return $this;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->id;
     }

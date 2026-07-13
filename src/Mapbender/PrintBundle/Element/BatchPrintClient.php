@@ -124,17 +124,12 @@ class BatchPrintClient extends PrintClient
     {
         $action = $request->attributes->get('action');
 
-        switch ($action) {
-            case PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE:
-                return $this->handleMultiFrameQueue($request, $element);
-                
-            case 'print':
-                return $this->handleMultiFrameDirect($request, $element);
-                
-            default:
-                // For all other actions, use parent implementation
-                return parent::handleRequest($element, $request);
-        }
+        return match ($action) {
+            PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE => $this->handleMultiFrameQueue($request, $element),
+            'print' => $this->handleMultiFrameDirect($request, $element),
+            // For all other actions, use parent implementation
+            default => parent::handleRequest($element, $request),
+        };
     }
 
     /**
@@ -243,7 +238,7 @@ class BatchPrintClient extends PrintClient
         
         // Return PDF response directly
         $filename = $this->generateFilename($element);
-        return new Response($pdfContent, 200, [
+        return new Response($pdfContent, Response::HTTP_OK, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"'
         ]);

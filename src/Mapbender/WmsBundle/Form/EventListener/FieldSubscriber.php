@@ -17,7 +17,7 @@ class FieldSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents(): array
     {
-        return array(FormEvents::PRE_SET_DATA => 'preSetData');
+        return [FormEvents::PRE_SET_DATA => 'preSetData'];
     }
 
     /**
@@ -25,7 +25,7 @@ class FieldSubscriber implements EventSubscriberInterface
      *
      * @param FormEvent $event
      */
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         /** @var WmsInstanceLayer $data */
         $data = $event->getData();
@@ -36,11 +36,11 @@ class FieldSubscriber implements EventSubscriberInterface
         }
 
         $layer = $event->getData();
-        $options = array(
+        $options = [
             'label' => 'Style',
             'layer' => $layer,
             'required' => false,
-        );
+        ];
         if ($layer->getSublayer()->count() > 0) {
             $options['attr'] = [
                 'readonly' => true,

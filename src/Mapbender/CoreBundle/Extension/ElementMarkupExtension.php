@@ -10,21 +10,17 @@ use Twig\TwigFunction;
 
 class ElementMarkupExtension extends AbstractExtension
 {
-    /** @var ElementMarkupRenderer */
-    protected $markupRenderer;
-
     /**
      * @param ElementMarkupRenderer $markupRenderer
      */
-    public function __construct(ElementMarkupRenderer $markupRenderer)
+    public function __construct(protected ElementMarkupRenderer $markupRenderer)
     {
-        $this->markupRenderer = $markupRenderer;
     }
 
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return 'mapbender_element_markup';
     }
@@ -34,11 +30,11 @@ class ElementMarkupExtension extends AbstractExtension
      */
     public function getFunctions(): array
     {
-        return array(
-            'element_visibility_class' => new TwigFunction('element_visibility_class', array($this, 'element_visibility_class')),
-            'element_markup' => new TwigFunction('element_markup', array($this, 'element_markup')),
-            'find_icon' => new TwigFunction('find_icon', array($this, 'find_icon'))
-        );
+        return [
+            'element_visibility_class' => new TwigFunction('element_visibility_class', $this->element_visibility_class(...)),
+            'element_markup' => new TwigFunction('element_markup', $this->element_markup(...)),
+            'find_icon' => new TwigFunction('find_icon', $this->find_icon(...))
+        ];
     }
 
     /**
@@ -47,14 +43,14 @@ class ElementMarkupExtension extends AbstractExtension
      */
     public function element_markup(Element $element)
     {
-        return $this->markupRenderer->renderElements(array($element));
+        return $this->markupRenderer->renderElements([$element]);
     }
 
     /**
      * @param Element $element
      * @return string|null
      */
-    public function element_visibility_class($element)
+    public function element_visibility_class(Element $element)
     {
         return $this->markupRenderer->getElementVisibilityClass($element);
     }

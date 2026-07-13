@@ -13,9 +13,9 @@ class CoordUtil
      * @param float $ratio [0;1] for results between start and end
      * @return float[]
      */
-    public static function interpolateLinear($start, $end, $ratio)
+    public static function interpolateLinear($start, array $end, $ratio): array
     {
-        $vOut = array();
+        $vOut = [];
         foreach ($start as $key => $startElement) {
             $vOut[$key] = $startElement + ($end[$key] - $startElement) * $ratio;
         }
@@ -30,7 +30,7 @@ class CoordUtil
      * @param float[] $b
      * @return float
      */
-    public static function distance($a, $b)
+    public static function distance($a, array $b): float
     {
         $sumOfSquares = 0;
         foreach ($a as $key => $aElement) {
@@ -53,14 +53,14 @@ class CoordUtil
         // Tesselate into triangles, calculate sum of centers of triangles weighted by
         // signed area.
         // See https://gis.stackexchange.com/a/164270
-        $weights = array();
-        $sums = array(0, 0);
+        $weights = [];
+        $sums = [0, 0];
         for ($i = 1; $i < $nPoints - 1; ++$i) {
-            $tri = array(
+            $tri = [
                 $points[0],
                 $points[$i],
                 $points[$i + 1],
-            );
+            ];
             $triangleCenter = static::getAverage($tri);
             $signedArea = ($tri[1][0] - $tri[0][0]) * ($tri[2][1] - $tri[0][1])
                         - ($tri[2][0] - $tri[0][0]) * ($tri[1][1] - $tri[0][1])
@@ -70,19 +70,19 @@ class CoordUtil
             $weights[] = $signedArea;
         }
         $scale = 1.0 / array_sum($weights);
-        return array(
+        return [
             $scale * $sums[0],
             $scale * $sums[1],
-        );
+        ];
     }
 
     /**
      * @param float[][] $points
      * @return float[]
      */
-    public static function getAverage($points)
+    public static function getAverage(array $points): array
     {
-        $sums = array(0.0, 0.0);
+        $sums = [0.0, 0.0];
         $nUsed = 0;
         foreach ($points as $i => $point) {
             if (!$i || $point !== $points[0]) {
@@ -92,9 +92,9 @@ class CoordUtil
             }
         }
         $weight = 1.0 / $nUsed;
-        return array(
+        return [
             $sums[0] * $weight,
             $sums[1] * $weight,
-        );
+        ];
     }
 }

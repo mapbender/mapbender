@@ -5,7 +5,6 @@ namespace Mapbender\VectorTilesBundle\Component;
 use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\VectorTilesBundle\Entity\VectorTileInstance;
 use Mapbender\VectorTilesBundle\Entity\VectorTileSource;
 
 class VectorTilesConfigGenerator extends SourceInstanceConfigGenerator

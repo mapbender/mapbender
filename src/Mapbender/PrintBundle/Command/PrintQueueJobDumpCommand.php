@@ -27,16 +27,16 @@ class PrintQueueJobDumpCommand extends AbstractPrintQueueCommand
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         parent::initialize($input, $output);
-        $validFormats = array(
+        $validFormats = [
             'json',
             'yml',
             'yaml',
-        );
+        ];
         $format = $input->getOption('format');
         if (!$format) {
             throw new \RuntimeException("Empty --format is not allowed");
         }
-        $lcFormat = strtolower($format);
+        $lcFormat = strtolower((string) $format);
         if (!in_array($lcFormat, $validFormats, true)) {
             $unsupportedMsg = 'Unsupported --format ' . print_r($format, true);
             $supportedMsg = 'Allowed values: ' . join(', ', $validFormats);
@@ -55,18 +55,12 @@ class PrintQueueJobDumpCommand extends AbstractPrintQueueCommand
         }
         $jobData = $jobEntity->getPayload();
 
-        switch (strtolower($input->getOption('format'))) {
-            case 'json':
-                $output->writeln(json_encode($jobData, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_HEX_QUOT));
-                break;
-            case 'yaml':
-            case 'yml':
-                $output->writeln(Yaml::dump($jobData, 9000));
-                break;
-            default:
-                // initialize should have already produced a (much better) message
-                throw new \RuntimeException("Unsupported format");
-        }
+        match (strtolower((string) $input->getOption('format'))) {
+            'json' => $output->writeln(json_encode($jobData, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_HEX_QUOT)),
+            'yaml', 'yml' => $output->writeln(Yaml::dump($jobData, 9000)),
+            // initialize should have already produced a (much better) message
+            default => throw new \RuntimeException("Unsupported format"),
+        };
         return 0;
     }
 }

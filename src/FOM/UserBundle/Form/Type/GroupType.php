@@ -2,30 +2,32 @@
 
 namespace FOM\UserBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class GroupType extends AbstractType
 {
-    /** @var string */
-    protected $userEntityClass;
-
-    public function __construct($userEntityClass)
+    /**
+     * @param string $userEntityClass
+     */
+    public function __construct(protected $userEntityClass)
     {
-        $this->userEntityClass = $userEntityClass;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('title', TextType::class, [
                 'label' => 'Name',
-            ))
-            ->add('description', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
+            ])
+            ->add('description', TextareaType::class, [
                 'required' => false,
                 'label' => 'fom.user.user.container.description',
-            ))
-            ->add('users', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
+            ])
+            ->add('users', EntityType::class, [
                 'class' =>  $this->userEntityClass,
                 'expanded' => true,
                 'multiple' => true,
@@ -33,9 +35,9 @@ class GroupType extends AbstractType
                 'label' => 'Users',
                 // collection field rendering bypasses form theme; suppress
                 // the spurious label if collection is empty
-                'label_attr' => array(
+                'label_attr' => [
                     'class' => 'hidden',
-                ),
-            ));
+                ],
+            ]);
     }
 }

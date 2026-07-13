@@ -19,12 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SourceRewriteHostCommand extends Command
 {
-    /** @var ManagerRegistry */
-    protected $managerRegistry;
-
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(protected ManagerRegistry $managerRegistry)
     {
-        $this->managerRegistry = $managerRegistry;
         parent::__construct(null);
     }
 
@@ -43,7 +39,7 @@ class SourceRewriteHostCommand extends Command
         return 0;
     }
 
-    protected function getTransformer(InputInterface $input)
+    protected function getTransformer(InputInterface $input): BaseUrlTransformer
     {
         $from = $input->getArgument('from');
         $to = $input->getArgument('to');
@@ -72,15 +68,15 @@ class SourceRewriteHostCommand extends Command
         $sourcesUnchanged = 0;
 
         if ($input->getOption('dry-run')) {
-            $changeVerbosities = array(
+            $changeVerbosities = [
                 'heading' => OutputInterface::VERBOSITY_QUIET,
                 'url' => OutputInterface::VERBOSITY_QUIET,
-            );
+            ];
         } else {
-            $changeVerbosities = array(
+            $changeVerbosities = [
                 'heading' => OutputInterface::VERBOSITY_NORMAL,
                 'url' => OutputInterface::VERBOSITY_VERBOSE,
-            );
+            ];
         }
 
         foreach ($sources as $source) {

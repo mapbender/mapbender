@@ -20,14 +20,8 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class ApplicationController extends AbstractController
 {
-    protected $isDebug;
-
-    public function __construct(protected ApplicationResolver       $applicationResolver,
-                                protected ApplicationMarkupRenderer $renderer,
-                                protected ApplicationMarkupCache    $markupCache,
-                                                                    $isDebug)
+    public function __construct(protected ApplicationResolver       $applicationResolver, protected ApplicationMarkupRenderer $renderer, protected ApplicationMarkupCache    $markupCache, protected $isDebug)
     {
-        $this->isDebug = $isDebug;
     }
 
     /**
@@ -38,7 +32,7 @@ class ApplicationController extends AbstractController
      * @return Response
      */
     #[Route(path: '/application/{slug}.{_format}', defaults: ['_format' => 'html'])]
-    public function application(Request $request, $slug)
+    public function application(Request $request, string $slug)
     {
         $appEntity = $this->applicationResolver->getApplicationEntity($slug);
 

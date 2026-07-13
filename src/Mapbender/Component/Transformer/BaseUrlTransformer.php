@@ -12,8 +12,7 @@ use Mapbender\CoreBundle\Utils\UrlUtil;
  */
 class BaseUrlTransformer implements OneWayTransformer
 {
-    /** @var StringReplaceTransformer */
-    protected $transformer;
+    protected StringReplaceTransformer $transformer;
 
     /**
      * @param string $from
@@ -22,24 +21,24 @@ class BaseUrlTransformer implements OneWayTransformer
      */
     public function __construct($from, $to, $caseSensitive = true)
     {
-        $replacements = array(
+        $replacements = [
             $from => $to,
-        );
+        ];
         $this->transformer = new StringReplaceTransformer($replacements, $caseSensitive);
     }
 
     public function process($x)
     {
-        $parts = parse_url($x);
-        $baseUrlParts = array(
+        $parts = parse_url((string) $x);
+        $baseUrlParts = [
             'scheme',
             'host',
             'port',
-        );
+        ];
         $baseUrl = UrlUtil::reconstructFromParts(array_intersect_key($parts, array_flip($baseUrlParts)));
 
         $baseUrl = $this->transformer->process($baseUrl);
-        $newParts = array_filter(parse_url($baseUrl));
+        $newParts = array_filter(parse_url((string) $baseUrl));
         $updatedParts = $newParts + $parts;
         if (empty($newParts['port'])) {
             unset($updatedParts['port']);
@@ -47,12 +46,12 @@ class BaseUrlTransformer implements OneWayTransformer
         $reconstructed = UrlUtil::reconstructFromParts($updatedParts);
         // OGC service special: service URLs like to end in '?' or '&', which
         // is lost on reconstruction. If the original had this, restore it.
-        $patterns = array(
+        $patterns = [
             '?' => '#\?$#',
             '&' => '#\?$#',
-        );
+        ];
         foreach ($patterns as $suffix => $pattern) {
-            if (preg_match($pattern, $x) && !preg_match($pattern, $reconstructed)) {
+            if (preg_match($pattern, (string) $x) && !preg_match($pattern, $reconstructed)) {
                 $reconstructed .= $suffix;
             }
         }

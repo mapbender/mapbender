@@ -21,7 +21,7 @@ class CanvasLegend
 
     protected array $imageCache = [];
 
-    public function __construct(private array $layers)
+    public function __construct(private readonly array $layers)
     {
         $this->image = imagecreatetruecolor($this->legendWidth, $this->offset + $this->layerHeight * count($this->layers) * 4);
         $this->prepareCanvas();
@@ -178,12 +178,12 @@ class CanvasLegend
 
     }
 
-    private function drawExternalImage(array $style)
+    private function drawExternalImage(array $style): void
     {
         if (!isset($this->imageCache[$style['image']])) {
             $url = $style['image'];
             // Security: restrict to http/https schemes to prevent SSRF via file://, ftp://, etc.
-            $scheme = parse_url($url, PHP_URL_SCHEME);
+            $scheme = parse_url((string) $url, PHP_URL_SCHEME);
             if ($scheme && !in_array($scheme, ['http', 'https'], true)) {
                 return;
             }

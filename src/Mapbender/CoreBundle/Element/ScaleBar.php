@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\ScaleBarAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
@@ -17,7 +18,7 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.scalebar.class.title";
     }
@@ -25,7 +26,7 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.scalebar.class.description";
     }
@@ -33,20 +34,20 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'title' => 'Scale Bar',
             'maxWidth' => 200,
             'anchor' => 'right-bottom',
             'units' => "km",
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbScalebar';
     }
@@ -54,15 +55,15 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\ScaleBarAdminType';
+        return ScaleBarAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderManager/Element/scalebar.html.twig';
     }
@@ -70,32 +71,32 @@ class ScaleBar extends AbstractElementService implements ConfigMigrationInterfac
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbScalebar.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/scalebar.scss',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/scalebar.html.twig');
         $view->attributes['class'] = 'mb-element-scaleline smallText';
-        $config = $element->getConfiguration() ?: array();
-        $maxWidth = \intval(ArrayUtil::getDefault($config, 'maxWidth', null) ?: $this->getDefaultConfiguration()['maxWidth']);
+        $config = $element->getConfiguration() ?: [];
+        $maxWidth = \intval(ArrayUtil::getDefault($config, 'maxWidth', null) ?: static::getDefaultConfiguration()['maxWidth']);
         $view->attributes['style'] = "width: auto; min-width: {$maxWidth}px;";
         return $view;
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         $config = $entity->getConfiguration();
         if (!empty($config['units'])) {

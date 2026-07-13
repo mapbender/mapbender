@@ -6,11 +6,8 @@ use Mapbender\Component\Transport\HttpTransportInterface;
 
 class GraphhopperDriver extends RoutingDriver
 {
-    protected HttpTransportInterface $httpTransport;
-
-    public function __construct(HttpTransportInterface $httpTransport)
+    public function __construct(protected HttpTransportInterface $httpTransport)
     {
-        $this->httpTransport = $httpTransport;
     }
 
     public function getRoute($requestParams, $configuration): array
@@ -18,7 +15,7 @@ class GraphhopperDriver extends RoutingDriver
         // TODO: Implement getRoute() method.
     }
 
-    public function processResponse($response, $configuration)
+    public function processResponse($response, $configuration): void
     {
         // TODO: Implement processResponse() method.
     }

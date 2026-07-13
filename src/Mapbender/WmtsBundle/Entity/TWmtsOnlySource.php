@@ -69,7 +69,7 @@ trait TWmtsOnlySource
     /**
      * @param string $accessConstraints
      */
-    public function setAccessConstraints($accessConstraints)
+    public function setAccessConstraints($accessConstraints): void
     {
         $this->accessConstraints = $accessConstraints;
     }
@@ -86,7 +86,7 @@ trait TWmtsOnlySource
     /**
      * @param string $serviceProviderSite
      */
-    public function setServiceProviderSite($serviceProviderSite)
+    public function setServiceProviderSite($serviceProviderSite): void
     {
         $this->serviceProviderSite = $serviceProviderSite;
     }
@@ -102,7 +102,7 @@ trait TWmtsOnlySource
     /**
      * @param string $serviceProviderName
      */
-    public function setServiceProviderName($serviceProviderName)
+    public function setServiceProviderName($serviceProviderName): void
     {
         $this->serviceProviderName = $serviceProviderName;
     }
@@ -139,7 +139,7 @@ trait TWmtsOnlySource
     /**
      * @param RequestInformation $getFeatureInfo
      */
-    public function setGetFeatureInfo(RequestInformation $getFeatureInfo)
+    public function setGetFeatureInfo(RequestInformation $getFeatureInfo): void
     {
         $this->getFeatureInfo = $getFeatureInfo;
     }
@@ -166,7 +166,7 @@ trait TWmtsOnlySource
     /**
      * @param ArrayCollection $themes
      */
-    public function setThemes(ArrayCollection $themes)
+    public function setThemes(ArrayCollection $themes): void
     {
         $this->themes = $themes;
     }
@@ -174,7 +174,7 @@ trait TWmtsOnlySource
     /**
      * @param Theme $theme
      */
-    public function addTheme(Theme $theme)
+    public function addTheme(Theme $theme): void
     {
         $this->themes->add($theme);
     }

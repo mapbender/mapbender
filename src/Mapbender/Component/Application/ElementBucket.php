@@ -8,23 +8,21 @@ use Mapbender\CoreBundle\Entity\Element;
 
 class ElementBucket
 {
-    /** @todo: use region descriptor object instead of string */
-    /** @var mixed */
-    protected $region;
-
     /** @var Element[] */
-    protected $elements;
+    protected array $elements;
 
-    public function __construct($region)
+    /**
+     * @param mixed $region
+     */
+    public function __construct(protected $region)
     {
-        $this->region = $region;
-        $this->elements = array();
+        $this->elements = [];
     }
 
     /**
      * @param Element $element
      */
-    public function addElement($element)
+    public function addElement($element): void
     {
         $this->elements[] = $element;
     }

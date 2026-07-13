@@ -2,12 +2,12 @@
 
 namespace Mapbender\ManagerBundle\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\Component\Transport\ConnectionErrorException;
-use Mapbender\CoreBundle\Component\Source\MutableHttpOriginInterface;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
@@ -17,9 +17,6 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\Exception\Loader\MalformedXmlException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
-use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
-use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
-use Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType;
 use Mapbender\CoreBundle\Component\Source\StyleableSourceLoaderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
@@ -33,7 +30,7 @@ class RepositoryController extends ApplicationControllerBase
     public function __construct(
         protected TypeDirectoryService $typeDirectory,
         EntityManagerInterface         $em,
-        private TranslatorInterface    $translator,
+        private readonly TranslatorInterface    $translator,
     )
     {
         parent::__construct($em);
@@ -48,29 +45,29 @@ class RepositoryController extends ApplicationControllerBase
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
         $repository = $this->em->getRepository(Source::class);
         /** @var Source[] $sources */
-        $sources = $repository->findBy(array(), array(
+        $sources = $repository->findBy([], [
             'title' => 'ASC',
             'id' => 'ASC',
-        ));
+        ]);
 
         /** @var SourceInstanceRepository $instanceRepository */
         $instanceRepository = $this->em->getRepository(SourceInstance::class);
 
-        $sharedInstances = $instanceRepository->findReusableInstances(array(), array(
+        $sharedInstances = $instanceRepository->findReusableInstances([], [
             'title' => 'ASC',
             'id' => 'ASC',
-        ));
+        ]);
 
-        return $this->render('@MapbenderManager/Repository/index.html.twig', array(
+        return $this->render('@MapbenderManager/Repository/index.html.twig', [
             'sources' => $sources,
             'shared_instances' => $sharedInstances,
             'datasources' => $this->typeDirectory->getTypeLabels(),
-            'grants' => array(
+            'grants' => [
                 'create' => $this->isGranted(ResourceDomainInstallation::ACTION_CREATE_SOURCES),
                 'refresh' => $this->isGranted(ResourceDomainInstallation::ACTION_REFRESH_SOURCES),
                 'delete' => $this->isGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES),
-            ),
-        ));
+            ],
+        ]);
     }
 
     #[ManagerRoute('/new/{sourceType}', methods: ['GET', 'POST'])]
@@ -105,9 +102,9 @@ class RepositoryController extends ApplicationControllerBase
                 $replacedMessage = str_replace('%type%', $this->translator->trans($dataSource->getLabel(false)), $message);
                 $this->addFlash('success', $replacedMessage);
 
-                return $this->redirectToRoute("mapbender_manager_repository_view", array(
+                return $this->redirectToRoute("mapbender_manager_repository_view", [
                     "sourceId" => $source->getId(),
-                ));
+                ]);
             } catch (ConnectionErrorException $e) {
                 $form->addError(new FormError('mb.manager.http_connection_error'));
                 $form->addError(new FormError($e->getMessage()));
@@ -125,12 +122,12 @@ class RepositoryController extends ApplicationControllerBase
             }
         }
 
-        return $this->render('@MapbenderManager/Source/add.html.twig', array(
+        return $this->render('@MapbenderManager/Source/add.html.twig', [
             'form' => $form->createView(),
             'submit_text' => 'mb.manager.source.load',
             'source_label' => $dataSource->getLabel(false),
             'return_path' => 'mapbender_manager_repository_index',
-        ));
+        ]);
     }
 
     /**
@@ -138,7 +135,7 @@ class RepositoryController extends ApplicationControllerBase
      * @return Response
      */
     #[ManagerRoute('/source/{sourceId}', methods: ['GET'])]
-    public function view($sourceId)
+    public function view($sourceId): Response
     {
         /** @var Source|null $source */
         $source = $this->em->getRepository(Source::class)->find($sourceId);
@@ -147,23 +144,23 @@ class RepositoryController extends ApplicationControllerBase
         }
 
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
-        $related = $this->getDbApplicationRepository()->findWithInstancesOf($source, null, array(
+        $related = $this->getDbApplicationRepository()->findWithInstancesOf($source, null, [
             'title' => Order::Ascending,
             'id' => Order::Ascending,
-        ));
-        $grants = \array_filter(array(
+        ]);
+        $grants = \array_filter([
             'refresh' => $this->isGranted(ResourceDomainInstallation::ACTION_REFRESH_SOURCES),
             'delete' => $this->isGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES),
-        ));
+        ]);
         $dataSource = $this->typeDirectory->getSource($source->getType());
-        $viewData = array(
+        $viewData = [
             'source' => $source,
             'applications' => $related,
             'title' => $dataSource->getLabel(true) . ' ' . $source->getTitle(),
             'grants' => $grants,
             // in backend, show all urls
             'secureUrls' => false,
-        );
+        ];
         $loader = $dataSource->getLoader();
         if ($loader instanceof StyleableSourceLoaderInterface) {
             $viewData['styles'] = $this->em->getRepository(Style::class)->findBy([
@@ -180,7 +177,7 @@ class RepositoryController extends ApplicationControllerBase
      * @return Response
      */
     #[ManagerRoute('/source/{sourceId}/delete', methods: ['GET', 'POST', 'DELETE'])]
-    public function delete(Request $request, $sourceId)
+    public function delete(Request $request, $sourceId): Response|RedirectResponse
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_DELETE_SOURCES);
@@ -190,29 +187,29 @@ class RepositoryController extends ApplicationControllerBase
             throw $this->createNotFoundException();
         }
 
-        $affectedApplications = $this->getDbApplicationRepository()->findWithInstancesOf($source, null, array(
+        $affectedApplications = $this->getDbApplicationRepository()->findWithInstancesOf($source, null, [
             'title' => Order::Ascending,
             'id' => Order::Ascending,
-        ));
+        ]);
 
-        $dummyForm = $this->createForm(FormType::class, null, array(
-            'action' => $this->generateUrl('mapbender_manager_repository_delete', array(
+        $dummyForm = $this->createForm(FormType::class, null, [
+            'action' => $this->generateUrl('mapbender_manager_repository_delete', [
                 'sourceId' => $sourceId,
-            )),
-        ));
+            ]),
+        ]);
 
         $dummyForm->handleRequest($request);
         if ($request->getMethod() === Request::METHOD_GET) {
             // Use an empty form to help client code follow the final redirect properly
             // See Resources/public/confirm-delete.js
-            return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig', array(
+            return $this->render('@MapbenderManager/Repository/confirmdelete.html.twig', [
                 'source' => $source,
                 'applications' => $affectedApplications,
                 'form' => $dummyForm->createView(),
-            ));
+            ]);
         } elseif (!$dummyForm->isSubmitted() || !$dummyForm->isValid()) {
             $this->addFlash('error', 'Invalid CSRF token.');
-            return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
+            return $this->redirectToRoute("mapbender_manager_repository_index");
         }
 
         // capture permission and entity updates in a single transaction
@@ -236,7 +233,7 @@ class RepositoryController extends ApplicationControllerBase
         $this->em->flush();
         $this->em->commit();
         $this->addFlash('success', 'Your source has been deleted');
-        return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
+        return $this->redirectToRoute("mapbender_manager_repository_index");
     }
 
     /**
@@ -247,7 +244,7 @@ class RepositoryController extends ApplicationControllerBase
      * @return Response
      */
     #[ManagerRoute('/source/{sourceId}/update', methods: ['GET', 'POST'])]
-    public function updateform(Request $request, $sourceId)
+    public function updateform(Request $request, $sourceId): RedirectResponse|Response
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_VIEW_SOURCES);
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_REFRESH_SOURCES);
@@ -279,28 +276,28 @@ class RepositoryController extends ApplicationControllerBase
                 }
 
                 $this->addFlash('success', "Your {$source->getType()} source has been updated");
-                return $this->redirectToRoute("mapbender_manager_repository_view", array(
+                return $this->redirectToRoute("mapbender_manager_repository_view", [
                     "sourceId" => $source->getId(),
-                ));
+                ]);
             } catch (\Exception $e) {
                 $this->em->rollback();
                 $form->addError(new FormError($e->getMessage()));
             }
         }
 
-        return $this->render('@MapbenderManager/Source/reload.html.twig', array(
+        return $this->render('@MapbenderManager/Source/reload.html.twig', [
             'form' => $form->createView(),
             'type_label' => $dataSource->getLabel(false),
             'submit_text' => 'mb.manager.source.load',
             'return_path' => 'mapbender_manager_repository_index',
-        ));
+        ]);
     }
 
     protected function setAliasForDuplicate(Source $source)
     {
         $wmsWithSameTitle = $this->em
             ->getRepository(Source::class)
-            ->findBy(array('title' => $source->getTitle()))
+            ->findBy(['title' => $source->getTitle()])
         ;
 
         if (count($wmsWithSameTitle) > 0) {

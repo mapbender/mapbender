@@ -14,11 +14,7 @@ class ProxyQuery
     /** @var string */
     protected $url;
 
-    /** @var string|null the POST content or null on GET requests */
-    protected $content;
-
-    /** @var array */
-    protected $headers;
+    protected array $headers;
 
     /**
      * Factory method for ProxyQuery instances appropriate for GET request.
@@ -31,10 +27,10 @@ class ProxyQuery
      * @return static
      * @since v3.1.6
      */
-    public static function createGet($url, $headers = array())
+    public static function createGet($url, $headers = []): static
     {
         // strip fragment and trailing query param separators
-        $url = rtrim(preg_replace('/#.*$/', '', $url), '&?');
+        $url = rtrim((string) preg_replace('/#.*$/', '', $url), '&?');
         return new static($url, null, $headers);
     }
 
@@ -50,10 +46,10 @@ class ProxyQuery
      * @return static
      * @since v3.1.6
      */
-    public static function createPost($url, $content, $headers = array())
+    public static function createPost($url, $content, $headers = []): static
     {
         // strip fragment and trailing query param separators
-        $url = rtrim(preg_replace('/#.*$/', '', $url), '&?');
+        $url = rtrim((string) preg_replace('/#.*$/', '', $url), '&?');
         // force $content to string
         return new static($url, $content ?: '', $headers);
     }
@@ -69,7 +65,7 @@ class ProxyQuery
     public static function createFromRequest(Request $request, string $forwardUrlParamName)
     {
         if (!$forwardUrlParamName) {
-            throw new \RuntimeException(__CLASS__ . '::' . __METHOD__ . ': expects explicit specification of "url" query parameter name');
+            throw new \RuntimeException(self::class . '::' . __METHOD__ . ': expects explicit specification of "url" query parameter name');
         }
         $url = $request->query->get($forwardUrlParamName);
         $extraGetParams = $request->query->all();
@@ -93,20 +89,19 @@ class ProxyQuery
      * @param array $headers
      * @throws \InvalidArgumentException for empty url host
      */
-    private function __construct($url, $content, $headers)
+    private function __construct($url, protected $content, $headers)
     {
         $parts = parse_url($url);
         if (empty($parts["host"])) {
             throw new \InvalidArgumentException("Missing host name");
         }
-        $this->headers = array_replace($headers, array(
+        $this->headers = array_replace($headers, [
             'Host' => $parts['host'],
-        ));
+        ]);
         $this->url = $url;
-        $this->content = $content;
     }
 
-    public function getHostname()
+    public function getHostname(): string|false|null
     {
         return \parse_url($this->url, PHP_URL_HOST);
     }
@@ -126,7 +121,7 @@ class ProxyQuery
      *
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         if ($this->content !== null) {
             return 'POST';
@@ -135,12 +130,12 @@ class ProxyQuery
         }
     }
 
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return rawurldecode(\parse_url($this->url, PHP_URL_USER) ?: '') ?: null;
     }
 
-    public function getPassword()
+    public function getPassword(): ?string
     {
         if (\parse_url($this->url, PHP_URL_USER)) {
             return rawurldecode(\parse_url($this->url, PHP_URL_PASS) ?: '');

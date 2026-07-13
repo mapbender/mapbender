@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\PrintBundle\Element\Type;
 
-use Mapbender\ManagerBundle\Form\DataTransformer\ArrayToCsvScalarTransformer;
 use Mapbender\ManagerBundle\Form\DataTransformer\IntArrayToCsvScalarTransformer;
 use Mapbender\ManagerBundle\Form\Type\SortableCollectionType;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
@@ -23,72 +22,72 @@ class PrintClientAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('scales', TextType::class, array(
+            ->add('scales', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.printclient.admin.scales',
-            ))
-            ->add('file_prefix', TextType::class, array(
+            ])
+            ->add('file_prefix', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.printclient.admin.fileprefix',
-            ))
+            ])
         ;
         $builder->get('scales')->addViewTransformer(new IntArrayToCsvScalarTransformer());
         if ($this->queueable) {
-            $builder->add('renderMode', ChoiceType::class, array(
-                'choices' => array(
+            $builder->add('renderMode', ChoiceType::class, [
+                'choices' => [
                     'mb.print.admin.printclient.renderMode.choice.direct' => 'direct',
                     'mb.print.admin.printclient.renderMode.choice.queued' => 'queued',
-                ),
+                ],
                 'label' => 'mb.print.admin.printclient.renderMode.label',
-            ));
-            $builder->add('queueAccess', ChoiceType::class, array(
-                'choices' => array(
+            ]);
+            $builder->add('queueAccess', ChoiceType::class, [
+                'choices' => [
                     'mb.print.admin.printclient.queueAccess.choice.private' => 'private',
                     'mb.print.admin.printclient.queueAccess.choice.global' => 'global',
-                ),
+                ],
                 'label' => 'mb.print.admin.printclient.queueAccess.label',
-            ));
+            ]);
         }
         $builder
-            ->add('quality_levels', SortableCollectionType::class, array(
+            ->add('quality_levels', SortableCollectionType::class, [
                 'label' => 'mb.core.admin.printclient.label.qualitylevels',
                 'auto_initialize' => false,
                 'required' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'entry_type' => PrintClientQualityAdminType::class,
-            ))
-            ->add('rotatable', CheckboxType::class, array(
+            ])
+            ->add('rotatable', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.rotatable',
-            ))
-            ->add('legend', CheckboxType::class, array(
+            ])
+            ->add('legend', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.legend',
-            ))
-            ->add('legend_default_behaviour', CheckboxType::class, array(
+            ])
+            ->add('legend_default_behaviour', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.legend_default_behaviour',
-            ))
-            ->add('optional_fields', YAMLConfigurationType::class, array(
+            ])
+            ->add('optional_fields', YAMLConfigurationType::class, [
                 'required' => false,
                 'label' => 'mb.core.printclient.admin.optionalfields',
-            ))
-            ->add('required_fields_first', CheckboxType::class, array(
+            ])
+            ->add('required_fields_first', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.admin.printclient.label.required_fields_first',
-            ))
-            ->add('replace_pattern', YAMLConfigurationType::class, array(
+            ])
+            ->add('replace_pattern', YAMLConfigurationType::class, [
                 'required' => false,
                 'label' => 'mb.core.printclient.admin.replacepattern',
-            ))
-            ->add('templates', SortableCollectionType::class, array(
+            ])
+            ->add('templates', SortableCollectionType::class, [
                 'label' => 'mb.core.admin.printclient.label.templates',
                 'entry_type' => PrintClientTemplateAdminType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'auto_initialize' => false,
-            ))
+            ])
         ;
     }
 }

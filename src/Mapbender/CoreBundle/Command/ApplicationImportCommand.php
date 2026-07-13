@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Command;
 
 
+use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
@@ -20,16 +21,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand('mapbender:application:import')]
 class ApplicationImportCommand extends AbstractApplicationTransportCommand
 {
-    /** @var boolean */
-    protected $strictElementConfigs;
-
+    /**
+     * @param bool $strictElementConfigs
+     */
     public function __construct(EntityManagerInterface $defaultEntityManager,
                                 ImportHandler $importHandler,
                                 ApplicationYAMLMapper $yamlRepository,
-                                $strictElementConfigs)
+                                protected $strictElementConfigs)
     {
         parent::__construct($defaultEntityManager, $importHandler, $yamlRepository);
-        $this->strictElementConfigs = $strictElementConfigs;
     }
 
     protected function configure(): void
@@ -72,9 +72,9 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
         }
     }
 
-    public function processDirectory($path, InputInterface $input, OutputStyle $output)
+    public function processDirectory($path, InputInterface $input, OutputStyle $output): void
     {
-        $inputPaths = array();
+        $inputPaths = [];
         foreach (\scandir($path) as $file) {
             if (preg_match('#\.(yml|yaml)$#', $file)) {
                 $inputPaths[] = realpath($path) . '/' . $file;
@@ -93,9 +93,9 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
      * @param mixed[] $exportData
      * @param InputInterface $input
      * @param OutputStyle $output
-     * @throws \Mapbender\ManagerBundle\Component\Exception\ImportException
+     * @throws ImportException
      */
-    protected function processExportData($exportData, InputInterface $input, OutputStyle $output)
+    protected function processExportData(array $exportData, InputInterface $input, OutputStyle $output)
     {
         $em = $this->getDefaultEntityManager();
         $em->beginTransaction();
@@ -135,8 +135,8 @@ class ApplicationImportCommand extends AbstractApplicationTransportCommand
             $appConfig = $yamlCompiler->prepareApplicationConfig($rawAppConfig, $slug, $fileName);
             $tempApplication = $this->yamlRepository->createApplication($appConfig, $slug);
 
-            $newSlug = EntityUtil::getUniqueValue($em, get_class($tempApplication), 'slug', $tempApplication->getSlug() . '_yml', '');
-            $newTitle = EntityUtil::getUniqueValue($em, get_class($tempApplication), 'title', $tempApplication->getTitle(), ' ');
+            $newSlug = EntityUtil::getUniqueValue($em, $tempApplication::class, 'slug', $tempApplication->getSlug() . '_yml', '');
+            $newTitle = EntityUtil::getUniqueValue($em, $tempApplication::class, 'title', $tempApplication->getTitle(), ' ');
             $em->beginTransaction();
             try {
                 $application = $this->importHandler->duplicateApplication($tempApplication, $newSlug);

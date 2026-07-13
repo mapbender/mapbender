@@ -4,6 +4,7 @@
 namespace FOM\UserBundle\Controller;
 
 
+use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\MailerInterface;
@@ -21,7 +22,7 @@ abstract class AbstractEmailProcessController extends UserControllerBase
     public function __construct(protected MailerInterface $mailer,
                                 protected TranslatorInterface $translator,
                                 ManagerRegistry $doctrine,
-                                $userEntityClass,
+                                string $userEntityClass,
                                 protected ?string $emailFromAddress,
                                 ?string $emailFromName,
                                 protected $isDebug)
@@ -62,7 +63,7 @@ abstract class AbstractEmailProcessController extends UserControllerBase
         return !($startTime < $endTime);
     }
 
-    protected function sendEmail($mailTo, $subject, $bodyText, $bodyHtml = null)
+    protected function sendEmail(Address|string $mailTo, string $subject, $bodyText, $bodyHtml = null)
     {
         $message = new Email();
         $message->subject($subject);

@@ -47,7 +47,7 @@ class PdfUtil
      * @param int $width optional, to rescale image
      * @param int $height optional, to rescale image
      */
-    public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0)
+    public function addImageToPdf($pdf, $gdResOrPath, $xOffset, $yOffset, $width=0, $height=0): void
     {
         if (!\is_string($gdResOrPath)) {
             // FPDF library can embed files, but not gd resources
@@ -56,7 +56,7 @@ class PdfUtil
             $this->addImageToPdf($pdf, $imageName, $xOffset, $yOffset, $width, $height);
             unlink($imageName);
         } else {
-            $pdf->Image($gdResOrPath, $xOffset, $yOffset, $width, $height, 'png', '', false, 0);
+            $pdf->Image($gdResOrPath, $xOffset, $yOffset, $width, $height, 'png', '');
         }
     }
 
@@ -65,7 +65,7 @@ class PdfUtil
      * @param resource|string $gdResOrPath
      * @param TemplateRegion $region
      */
-    public function addImageToPdfRegion($pdf, $gdResOrPath, $region)
+    public function addImageToPdfRegion($pdf, $gdResOrPath, $region): void
     {
         $this->addImageToPdf($pdf, $gdResOrPath,
             $region->getOffsetX(), $region->getOffsetY(),
@@ -78,7 +78,7 @@ class PdfUtil
      * @param string|null $prefix
      * @return string
      */
-    public function makeTempFile($prefix = null)
+    public function makeTempFile($prefix = null): string
     {
         $filePath = tempnam($this->tempDir, $this->tempFilePrefix . ($prefix ?: ''));
         // tempnam may return false in undocumented error cases

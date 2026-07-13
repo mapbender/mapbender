@@ -8,7 +8,6 @@ use Assetic\Asset\StringAsset;
 use Assetic\Filter\CssRewriteFilter;
 use Assetic\Filter\FilterInterface;
 use Assetic\Filter\ScssphpFilter;
-use Mapbender\CoreBundle\Validator\Constraints\Scss;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -45,10 +44,10 @@ class CssCompiler extends AssetFactoryBase
         $content = $this->concatenateContents($inputs, $debug);
 
         $this->sassFilter->setOutputStyle($debug ? OutputStyle::EXPANDED : OutputStyle::COMPRESSED);
-        $filters = array(
+        $filters = [
             $this->sassFilter,
             $this->cssRewriteFilter,
-        );
+        ];
 
         $assets = new StringAsset($content, $filters, '/', $this->getSourcePath());
         $assets->setTargetPath($this->getTargetPath());
@@ -58,7 +57,7 @@ class CssCompiler extends AssetFactoryBase
     /**
      * @return string
      */
-    protected function getSourcePath()
+    protected function getSourcePath(): string
     {
         // Calculate the subfolder under the current host that contains the web directory
         // (actually, the entry script) from the Router's RequestContext.
@@ -67,7 +66,7 @@ class CssCompiler extends AssetFactoryBase
         $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
         $beforeScript = implode('', array_slice(explode($scriptName, $baseUrl), 0, 1));
         $withScript = rtrim($beforeScript, '/') . '/' . $scriptName;
-        if ($baseUrl && $scriptName && 0 !== strpos($baseUrl, $withScript)) {
+        if ($baseUrl && $scriptName && !str_starts_with($baseUrl, $withScript)) {
             // Context base url explicitly includes the name of the executed entry script.
             // => Use as is.
             return $withScript;
@@ -81,20 +80,20 @@ class CssCompiler extends AssetFactoryBase
     /**
      * @return string
      */
-    protected function getTargetPath()
+    protected function getTargetPath(): string
     {
         $context = $this->router->getContext();
         return $context->getBaseUrl() . $context->getPathInfo();
     }
 
-    protected function getMigratedReferencesMapping()
+    protected function getMigratedReferencesMapping(): array
     {
-        return array(
+        return [
             // updates for reliance on robloach/component-installer
             // select2 CSS works fine standalone (no url references) and can be sourced directly from vendor
             '/components/select2/select2-built.css' => '/../vendor/select2/select2/dist/css/select2.css',
             // Bootstrap colorpicker (from abandoned debugteam fork) absorbed into Mapbender, pre-provided in template
-            '/components/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css' => array(),
-        );
+            '/components/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css' => [],
+        ];
     }
 }

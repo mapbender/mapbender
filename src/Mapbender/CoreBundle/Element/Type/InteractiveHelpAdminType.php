@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,11 +12,8 @@ class InteractiveHelpAdminType extends AbstractType
 {
     use MapbenderTypeTrait;
 
-    private TranslatorInterface $trans;
-
-    public function __construct(TranslatorInterface $trans)
+    public function __construct(private TranslatorInterface $trans)
     {
-        $this->trans = $trans;
     }
 
     /**
@@ -35,10 +33,10 @@ class InteractiveHelpAdminType extends AbstractType
                 ],
                 'help' => 'mb.interactivehelp.admin.help',
             ], $this->trans))
-            ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('autoOpen', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.interactivehelp.admin.showOnStart',
-            ))
+            ])
         ;
     }
 }

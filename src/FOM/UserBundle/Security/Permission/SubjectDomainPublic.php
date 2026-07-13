@@ -10,7 +10,7 @@ class SubjectDomainPublic extends AbstractSubjectDomain
 {
     const SLUG = "public";
 
-    public function __construct(private TranslatorInterface $translator, protected bool $isAssignable)
+    public function __construct(private readonly TranslatorInterface $translator, protected bool $isAssignable)
     {
 
     }

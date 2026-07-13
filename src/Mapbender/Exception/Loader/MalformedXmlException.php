@@ -22,10 +22,10 @@ class MalformedXmlException extends SourceLoaderException
             $content = \preg_replace('#[\n\r]+#mu', ' ', $content);
         }
         if ($normalizeWhitespace) {
-            $content = \preg_replace('#\s+#mu', ' ', $content);
+            $content = \preg_replace('#\s+#mu', ' ', (string) $content);
         }
         if ($charLimit > 0) {
-            $content = \mb_substr($content, 0, $charLimit);
+            $content = \mb_substr((string) $content, 0, $charLimit);
         }
         return $content;
     }

@@ -68,7 +68,7 @@ class UrlTemplateType implements MutableUrlTarget
      * @param string $format
      * @return $this
      */
-    public function setFormat($format)
+    public function setFormat($format): static
     {
         $this->format = $format;
         return $this;
@@ -78,7 +78,7 @@ class UrlTemplateType implements MutableUrlTarget
      * @param string $resourceType
      * @return $this
      */
-    public function setResourceType($resourceType)
+    public function setResourceType($resourceType): static
     {
         $this->resourceType = $resourceType;
         return $this;
@@ -88,7 +88,7 @@ class UrlTemplateType implements MutableUrlTarget
      * @param string $template
      * @return $this
      */
-    public function setTemplate($template)
+    public function setTemplate($template): static
     {
         $this->template = $template;
         return $this;
@@ -103,12 +103,12 @@ class UrlTemplateType implements MutableUrlTarget
         }
     }
 
-    public function setExtension($extension)
+    public function setExtension($extension): void
     {
         $this->extension = $extension;
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
         if ($url = $this->getTemplate()) {
             $this->setTemplate($transformer->process($url));

@@ -17,22 +17,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AssetsController extends AbstractController
 {
-    protected $containerTimestamp;
-    protected $cacheDir;
-    protected $isDebug;
+    protected int $containerTimestamp;
 
     public function __construct(protected TranslatorInterface     $translator,
                                 protected ApplicationResolver     $applicationResolver,
                                 protected ApplicationAssetService $assetService,
                                                                   $containerTimestamp,
-                                                                  $cacheDir,
-                                                                  $isDebug,
+                                                                  protected $cacheDir,
+                                                                  protected $isDebug,
                                 protected string                  $templateClass,
                                 protected string                  $loginTemplateClass)
     {
         $this->containerTimestamp = intval(ceil($containerTimestamp));
-        $this->cacheDir = $cacheDir;
-        $this->isDebug = $isDebug;
     }
 
     /**
@@ -43,7 +39,7 @@ class AssetsController extends AbstractController
      */
     #[Route(path: '/application/{slug}/assets/{type}', name: 'mapbender_core_application_assets', requirements: ['type' => 'js|css|trans'])]
     #[Route(path: '/application/{slug}/sourcemap/{type}', name: 'mapbender_core_application_sourcemap', requirements: ['type' => 'js|css|trans'])]
-    public function assets(Request $request, string $slug, string $type, $_route)
+    public function assets(Request $request, string $slug, string $type, $_route): BinaryFileResponse|Response
     {
         $cacheFile = $this->getCachePath($request, $slug, $type);
         if ($source = $this->getManagerAssetDependencies($slug)) {
@@ -53,10 +49,10 @@ class AssetsController extends AbstractController
             $appModificationTs = $source->getUpdated()->getTimestamp();
         }
         $cacheFile .= ".{$type}";
-        $headers = array(
+        $headers = [
             'Content-Type' => $this->getMimeType($type),
             'Cache-Control' => 'max-age=0, must-revalidate, private',
-        );
+        ];
 
         $useCached = (!$this->isDebug) && file_exists($cacheFile);
         if ($useCached && $appModificationTs < filectime($cacheFile)) {
@@ -92,7 +88,7 @@ class AssetsController extends AbstractController
      * @param string $type
      * @return string
      */
-    protected function getCachePath(Request $request, $slug, $type)
+    protected function getCachePath(Request $request, $slug, $type): string
     {
         $path = "{$this->cacheDir}/{$slug}";
         if ($type === 'trans') {
@@ -110,31 +106,24 @@ class AssetsController extends AbstractController
 
     protected function getManagerAssetDependencies(string $slug): ?TemplateAssetDependencyInterface
     {
-        switch ($slug) {
-            case 'manager':
-                return new $this->templateClass();
-            case 'mb3-login':
-                return new $this->loginTemplateClass();
-            default:
-                return null;
-        }
+        return match ($slug) {
+            'manager' => new $this->templateClass(),
+            'mb3-login' => new $this->loginTemplateClass(),
+            default => null,
+        };
     }
 
     /**
      * @param string $type
      * @return string|null
      */
-    protected function getMimeType($type)
+    protected function getMimeType($type): ?string
     {
-        switch ($type) {
-            case 'js':
-            case 'trans':
-                return 'application/javascript';
-            case 'css':
-                return 'text/css';
-            default:
-                // Uh-oh
-                return null;
-        }
+        return match ($type) {
+            'js', 'trans' => 'application/javascript',
+            'css' => 'text/css',
+            // Uh-oh
+            default => null,
+        };
     }
 }

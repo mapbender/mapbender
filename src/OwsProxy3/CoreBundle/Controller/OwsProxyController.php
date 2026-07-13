@@ -2,6 +2,7 @@
 
 namespace OwsProxy3\CoreBundle\Controller;
 
+use Mapbender\CoreBundle\Component\Exception\ProxySignatureException;
 use Mapbender\CoreBundle\Component\Signer;
 use OwsProxy3\CoreBundle\Component\HttpFoundationClient;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -39,7 +40,7 @@ class OwsProxyController
             $this->signer->checkSignedUrl($url);
         } catch (\InvalidArgumentException $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
-        } catch (\Mapbender\CoreBundle\Component\Exception\ProxySignatureException $e) {
+        } catch (ProxySignatureException $e) {
             throw new AccessDeniedHttpException($e->getMessage(), $e);
         }
         return $this->getQueryResponse($proxy_query, $request);

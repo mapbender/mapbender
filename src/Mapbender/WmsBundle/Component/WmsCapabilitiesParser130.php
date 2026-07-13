@@ -71,15 +71,15 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
         return $bbox;
     }
 
-    protected function getLayerLatLonBounds(\DOMElement $layerEl)
+    protected function getLayerLatLonBounds(\DOMElement $layerEl): ?BoundingBox
     {
         foreach ($this->getChildNodesByTagName($layerEl, 'EX_GeographicBoundingBox') as $bboxEl) {
             $bbox = new BoundingBox();
             $bbox->setSrs('EPSG:4326');
-            $bbox->setMinx(\trim($this->getFirstChildNodeText($bboxEl, 'westBoundLongitude')));
-            $bbox->setMiny(\trim($this->getFirstChildNodeText($bboxEl, 'southBoundLatitude')));
-            $bbox->setMaxx(\trim($this->getFirstChildNodeText($bboxEl, 'eastBoundLongitude')));
-            $bbox->setMaxy(\trim($this->getFirstChildNodeText($bboxEl, 'northBoundLatitude')));
+            $bbox->setMinx(\trim((string) $this->getFirstChildNodeText($bboxEl, 'westBoundLongitude')));
+            $bbox->setMiny(\trim((string) $this->getFirstChildNodeText($bboxEl, 'southBoundLatitude')));
+            $bbox->setMaxx(\trim((string) $this->getFirstChildNodeText($bboxEl, 'eastBoundLongitude')));
+            $bbox->setMaxy(\trim((string) $this->getFirstChildNodeText($bboxEl, 'northBoundLatitude')));
             return $bbox;
         }
         return null;

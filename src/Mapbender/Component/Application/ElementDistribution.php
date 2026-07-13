@@ -14,8 +14,7 @@ class ElementDistribution
     protected $mapElement;
     /** @var ElementBucket[] */
     protected $anchoredContentElements;
-    /** @var ElementBucket */
-    protected $unanchoredContentElements;
+    protected ElementBucket $unanchoredContentElements;
     /** @var ElementBucket[] */
     protected $nonContentRegionMap;
 
@@ -25,8 +24,8 @@ class ElementDistribution
     public function __construct($elements)
     {
         $this->mapElement = null;
-        $this->nonContentRegionMap = array();
-        $this->anchoredContentElements = array();
+        $this->nonContentRegionMap = [];
+        $this->anchoredContentElements = [];
         $this->unanchoredContentElements = new ElementBucket('content');    /** @todo: use region descriptor object instead of string */
         foreach ($elements as $element) {
             if (\is_a($element->getClass(), 'Mapbender\Component\Element\MainMapElementInterface', true)) {
@@ -69,7 +68,7 @@ class ElementDistribution
         if (!empty($this->anchoredContentElements[$anchorValue])) {
             return $this->anchoredContentElements[$anchorValue]->getElements();
         } else {
-            return array();
+            return [];
         }
     }
 

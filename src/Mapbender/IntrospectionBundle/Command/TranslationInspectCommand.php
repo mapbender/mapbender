@@ -13,10 +13,10 @@ class TranslationInspectCommand extends AbstractTranslationCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $catalogs = $this->getCatalogs($this->allCatalogNames);
-        $referenceCatalogs = array(
+        $referenceCatalogs = [
             $catalogs['en'],
             $catalogs['de'],
-        );
+        ];
         $this->showIdentityTranslations($output, $catalogs);
         $this->showRepetitions($output, $referenceCatalogs, $catalogs);
         return 0;
@@ -26,9 +26,9 @@ class TranslationInspectCommand extends AbstractTranslationCommand
      * @param string[] $catalogNames
      * @return MessageCatalogueInterface[] keyed on catalog name
      */
-    protected function getCatalogs($catalogNames)
+    protected function getCatalogs($catalogNames): array
     {
-        $catalogsOut = array();
+        $catalogsOut = [];
         foreach ($catalogNames as $name) {
             $catalogsOut[$name] = $this->getCatalog($name);
         }
@@ -43,9 +43,9 @@ class TranslationInspectCommand extends AbstractTranslationCommand
     {
         foreach ($catalogs as $catalog) {
             foreach ($catalog->getDomains() as $domain) {
-                $idents = array();
+                $idents = [];
                 foreach ($catalog->all($domain) as $key => $message) {
-                    if ($key == trim($message)) {
+                    if ($key == trim((string) $message)) {
                         $idents[] = $key;
                     }
                 }
@@ -66,7 +66,7 @@ class TranslationInspectCommand extends AbstractTranslationCommand
      * @param MessageCatalogueInterface[] $allCatalogs
      * @param string $domain
      */
-    protected function showRepetitions(OutputInterface $output, $referenceCatalogs, $allCatalogs, $domain = 'messages')
+    protected function showRepetitions(OutputInterface $output, $referenceCatalogs, $allCatalogs, ?string $domain = 'messages')
     {
         foreach ($referenceCatalogs as $referenceIndex => $referenceCatalog) {
             $referenceMessages = $referenceCatalog->all($domain);

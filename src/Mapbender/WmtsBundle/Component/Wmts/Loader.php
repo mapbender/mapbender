@@ -4,6 +4,7 @@
 namespace Mapbender\WmtsBundle\Component\Wmts;
 
 
+use Mapbender\CoreBundle\Entity\Application;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Exception\InvalidUrlException;
@@ -30,19 +31,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Loader extends HttpSourceLoader
 {
-    /** @var EntityManagerInterface */
-    protected $entityManager;
-
-    /** @var XmlValidatorService */
-    protected $validator;
-
-    public function __construct(EntityManagerInterface $entityManager,
+    public function __construct(protected EntityManagerInterface $entityManager,
                                 HttpTransportInterface $httpTransport,
-                                XmlValidatorService    $validator)
+                                protected XmlValidatorService    $validator)
     {
         parent::__construct($httpTransport);
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
     }
 
     /**
@@ -82,7 +75,7 @@ class Loader extends HttpSourceLoader
         $this->validator->validateDocument($this->xmlToDom($content));
     }
 
-    public function updateSource(Source $target, Source $reloaded, ?SourceLoaderSettings $settings = null)
+    public function updateSource(Source $target, Source $reloaded, ?SourceLoaderSettings $settings = null): void
     {
         /** @var HttpTileSource $target */
         /** @var HttpTileSource $reloaded */
@@ -96,7 +89,7 @@ class Loader extends HttpSourceLoader
         KeywordUpdater::updateKeywords($target, $reloaded, $this->entityManager, WmtsSourceKeyword::class);
 
         /** @var ApplicationRepository $applicationRepository */
-        $applicationRepository = $this->entityManager->getRepository('\Mapbender\CoreBundle\Entity\Application');
+        $applicationRepository = $this->entityManager->getRepository(Application::class);
         foreach ($applicationRepository->findWithInstancesOf($target) as $application) {
             $application->setUpdated(new \DateTime('now'));
             $this->entityManager->persist($application);
@@ -121,7 +114,7 @@ class Loader extends HttpSourceLoader
 
     protected function updateInstance(WmtsInstance $instance)
     {
-        $identifierMap = array();
+        $identifierMap = [];
         foreach ($instance->getLayers() as $instanceLayer) {
             $identifier = $instanceLayer->getSourceItem()->getIdentifier();
             $identifierMap[$identifier] = $instanceLayer;

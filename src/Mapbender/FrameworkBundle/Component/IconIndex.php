@@ -9,20 +9,19 @@ use Mapbender\Utils\HtmlUtil;
 
 class IconIndex implements IconPackageInterface
 {
-    /** @var IconPackageInterface[] */
-    protected $packages;
-
     /**
      * @param IconPackageInterface[] $packages
      */
-    public function __construct($packages)
+    public function __construct(protected $packages)
     {
-        $this->packages = $packages;
     }
 
-    public function getChoices()
+    /**
+     * @return mixed[]
+     */
+    public function getChoices(): array
     {
-        $choices = array();
+        $choices = [];
         foreach ($this->packages as $package) {
             // array_diff to remove value duplicates while preserving keys
             $choices += \array_diff($package->getChoices(), $choices);
@@ -36,32 +35,32 @@ class IconIndex implements IconPackageInterface
             if ($package->isHandled($iconCode)) {
                 $markup = $package->getIconMarkup($iconCode, $additionalClass);
                 if (!$markup) {
-                    throw new \LogicException("Icon package " . \get_class($package) . " produced no markup for {$iconCode}");
+                    throw new \LogicException("Icon package " . $package::class . " produced no markup for {$iconCode}");
                 }
                 return $markup;
             }
         }
         // Fingers crossed
-        return HtmlUtil::renderTag('span', '', array(
+        return HtmlUtil::renderTag('span', '', [
             'class' => 'mb-glyphicon ' . $iconCode . ' ' . $additionalClass,
-        ));
+        ]);
     }
 
-    public function getStyleSheets()
+    public function getStyleSheets(): array
     {
-        $styleSheets = array();
+        $styleSheets = [];
         foreach ($this->packages as $package) {
             $styleSheets = \array_merge($styleSheets, $package->getStyleSheets());
         }
         return \array_values(\array_unique($styleSheets));
     }
 
-    public function isHandled($iconCode)
+    public function isHandled($iconCode): bool
     {
         return true;
     }
 
-    public function getAliases()
+    public function getAliases(): never
     {
         throw new \LogicException("Index package cannot list aliases");
     }

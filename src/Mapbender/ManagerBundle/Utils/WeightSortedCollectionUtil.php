@@ -13,7 +13,7 @@ class WeightSortedCollectionUtil
      * @param Collection $collection
      * @param WeightSortedCollectionMember $member
      */
-    public static function removeOne(Collection $collection, $member)
+    public static function removeOne(Collection $collection, $member): void
     {
         static::removeOneInternal($collection, $member, true);
     }
@@ -21,7 +21,7 @@ class WeightSortedCollectionUtil
     /**
      * @param Collection $collection
      */
-    public static function reassignWeights(Collection $collection)
+    public static function reassignWeights(Collection $collection): void
     {
         foreach ($collection->getValues() as $newWeight => $member) {
             /** @var WeightSortedCollectionMember $member */
@@ -34,7 +34,7 @@ class WeightSortedCollectionUtil
      * @param WeightSortedCollectionMember $member
      * @param int|null $targetWeight
      */
-    public static function updateSingleWeight(Collection $collection, $member, $targetWeight)
+    public static function updateSingleWeight(Collection $collection, $member, $targetWeight): void
     {
         static::removeOneInternal($collection, $member, false);
         $siblings = $collection->getValues();
@@ -61,7 +61,7 @@ class WeightSortedCollectionUtil
      * @param WeightSortedCollectionMember $member
      * @param int|null $targetWeight
      */
-    public static function insertWithWeight(Collection $collection, $member, $targetWeight)
+    public static function insertWithWeight(Collection $collection, $member, $targetWeight): void
     {
         if ($targetWeight === null || $targetWeight >= count($collection)) {
             static::append($collection, $member);
@@ -77,7 +77,7 @@ class WeightSortedCollectionUtil
      * @param Collection $collection
      * @param WeightSortedCollectionMember $member
      */
-    public static function append(Collection $collection, $member)
+    public static function append(Collection $collection, $member): void
     {
         /** @var WeightSortedCollectionMember $member */
         $member->setWeight(count($collection));
@@ -88,9 +88,9 @@ class WeightSortedCollectionUtil
      * @param Collection $collection
      * @param WeightSortedCollectionMember $member
      */
-    public static function prepend(Collection $collection, $member)
+    public static function prepend(Collection $collection, $member): void
     {
-        $members = array_merge(array($member), array_values($collection->slice(0)));
+        $members = array_merge([$member], array_values($collection->slice(0)));
         $collection->clear();
         foreach ($members as $newWeight => $newMember) {
             /** @var WeightSortedCollectionMember $newMember */
@@ -105,7 +105,7 @@ class WeightSortedCollectionUtil
      * @param WeightSortedCollectionMember $member
      * @param int|null $targetWeight
      */
-    public static function moveBetweenCollections(Collection $target, Collection $source, $member, $targetWeight = null)
+    public static function moveBetweenCollections(Collection $target, Collection $source, $member, $targetWeight = null): void
     {
         static::removeOne($source, $member);
         static::insertWithWeight($target, $member, $targetWeight);
@@ -116,7 +116,7 @@ class WeightSortedCollectionUtil
      * @param $member
      * @param bool $renumber to trigger weight reassignment
      */
-    public static function removeOneInternal(Collection $collection, $member, $renumber)
+    public static function removeOneInternal(Collection $collection, $member, $renumber): void
     {
         $memberKey = $collection->indexOf($member);
         if (false === $memberKey) {

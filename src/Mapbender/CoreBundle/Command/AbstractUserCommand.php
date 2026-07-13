@@ -12,12 +12,8 @@ use Symfony\Component\Console\Command\Command;
 
 abstract class AbstractUserCommand extends Command
 {
-    /** @var ManagerRegistry */
-    protected $managerRegistry;
-
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(protected ManagerRegistry $managerRegistry)
     {
-        $this->managerRegistry = $managerRegistry;
         parent::__construct(null);
     }
 

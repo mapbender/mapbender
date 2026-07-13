@@ -3,6 +3,7 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\ViewManagerAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
@@ -16,74 +17,65 @@ class ViewManager extends AbstractElementService
     const ACCESS_READWRITE = 'rw';
     const ACCESS_READWRITEDELETE = 'rwd';
 
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-
-    /** @var ViewManagerHttpHandler */
-    protected $httpHandler;
-
-    public function __construct(TokenStorageInterface $tokenStorage,
-                                ViewManagerHttpHandler $httpHandler)
+    public function __construct(protected TokenStorageInterface $tokenStorage, protected ViewManagerHttpHandler $httpHandler)
     {
-        $this->httpHandler = $httpHandler;
-        $this->tokenStorage = $tokenStorage;
     }
 
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return 'mb.core.viewManager.class.title';
     }
 
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return 'mb.core.viewManager.class.description';
     }
 
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbViewManager';
     }
 
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbViewManager.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/mbViewManager.scss',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.core.viewManager.recordStatus.*',
-            ),
-        );
+            ],
+        ];
     }
 
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\ViewManagerAdminType';
+        return ViewManagerAdminType::class;
     }
 
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/view_manager.html.twig';
     }
 
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'publicEntries' => self::ACCESS_READONLY,
             'privateEntries' => true,
             'allowAnonymousSave' => false,
             'showDate' => false,
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): false|TemplateView
     {
         $token = $this->tokenStorage->getToken();
-        $config = $element->getConfiguration() + $this->getDefaultConfiguration();
+        $config = $element->getConfiguration() + static::getDefaultConfiguration();
         if (!$token || ($token instanceof NullToken)) {
             if (empty($config['publicEntries'])) {
                 // No access to public entries; private entries undefined for anons
@@ -94,7 +86,7 @@ class ViewManager extends AbstractElementService
 
         $view = new TemplateView('@MapbenderCore/Element/view_manager.html.twig');
         $view->attributes['class'] = 'mb-element-viewmanager';
-        $view->attributes['data-title'] = $element->getTitle() ?: $this->getClassTitle();   // For popup
+        $view->attributes['data-title'] = $element->getTitle() ?: static::getClassTitle();   // For popup
         $view->variables['grants'] = $this->httpHandler->getGrantsVariables($config);
         $view->variables['showDate'] = $config['showDate'];
         $view->variables['showPublicPrivateState'] = !empty($config['privateEntries']);
@@ -110,7 +102,7 @@ class ViewManager extends AbstractElementService
         return $this->httpHandler;
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconBookmark';
     }

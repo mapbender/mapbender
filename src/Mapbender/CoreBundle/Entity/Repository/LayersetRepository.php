@@ -31,8 +31,8 @@ class LayersetRepository extends EntityRepository
      */
     public function findWithInstancesOf(Source $source, ?array $criteria=null, ?array $orderBy = null, $limit = null, $offset = null)
     {
-        $layersets = array();
-        foreach ($this->findBy($criteria ?: array(), $orderBy) as $layerset) {
+        $layersets = [];
+        foreach ($this->findBy($criteria ?: [], $orderBy) as $layerset) {
             if ($layerset->getInstancesOf($source)->count()) {
                 $layersets[] = $layerset;
             } else {
@@ -63,8 +63,8 @@ class LayersetRepository extends EntityRepository
      */
     public function findWithInstance(SourceInstance $instance, ?array $criteria = null, ?array $orderBy = null, $limit = null, $offset = null)
     {
-        $matches = array();
-        foreach ($this->findBy($criteria ?: array(), $orderBy) as $layerset) {
+        $matches = [];
+        foreach ($this->findBy($criteria ?: [], $orderBy) as $layerset) {
             if ($layerset->getCombinedInstances()->contains($instance)) {
                 $matches[] = $layerset;
             }

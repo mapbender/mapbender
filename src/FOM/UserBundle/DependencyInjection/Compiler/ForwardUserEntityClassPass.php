@@ -14,19 +14,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ForwardUserEntityClassPass implements CompilerPassInterface
 {
-    /** @var string */
-    protected $default;
-    /** @var string */
-    protected $targetParameterKey;
-
     /**
      * @param string $targetParameterKey
      * @param string $default
      */
-    public function __construct($targetParameterKey, $default)
+    public function __construct(protected $targetParameterKey, protected $default)
     {
-        $this->targetParameterKey = $targetParameterKey;
-        $this->default = $default;
     }
 
     public function process(ContainerBuilder $container): void
@@ -37,7 +30,7 @@ class ForwardUserEntityClassPass implements CompilerPassInterface
             $securityConfig = array_values($securityConfig);
             $securityConfig = $securityConfig[0];
         }
-        $entityProviderConfig = array();
+        $entityProviderConfig = [];
         if (!empty($securityConfig['providers'])) {
             foreach ($securityConfig['providers'] as $name => $providerConfig) {
                 if (\is_array($providerConfig) && isset($providerConfig['entity'])) {

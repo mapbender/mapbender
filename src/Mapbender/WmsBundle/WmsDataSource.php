@@ -17,10 +17,10 @@ class WmsDataSource extends DataSource
 {
 
     public function __construct(
-        private WmsSourceInstanceConfigGenerator $configGenerator,
-        private SourceInstanceFactory            $instanceFactory,
-        private Importer                         $loader,
-        private LayerRendererWms                 $layerRenderer,
+        private readonly WmsSourceInstanceConfigGenerator $configGenerator,
+        private readonly SourceInstanceFactory            $instanceFactory,
+        private readonly Importer                         $loader,
+        private readonly LayerRendererWms                 $layerRenderer,
     )
     {
     }

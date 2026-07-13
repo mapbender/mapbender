@@ -30,14 +30,14 @@ class CoordinatesUtilityController
      * @return JsonResponse
      */
     #[Route(path: '/srs-autocomplete', name: 'srs_autocomplete', options: ['expose' => true])]
-    public function srsAutocompleteAction(Request $request)
+    public function srsAutocompleteAction(Request $request): JsonResponse
     {
         $term = $request
             ->query
             ->get('term');
 
         // All SRS names are upper case!
-        $term = \strtoupper($term);
+        $term = \strtoupper((string) $term);
 
         $repository = $this->doctrineRegistry->getRepository(SRS::class);
         $criteria = Criteria::create()
@@ -52,7 +52,7 @@ class CoordinatesUtilityController
             $collection = new ArrayCollection($repository->findAll());
             $results = $collection->matching($criteria);
         }
-        $responseData = array();
+        $responseData = [];
         foreach ($results as $srs) {
             $responseData[] = $srs->getName() . ' | ' . $srs->getTitle();
         }

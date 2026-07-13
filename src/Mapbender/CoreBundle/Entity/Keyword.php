@@ -11,7 +11,7 @@ use Mapbender\CoreBundle\Component\ContainingKeyword;
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name: 'discriminator', type: 'string')]
 #[ORM\Table(name: 'mb_core_keyword')]
-abstract class Keyword
+abstract class Keyword implements \Stringable
 {
 
     /**
@@ -67,7 +67,7 @@ abstract class Keyword
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->id;
     }

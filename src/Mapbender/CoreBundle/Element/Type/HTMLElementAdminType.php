@@ -46,24 +46,24 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
 
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'preSetData',
-        );
+        ];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         /** @var Element $element */
         $element = $event->getForm()->getParent()->getData();
-        $event->getForm()->add('content', TextareaType::class, array(
+        $event->getForm()->add('content', TextareaType::class, [
             'required' => false,
             'label' => 'mb.core.htmlelement.admin.content',
-            'constraints' => new HtmlTwigConstraint(array(
+            'constraints' => new HtmlTwigConstraint([
                 // Same twig variable scope as frontend
                 /** @see HTMLElement::getView */
                 'entity' => $element,
                 'application' => $element->getApplication(),
-            ))
-        ));
+            ])
+        ]);
     }
 }

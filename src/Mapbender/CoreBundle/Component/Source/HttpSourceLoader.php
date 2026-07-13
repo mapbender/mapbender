@@ -12,7 +12,6 @@ use Mapbender\Exception\Loader\RefreshTypeMismatchException;
 use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\Exception\Loader\SourceLoaderException;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
-use Mapbender\ManagerBundle\Form\Type\HttpSourceOriginType;
 use Mapbender\ManagerBundle\Form\Type\HttpSourceSelectionType;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -54,7 +53,7 @@ abstract class HttpSourceLoader extends SourceLoader
 
         /** @var HttpParsedSource $source */
         $source = $this->parseResponseContent($response->getContent());
-        $this->updateOrigin($source, $formData);
+        static::updateOrigin($source, $formData);
         return $source;
     }
 
@@ -76,7 +75,7 @@ abstract class HttpSourceLoader extends SourceLoader
     /**
      * Copies origin-related attributes (url, username, password) from $origin to $target
      */
-    public static function updateOrigin(MutableHttpOriginInterface $target, HttpOriginInterface $origin)
+    public static function updateOrigin(MutableHttpOriginInterface $target, HttpOriginInterface $origin): void
     {
         $target->setOriginUrl($origin->getOriginUrl());
         $target->setUsername($origin->getUsername());
@@ -107,7 +106,7 @@ abstract class HttpSourceLoader extends SourceLoader
         $this->beforeSourceUpdate($source, $reloadedSource);
         $settings = $formData instanceof SourceLoaderSettings ? $formData : null;
         $this->updateSource($source, $reloadedSource, $settings);
-        $this->updateOrigin($source, $formData);
+        static::updateOrigin($source, $formData);
     }
 
     /**

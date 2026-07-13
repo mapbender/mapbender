@@ -2,6 +2,8 @@
 
 namespace FOM\UserBundle\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use FOM\UserBundle\Form\Type\GroupType;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\UserBundle\Entity\Group;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
@@ -33,13 +35,13 @@ class GroupController extends AbstractController
      * @throws \Exception
      */
     #[Route('/group/new', methods: ['GET', 'POST'])]
-    public function create(Request $request)
+    public function create(Request $request): RedirectResponse|Response
     {
         $group = new Group();
 
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_CREATE_GROUPS);
 
-        $form = $this->createForm('FOM\UserBundle\Form\Type\GroupType', $group);
+        $form = $this->createForm(GroupType::class, $group);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,16 +55,16 @@ class GroupController extends AbstractController
             $this->em->flush();
             $this->addFlash('success', 'The group has been saved.');
 
-            return $this->redirectToRoute('fom_user_security_index', array(
+            return $this->redirectToRoute('fom_user_security_index', [
                 '_fragment' => 'tabGroups',
-            ));
+            ]);
         }
 
-        return $this->render('@FOMUser/Group/form.html.twig', array(
+        return $this->render('@FOMUser/Group/form.html.twig', [
             'group' => $group,
             'form' => $form->createView(),
             'title' => 'fom.user.group.form.new_group',
-        ));
+        ]);
     }
 
     /**
@@ -71,7 +73,7 @@ class GroupController extends AbstractController
      * @return Response
      */
     #[Route('/group/{id}/edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, $id)
+    public function edit(Request $request, $id): RedirectResponse|Response
     {
         $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_GROUPS);
 
@@ -81,7 +83,7 @@ class GroupController extends AbstractController
             throw new NotFoundHttpException('The group does not exist');
         }
 
-        $form = $this->createForm('FOM\UserBundle\Form\Type\GroupType', $group);
+        $form = $this->createForm(GroupType::class, $group);
 
         // see https://afilina.com/doctrine-not-saving-manytomany
         foreach ($group->getUsers() as $previousUser) {
@@ -98,9 +100,9 @@ class GroupController extends AbstractController
             $this->em->flush();
 
             $this->addFlash('success', 'The group has been updated.');
-            return $this->redirectToRoute('fom_user_security_index', array(
+            return $this->redirectToRoute('fom_user_security_index', [
                 '_fragment' => 'tabGroups',
-            ));
+            ]);
         }
 
         $view = $form->createView();
@@ -109,14 +111,12 @@ class GroupController extends AbstractController
          * sorting takes place here because it is not easy to implement in twig
          */
         $users = $view->children['users'];
-        usort($users->children, function ($a, $b) {
-            return strcasecmp($a->vars['label'], $b->vars['label']);
-        });
-        return $this->render('@FOMUser/Group/form.html.twig', array(
+        usort($users->children, fn($a, $b): int => strcasecmp($a->vars['label'], $b->vars['label']));
+        return $this->render('@FOMUser/Group/form.html.twig', [
             'group' => $group,
             'form' => $view,
             'title' => 'fom.user.group.form.edit_group',
-        ));
+        ]);
     }
 
     /**
@@ -145,7 +145,7 @@ class GroupController extends AbstractController
             $this->em->remove($group);
             $this->em->flush();
             $this->em->commit();
-        } catch(\Exception $e) {
+        } catch(\Exception) {
             $this->em->rollback();
             $this->addFlash('error', "The group couldn't be deleted.");
         }

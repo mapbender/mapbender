@@ -12,11 +12,8 @@ class DataUploadAdminType extends AbstractType
 {
     use MapbenderTypeTrait;
 
-    private TranslatorInterface $trans;
-
-    public function __construct(TranslatorInterface $trans)
+    public function __construct(private TranslatorInterface $trans)
     {
-        $this->trans = $trans;
     }
 
     /**
@@ -25,10 +22,10 @@ class DataUploadAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('maxFileSize', IntegerType::class, array(
+            ->add('maxFileSize', IntegerType::class, [
                 'required' => true,
                 'label' => 'mb.core.dataupload.admin.maxFileSize',
-            ))
+            ])
             ->add('helpText', TextareaType::class, $this->createInlineHelpText([
                 'required' => false,
                 'label' => 'mb.core.dataupload.admin.helpLabel',

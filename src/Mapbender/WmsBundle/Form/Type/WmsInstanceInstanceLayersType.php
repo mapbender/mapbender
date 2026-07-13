@@ -2,6 +2,8 @@
 
 namespace Mapbender\WmsBundle\Form\Type;
 
+use Mapbender\ManagerBundle\Form\Type\SourceInstanceType;
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\CoreBundle\Element\Type\MapbenderTypeTrait;
 use Mapbender\ManagerBundle\Form\Type\SourceInstanceLayerCollectionType;
 use Mapbender\WmsBundle\Entity\WmsInstance;
@@ -23,13 +25,13 @@ class WmsInstanceInstanceLayersType extends AbstractType
      */
     public function __construct(
         protected bool $exposeLayerOrder = false,
-        protected TranslatorInterface $translator)
+        protected ?TranslatorInterface $translator = null)
     {
     }
 
     public function getParent(): string
     {
-        return 'Mapbender\ManagerBundle\Form\Type\SourceInstanceType';
+        return SourceInstanceType::class;
     }
 
     /**
@@ -41,106 +43,106 @@ class WmsInstanceInstanceLayersType extends AbstractType
         $instance = $options["data"];
         $source = $instance->getSource();
 
-        $getMapFormatChoices = array();
-        foreach ($source->getGetMap()->getFormats() ?: array() as $value) {
+        $getMapFormatChoices = [];
+        foreach ($source->getGetMap()->getFormats() ?: [] as $value) {
             $getMapFormatChoices[$value] = $value;
         }
-        $featureInfoFormatChoices = array();
+        $featureInfoFormatChoices = [];
         if ($gfi = $source->getGetFeatureInfo()) {
-            foreach ($gfi->getFormats() ?: array() as $value) {
+            foreach ($gfi->getFormats() ?: [] as $value) {
                 $featureInfoFormatChoices[$value] = $value;
             }
         }
-        $exceptionFormatChoices = array();
-        foreach ($source->getExceptionFormats() ?: array() as $value) {
+        $exceptionFormatChoices = [];
+        foreach ($source->getExceptionFormats() ?: [] as $value) {
             $exceptionFormatChoices[$value] = $value;
         }
 
         $builder
-            ->add('format', ChoiceType::class, array(
+            ->add('format', ChoiceType::class, [
                 'choices' => $getMapFormatChoices,
                 'required' => true,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.format',
-            ))
-            ->add('infoformat', ChoiceType::class, array(
+            ])
+            ->add('infoformat', ChoiceType::class, [
                 'choices' => $featureInfoFormatChoices,
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.infoformat',
-            ))
-            ->add('exceptionformat', ChoiceType::class, array(
+            ])
+            ->add('exceptionformat', ChoiceType::class, [
                 'choices' => $exceptionFormatChoices,
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.exceptionformat',
-            ))
-            ->add('transparency', CheckboxType::class, array(
+            ])
+            ->add('transparency', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.transparency',
-            ))
-            ->add('tiled', CheckboxType::class, array(
+            ])
+            ->add('tiled', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.tiled',
-            ))
-            ->add('ratio', NumberType::class, array(
+            ])
+            ->add('ratio', NumberType::class, [
                 'required' => false,
                 'scale' => 2,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.ratio',
-            ))
-            ->add('buffer', IntegerType::class, array(
+            ])
+            ->add('buffer', IntegerType::class, [
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.buffer',
-            ))
-            ->add('refreshInterval', IntegerType::class, $this->createInlineHelpText(array(
+            ])
+            ->add('refreshInterval', IntegerType::class, $this->createInlineHelpText([
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.refresh_interval',
                 'help' => 'mb.wms.wmsloader.repo.instance.label.refresh_interval_help',
-            ), $this->translator))
+            ], $this->translator))
         ;
         if ($source->getDimensions()) {
-            $builder->add('dimensions', CollectionType::class, array(
+            $builder->add('dimensions', CollectionType::class, [
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.dimensions',
-                'entry_type' => 'Mapbender\WmsBundle\Form\Type\DimensionInstType',
+                'entry_type' => DimensionInstType::class,
                 'allow_add' => false,
                 'allow_delete' => false,
-                'entry_options' => array(
+                'entry_options' => [
                     'instance' => $instance,
                     'by_reference' => false,
-                ),
+                ],
                 'label' => false,
-            ));
+            ]);
         }
         $builder
-            ->add('vendorspecifics', CollectionType::class, array(
+            ->add('vendorspecifics', CollectionType::class, [
                 'required' => false,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.vendorspecifics',
-                'entry_type' => 'Mapbender\WmsBundle\Form\Type\VendorSpecificType',
+                'entry_type' => VendorSpecificType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'entry_options' => array(
+                'entry_options' => [
                     'by_reference' => false,
-                ),
-            ))
-            ->add('layers', SourceInstanceLayerCollectionType::class, array(
-                'entry_type' => 'Mapbender\WmsBundle\Form\Type\WmsInstanceLayerType',
+                ],
+            ])
+            ->add('layers', SourceInstanceLayerCollectionType::class, [
+                'entry_type' => WmsInstanceLayerType::class,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.layers',
-                'entry_options' => array(
-                    'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
-                ),
-            ))
+                'entry_options' => [
+                    'data_class' => WmsInstanceLayer::class,
+                ],
+            ])
         ;
 
         if ($this->exposeLayerOrder) {
-            $layerOrderChoices = array();
+            $layerOrderChoices = [];
             foreach (WmsInstance::validLayerOrderChoices() as $validChoice) {
                 $translationKey = "mb.wms.wmsloader.repo.instance.label.layerorder.$validChoice";
                 $layerOrderChoices[$translationKey] = $validChoice;
             }
-            $builder->add('layerOrder', ChoiceType::class, array(
+            $builder->add('layerOrder', ChoiceType::class, [
                 'choices' => $layerOrderChoices,
                 'required' => true,
                 'auto_initialize' => true,
                 'label' => 'mb.wms.wmsloader.repo.instance.label.layerorder',
-            ));
+            ]);
         }
     }
 }

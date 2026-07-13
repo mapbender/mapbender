@@ -2,6 +2,8 @@
 
 namespace FOM\UserBundle\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use FOM\UserBundle\Form\Type\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -69,7 +71,7 @@ class UserController extends UserControllerBase
      * @return Response
      * @throws \Exception
      */
-    protected function createOrEditUser(Request $request, User $user)
+    protected function createOrEditUser(Request $request, User $user): RedirectResponse|Response
     {
         $isNew = !$user->getId();
         $profileClass = $this->profileEntityClass;
@@ -80,9 +82,9 @@ class UserController extends UserControllerBase
 
         $groupPermission = $this->isGranted(ResourceDomainInstallation::ACTION_EDIT_GROUPS);
 
-        $form = $this->createForm('FOM\UserBundle\Form\Type\UserType', $user, array(
+        $form = $this->createForm(UserType::class, $user, [
             'group_permission' => $groupPermission,
-        ));
+        ]);
 
 
         $securityIndexGranted = $this->isGranted(ResourceDomainInstallation::ACTION_VIEW_USERS);
@@ -109,9 +111,9 @@ class UserController extends UserControllerBase
 
             // Do not redirect to security index if access will be denied
             if ($securityIndexGranted) {
-                return $this->redirectToRoute('fom_user_security_index', array(
+                return $this->redirectToRoute('fom_user_security_index', [
                     '_fragment' => 'tabUsers',
-                ));
+                ]);
             }
         }
 
@@ -122,19 +124,17 @@ class UserController extends UserControllerBase
          */
         if (array_key_exists('groups', $view->children)) {
             $groups = $view->children['groups'];
-            usort($groups->children, function ($a, $b) {
-                return strcasecmp($a->vars['label'], $b->vars['label']);
-            });
+            usort($groups->children, fn($a, $b): int => strcasecmp($a->vars['label'], $b->vars['label']));
         }
-        return $this->render('@FOMUser/User/form.html.twig', array(
+        return $this->render('@FOMUser/User/form.html.twig', [
             'user' => $user,
             'form' => $view,
             'profile_template' => $this->profileTemplate,
             'title' => $isNew ? 'fom.user.user.form.new_user' : 'fom.user.user.form.edit_user',
-            'return_url' => (!$securityIndexGranted) ? false : $this->generateUrl('fom_user_security_index', array(
+            'return_url' => (!$securityIndexGranted) ? false : $this->generateUrl('fom_user_security_index', [
                 '_fragment' => 'tabUsers'
-            )),
-        ));
+            ]),
+        ]);
     }
 
     /**
@@ -172,7 +172,7 @@ class UserController extends UserControllerBase
             $em->flush();
             $em->commit();
             $this->addFlash('success', 'The user has been deleted.');
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $em->rollback();
             $this->addFlash('error', "The user couldn't be deleted.");
         }
