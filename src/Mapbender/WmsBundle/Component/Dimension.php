@@ -31,7 +31,7 @@ class Dimension
     /**
      * @param string|null $value
      */
-    public function setName($value)
+    public function setName($value): void
     {
         $this->name = $value;
     }
@@ -47,7 +47,7 @@ class Dimension
     /**
      * @param string|null $value
      */
-    public function setUnits($value)
+    public function setUnits($value): void
     {
         $this->units = $value;
     }
@@ -63,7 +63,7 @@ class Dimension
     /**
      * @param string|null $value
      */
-    public function setUnitSymbol($value)
+    public function setUnitSymbol($value): void
     {
         $this->unitSymbol = $value;
     }
@@ -79,7 +79,7 @@ class Dimension
     /**
      * @param string|null $value
      */
-    public function setDefault($value)
+    public function setDefault($value): void
     {
         $this->default = $value;
     }
@@ -95,7 +95,7 @@ class Dimension
     /**
      * @param boolean $value
      */
-    public function setMultipleValues($value)
+    public function setMultipleValues($value): void
     {
         $this->multipleValues = !!$value;
     }
@@ -111,7 +111,7 @@ class Dimension
     /**
      * @param boolean $value
      */
-    public function setNearestValue($value)
+    public function setNearestValue($value): void
     {
         $this->nearestValue = !!$value;
     }
@@ -127,7 +127,7 @@ class Dimension
     /**
      * @param boolean $value
      */
-    public function setCurrent($value)
+    public function setCurrent($value): void
     {
         $this->current = !!$value;
     }
@@ -143,7 +143,7 @@ class Dimension
     /**
      * @param string|null $value
      */
-    public function setExtent($value)
+    public function setExtent($value): void
     {
         $this->extent = $value;
     }
@@ -160,11 +160,11 @@ class Dimension
      * Generates a GET parameter name for this dimension.
      * @return string
      */
-    public function getParameterName()
+    public function getParameterName(): string
     {
-        if (strtolower($this->name) === self::NAME_TIME) {
+        if (strtolower((string) $this->name) === self::NAME_TIME) {
             return self::NAME_TIME;
-        } elseif (strtolower($this->name) === self::NAME_ELEVATION) {
+        } elseif (strtolower((string) $this->name) === self::NAME_ELEVATION) {
             return self::NAME_ELEVATION;
         } else {
             return self::NAME_PREFIX . $this->name;

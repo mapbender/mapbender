@@ -48,7 +48,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     /**
      * @param bool $strict
      */
-    public function setStrictElementConfigs($strict)
+    public function setStrictElementConfigs(bool $strict): void
     {
         $this->strictElementConfigs = $strict;
     }
@@ -73,7 +73,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
      * @param ContainerBuilder $container
      * @param string $path Application directory path
      */
-    protected function loadYamlApplications($container, $path)
+    protected function loadYamlApplications($container, string|array $path)
     {
         $finder = new Finder();
         $finder
@@ -81,7 +81,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
             ->files()
             ->name(['*.yml', '*.yaml'])
         ;
-        $applications = array();
+        $applications = [];
 
         foreach ($finder as $file) {
             $fileData = Yaml::parse(file_get_contents($file->getRealPath()));
@@ -113,14 +113,14 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
      * @param array $definition
      * @return array
      */
-    protected function processApplicationDefinition($slug, $definition)
+    protected function processApplicationDefinition($slug, array $definition): array
     {
         if (!isset($definition['layersets'])) {
             if (isset($definition['layerset'])) {
                 $this->handleException("Deprecated: your YAML application {$slug} defines legacy 'layerset' (single item), should define 'layersets' (array)");
-                $definition['layersets'] = array($definition['layerset']);
+                $definition['layersets'] = [$definition['layerset']];
             } else {
-                $definition['layersets'] = array();
+                $definition['layersets'] = [];
             }
         }
         unset($definition['layerset']);
@@ -147,7 +147,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
      * @param array $definition
      * @return array|null
      */
-    protected function processElementDefinition($definition)
+    protected function processElementDefinition(array $definition): ?array
     {
         if (empty($definition['class'])) {
             $this->handleException("Yaml element is missing required 'class' definition.");
@@ -177,7 +177,7 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
             $this->onElementConfigChange($definition['class'], $configBefore, $configAfter);
             $definition = array_replace($configAfter, $nonConfigs);
             $this->checkElementConfig($handlingClass, array_diff_key($definition, array_flip($nonConfigKeys)));
-        } catch (UndefinedElementClassException $e) {
+        } catch (UndefinedElementClassException) {
             // May be a canoncial. Keep the Element without migrating.
         }
 
@@ -193,16 +193,14 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
      * @param $configBefore
      * @param $configAfter
      */
-    protected function onElementConfigChange($className, $configBefore, $configAfter)
+    protected function onElementConfigChange($className, array $configBefore, array $configAfter)
     {
-        $changedValueKeys = array_keys(array_uintersect_assoc($configAfter, $configBefore, function ($a, $b) {
-            return ($a !== $b) ? 0 : (-1 + 2 * intval($a > $b));
-        }));
+        $changedValueKeys = array_keys(array_uintersect_assoc($configAfter, $configBefore, fn($a, $b): int => ($a !== $b) ? 0 : (-1 + 2 * intval($a > $b))));
         $keysBefore = array_keys($configBefore);
         $keysAfter = array_keys($configAfter);
         $removedKeys = array_diff($keysBefore, $keysAfter);
         $addedKeys = array_diff($keysAfter, $keysBefore);
-        $messageParts = array();
+        $messageParts = [];
         if ($removedKeys) {
             $messageParts[] = 'removed ' . implode(', ', $removedKeys);
         }
@@ -211,14 +209,14 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
             $messageParts[] = 'added ' . implode(', ', $addedKeys);
         }
         foreach ($changedValueKeys as $k) {
-            $messageParts[] = implode(' ', array(
+            $messageParts[] = implode(' ', [
                 'changed',
                 $k,
                 'from',
                 var_export($configBefore[$k], true),
                 'to',
                 var_export($configAfter[$k], true),
-            ));
+            ]);
         }
         if ($messageParts) {
             $this->handleException("Yaml application contains outdated {$className} configuration: " . implode('; ', $messageParts));
@@ -245,14 +243,14 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     /**
      * @return string[]
      */
-    protected function getTopLevelElementKeys()
+    protected function getTopLevelElementKeys(): array
     {
-        return array(
+        return [
             'title',
             'roles',
             'class',
             'screenType',
-        );
+        ];
     }
 
     private function handleException(string $message): void

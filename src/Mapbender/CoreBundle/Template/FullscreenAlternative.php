@@ -16,7 +16,7 @@ class FullscreenAlternative extends Fullscreen
     /**
      * @inheritdoc
      */
-    public static function getTitle()
+    public static function getTitle(): string
     {
         return 'Fullscreen alternative';
     }
@@ -28,7 +28,7 @@ class FullscreenAlternative extends Fullscreen
                 return parent::getRegionClasses($application, $regionName);
             case 'sidepane':
                 $props = $this->extractRegionProperties($application, $regionName);
-                $classes = array(ArrayUtil::getDefault($props, 'align') ?: 'right');
+                $classes = [ArrayUtil::getDefault($props, 'align') ?: 'right'];
                 if (!empty($props['closed'])) {
                     $classes[] = 'closed';
                 }
@@ -38,18 +38,14 @@ class FullscreenAlternative extends Fullscreen
 
     public static function getRegionPropertiesDefaults($regionName)
     {
-        switch ($regionName) {
-            case 'toolbar':
-            case 'footer':
-                return \array_replace(parent::getRegionPropertiesDefaults($regionName), array(
-                    'item_alignment' => 'left',
-                ));
-            case 'sidepane':
-                return \array_replace(parent::getRegionPropertiesDefaults($regionName), array(
-                    'align' => 'right',
-                ));
-            default:
-                return parent::getRegionPropertiesDefaults($regionName);
-        }
+        return match ($regionName) {
+            'toolbar', 'footer' => \array_replace(parent::getRegionPropertiesDefaults($regionName), [
+                'item_alignment' => 'left',
+            ]),
+            'sidepane' => \array_replace(parent::getRegionPropertiesDefaults($regionName), [
+                'align' => 'right',
+            ]),
+            default => parent::getRegionPropertiesDefaults($regionName),
+        };
     }
 }

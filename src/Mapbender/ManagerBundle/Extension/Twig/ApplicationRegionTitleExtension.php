@@ -11,19 +11,15 @@ use Twig\TwigFunction;
 
 class ApplicationRegionTitleExtension extends AbstractExtension
 {
-    /** @var ApplicationTemplateRegistry */
-    protected $templateRegistry;
-
-    public function __construct(ApplicationTemplateRegistry $templateRegistry)
+    public function __construct(protected ApplicationTemplateRegistry $templateRegistry)
     {
-        $this->templateRegistry = $templateRegistry;
     }
 
     public function getFunctions(): array
     {
-        return array(
-            'application_region_title' => new TwigFunction('application_region_title', array($this, 'application_region_title')),
-        );
+        return [
+            'application_region_title' => new TwigFunction('application_region_title', $this->application_region_title(...)),
+        ];
     }
 
     public function application_region_title(Application $application, $regionName)

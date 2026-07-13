@@ -16,7 +16,7 @@ class RequestInformation implements MutableUrlTarget
     /** @var string|null */
     public $httpPost;
     /** @var string[] */
-    public $formats = array();
+    public $formats = [];
 
     /**
      * Get httpGet
@@ -33,7 +33,7 @@ class RequestInformation implements MutableUrlTarget
      * @param string $value
      * @return $this
      */
-    public function setHttpGet($value)
+    public function setHttpGet($value): static
     {
         $this->httpGet = $value;
         return $this;
@@ -54,7 +54,7 @@ class RequestInformation implements MutableUrlTarget
      * @param string $value
      * @return $this
      */
-    public function setHttpPost($value)
+    public function setHttpPost($value): static
     {
         $this->httpPost = $value;
         return $this;
@@ -75,7 +75,7 @@ class RequestInformation implements MutableUrlTarget
      * @param string[] $value
      * @return $this
      */
-    public function setFormats($value)
+    public function setFormats($value): static
     {
         $this->formats = $value;
         return $this;
@@ -86,13 +86,13 @@ class RequestInformation implements MutableUrlTarget
      * @param string $value
      * @return $this
      */
-    public function addFormat($value)
+    public function addFormat($value): static
     {
         $this->formats[] = $value;
         return $this;
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
         if ($this->httpGet) {
             $this->setHttpGet($transformer->process($this->httpGet));

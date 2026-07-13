@@ -19,16 +19,12 @@ use Symfony\Component\Yaml\Yaml;
 #[AsCommand('mapbender:application:export')]
 class ApplicationExportCommand extends AbstractApplicationTransportCommand
 {
-    /** @var ExportHandler */
-    protected $exportHandler;
-
     public function __construct(EntityManagerInterface $defaultEntityManager,
                                 ImportHandler $importHandler,
-                                ExportHandler $exportHandler,
+                                protected ExportHandler $exportHandler,
                                 ApplicationYAMLMapper $yamlRepository)
     {
         parent::__construct($defaultEntityManager, $importHandler, $yamlRepository);
-        $this->exportHandler = $exportHandler;
     }
 
     protected function configure(): void
@@ -39,26 +35,20 @@ class ApplicationExportCommand extends AbstractApplicationTransportCommand
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        switch (strtolower($input->getOption('format'))) {
-            case 'json':
-                $input->setOption('format', 'json');
-                break;
-            case 'yml':
-            case 'yaml':
-                $input->setOption('format', 'yaml');
-                break;
-            default:
-                throw new \InvalidArgumentException("Unsupported format " . print_r($input->getOption('format'), true));
-        }
+        match (strtolower((string) $input->getOption('format'))) {
+            'json' => $input->setOption('format', 'json'),
+            'yml', 'yaml' => $input->setOption('format', 'yaml'),
+            default => throw new \InvalidArgumentException("Unsupported format " . print_r($input->getOption('format'), true)),
+        };
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $slug = $input->getArgument('slug');
         /** @var Application|null $app */
-        $app = $this->getApplicationRepository()->findOneBy(array(
+        $app = $this->getApplicationRepository()->findOneBy([
             'slug' => $slug,
-        ));
+        ]);
         if (!$app) {
             $app = $this->yamlRepository->getApplication($slug);
         }

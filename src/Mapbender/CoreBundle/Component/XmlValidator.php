@@ -16,11 +16,6 @@ use Psr\Log\LoggerInterface;
  */
 class XmlValidator
 {
-    /** @var LoggerInterface */
-    protected $logger;
-    /** @var HttpTransportInterface */
-    protected $httpTransport;
-
     /**
      * @var string|false path to built-in schemas used for the validation session. This is an optimization, avoiding ad-hoc
      *   downloads of commonly used schemas
@@ -44,18 +39,16 @@ class XmlValidator
      * @param string $tempDir
      * @param string|null|false $staticSchemaPath
      */
-    public function __construct(HttpTransportInterface $httpTransport, LoggerInterface $logger,
+    public function __construct(protected HttpTransportInterface $httpTransport, protected LoggerInterface $logger,
                                 $tempDir, $staticSchemaPath = null)
     {
-        $this->logger = $logger;
-        $this->httpTransport = $httpTransport;
         $this->schemaDownloadDir = $this->ensureDirectory($tempDir);
         if ($staticSchemaPath) {
             $this->shippingSchemaDir = $this->normalizePath($staticSchemaPath);
         } else {
             $this->shippingSchemaDir = false;
         }
-        $this->filesToDelete = array();
+        $this->filesToDelete = [];
     }
 
     /**
@@ -65,9 +58,9 @@ class XmlValidator
      * @throws \Exception
      * @throws XmlParseException
      */
-    public function validate(\DOMDocument $doc)
+    public function validate(\DOMDocument $doc): void
     {
-        $this->filesToDelete = array();
+        $this->filesToDelete = [];
         try {
             if (isset($doc->doctype)) {// DTD
                 $this->validateDtd($doc);
@@ -145,9 +138,9 @@ EOF
      * @param \DOMDocument $doc
      * @return array schema locations
      */
-    private function addSchemas(\DOMDocument $doc)
+    private function addSchemas(\DOMDocument $doc): array
     {
-        $schemaLocations = array();
+        $schemaLocations = [];
         if ($element =
             $doc->documentElement->getAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'schemaLocation')) {
             $items = preg_split('/\s+/', $element);
@@ -166,7 +159,7 @@ EOF
      * @param string $path url
      * @return boolean true if a schema location added otherwise false
      */
-    private function addSchemaLocation(&$schemaLocations, $ns, $path)
+    private function addSchemaLocation(array &$schemaLocations, string $ns, string $path): bool
     {
         if (stripos($path, "http:") === 0 || stripos($path, "https:") === 0) {
             $this->addSchemaLocationReq($schemaLocations, $ns, $path);
@@ -187,7 +180,7 @@ EOF
      * @throws \Exception  create exception
      * @throws XmlParseException xml parse exception
      */
-    private function addSchemaLocationReq(&$schemaLocations, $ns, $url)
+    private function addSchemaLocationReq(array &$schemaLocations, $ns, $url): void
     {
         $fullFileName = $this->getFileName($ns, $url);
         if (!is_file($fullFileName)) {
@@ -261,14 +254,14 @@ EOF
     /**
      * Removes all xsd, dtd temp files
      */
-    private function removeFiles()
+    private function removeFiles(): void
     {
         foreach ($this->filesToDelete as $fileToDel) {
             if (is_file($fileToDel)) {
                 unlink($fileToDel);
             }
         }
-        $this->filesToDelete = array();
+        $this->filesToDelete = [];
     }
 
     /**
@@ -312,8 +305,8 @@ EOF
     private function normalizePath($path)
     {
         $path = preg_replace('#[/\\\\][^/\\\\]+[/\\\\][\.]{2}#', '', $path);
-        if (!strpos($path, "..")) {
-            return preg_replace('#[/\\\\]#', DIRECTORY_SEPARATOR, $path);
+        if (!strpos((string) $path, "..")) {
+            return preg_replace('#[/\\\\]#', DIRECTORY_SEPARATOR, (string) $path);
         } else {
             return $this->normalizePath($path);
         }
@@ -328,7 +321,7 @@ EOF
     private function addFileSchema($filePath)
     {
         $filePath_ = preg_replace('#[/\\\\]#', '/', $filePath);
-        if (stripos($filePath_, "file:") !== 0) {
+        if (stripos((string) $filePath_, "file:") !== 0) {
             return "file:///" . $filePath_;
         } else {
             return $filePath_;
@@ -341,7 +334,7 @@ EOF
      * @param string $path
      * @return string absolute, final path (symlinks resolved)
      */
-    protected function ensureDirectory($path)
+    protected function ensureDirectory($path): string
     {
         while (is_link($path)) {
             $path = readlink($path);
@@ -384,7 +377,7 @@ EOF
      * @param string $url
      * @return string response body
      */
-    protected function download($url)
+    protected function download($url): string|false
     {
         return $this->httpTransport->getUrl($url)->getContent();
     }
@@ -398,7 +391,7 @@ EOF
      * @param string $url the entire request url for the scheme, used as a fallback for legacy file placement
      * @return string|null absoulte path to local file or null if not found
      */
-    protected function locateShippingSchema($targetNamespace, $initialPath, $url)
+    protected function locateShippingSchema($targetNamespace, $initialPath, $url): ?string
     {
         $newStyleFullPath = "{$this->shippingSchemaDir}/{$initialPath}";
         if (file_exists($newStyleFullPath)) {
@@ -410,14 +403,14 @@ EOF
              * @todo: shipping schemas should relocate and adopt a single file naming convention that works on
              *        Unix and Windows. Then we can remove this entire path.
              */
-            $legacyCandidates = array(
+            $legacyCandidates = [
                 // first form will use the full URL, most notably including the scheme
                 // this produces names like
                 //   "xmlschemas/http___www_w3_org_XML_1998_namespace_http___www_w3_org_2001_xml_xsd"
                 "{$targetNamespace}_{$url}",
                 // second form uses the (already preprocessed) path
                 "{$targetNamespace}_{$initialPath}",
-            );
+            ];
             foreach ($legacyCandidates as $candidate) {
                 // flatten non-word / non-digit chars to underscores, prepend base path
                 $underscored = preg_replace('#[^\w\d]#', '_', $candidate);

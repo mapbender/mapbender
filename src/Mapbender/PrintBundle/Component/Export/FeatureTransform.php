@@ -6,13 +6,12 @@ namespace Mapbender\PrintBundle\Component\Export;
 
 class FeatureTransform extends Affine2DTransform
 {
-    /** @var float */
-    public $lineScale;
-
-    protected function __construct(array $matrixRows, $lineScale = 1.0)
+    /**
+     * @param float $lineScale
+     */
+    protected function __construct(array $matrixRows, public $lineScale = 1.0)
     {
         parent::__construct($matrixRows);
-        $this->lineScale = $lineScale;
     }
 
     /**

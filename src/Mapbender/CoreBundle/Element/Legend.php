@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\LegendAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
@@ -17,7 +18,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.legend.class.title";
     }
@@ -25,7 +26,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.legend.class.description";
     }
@@ -33,50 +34,50 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/LegendEntry.js',
                 '@MapbenderCoreBundle/Resources/public/elements/MbLegend.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/legend.scss',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             "autoOpen" => true,
             "showSourceTitle" => true,
             "showLayerTitle" => true,
             "showGroupedLayerTitle" => true,
             "element_icon" => self::getDefaultIcon(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\LegendAdminType';
+        return LegendAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbLegend';
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): StaticView
     {
         $view = new StaticView('');
         $view->attributes['class'] = 'mb-element-legend';
@@ -87,14 +88,14 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/legend.html.twig';
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
-        $config = $entity->getConfiguration() ?: array();
+        $config = $entity->getConfiguration() ?: [];
         if (!isset($config['showGroupedLayerTitle'])) {
             $defaults = static::getDefaultConfiguration();
             if (isset($config['showGrouppedTitle'])) {
@@ -107,7 +108,7 @@ class Legend extends AbstractElementService implements ConfigMigrationInterface
         $entity->setConfiguration($config);
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconLegend';
     }

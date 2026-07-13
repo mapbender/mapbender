@@ -8,9 +8,7 @@ use Mapbender\CoreBundle\Entity\HttpParsedSource;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
-use Mapbender\CoreBundle\Utils\RequestUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
-use Mapbender\WmsBundle\Entity\WmsInstance;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -84,7 +82,7 @@ class Endpoint
         }
     }
 
-    public function getInternalLegendUrl(Request $request, $instanceLayerId): ?string
+    public function getInternalLegendUrl(Request $request, string $instanceLayerId): ?string
     {
         $layerLegendUrl = $this->getInternalLegendBaseUrl($instanceLayerId);
         if ($layerLegendUrl) {

@@ -10,28 +10,25 @@ class TileMatrixTms extends TileMatrix
 {
     protected $extentBottom;
 
-    protected $baseUrl;
-
-    public function __construct($baseUrl, $resolution, $identifier, $origin, $tileWidth, $tileHeight)
+    public function __construct(protected $baseUrl, $resolution, $identifier, $origin, $tileWidth, $tileHeight)
     {
         parent::__construct($resolution, $identifier, $origin[0], $tileWidth, $tileHeight);
         $this->rowSign = 1;
-        $this->baseUrl = $baseUrl;
         $this->extentBottom = $origin[1];
     }
 
-    public function getTileUrl($tileX, $tileY)
+    public function getTileUrl($tileX, $tileY): string
     {
-        return rtrim($this->baseUrl, '/') . "/{$this->identifier}/{$tileX}/{$tileY}.png";
+        return rtrim((string) $this->baseUrl, '/') . "/{$this->identifier}/{$tileX}/{$tileY}.png";
     }
 
     /**
      * @param Box $extent
      * @return ImageTile[]
      */
-    public function getTileRequests(Box $extent)
+    public function getTileRequests(Box $extent): array
     {
-        $tilesOut = array();
+        $tilesOut = [];
         $unitsPerTile = $this->getUnitsPerTile();
         $fy0 = ($extent->top - $this->extentBottom - $unitsPerTile['y']) / $unitsPerTile['y'];
         $fx0 = ($extent->left - $this->extentLeft) / $unitsPerTile['x'];

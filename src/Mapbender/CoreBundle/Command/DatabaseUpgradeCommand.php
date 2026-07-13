@@ -2,6 +2,9 @@
 
 namespace Mapbender\CoreBundle\Command;
 
+use Mapbender\CoreBundle\Element\Map;
+use Mapbender\CoreBundle\Element\LinkButton;
+use Mapbender\CoreBundle\Element\ControlButton;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\OraclePlatform;
@@ -20,7 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DatabaseUpgradeCommand extends Command
 {
 
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
         parent::__construct(null);
     }
@@ -50,14 +53,14 @@ class DatabaseUpgradeCommand extends Command
         return 0;
     }
 
-    protected function getObsoleteMapOptionNames()
+    protected function getObsoleteMapOptionNames(): array
     {
-        return array(
+        return [
             'imgPath',
             'wmsTileDelay',
             'minTileSize',
             'maxResolution',
-        );
+        ];
     }
 
     /**
@@ -69,9 +72,9 @@ class DatabaseUpgradeCommand extends Command
     protected function updateMapElementConfigs(InputInterface $input, OutputInterface $output)
     {
 
-        $maps = $this->em->getRepository(Element::class)->findBy(array(
-            'class' => 'Mapbender\CoreBundle\Element\Map',
-        ));
+        $maps = $this->em->getRepository(Element::class)->findBy([
+            'class' => Map::class,
+        ]);
         $output->writeln('Updating map element configs');
         $output->writeln('Found ' . count($maps) . ' map elements');
         $progressBar = new ProgressBar($output, count($maps));
@@ -80,7 +83,7 @@ class DatabaseUpgradeCommand extends Command
             /** @var Element $map */
             $config = $map->getConfiguration();
             $progressBar->advance();
-            $removedConfigs = array();
+            $removedConfigs = [];
             foreach ($this->getObsoleteMapOptionNames() as $obsoleteKey) {
                 if (array_key_exists($obsoleteKey, $config)) {
                     unset($config[$obsoleteKey]);
@@ -169,16 +172,16 @@ class DatabaseUpgradeCommand extends Command
     protected function updateButtonTypes(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Updating old button classes …');
-        $oldButtons = $this->em->getRepository(Element::class)->findBy(array(
+        $oldButtons = $this->em->getRepository(Element::class)->findBy([
             'class' => 'Mapbender\CoreBundle\Element\Button',
-        ));
+        ]);
 
         $output->writeln('Found ' . count($oldButtons) . ' Mapbender\CoreBundle\Element\Button elements');
         foreach ($oldButtons as $oldButton) {
             if (str_contains(json_encode($oldButton->getConfiguration()), 'http')) {
-                $oldButton->setClass("Mapbender\\CoreBundle\\Element\\LinkButton");
+                $oldButton->setClass(LinkButton::class);
             } else {
-                $oldButton->setClass("Mapbender\\CoreBundle\\Element\\ControlButton");
+                $oldButton->setClass(ControlButton::class);
             }
         }
         $this->em->flush();

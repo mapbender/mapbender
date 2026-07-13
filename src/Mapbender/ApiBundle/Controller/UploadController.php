@@ -69,7 +69,7 @@ class UploadController extends AbstractController
             )
         ]
     )]
-    public function uploadZipAction(Request $request): JsonResponse
+    public function uploadZip(Request $request): JsonResponse
     {
         $missingPermissions = [];
         if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
@@ -108,7 +108,7 @@ class UploadController extends AbstractController
             mkdir($this->uploadDir, 0777, true);
         }
 
-        $originalFileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $originalFileName = pathinfo((string) $file->getClientOriginalName(), PATHINFO_FILENAME);
         $zipFilePath = $this->uploadDir . $originalFileName . '.zip';
 
         try {

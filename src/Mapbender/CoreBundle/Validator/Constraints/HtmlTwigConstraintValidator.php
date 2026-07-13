@@ -2,31 +2,28 @@
 
 namespace Mapbender\CoreBundle\Validator\Constraints;
 
+use Twig\Source;
 use Symfony\Component\Validator\Constraint;
 use Twig\Environment;
 use Twig\Error\Error;
 
 class HtmlTwigConstraintValidator extends HtmlConstraintValidator
 {
-    /** @var Environment */
-    protected $twig;
-
     /**
      * @param Environment $twig
      */
-    public function __construct(Environment $twig)
+    public function __construct(protected Environment $twig)
     {
-        $this->twig = $twig;
     }
 
     /**
      * @param string $value
      * @param Constraint $constraint
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         try {
-            $source = new \Twig\Source($value ?: '', 'input');
+            $source = new Source($value ?: '', 'input');
             $this->twig->parse($this->twig->tokenize($source));
             $structureValid = true;
         } catch (Error $e) {

@@ -16,15 +16,9 @@ class OsrmDriver extends RoutingDriver
 
     protected string $locale;
 
-    protected HttpTransportInterface $httpTransport;
-
-    protected TranslatorInterface $translator;
-
-    public function __construct(HttpTransportInterface $httpTransport, TranslatorInterface $translator)
+    public function __construct(protected HttpTransportInterface $httpTransport, protected TranslatorInterface $translator)
     {
-        $this->httpTransport = $httpTransport;
-        $this->translator = $translator;
-        parent::__construct($translator);
+        parent::__construct($this->translator);
     }
 
     /**
@@ -40,7 +34,7 @@ class OsrmDriver extends RoutingDriver
         return $this->processResponse($response, $configuration);
     }
 
-    private function buildQuery($requestParams, $config): string
+    private function buildQuery(array $requestParams, array $config): string
     {
         $service = ($config['service']) ?: 'route';
         $version = ($config['version']) ?: 'v1';
@@ -117,7 +111,7 @@ class OsrmDriver extends RoutingDriver
         return $translatedInstructions;
     }
 
-    protected function translateOsrmInstruction($instruction): array|bool|string
+    protected function translateOsrmInstruction(array $instruction): array|bool|string
     {
         $path = realpath(__DIR__ . '/../../Resources/translations/osrm') . '/';
         $filename = 'osrm.' . $this->locale . '.json';
@@ -128,7 +122,7 @@ class OsrmDriver extends RoutingDriver
         $translations = json_decode($translations, true);
         $translations = $translations['v5'];
         $type = $instruction['maneuver']['type'];
-        $modifier = (isset($instruction['maneuver']['modifier'])) ? $instruction['maneuver']['modifier'] : false;
+        $modifier = $instruction['maneuver']['modifier'] ?? false;
         $streetName = $instruction['name'];
 
         if (empty($streetName) && isset($instruction['ref'])) {
@@ -159,7 +153,7 @@ class OsrmDriver extends RoutingDriver
         }
     }
 
-    protected function getDirection($instruction): bool|string
+    protected function getDirection(array $instruction): bool|string
     {
         $bearing = floatval($instruction['maneuver']['bearing_after']);
 
@@ -184,7 +178,7 @@ class OsrmDriver extends RoutingDriver
         }
     }
 
-    protected function getStartAddress($response)
+    protected function getStartAddress(array $response)
     {
         if (!empty($response['waypoints'][0]['name'])) {
             return $response['waypoints'][0]['name'];
@@ -197,7 +191,7 @@ class OsrmDriver extends RoutingDriver
         return $startAddress;
     }
 
-    protected function getDestinationAddress($response)
+    protected function getDestinationAddress(array $response)
     {
         $destinationIndex = count($response['waypoints']) - 1;
         if (!empty($response['waypoints'][$destinationIndex]['name'])) {

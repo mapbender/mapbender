@@ -7,7 +7,7 @@ namespace Mapbender\PrintBundle\Component\Geometry;
 class Tuple
 {
     /** @var float[] */
-    protected $components;
+    protected array $components;
 
     /**
      * @param float[] $components
@@ -32,7 +32,7 @@ class Tuple
     /**
      * @return int
      */
-    public function getDimensionality()
+    public function getDimensionality(): int
     {
         return count($this->components);
     }

@@ -12,12 +12,12 @@ class ObjectIdentityPool
     /** @var mixed[] */
     protected $entries;
     /** @var string[] */
-    protected $uniqueClassNames;
+    protected array $uniqueClassNames;
 
     public function __construct()
     {
-        $this->entries = array();
-        $this->uniqueClassNames = array();
+        $this->entries = [];
+        $this->uniqueClassNames = [];
     }
 
     /**
@@ -53,7 +53,7 @@ class ObjectIdentityPool
      * @param static $other
      * @param bool $allowReplace
      */
-    public function merge($other, $allowReplace = false)
+    public function merge($other, $allowReplace = false): void
     {
         if ($allowReplace) {
             $this->entries = array_replace($other->entries, $this->entries);
@@ -67,15 +67,18 @@ class ObjectIdentityPool
      * @param string[] $identifier
      * @return string
      */
-    protected function getTrackingKey($className, $identifier)
+    protected function getTrackingKey(object|string $className, $identifier): string
     {
         $identifier = $this->normalizeIdentifier($identifier);
         return DoctrineClassUtil::getRealClass($className) . '#' . serialize($identifier);
     }
 
-    protected function normalizeIdentifier($identifierIn)
+    /**
+     * @return mixed[]
+     */
+    protected function normalizeIdentifier($identifierIn): array
     {
-        $identifierOut = array();
+        $identifierOut = [];
         foreach ($identifierIn as $k => $v) {
             if (is_int($v) || is_float($v)) {
                 $identifierOut[$k] = strval($v);

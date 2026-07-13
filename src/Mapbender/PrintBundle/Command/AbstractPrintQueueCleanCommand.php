@@ -12,14 +12,14 @@ abstract class AbstractPrintQueueCleanCommand extends AbstractPrintQueueCommand
 {
     protected function findDanglingFiles()
     {
-        $expectedFiles = array();
+        $expectedFiles = [];
         foreach ($this->repository->findAll() as $entity) {
             $fileName = "{$this->storagePath}/{$entity->getFilename()}";
             if (file_exists($fileName)) {
                 $expectedFiles[] = realpath($fileName);
             }
         }
-        $foundFiles = array();
+        $foundFiles = [];
         foreach (Finder::create()->files()->in($this->storagePath) as $foundFile) {
             /** @var \SplFileInfo $foundFile */
             $foundFiles[] = $foundFile->getRealPath();

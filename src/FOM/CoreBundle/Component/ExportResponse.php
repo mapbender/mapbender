@@ -94,18 +94,18 @@ class ExportResponse extends Response
     /**
      * Enable download
      */
-    public function enableDownload()
+    public function enableDownload(): void
     {
-        $this->headers->add(array('Cache-Control' => 'private',
+        $this->headers->add(['Cache-Control' => 'private',
                                   'Pragma'        => 'no-cache',
-                                  'Expires'       => '0')
+                                  'Expires'       => '0']
         );
     }
 
     /**
      * Disable  download
      */
-    public function disableDownload(){
+    public function disableDownload(): void{
         $this->headers->remove('Cache-Control');
         $this->headers->remove('Pragma');
         $this->headers->remove('Expires');
@@ -116,7 +116,7 @@ class ExportResponse extends Response
      *
      * @param $data
      */
-    public function setXls(array &$data){
+    public function setXls(array &$data): void{
         $output = self::genXLS($data);
         $this->setData($output);
     }
@@ -127,7 +127,7 @@ class ExportResponse extends Response
      * @return void
      */
 
-    public function setXlsx(array &$data){
+    public function setXlsx(array &$data): void{
         $xlsx = SimpleXLSXGen::fromArray( $data );
         $this->setData($xlsx);
     }
@@ -139,7 +139,7 @@ class ExportResponse extends Response
      * @param bool  $detectHead
      * @internal param bool $xls
      */
-    public function setCsv(array &$data, $detectHead = true)
+    public function setCsv(array &$data, $detectHead = true): void
     {
         $handle     = self::createMemoryHandle();
         if($detectHead && count($data)> 0){
@@ -162,8 +162,8 @@ class ExportResponse extends Response
      * @param mixed $output
      * @return $this
      */
-    public function setData(&$output){
-        $this->headers->add(array('Content-Length' => strlen($output)));
+    public function setData(?string &$output): static{
+        $this->headers->add(['Content-Length' => strlen((string) $output)]);
         $this->setContent($output);
         return $this;
     }
@@ -173,17 +173,17 @@ class ExportResponse extends Response
      *
      * @param string $type
      */
-    public function setType($type)
+    public function setType($type): void
     {
         switch ($type) {
             case self::TYPE_CSV:
-                $this->headers->add(array('Content-Type' => 'text/csv;charset=' . self::UTF_16_LE));
+                $this->headers->add(['Content-Type' => 'text/csv;charset=' . self::UTF_16_LE]);
                 break;
             case self::TYPE_XLS:
-                $this->headers->add(array("Content-Type" => "application/vnd.ms-excel"));
+                $this->headers->add(["Content-Type" => "application/vnd.ms-excel"]);
                 break;
             case self::TYPE_XLSX:
-                $this->headers->add(array("Content-Type" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+                $this->headers->add(["Content-Type" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]);
                 break;
         }
         $this->type = $type;
@@ -195,7 +195,7 @@ class ExportResponse extends Response
      * @param string $enclosure
      * @return $this
      */
-    public function setEnclosure($enclosure)
+    public function setEnclosure($enclosure): static
     {
         $this->enclosure = $enclosure;
         return $this;
@@ -207,7 +207,7 @@ class ExportResponse extends Response
      * @param string $delimiter
      * @return $this
      */
-    public function setDelimiter($delimiter)
+    public function setDelimiter($delimiter): static
     {
         $this->delimiter = $delimiter;
         return $this;
@@ -219,7 +219,7 @@ class ExportResponse extends Response
      * @param string $encodingFrom
      * @return $this
      */
-    public function setEncodingFrom($encodingFrom)
+    public function setEncodingFrom($encodingFrom): static
     {
         $this->encodingFrom = $encodingFrom;
         return $this;
@@ -231,10 +231,10 @@ class ExportResponse extends Response
      * @param string $fileName
      * @return $this
      */
-    public function setFileName($fileName)
+    public function setFileName($fileName): static
     {
         $this->fileName = $fileName;
-        $this->headers->add(array('Content-Disposition' => 'attachment; filename="' . $this->fileName . '"'));
+        $this->headers->add(['Content-Disposition' => 'attachment; filename="' . $this->fileName . '"']);
         return $this;
     }
 
@@ -291,7 +291,7 @@ class ExportResponse extends Response
         foreach ($data as $row) {
             $colNum = 0;
             foreach ($row as $keyName => $value) {
-                $value = mb_convert_encoding(trim($value), 'ISO-8859-1', 'UTF-8');
+                $value = mb_convert_encoding(trim((string) $value), 'ISO-8859-1', 'UTF-8');
 
                 /* string cell */
                 if (!is_numeric($value)) {

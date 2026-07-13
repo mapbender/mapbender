@@ -15,12 +15,8 @@ class ApplicationEvent extends Event
      */
     const EVTNAME_BEFORE_CONFIG = 'mb.before_application_config';
 
-    /** @var Application */
-    protected $application;
-
-    public function __construct(Application $application)
+    public function __construct(protected Application $application)
     {
-        $this->application = $application;
     }
 
     /**

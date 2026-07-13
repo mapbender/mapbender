@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email')]
 #[ORM\Entity]
 #[ORM\Table(name: 'fom_user')]
-class User extends AbstractUser implements EquatableInterface, PasswordAuthenticatedUserInterface
+class User extends AbstractUser implements EquatableInterface, PasswordAuthenticatedUserInterface, \Stringable
 {
     #[Assert\NotBlank]
     #[Assert\Email]
@@ -75,7 +75,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
      * @param string $email
      * @return $this
      */
-    public function setEmail($email)
+    public function setEmail($email): static
     {
         $this->email = $email;
         return $this;
@@ -92,7 +92,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
     /**
      * @param \DateTime|null $registrationTime
      */
-    public function setRegistrationTime($registrationTime)
+    public function setRegistrationTime($registrationTime): void
     {
         $this->registrationTime = $registrationTime;
     }
@@ -108,7 +108,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
     /**
      * @param string $registrationToken
      */
-    public function setRegistrationToken($registrationToken)
+    public function setRegistrationToken($registrationToken): void
     {
         $this->registrationToken = $registrationToken;
     }
@@ -126,7 +126,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
      *
      * @param \DateTime|null $resetTime
      */
-    public function setResetTime($resetTime)
+    public function setResetTime($resetTime): void
     {
         $this->resetTime = $resetTime;
     }
@@ -142,7 +142,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
     /**
      * @param string $resetToken
      */
-    public function setResetToken($resetToken)
+    public function setResetToken($resetToken): void
     {
         $this->resetToken = $resetToken;
     }
@@ -163,7 +163,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
      * @param Group $group
      * @return $this
      */
-    public function addGroup(Group $group)
+    public function addGroup(Group $group): static
     {
         $this->groups[] = $group;
         return $this;
@@ -182,7 +182,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
      */
     public function getRoles(): array
     {
-        $roles = array();
+        $roles = [];
         foreach ($this->getGroups() as $group) {
             $roles[] = $group->getRole();
         }
@@ -219,7 +219,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
      * @return bool
      * @internal
      */
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         if ($this->getId() === 1) {
             return true;
@@ -231,7 +231,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
      * @param BasicProfile|null $profile
      * @return $this
      */
-    public function setProfile($profile)
+    public function setProfile($profile): static
     {
         if ($profile && \method_exists($profile, 'setUid')) {
             $profile->setUid($this);
@@ -254,7 +254,7 @@ class User extends AbstractUser implements EquatableInterface, PasswordAuthentic
     }
 
     // why...?
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getUsername() ?: '';
     }

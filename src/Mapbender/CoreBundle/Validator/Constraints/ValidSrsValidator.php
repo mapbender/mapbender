@@ -9,7 +9,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class ValidSrsValidator extends ConstraintValidator
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
     }
 
@@ -26,7 +26,7 @@ class ValidSrsValidator extends ConstraintValidator
             }
 
             $srsName = explode('|', $value, 2)[0];
-            $srs = $this->em->getRepository(SRS::class)->findOneBy(array("name" => $srsName));
+            $srs = $this->em->getRepository(SRS::class)->findOneBy(["name" => $srsName]);
             if (!$srs) {
                 $this->context->addViolation('mb.core.map.admin.epsg_not_found');
             }

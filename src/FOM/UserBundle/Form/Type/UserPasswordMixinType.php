@@ -4,6 +4,8 @@
 namespace FOM\UserBundle\Form\Type;
 
 
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
@@ -16,57 +18,53 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class UserPasswordMixinType extends AbstractType
 {
-    /** @var UserHelperService */
-    protected $userHelperService;
-
     /**
      * @param UserHelperService $userHelperService
      */
-    public function __construct(UserHelperService $userHelperService)
+    public function __construct(protected UserHelperService $userHelperService)
     {
-        $this->userHelperService = $userHelperService;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'FOM\UserBundle\Entity\User',
+        $resolver->setDefaults([
+            'data_class' => User::class,
             'requirePassword' => null,
-        ));
-        $resolver->setAllowedTypes('requirePassword', array(
+        ]);
+        $resolver->setAllowedTypes('requirePassword', [
             'boolean',
             'null',
-        ));
+        ]);
     }
 
     /**
      * @param FormInterface|FormBuilderInterface $form
      * @param array $options
      */
-    public function addPasswordField($form, array $options)
+    public function addPasswordField($form, array $options): void
     {
         $constraints = $this->userHelperService->getPasswordConstraints();
         if ($options['requirePassword']) {
             $constraints[] = new NotBlank();
         }
         $form
-            ->add('password', 'Symfony\Component\Form\Extension\Core\Type\RepeatedType', array(
-                'type' => 'Symfony\Component\Form\Extension\Core\Type\PasswordType',
+            ->add('password', RepeatedType::class, [
+                'type' => PasswordType::class,
                 // do not, ever, synchronize with password hash attribute 'password'
                 'mapped' => false,
                 // require password input for new users
                 // password editing for existing users is optional
                 'required' => $options['requirePassword'],
                 'invalid_message' => 'fom.user.password.repeat_mismatch',
-                'first_options' => array(
+                'first_options' => [
                     'label' => 'fom.user.registration.form.choose_password',
-                ),
-                'second_options' => array(
+                ],
+                'second_options' => [
                     'label' => 'fom.user.registration.form.confirm_password',
-                ),
+                ],
                 'options' => ['attr' => ['autocomplete' => 'new-password']],
                 'constraints' => $constraints,
-            ))
+            ])
         ;
     }
 
@@ -77,16 +75,12 @@ class UserPasswordMixinType extends AbstractType
         if ($options['requirePassword'] !== null) {
             $this->addPasswordField($builder, $options);
         } else {
-            $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($type) {
-                return $type->preSetData($event);
-            });
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, fn(FormEvent $event) => $type->preSetData($event));
         }
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($type) {
-            return $type->postSubmit($event);
-        });
+        $builder->addEventListener(FormEvents::POST_SUBMIT, fn(FormEvent $event) => $type->postSubmit($event));
     }
 
-    public function postSubmit(FormEvent $event)
+    public function postSubmit(FormEvent $event): void
     {
         $form = $event->getForm();
         /** @var User $user */
@@ -99,13 +93,13 @@ class UserPasswordMixinType extends AbstractType
         }
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         /** @var User|null $user */
         $user = $event->getData();
-        $options = array(
+        $options = [
             'requirePassword' => (!$user || !$user->getId()),
-        );
+        ];
         $this->addPasswordField($event->getForm(), $options);
     }
 }

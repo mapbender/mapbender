@@ -7,24 +7,23 @@ use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Element\Type\HTMLElementAdminType;
 use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Entity\RegionProperties;
 
 /**
  * HTMLElement.
  */
 class HTMLElement extends AbstractElementService implements FloatableElement
 {
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return 'mb.core.htmlelement.class.title';
     }
 
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return 'mb.core.htmlelement.class.description';
     }
 
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string|false
     {
         // no widget constructor, except for non-inline content. For those, reuse MbCopyright widget.
         return $this->isPopup($element) ? 'MbCopyright' : false;
@@ -35,14 +34,14 @@ class HTMLElement extends AbstractElementService implements FloatableElement
         return $element->getRegion() === 'content' && !$element->getConfiguration()['openInline'];
     }
 
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
         return $this->isPopup($element)
             ? ['js' => ['@MapbenderCoreBundle/Resources/public/elements/MbCopyright.js']]
             : [];
     }
 
-    public static function getType()
+    public static function getType(): string
     {
         return HTMLElementAdminType::class;
     }
@@ -50,15 +49,15 @@ class HTMLElement extends AbstractElementService implements FloatableElement
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'classes' => '',
             'content' => ''
-        );
+        ];
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $config = $element->getConfiguration();
         $view = new TemplateView('@MapbenderCore/Element/htmlelement.html.twig');
@@ -76,19 +75,19 @@ class HTMLElement extends AbstractElementService implements FloatableElement
         $view->variables['application'] = $element->getApplication();
         $view->variables['entity'] = $element;
         // Do not cache if content contains any twig expressions or flow control ("{{" or "{%")
-        if (false !== strpos($config['content'], '{')) {
+        if (str_contains($config['content'], '{')) {
             $view->cacheable = false;
         }
         return $view;
     }
 
-    public function getClientConfiguration(Element $element)
+    public function getClientConfiguration(Element $element): array
     {
         // Nothing. No script.
-        return array();
+        return [];
     }
 
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/htmlelement.html.twig';
     }

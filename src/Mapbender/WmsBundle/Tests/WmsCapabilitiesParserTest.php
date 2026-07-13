@@ -10,8 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 class WmsCapabilitiesParserTest extends KernelTestCase
 {
-    public function testMinimal(){
-        $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
+    public function testMinimal(): void{
+        $data = file_get_contents((__DIR__ ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
         $wms = $this->getImporter()->parseResponseContent($data);
         $this->assertSame("OGC:WMS",$wms->getName(),"Name is wrong");
         $this->assertSame("The example.com Test WMS",$wms->getTitle(),  "title is wrong");
@@ -25,8 +25,8 @@ class WmsCapabilitiesParserTest extends KernelTestCase
 
     }
 
-    public function testLayersRootLayerOnly(){
-        $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
+    public function testLayersRootLayerOnly(): void{
+        $data = file_get_contents((__DIR__ ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
         $wms = $this->getImporter()->parseResponseContent($data);
         $this->assertEquals(1,$wms->getLayers()->count());
 
@@ -38,8 +38,8 @@ class WmsCapabilitiesParserTest extends KernelTestCase
         $this->assertEquals(0,$rootLayer->getSublayer()->count(), "Root Layer does not have 0 sub layers");
     }
 
-    public function testGetMap(){
-        $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
+    public function testGetMap(): void{
+        $data = file_get_contents((__DIR__ ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
         $wms = $this->getImporter()->parseResponseContent($data);
         $this->assertEquals(1,$wms->getLayers()->count());
 

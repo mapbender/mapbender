@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\DataUploadAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\Component\Element\TemplateView;
@@ -11,7 +12,7 @@ class DataUpload extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return 'mb.core.dataupload.class.title';
     }
@@ -19,7 +20,7 @@ class DataUpload extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return 'mb.core.dataupload.class.description';
     }
@@ -27,7 +28,7 @@ class DataUpload extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbDataUpload';
     }
@@ -35,45 +36,45 @@ class DataUpload extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbDataUpload.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/dataupload.scss',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.core.dataupload.*',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'maxFileSize' => 10,
             'helpText' => 'mb.core.dataupload.admin.helpText',
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\DataUploadAdminType';
+        return DataUploadAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/dataupload.html.twig';
     }
@@ -83,7 +84,7 @@ class DataUpload extends AbstractElementService
         return $element->getConfiguration();
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/dataupload.html.twig');
         $view->variables['title'] = $element->getTitle();
@@ -93,7 +94,7 @@ class DataUpload extends AbstractElementService
         return $view;
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconDataUpload';
     }

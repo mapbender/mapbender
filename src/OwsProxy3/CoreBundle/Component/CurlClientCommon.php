@@ -14,16 +14,16 @@ class CurlClientCommon extends BaseClient
      * @param array $config
      * @return array
      */
-    public static function getCurlOptions($hostName, $config)
+    public static function getCurlOptions($hostName, array $config): array
     {
-        $options = array(
+        $options = [
             CURLOPT_TIMEOUT => 60,
             CURLOPT_CONNECTTIMEOUT => 30,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HEADER => 1,
             CURLOPT_FOLLOWLOCATION => 1,
             CURLOPT_MAXREDIRS => 3,
-        );
+        ];
         if (isset($config['timeout'])) {
             $options[CURLOPT_TIMEOUT] = $config['timeout'];
         }
@@ -37,25 +37,28 @@ class CurlClientCommon extends BaseClient
             $options[CURLOPT_SSL_VERIFYHOST] = $config['checkssl'] ? 2 : 0;
         }
         if (isset($config['host']) && (empty($config['noproxy']) || !in_array($hostName, $config['noproxy']))) {
-            $proxyOptions = array(
+            $proxyOptions = [
                 CURLOPT_PROXY => $config['host'],
                 CURLOPT_PROXYPORT => $config['port'],
-            );
+            ];
             if (isset($config['user']) && isset($config['password'])) {
                 // must be encoded, at the very least to disambiguate embedded colon from separator colon
                 // see https://curl.haxx.se/libcurl/c/CURLOPT_PROXYUSERPWD.html
-                $proxyOptions = array_replace($proxyOptions, array(
+                $proxyOptions = array_replace($proxyOptions, [
                     CURLOPT_PROXYUSERPWD => rawurlencode($config['user']) . ':' . rawurlencode($config['password']),
-                ));
+                ]);
             }
             $options = array_replace($options, $proxyOptions);
         }
         return $options;
     }
 
-    protected static function flattenHeaders(array $values)
+    /**
+     * @return mixed[]
+     */
+    protected static function flattenHeaders(array $values): array
     {
-        $flat = array();
+        $flat = [];
         foreach ($values as $name => $value) {
             if (\is_numeric($name)) {
                 $flat[] = $value;
@@ -74,15 +77,15 @@ class CurlClientCommon extends BaseClient
      * @param ProxyQuery $query
      * @return string[]
      */
-    protected function prepareRequestHeaders(ProxyQuery $query)
+    protected function prepareRequestHeaders(ProxyQuery $query): array
     {
-        $headers = Utils::filterHeaders($query->getHeaders(), array(
+        $headers = Utils::filterHeaders($query->getHeaders(), [
             "cookie",
             "user-agent",
             "content-length",
             "referer",
             "host",
-        ));
+        ]);
         $headers['User-Agent'] = $this->userAgent;
 
         if ($query->getUsername()) {
@@ -95,9 +98,9 @@ class CurlClientCommon extends BaseClient
      * @param string $rawHeaders
      * @return string[]
      */
-    protected static function parseResponseHeaders($rawHeaders)
+    protected static function parseResponseHeaders($rawHeaders): array
     {
-        $headers = array();
+        $headers = [];
         foreach (\preg_split('#\\r?\\n#', $rawHeaders) as $line) {
             $line = trim($line);
             if ($line) {
@@ -105,7 +108,7 @@ class CurlClientCommon extends BaseClient
                     // = status line ~ "HTTP/1.1 200 OK"
                     // For redirected response, curl will concatenate multiple blocks of headers
                     // ignore everything except the last one
-                    $headers = array();
+                    $headers = [];
                     continue;
                 }
                 $parts = \preg_split('#:\s*#', $line, 2);

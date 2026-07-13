@@ -75,7 +75,7 @@ class HttpOriginModel implements MutableHttpOriginInterface, SourceLoaderSetting
      * @param HttpOriginInterface $other
      * @return static
      */
-    public static function extract(HttpOriginInterface $other)
+    public static function extract(HttpOriginInterface $other): static
     {
         $instance = new static();
         $instance->setOriginUrl($other->getOriginUrl());

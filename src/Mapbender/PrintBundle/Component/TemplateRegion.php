@@ -12,10 +12,8 @@ use Mapbender\PrintBundle\Component\Region\FontStyle;
  */
 class TemplateRegion implements \ArrayAccess
 {
-    /** @var float */
-    protected $width;
-    /** @var float */
-    protected $height;
+    protected float $width;
+    protected float $height;
     /** @var float[] */
     protected $offsets;
     /** @var FontStyle|null */
@@ -39,7 +37,7 @@ class TemplateRegion implements \ArrayAccess
         if ($offsets) {
             $this->offsets = array_map('floatval', array_values(array_slice($offsets, 0, 2)));
         } else {
-            $this->offsets = array(0, 0);
+            $this->offsets = [0, 0];
         }
     }
 
@@ -54,7 +52,7 @@ class TemplateRegion implements \ArrayAccess
     /**
      * @param string|null $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -70,7 +68,7 @@ class TemplateRegion implements \ArrayAccess
     /**
      * @param Template|null $parentTemplate
      */
-    public function setParentTemplate($parentTemplate)
+    public function setParentTemplate($parentTemplate): void
     {
         $this->parentTemplate = $parentTemplate;
     }
@@ -102,7 +100,7 @@ class TemplateRegion implements \ArrayAccess
     /**
      * @param FontStyle $style
      */
-    public function setFontStyle(FontStyle $style)
+    public function setFontStyle(FontStyle $style): void
     {
         $this->style = $style;
     }
@@ -166,11 +164,11 @@ class TemplateRegion implements \ArrayAccess
 
     public function offsetSet($offset, $value): void
     {
-        throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
+        throw new \RuntimeException(static::class . " does not support array-style mutation");
     }
 
     public function offsetUnset($offset): void
     {
-        throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
+        throw new \RuntimeException(static::class . " does not support array-style mutation");
     }
 }

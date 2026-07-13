@@ -22,7 +22,7 @@ class FullPage extends TemplateRegion
      * @param PDF_Extensions|\FPDF $pdf $pdf
      * @return static
      */
-    public static function fromCurrentPdfPage($pdf)
+    public static function fromCurrentPdfPage($pdf): static
     {
         return new static($pdf->GetPageWidth(), $pdf->GetPageHeight());
     }

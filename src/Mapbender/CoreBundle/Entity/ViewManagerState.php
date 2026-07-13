@@ -37,11 +37,9 @@ class ViewManagerState
 
     /**
      * Date and time of last modification
-     *
-     * @var \DateTime|null
      */
     #[ORM\Column(type: 'datetime')]
-    protected $mtime;
+    protected \DateTime $mtime;
 
     /**
      * @var string
@@ -72,8 +70,8 @@ class ViewManagerState
 
     public function __construct()
     {
-        $this->layersetStates = array();
-        $this->sourceStates = array();
+        $this->layersetStates = [];
+        $this->sourceStates = [];
         $this->mtime = new \DateTime();
     }
 
@@ -96,7 +94,7 @@ class ViewManagerState
     /**
      * @param string $applicationSlug
      */
-    public function setApplicationSlug($applicationSlug)
+    public function setApplicationSlug($applicationSlug): void
     {
         $this->applicationSlug = $applicationSlug;
     }
@@ -104,7 +102,7 @@ class ViewManagerState
     /**
      * @param string|null $userId
      */
-    public function setUserId($userId)
+    public function setUserId($userId): void
     {
         $this->userId = $userId;
     }
@@ -128,7 +126,7 @@ class ViewManagerState
     /**
      * @param \DateTime $mtime
      */
-    public function setMtime(\DateTime $mtime)
+    public function setMtime(\DateTime $mtime): void
     {
         $this->mtime = $mtime;
     }
@@ -144,7 +142,7 @@ class ViewManagerState
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
@@ -160,7 +158,7 @@ class ViewManagerState
     /**
      * @param string $viewParams
      */
-    public function setViewParams(string $viewParams)
+    public function setViewParams(string $viewParams): void
     {
         $this->viewParams = $viewParams;
     }
@@ -176,7 +174,7 @@ class ViewManagerState
     /**
      * @param mixed[] $sourceStates
      */
-    public function setSourceStates(array $sourceStates)
+    public function setSourceStates(array $sourceStates): void
     {
         $this->sourceStates = $sourceStates;
     }
@@ -192,7 +190,7 @@ class ViewManagerState
     /**
      * @param mixed[] $layersetStates
      */
-    public function setLayersetStates(array $layersetStates)
+    public function setLayersetStates(array $layersetStates): void
     {
         $this->layersetStates = $layersetStates;
     }
@@ -200,12 +198,12 @@ class ViewManagerState
     /**
      * @return mixed[]
      */
-    public function encode()
+    public function encode(): array
     {
-        return array(
+        return [
             'viewParams' => $this->getViewParams(),
             'layersets' => $this->getLayersetStates(),
             'sources' => $this->getSourceStates(),
-        );
+        ];
     }
 }

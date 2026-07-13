@@ -9,26 +9,23 @@ use Twig\TwigFilter;
 
 class NumberExtension extends AbstractExtension
 {
-    private RequestStack $requestStack;
-
-    public function __construct(RequestStack $requestStack)
+    public function __construct(private readonly RequestStack $requestStack)
     {
-        $this->requestStack = $requestStack;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'mbcore_number';
     }
 
     public function getFilters(): array
     {
-        return array(
-            'formatted_number' => new TwigFilter('formatted_number', [$this, 'formatNumber']),
-        );
+        return [
+            'formatted_number' => new TwigFilter('formatted_number', $this->formatNumber(...)),
+        ];
     }
 
-    public function formatNumber($number)
+    public function formatNumber($number): string|false
     {
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
         return \NumberFormatter::create($locale, \NumberFormatter::DECIMAL)->format($number);

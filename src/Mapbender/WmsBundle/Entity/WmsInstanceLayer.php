@@ -18,7 +18,7 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 #[ORM\Entity(repositoryClass: WmsInstanceLayerRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_wms_wmsinstancelayer')]
-class WmsInstanceLayer extends SourceInstanceItem
+class WmsInstanceLayer extends SourceInstanceItem implements \Stringable
 {
 
     #[ORM\ManyToOne(targetEntity: WmsInstance::class, cascade: ['refresh', 'persist'], inversedBy: 'layers')]
@@ -65,7 +65,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     protected $maxScale;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected $style = "";
+    protected string $style;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     protected $priority;
@@ -98,7 +98,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         if ($this->id) {
             $sublayers = $this->getSublayer()->getValues();
-            $newSublayers = array();
+            $newSublayers = [];
             $this->setId(null);
             foreach ($sublayers as $layer) {
                 /** @var static $layer */
@@ -111,7 +111,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     }
 
     #[ORM\PostLoad]
-    public function postLoad()
+    public function postLoad(): void
     {
         if ($this->minScale == INF) {
             $this->minScale = null;
@@ -127,7 +127,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param ArrayCollection $sublayer
      * @return WmsInstanceLayer
      */
-    public function setSublayer($sublayer)
+    public function setSublayer($sublayer): static
     {
         $this->sublayer = $sublayer;
         return $this;
@@ -137,7 +137,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param WmsInstanceLayer $sublayer
      * @return WmsInstanceLayer
      */
-    public function addSublayer(WmsInstanceLayer $sublayer)
+    public function addSublayer(WmsInstanceLayer $sublayer): static
     {
         $sublayer->setParent($this);
         $this->sublayer->add($sublayer);
@@ -160,7 +160,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param WmsInstanceLayer $parent
      * @return WmsInstanceLayer
      */
-    public function setParent($parent)
+    public function setParent($parent): static
     {
         $this->parent = $parent;
         return $this;
@@ -182,7 +182,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param boolean $active
      * @return WmsInstanceLayer
      */
-    public function setActive($active)
+    public function setActive($active): static
     {
         $this->active = (bool)$active;
         return $this;
@@ -204,7 +204,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param boolean $allowselected
      * @return WmsInstanceLayer
      */
-    public function setAllowselected($allowselected)
+    public function setAllowselected($allowselected): static
     {
         $this->allowselected = (bool)$allowselected;
         return $this;
@@ -226,7 +226,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param boolean $selected
      * @return WmsInstanceLayer
      */
-    public function setSelected($selected)
+    public function setSelected($selected): static
     {
         $this->selected = (bool)$selected;
         return $this;
@@ -248,7 +248,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param boolean $info
      * @return WmsInstanceLayer
      */
-    public function setInfo($info, bool $force = false)
+    public function setInfo($info, bool $force = false): static
     {
         if ($this->infoUnavailable === true && !$force) {
             $this->info = false;
@@ -285,7 +285,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param string $toggle
      * @return $this
      */
-    public function setToggle($toggle)
+    public function setToggle($toggle): static
     {
         $this->toggle = (bool)$toggle;
         return $this;
@@ -297,7 +297,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param boolean $allowinfo
      * @return WmsInstanceLayer
      */
-    public function setAllowinfo($allowinfo)
+    public function setAllowinfo($allowinfo): static
     {
         if ($this->infoUnavailable === true) {
             $this->allowinfo = false;
@@ -334,7 +334,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param boolean $allowtoggle
      * @return $this
      */
-    public function setAllowtoggle($allowtoggle)
+    public function setAllowtoggle($allowtoggle): static
     {
         $this->allowtoggle = (bool)$allowtoggle;
         return $this;
@@ -346,7 +346,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param float|null $value
      * @return WmsInstanceLayer
      */
-    public function setMinScale($value)
+    public function setMinScale($value): static
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
         return $this;
@@ -394,7 +394,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param float|null $value
      * @return WmsInstanceLayer
      */
-    public function setMaxScale($value)
+    public function setMaxScale($value): static
     {
         $this->maxScale = ($value === null || $value == INF) ? null : floatval($value);
         return $this;
@@ -442,7 +442,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param string $style
      * @return WmsInstanceLayer
      */
-    public function setStyle($style)
+    public function setStyle($style): static
     {
         $this->style = $style;
         return $this;
@@ -464,7 +464,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param integer $priority
      * @return WmsInstanceLayer
      */
-    public function setPriority($priority)
+    public function setPriority($priority): static
     {
         if ($priority !== null) {
             $this->priority = intval($priority);
@@ -498,7 +498,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * @inheritdoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->getId();
     }
@@ -508,7 +508,7 @@ class WmsInstanceLayer extends SourceInstanceItem
      * @param WmsLayerSource $layerSource
      * @internal
      */
-    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, ?SourceLoaderSettings $settings = null)
+    public function populateFromSource(WmsInstance $instance, WmsLayerSource $layerSource, ?SourceLoaderSettings $settings = null): void
     {
         $this->setSourceInstance($instance);
         $this->setSourceItem($layerSource);
@@ -536,7 +536,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * @return boolean
      */
-    public function isRoot()
+    public function isRoot(): bool
     {
         return !$this->getParent();
     }

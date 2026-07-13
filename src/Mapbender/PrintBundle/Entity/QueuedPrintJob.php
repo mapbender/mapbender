@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\PrintBundle\Entity;
 
+use Mapbender\PrintBundle\Repository\QueuedPrintJobRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -12,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author    Andriy Oblivantsev <eslider@gmail.com>
  * @copyright 2014 by WhereGroup GmbH & Co. KG
  */
-#[ORM\Entity(repositoryClass: \Mapbender\PrintBundle\Repository\QueuedPrintJobRepository::class)]
+#[ORM\Entity(repositoryClass: QueuedPrintJobRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_print_queue')]
 class QueuedPrintJob
@@ -83,7 +84,7 @@ class QueuedPrintJob
      * @param int $id
      * @return $this
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
         return $this;
@@ -101,7 +102,7 @@ class QueuedPrintJob
      * @param string $filename
      * @return $this
      */
-    public function setFilename($filename)
+    public function setFilename($filename): static
     {
         $this->filename = $filename;
         return $this;
@@ -119,7 +120,7 @@ class QueuedPrintJob
      * @param string|null $userId
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId($userId): static
     {
         $this->userId = $userId;
         return $this;
@@ -141,7 +142,7 @@ class QueuedPrintJob
      * @param array $payload
      * @return $this
      */
-    public function setPayload(array $payload)
+    public function setPayload(array $payload): static
     {
         $this->payload = $payload;
         return $this;
@@ -163,7 +164,7 @@ class QueuedPrintJob
      * @param \DateTime $queued
      * @return $this
      */
-    public function setQueued($queued)
+    public function setQueued($queued): static
     {
         $this->queued = $queued;
         return $this;
@@ -185,7 +186,7 @@ class QueuedPrintJob
      * @param \DateTime $started
      * @return $this
      */
-    public function setStarted($started)
+    public function setStarted($started): static
     {
         $this->started = $started;
         return $this;
@@ -207,14 +208,14 @@ class QueuedPrintJob
      * @param \DateTime $created
      * @return $this
      */
-    public function setCreated($created)
+    public function setCreated($created): static
     {
         $this->created = $created;
         return $this;
     }
 
     #[ORM\PostLoad]
-    public function fixFilename()
+    public function fixFilename(): void
     {
         // previous implementations stored the filename without extension
         if ($this->filename && !preg_match('#\.[\w]+$#', $this->filename)) {

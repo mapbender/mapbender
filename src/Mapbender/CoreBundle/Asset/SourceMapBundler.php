@@ -43,19 +43,19 @@ class SourceMapBundler
      */
     public function build(): string
     {
-        return json_encode(array(
+        return json_encode([
             "version" => 3,
             "sourceRoot" => "",
             "sources" => $this->files,
-            "names" => array(),
+            "names" => [],
             "mappings" => $this->generateMappings()
-        ));
+        ]);
     }
 
 
     public function generateMappings(): string
     {
-        $mappingEncoded = array();
+        $mappingEncoded = [];
 
         $last_gen_line = 0;
         $last_src_index = 0;
@@ -68,7 +68,7 @@ class SourceMapBundler
                 $mappingEncoded[] = ";";
             }
 
-            $line_map_enc = array();
+            $line_map_enc = [];
 
             $m_enc = Base64VLQ::encode($m['gen_col']);
             if (isset($m['src_index'])) {
@@ -86,7 +86,7 @@ class SourceMapBundler
             $mappingEncoded[] = implode(",", $line_map_enc) . ";";
         }
 
-        return implode($mappingEncoded);
+        return implode('', $mappingEncoded);
     }
 
 }

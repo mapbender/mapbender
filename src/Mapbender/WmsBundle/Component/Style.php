@@ -35,7 +35,7 @@ class Style implements MutableUrlTarget
      * @param string $name
      * @return $this
      */
-    public function setName($name)
+    public function setName($name): static
     {
         $this->name = $name;
         return $this;
@@ -57,7 +57,7 @@ class Style implements MutableUrlTarget
      * @param string $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
         return $this;
@@ -79,7 +79,7 @@ class Style implements MutableUrlTarget
      * @param string $abstract
      * @return $this
      */
-    public function setAbstract($abstract)
+    public function setAbstract($abstract): static
     {
         $this->abstract = $abstract;
         return $this;
@@ -101,7 +101,7 @@ class Style implements MutableUrlTarget
      * @param LegendUrl|null $legendUrl
      * @return $this
      */
-    public function setLegendUrl(?LegendUrl $legendUrl = null)
+    public function setLegendUrl(?LegendUrl $legendUrl = null): static
     {
         $this->legendUrl = $legendUrl;
         return $this;
@@ -117,7 +117,7 @@ class Style implements MutableUrlTarget
         return $this->legendUrl;
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
         $legendUrl = $this->getLegendUrl();
         if ($legendUrl && ($onlineResource = $legendUrl->getOnlineResource())) {

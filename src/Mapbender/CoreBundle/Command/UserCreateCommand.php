@@ -14,13 +14,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UserCreateCommand extends AbstractUserCommand
 {
-    /** @var UserHelperService */
-    protected $userHelper;
-
     public function __construct(ManagerRegistry $managerRegistry,
-                                UserHelperService $userHelper)
+                                protected UserHelperService $userHelper)
     {
-        $this->userHelper = $userHelper;
         parent::__construct($managerRegistry);
     }
 
@@ -45,9 +41,9 @@ class UserCreateCommand extends AbstractUserCommand
     {
         $username = $input->getArgument('name');
         /** @var User|null $user */
-        $user = $this->getRepository()->findOneBy(array(
+        $user = $this->getRepository()->findOneBy([
             'username' => $username,
-        ));
+        ]);
         $em = $this->getEntityManager();
         if (!$user) {
             $user = new User();
@@ -78,7 +74,7 @@ class UserCreateCommand extends AbstractUserCommand
         return 0;
     }
 
-    protected function updateUser(User $user, InputInterface $input)
+    protected function updateUser(User $user, InputInterface $input): int
     {
         $mods = 0;
         if ($input->getOption('email')) {

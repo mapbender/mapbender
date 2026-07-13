@@ -4,6 +4,7 @@
 namespace Mapbender\IntrospectionBundle\Command;
 
 
+use Twig\Error\LoaderError;
 use Mapbender\Component\Application\TemplateAssetDependencyInterface;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
 use Mapbender\CoreBundle\Entity\Application;
@@ -19,28 +20,15 @@ use Twig\Loader\FilesystemLoader;
 
 class InspectTranslationTwigsCommand extends Command
 {
-    /** @var FilesystemLoader */
-    protected $twigLoader;
-    /** @var ElementInventoryService */
-    protected $inventory;
-    /** @var ElementEntityFactory */
-    protected $entityFactory;
-    /** @var ApplicationTemplateRegistry */
-    protected $templateRegistry;
-
-    public function __construct(FilesystemLoader $twigLoader,
-                                ElementInventoryService $inventory,
-                                ElementEntityFactory $entityFactory,
-                                ApplicationTemplateRegistry $templateRegistry)
+    public function __construct(protected FilesystemLoader $twigLoader,
+                                protected ElementInventoryService $inventory,
+                                protected ElementEntityFactory $entityFactory,
+                                protected ApplicationTemplateRegistry $templateRegistry)
     {
-        $this->twigLoader = $twigLoader;
-        $this->inventory = $inventory;
-        $this->entityFactory = $entityFactory;
-        $this->templateRegistry = $templateRegistry;
         parent::__construct(null);
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this
             ->addOption('elements', null, InputOption::VALUE_NONE)
@@ -51,12 +39,12 @@ class InspectTranslationTwigsCommand extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        $targetOptions = array(
+        $targetOptions = [
             'elements',
             'templates',
             'admin',
-        );
-        $targets = array();
+        ];
+        $targets = [];
         foreach ($targetOptions as $optionName) {
             if ($input->getOption($optionName)) {
                 $targets[] = $optionName;
@@ -75,7 +63,7 @@ class InspectTranslationTwigsCommand extends Command
         foreach ($resources as $resourceName) {
             try {
                 $content = $this->twigLoader->getSourceContext($resourceName)->getCode();
-            } catch (\Twig\Error\LoaderError $e) {
+            } catch (LoaderError) {
                 // do absolutely nothing
                 continue;
             }
@@ -86,13 +74,13 @@ class InspectTranslationTwigsCommand extends Command
 
     protected function inspectContent(OutputInterface $output, $content, $resourceName)
     {
-        $stripped = preg_replace('#^\s*\{\s*#', '', preg_replace('#\s*\}\s*$#', '', $content));
+        $stripped = preg_replace('#^\s*\{\s*#', '', (string) preg_replace('#\s*\}\s*$#', '', (string) $content));
         $rows = array_filter(preg_split('#\s*,\s*#', $stripped));
         if (!$rows) {
             $output->writeln("Empty resource: {$resourceName}");
         }
         foreach ($rows as $rowContent) {
-            $matches = array();
+            $matches = [];
             if (!preg_match('#^"(?<key>[^"]+)\"\s*:\s*"[{]{2}\s*[\\\'"](?<input>[^\\\'"]+)[\\\'"]\s*\|\s*trans\s*[}]{2}"$#', $rowContent, $matches)) {
                 throw new \LogicException("Unidentifiable translation twig row content " . print_r($rowContent, true) . " in {$resourceName}");
             }
@@ -102,9 +90,12 @@ class InspectTranslationTwigsCommand extends Command
         }
     }
 
-    protected function collectResourcePaths(InputInterface $input)
+    /**
+     * @return mixed[]
+     */
+    protected function collectResourcePaths(InputInterface $input): array
     {
-        $resources = array();
+        $resources = [];
         if ($input->getOption('elements')) {
             $resources = array_merge($resources, $this->collectElementResourcePaths());
         }
@@ -117,10 +108,13 @@ class InspectTranslationTwigsCommand extends Command
         return $resources;
     }
 
-    protected function collectElementResourcePaths()
+    /**
+     * @return mixed[]
+     */
+    protected function collectElementResourcePaths(): array
     {
         $dummyApplication = new Application();
-        $twigPaths = array();
+        $twigPaths = [];
         $classNames = $this->inventory->getRawInventory();
         foreach ($classNames as $className) {
             $element = $this->entityFactory->newEntity($className, 'content', $dummyApplication);
@@ -141,19 +135,19 @@ class InspectTranslationTwigsCommand extends Command
 
     protected function collectAdminResourcePaths()
     {
-        return $this->extractTemplateTranslationDependencies(array(
+        return $this->extractTemplateTranslationDependencies([
             new LoginTemplate(),
             new ManagerTemplate(),
-        ));
+        ]);
     }
 
     /**
      * @param TemplateAssetDependencyInterface[] $sources
      * @return string[]
      */
-    protected function extractTemplateTranslationDependencies($sources)
+    protected function extractTemplateTranslationDependencies($sources): array
     {
-        $rv = array();
+        $rv = [];
         foreach ($sources as $source) {
             /** @var TemplateAssetDependencyInterface $source */
             $rv = array_merge($rv, $this->filterTranslationDependencies($source->getAssets('trans')));
@@ -166,9 +160,9 @@ class InspectTranslationTwigsCommand extends Command
      * @param string[] $deps
      * @return string[]
      */
-    protected function filterTranslationDependencies(array $deps)
+    protected function filterTranslationDependencies(array $deps): array
     {
-        $rv = array();
+        $rv = [];
         foreach ($deps as $dep) {
             if (\preg_match('#\.twig$#', $dep)) {
                 $rv[] = $dep;

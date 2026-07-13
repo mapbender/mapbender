@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Mapbender\ManagerBundle\Form\DataTransformer\ArrayToCsvScalarTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -16,34 +17,34 @@ class SketchAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('autoOpen', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ->add('autoOpen', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.autoOpen',
-            ))
-            ->add('deactivate_on_close', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ])
+            ->add('deactivate_on_close', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.sketch.admin.deactivate_on_close',
-            ))
-            ->add('geometrytypes', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+            ])
+            ->add('geometrytypes', ChoiceType::class, [
                 'required' => true,
                 'label' => 'mb.core.sketch.admin.geometrytypes',
                 'multiple' => true,
-                'choices' => array(
+                'choices' => [
                     'mb.core.sketch.geometrytype.point' => 'point',
                     'mb.core.sketch.geometrytype.line' => 'line',
                     'mb.core.sketch.geometrytype.polygon' => 'polygon',
                     'mb.core.sketch.geometrytype.rectangle' => 'rectangle',
                     'mb.core.sketch.geometrytype.circle' => 'circle',
-                ),
-            ))
-            ->add('colors', TextType::class, array(
+                ],
+            ])
+            ->add('colors', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.sketch.admin.colors'
-            ))
-            ->add('allow_custom_color', CheckboxType::class, array(
+            ])
+            ->add('allow_custom_color', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.sketch.admin.allow_custom_color'
-            ))
+            ])
         ;
         $builder->get('colors')->addModelTransformer(new ArrayToCsvScalarTransformer());
     }

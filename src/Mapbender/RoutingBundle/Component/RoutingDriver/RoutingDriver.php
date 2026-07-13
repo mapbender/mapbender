@@ -27,11 +27,8 @@ abstract class RoutingDriver {
     protected string $timeField = 'time';
     protected string $timeScale = 'ms';
 
-    protected TranslatorInterface $translator;
-
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(protected TranslatorInterface $translator)
     {
-        $this->translator = $translator;
     }
 
     abstract public function getRoute($requestParams, $configuration) : array;
@@ -77,7 +74,7 @@ abstract class RoutingDriver {
         return str_replace($search, $replace, $infoText);
     }
 
-    protected function getRoutingInstructions($steps): array
+    protected function getRoutingInstructions(array $steps): array
     {
         return $this->addInstructionSymbols($this->translateInstructions($steps));
     }
@@ -85,10 +82,10 @@ abstract class RoutingDriver {
     protected function formatTime($time): string
     {
         $time = gmdate('H:i', $time);
-        if (substr($time, 0, 2) == '00') {
+        if (str_starts_with($time, '00')) {
             $minutes = substr($time, 3, strlen($time));
             $min = ' ' . $this->translator->trans('mb.routing.frontend.minutes');
-            return (substr($minutes, 0, 1) == '0') ? substr($minutes, 1, 1) . $min : $minutes . $min;
+            return (str_starts_with($minutes, '0')) ? substr($minutes, 1, 1) . $min : $minutes . $min;
         }
         return $time . ' ' . $this->translator->trans('mb.routing.frontend.hours');
     }
@@ -103,7 +100,7 @@ abstract class RoutingDriver {
 
     protected function getInstructionSignMapping(): array
     {
-        return array(
+        return [
             8 => static::INSTR_UTURN_RIGHT, // gh: U_TURN_RIGHT
             7 => static::INSTR_KEEP_RIGHT,  // gh: KEEP_RIGHT
             3 => static::INSTR_RIGHT3,      // gh: TURN_SHARP_RIGHT
@@ -119,7 +116,7 @@ abstract class RoutingDriver {
             4 => static::INSTR_FINISH,      // gh: FINISH
             5 => static::INSTR_VIA,         // gh: REACHED_VIA
             6 => static::INSTR_ROUNDABOUT,  // gh: USE_ROUNDABOUT
-        );
+        ];
     }
 
 
@@ -131,8 +128,8 @@ abstract class RoutingDriver {
      */
     protected function addInstructionSymbols(array $instructions): array
     {
-        $instructionsOut = array();
-        $iconMap = array(
+        $instructionsOut = [];
+        $iconMap = [
             static::INSTR_LEFT1 => 'icon-slight-left',
             static::INSTR_LEFT2 => 'icon-left',
             static::INSTR_LEFT3 => 'icon-sharp-left',
@@ -146,20 +143,20 @@ abstract class RoutingDriver {
             static::INSTR_CONTINUE => 'icon-continue',
             static::INSTR_FINISH => 'icon-destination',
             static::INSTR_ROUNDABOUT => 'icon-roundabout',
-        );
+        ];
         foreach ($instructions as $instruction) {
             $iconClass = ArrayUtil::getDefault($iconMap, $instruction['action'], null);
             if ($iconClass) {
-                $instruction += array(
+                $instruction += [
                     'icon' => $iconClass,
-                );
+                ];
             }
             $instructionsOut[] = $instruction;
         }
         return $instructionsOut;
     }
 
-    protected function calculateDuration($instruction): ?string
+    protected function calculateDuration(array $instruction): ?string
     {
         if ($instruction[$this->timeField] != null) {
             if ($this->timeScale == "ms") {
@@ -182,11 +179,11 @@ abstract class RoutingDriver {
         return ArrayUtil::getDefault($signMapping, $this->getInstructionSign($instruction), null);
     }
 
-    protected function getInstructionSign($instruction) {
+    protected function getInstructionSign(array $instruction) {
         return $instruction['sign'];
     }
 
-    protected function getInstructionText($instruction) {
+    protected function getInstructionText(array $instruction) {
         return $instruction['text'];
     }
 

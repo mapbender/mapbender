@@ -14,24 +14,18 @@ use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractPrintQueueCommand extends Command
 {
-    /** @var ManagerRegistry */
-    protected $managerRegistry;
-    /** @var Filesystem */
-    protected $filesystem;
     /** @var EntityManagerInterface */
     protected $entityManager;
     /** @var QueuedPrintJobRepository */
     protected $repository;
-    /** @var string */
-    protected $storagePath;
 
-    public function __construct(ManagerRegistry $managerRegistry,
-                                Filesystem $filesystem,
-                                $storagePath)
+    /**
+     * @param string $storagePath
+     */
+    public function __construct(protected ManagerRegistry $managerRegistry,
+                                protected Filesystem $filesystem,
+                                protected $storagePath)
     {
-        $this->managerRegistry = $managerRegistry;
-        $this->filesystem = $filesystem;
-        $this->storagePath = $storagePath;
         parent::__construct(null);
     }
 

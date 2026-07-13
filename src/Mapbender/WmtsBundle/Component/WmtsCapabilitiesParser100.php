@@ -81,13 +81,13 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param WmtsSource $source
      * @param \DOMElement $contextElm
      */
-    private function parseServiceIdentification(WmtsSource $source, \DOMElement $contextElm)
+    private function parseServiceIdentification(WmtsSource $source, \DOMElement $contextElm): void
     {
         $source->setTitle($this->getFirstChildNodeText($contextElm, 'Title'));
         $source->setDescription($this->getFirstChildNodeText($contextElm, 'Abstract'));
 
         $keywordWrap = $this->getFirstChildNode($contextElm, 'Keywords');
-        $keywordElements = $keywordWrap ? $this->getChildNodesByTagName($keywordWrap, 'Keyword') : array();
+        $keywordElements = $keywordWrap ? $this->getChildNodesByTagName($keywordWrap, 'Keyword') : [];
         foreach ($keywordElements as $keywordElement) {
             $text = \trim($keywordElement->textContent);
             if ($text) {
@@ -106,7 +106,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param WmtsSource $source
      * @param \DOMElement $contextElm
      */
-    private function parseServiceProvider(WmtsSource $source, \DOMElement $contextElm)
+    private function parseServiceProvider(WmtsSource $source, \DOMElement $contextElm): void
     {
         $contact = new Contact();
         $providerName = $this->getFirstChildNodeText($contextElm, 'ProviderName');
@@ -166,7 +166,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param \DOMElement $element
      * @return RequestInformation|null
      */
-    private function parseOperationRequestInformation(\DOMElement $element)
+    private function parseOperationRequestInformation(\DOMElement $element): ?RequestInformation
     {
         $dcp = $this->getFirstChildNode($element, 'DCP');
         $http = $dcp ? $this->getFirstChildNode($dcp, 'HTTP') : null;
@@ -199,13 +199,16 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
         }
     }
 
-    protected function parseAllowedEncodings(\DOMElement $element)
+    /**
+     * @return mixed[]
+     */
+    protected function parseAllowedEncodings(\DOMElement $element): array
     {
-        $values = array();
+        $values = [];
         foreach ($this->getChildNodesByTagName($element, 'Constraint') as $constraintEl) {
             if ($constraintEl->getAttribute('name') === 'GetEncoding') {
                 $allowedValuesEl = $this->getFirstChildNode($constraintEl, 'AllowedValues');
-                $allowedValueEls = $allowedValuesEl ? $this->getChildNodesByTagName($allowedValuesEl, 'Value') : array();
+                $allowedValueEls = $allowedValuesEl ? $this->getChildNodesByTagName($allowedValuesEl, 'Value') : [];
                 foreach ($allowedValueEls as $allowedValueEl) {
                     $values[] = $allowedValueEl->textContent;
                 }
@@ -265,7 +268,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param \DOMElement $element
      * @return Style
      */
-    protected function parseStyle(\DOMElement $element)
+    protected function parseStyle(\DOMElement $element): Style
     {
         $style = new Style();
         $style
@@ -289,7 +292,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param \DOMElement $element
      * @return TileMatrixSetLink
      */
-    protected function parseTileMatrixSetLink(\DOMElement $element)
+    protected function parseTileMatrixSetLink(\DOMElement $element): TileMatrixSetLink
     {
         $link = new TileMatrixSetLink();
         $link
@@ -303,7 +306,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param \DOMElement $element
      * @return UrlTemplateType
      */
-    protected function parseLayerResourceUrl(\DOMElement $element)
+    protected function parseLayerResourceUrl(\DOMElement $element): UrlTemplateType
     {
         $resourceUrl = new UrlTemplateType();
         $resourceUrl
@@ -318,7 +321,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param \DOMElement $element
      * @return TileMatrixSet
      */
-    private function parseTilematrixset(\DOMElement $element)
+    private function parseTilematrixset(\DOMElement $element): TileMatrixSet
     {
         $tilematrixset = new TileMatrixSet();
         $tilematrixset->setIdentifier($this->getFirstChildNodeText($element, 'Identifier'));
@@ -329,7 +332,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
             $tileMatrix = new TileMatrix();
             $tileMatrix->setIdentifier($this->getFirstChildNodeText($tileMatrixEl, 'Identifier'));
             $tileMatrix->setScaledenominator(floatval($this->getFirstChildNodeText($tileMatrixEl, 'ScaleDenominator')));
-            $topleft = array_map('\floatval', explode(' ', $this->getFirstChildNodeText($tileMatrixEl, 'TopLeftCorner')));
+            $topleft = array_map('\floatval', explode(' ', (string) $this->getFirstChildNodeText($tileMatrixEl, 'TopLeftCorner')));
             $tileMatrix->setTopleftcorner($topleft);
             $tileMatrix->setMatrixwidth(intval($this->getFirstChildNodeText($tileMatrixEl, 'MatrixWidth')));
             $tileMatrix->setMatrixheight(intval($this->getFirstChildNodeText($tileMatrixEl, 'MatrixHeight')));
@@ -344,7 +347,7 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param \DOMElement $element
      * @return Theme
      */
-    private function parseTheme(\DOMElement $element)
+    private function parseTheme(\DOMElement $element): Theme
     {
         $theme = new Theme();
         $theme->setIdentifier($this->getFirstChildNodeText($element, 'Identifier'));
@@ -361,11 +364,11 @@ class WmtsCapabilitiesParser100 extends CapabilitiesDomParser
         return $theme;
     }
 
-    protected function parseBoundingBox(\DOMElement $element)
+    protected function parseBoundingBox(\DOMElement $element): BoundingBox
     {
         $crs = $element->getAttribute('crs') ?: null;
-        $lowerCorner = \explode(' ', $this->getFirstChildNodeText($element, 'LowerCorner'));
-        $upperCorner = \explode(' ', $this->getFirstChildNodeText($element, 'UpperCorner'));
+        $lowerCorner = \explode(' ', (string) $this->getFirstChildNodeText($element, 'LowerCorner'));
+        $upperCorner = \explode(' ', (string) $this->getFirstChildNodeText($element, 'UpperCorner'));
         return new BoundingBox($crs, $lowerCorner[0], $lowerCorner[1], $upperCorner[0], $upperCorner[1]);
     }
 

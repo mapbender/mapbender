@@ -15,11 +15,11 @@ use Mapbender\CoreBundle\Entity\Source;
 class SourceMetadataListener
 {
 
-    public function __construct(private TypeDirectoryService $typeDirectoryService)
+    public function __construct(private readonly TypeDirectoryService $typeDirectoryService)
     {
     }
 
-    public function loadClassMetadata(LoadClassMetadataEventArgs $args)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $args): void
     {
         $class = $args->getClassMetadata();
         // Dynamically add new subclasses to the discriminator map of the Node class.

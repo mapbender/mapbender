@@ -11,7 +11,7 @@ class HtmlConstraintValidator extends ConstraintValidator
      * @param string $value
      * @param Constraint $constraint
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         // DOMDocument parsing fails on empty or all-whitespace values
         // Wrap in valid outer tag to work around this
@@ -20,7 +20,7 @@ class HtmlConstraintValidator extends ConstraintValidator
         try {
             $dom = new \DOMDocument;
             $dom->loadHTML($wrapped);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->context->addViolation('html.invalid');
         }
     }

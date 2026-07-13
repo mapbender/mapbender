@@ -14,7 +14,7 @@ use Mapbender\CoreBundle\Entity\Repository\SourceInstanceRepository;
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
 #[ORM\Table(name: 'mb_core_sourceinstance')]
-abstract class SourceInstance extends SourceInstanceAssignment implements YamlDefinedPermissionEntity
+abstract class SourceInstance extends SourceInstanceAssignment implements YamlDefinedPermissionEntity, \Stringable
 {
     /**
      * @var integer $id
@@ -75,7 +75,7 @@ abstract class SourceInstance extends SourceInstanceAssignment implements YamlDe
      * @param String $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle(?string $title)
     {
         $this->title = $title;
         return $this;
@@ -115,7 +115,7 @@ abstract class SourceInstance extends SourceInstanceAssignment implements YamlDe
      * @param boolean $baseSource
      * @return $this
      */
-    public function setBasesource($baseSource)
+    public function setBasesource(bool $baseSource)
     {
         $this->basesource = $baseSource;
 
@@ -177,7 +177,7 @@ abstract class SourceInstance extends SourceInstanceAssignment implements YamlDe
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->getId();
     }

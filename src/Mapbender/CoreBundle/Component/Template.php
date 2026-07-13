@@ -29,57 +29,41 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
      */
     public function getAssets($type)
     {
-        switch ($type) {
-            case 'js':
-            case 'css':
-            case 'trans':
-                return ['mb.error.*'];
-            default:
-                throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true));
-        }
+        return match ($type) {
+            'js', 'css', 'trans' => ['mb.error.*'],
+            default => throw new \InvalidArgumentException("Unsupported asset type " . print_r($type, true)),
+        };
     }
 
     public function getRegionTemplate(Application $application, $regionName)
     {
-        switch ($regionName) {
-            case 'sidepane':
-                return '@MapbenderCore/Template/region/sidepane.html.twig';
-            case 'toolbar':
-                return '@MapbenderCore/Template/region/toolbar.html.twig';
-            case 'footer':
-                return '@MapbenderCore/Template/region/footer.html.twig';
-            default:
-                return '@MapbenderCore/Template/region/generic.html.twig';
-        }
+        return match ($regionName) {
+            'sidepane' => '@MapbenderCore/Template/region/sidepane.html.twig',
+            'toolbar' => '@MapbenderCore/Template/region/toolbar.html.twig',
+            'footer' => '@MapbenderCore/Template/region/footer.html.twig',
+            default => '@MapbenderCore/Template/region/generic.html.twig',
+        };
     }
 
     public static function getRegionTitle($regionName)
     {
-        switch ($regionName) {
-            default:
-                return \ucfirst($regionName);
-            case 'sidepane':
-                return 'mb.template.region.sidepane';
-            case 'toolbar':
-                return 'mb.template.region.toolbar';
-            case 'footer':
-                return 'mb.template.region.footer';
-            case 'content':
-                return 'mb.template.region.content';
-        }
+        return match ($regionName) {
+            'sidepane' => 'mb.template.region.sidepane',
+            'toolbar' => 'mb.template.region.toolbar',
+            'footer' => 'mb.template.region.footer',
+            'content' => 'mb.template.region.content',
+            default => \ucfirst((string) $regionName),
+        };
     }
 
     public function getRegionTemplateVars(Application $application, $regionName)
     {
-        switch ($regionName) {
-            default:
-                return array();
-            case 'toolbar':
-            case 'footer':
-                return array_replace(array(
-                    'alignment_class' => $this->getToolbarAlignmentClass($application, $regionName),
-                ));
-        }
+        return match ($regionName) {
+            'toolbar', 'footer' => array_replace([
+                'alignment_class' => static::getToolbarAlignmentClass($application, $regionName),
+            ]),
+            default => [],
+        };
     }
 
     /**
@@ -89,7 +73,7 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
      */
     public function getRegionClasses(Application $application, $regionName)
     {
-        $classes = array();
+        $classes = [];
         switch ($regionName) {
             case 'toolbar':
                 $classes[] = 'top';
@@ -108,21 +92,17 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
      */
     public function getLateAssets($type)
     {
-        switch ($type) {
-            case 'js':
-            case 'css':
-            case 'trans':
-                return array();
-            default:
-                throw new \InvalidArgumentException("Unsupported late asset type " . print_r($type, true));
-        }
+        return match ($type) {
+            'js', 'css', 'trans' => [],
+            default => throw new \InvalidArgumentException("Unsupported late asset type " . print_r($type, true)),
+        };
     }
 
     public function getTemplateVars(Application $application)
     {
-        return array(
+        return [
             'region_props' => $application->getNamedRegionProperties(),
-        );
+        ];
     }
 
     /**
@@ -132,7 +112,7 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
      */
     public static function getRegionsProperties()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -151,12 +131,12 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
 
     final public static function getValidOverlayAnchors()
     {
-        return array(
+        return [
             self::OVERLAY_ANCHOR_LEFT_TOP,
             self::OVERLAY_ANCHOR_RIGHT_TOP,
             self::OVERLAY_ANCHOR_LEFT_BOTTOM,
             self::OVERLAY_ANCHOR_RIGHT_BOTTOM,
-        );
+        ];
     }
 
     /**
@@ -167,7 +147,7 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
     protected static function extractRegionProperties(Application $application, $regionName)
     {
         $propsObject = $application->getPropertiesFromRegion($regionName) ?: new RegionProperties();
-        return $propsObject->getProperties() ?: array();
+        return $propsObject->getProperties() ?: [];
     }
 
     public function getBodyClass(Application $application)
@@ -177,8 +157,8 @@ abstract class Template implements IApplicationTemplateInterface, IApplicationTe
 
     public static function getRegionPropertiesDefaults($regionName)
     {
-        $definitions = ArrayUtil::getDefault(static::getRegionsProperties(), $regionName) ?: array();
-        $defaults = array();
+        $definitions = ArrayUtil::getDefault(static::getRegionsProperties(), $regionName) ?: [];
+        $defaults = [];
         foreach ($definitions as $name => $value) {
             if (\is_array($value)) {
                 $defaults += $value;

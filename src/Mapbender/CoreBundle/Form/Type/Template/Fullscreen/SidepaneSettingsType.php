@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
 
+use Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType;
 use Mapbender\CoreBundle\Element\Type\MapbenderTypeTrait;
 use Mapbender\ManagerBundle\Form\Type\ScreentypeType;
 use Symfony\Component\Form\AbstractType;
@@ -24,14 +25,14 @@ class SidepaneSettingsType extends AbstractType
 
     public function getParent(): string
     {
-        return 'Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType';
+        return RegionSettingsType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'compound' => true,
-        ));
+        ]);
     }
 
     public function getBlockPrefix(): string
@@ -41,39 +42,39 @@ class SidepaneSettingsType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('name', SidepaneTypeType::class, array(
+        $builder->add('name', SidepaneTypeType::class, [
             'label' => 'mb.core.admin.template.sidepane.type.label',
-        ));
+        ]);
         if ($this->allowResponsiveContainers) {
-            $builder->add('screenType', ScreentypeType::class, array(
+            $builder->add('screenType', ScreentypeType::class, [
                 'label' => 'mb.manager.screentype.label',
-            ));
+            ]);
         }
-        $builder->add('width', TextType::class, array(
+        $builder->add('width', TextType::class, [
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 'placeholder' => '350px',   // HACK: this is implicitly the default (via CSS)
-            ),
+            ],
             'label' => 'mb.manager.sidepane.width',
-        ));
+        ]);
         $builder->add('resizable', CheckboxType::class, $this->createInlineHelpText([
             'required' => false,
             'label' => 'mb.manager.sidepane.resizable',
             'help' => 'mb.manager.sidepane.resizable_help',
         ], $this->translator, false));
-        $builder->add('align', ChoiceType::class, array(
+        $builder->add('align', ChoiceType::class, [
             'required' => false,
-            'choices' => array(
+            'choices' => [
                 'mb.manager.sidepane.align.choice.left' => 'left',
                 'mb.manager.sidepane.align.choice.right' => 'right',
-            ),
+            ],
             'label' => 'mb.manager.sidepane.align.label',
             'placeholder' => false,
             'empty_data' => 'left',
-        ));
-        $builder->add('closed', CheckboxType::class, array(
+        ]);
+        $builder->add('closed', CheckboxType::class, [
             'required' => false,
             'label' => 'mb.manager.sidepane.closed',
-        ));
+        ]);
     }
 }

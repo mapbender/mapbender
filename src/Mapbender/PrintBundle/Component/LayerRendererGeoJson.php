@@ -35,10 +35,10 @@ class LayerRendererGeoJson extends LayerRenderer
     public function squashLayerDefinitions(array $layerDef, array $nextLayerDef, Resolution $resolution): false|array
     {
         // Fold everything, maintaining feature order
-        $featuresKeys = array(
+        $featuresKeys = [
             'geometries',   // legacy
             'features',     // conformant GeoJson
-        );
+        ];
         $nextLayerFeatures = false;
         foreach ($featuresKeys as $featuresKey) {
             if (array_key_exists($featuresKey, $nextLayerDef)) {
@@ -166,10 +166,10 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param ExportCanvas $canvas
      * @param array $feature GeoJSONish
      */
-    public function drawFeature(ExportCanvas $canvas, $feature)
+    public function drawFeature(ExportCanvas $canvas, array $feature): void
     {
         $type = $feature['type'];
-        switch (strtolower($type)) {
+        switch (strtolower((string) $type)) {
             case 'point':
                 $this->drawPoint($canvas, $feature);
                 break;
@@ -191,9 +191,9 @@ class LayerRendererGeoJson extends LayerRenderer
         }
     }
 
-    protected function getColor($color, $alpha, $image)
+    protected function getColor($color, $alpha, $image): int|false
     {
-        list($r, $g, $b) = CSSColorParser::parse($color);
+        [$r, $g, $b] = CSSColorParser::parse($color);
         $a = (1 - $alpha) * 127.0;
         return imagecolorallocatealpha($image, $r, $g, $b, $a);
     }
@@ -202,10 +202,10 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param string $type (a GeoJson type name)
      * @return array
      */
-    protected function getDefaultFeatureStyle($type)
+    protected function getDefaultFeatureStyle($type): array
     {
         // see http://dev.openlayers.org/releases/OpenLayers-2.13.1/docs/files/OpenLayers/Feature/Vector-js.html#OpenLayers.Feature.Vector.Constants
-        return array(
+        return [
             'strokeWidth' => 1,
             'strokeOpacity' => 1,
             'fontColor' => '#ff0000',
@@ -217,22 +217,20 @@ class LayerRendererGeoJson extends LayerRenderer
             'fontOpacity' => 1,
             'pointRadius' => 6,
             'fillOpacity' => 0.4,
-        );
+        ];
     }
 
     /**
      * @param mixed[] $geometry
      * @return array
      */
-    protected function getFeatureStyle($geometry)
+    protected function getFeatureStyle(array $geometry): array
     {
         $defaults = $this->getDefaultFeatureStyle($geometry['type']);
         // Special snowflake Digitizer can and will supply NULL for required
         // style attributes, nuking our defaults. Filter those NULLs, if we have
         // a default value for them.
-        $filteredStyle = array_filter($geometry['style'], function ($value) {
-            return $value !== null;
-        });
+        $filteredStyle = array_filter($geometry['style'], fn($value): bool => $value !== null);
         $mergedStyle = array_replace($defaults, $filteredStyle) + $geometry['style'];
         // forward fontOpacity => labelOutlineOpacity default
         // see http://dev.openlayers.org/releases/OpenLayers-2.13.1/docs/files/OpenLayers/Feature/Vector-js.html#OpenLayers.Feature.Vector.Constants
@@ -246,13 +244,13 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param ExportCanvas $canvas
      * @param mixed[] $geometry
      */
-    protected function drawPolygon($canvas, $geometry)
+    protected function drawPolygon($canvas, array $geometry)
     {
         // promote to single-item MultiPolygon and delegate
-        $multiPolygon = array_replace($geometry, array(
+        $multiPolygon = array_replace($geometry, [
             'type' => 'MultiPolygon',
-            'coordinates' => array($geometry['coordinates']),
-        ));
+            'coordinates' => [$geometry['coordinates']],
+        ]);
         $this->drawMultiPolygon($canvas, $multiPolygon);
     }
 
@@ -260,21 +258,21 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param ExportCanvas $canvas
      * @param mixed[] $geometry
      */
-    protected function drawMultiPolygon($canvas, $geometry)
+    protected function drawMultiPolygon($canvas, array $geometry)
     {
-        $ringCenters = array();
+        $ringCenters = [];
 
         $style = $this->getFeatureStyle($geometry);
-        $transformedRings = array();
+        $transformedRings = [];
         $bounds = new FeatureBounds();
         foreach ($geometry['coordinates'] as $polygonIndex => $polygon) {
-            $transformedRings[$polygonIndex] = array();
+            $transformedRings[$polygonIndex] = [];
             foreach ($polygon as $ringIx => $ring) {
                 if (count($ring) < 3) {
                     continue;
                 }
 
-                $transformedRing = array();
+                $transformedRing = [];
                 foreach ($ring as $c) {
                     $transformedRing[] = $canvas->featureTransform->transformPair($c);
                 }
@@ -315,13 +313,13 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param ExportCanvas $canvas
      * @param mixed[] $geometry
      */
-    protected function drawLineString($canvas, $geometry)
+    protected function drawLineString($canvas, array $geometry)
     {
         // promote to single-item MultiLineString and delegate
-        $mlString = array_replace($geometry, array(
+        $mlString = array_replace($geometry, [
             'type' => 'MultiLineString',
-            'coordinates' => array($geometry['coordinates']),
-        ));
+            'coordinates' => [$geometry['coordinates']],
+        ]);
         $this->drawMultiLineString($canvas, $mlString);
     }
 
@@ -329,17 +327,17 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param ExportCanvas $canvas
      * @param mixed[] $geometry
      */
-    protected function drawMultiLineString($canvas, $geometry)
+    protected function drawMultiLineString($canvas, array $geometry)
     {
         $nCentroidPoints = 0;
-        $centroidSums = array(
+        $centroidSums = [
             'x' => 0.0,
             'y' => 0.0,
-        );
+        ];
         $style = $this->getFeatureStyle($geometry);
-        $transformedCoordSets = array();
+        $transformedCoordSets = [];
         foreach ($geometry['coordinates'] as $lineString) {
-            $transformedLineCoords = array();
+            $transformedLineCoords = [];
             foreach ($lineString as $coord) {
                 $transformedLineCoords[] = $canvas->featureTransform->transformPair($coord);
             }
@@ -368,10 +366,10 @@ class LayerRendererGeoJson extends LayerRenderer
             $this->drawLineSetsInternal($canvas, $style, $transformedCoordSets, false);
         }
         if ($nCentroidPoints && !empty($style['label'])) {
-            $centroid = array(
+            $centroid = [
                 $centroidSums['x'] / $nCentroidPoints,
                 $centroidSums['y'] / $nCentroidPoints,
-            );
+            ];
             $this->drawFeatureLabel($canvas, $style, $style['label'], $centroid);
         }
     }
@@ -380,13 +378,13 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param ExportCanvas $canvas
      * @param mixed[] $geometry
      */
-    protected function drawPoint($canvas, $geometry)
+    protected function drawPoint($canvas, array $geometry)
     {
         // promote to single-item MultiPoint and delegate
-        $mPoint = array_replace($geometry, array(
+        $mPoint = array_replace($geometry, [
             'type' => 'MultiPoint',
-            'coordinates' => array($geometry['coordinates']),
-        ));
+            'coordinates' => [$geometry['coordinates']],
+        ]);
         $this->drawMultiPoint($canvas, $mPoint);
     }
 
@@ -394,7 +392,7 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param ExportCanvas $canvas
      * @param mixed[] $geometry
      */
-    protected function drawMultiPoint($canvas, $geometry)
+    protected function drawMultiPoint($canvas, array $geometry)
     {
 
         $style = $this->getFeatureStyle($geometry);
@@ -428,10 +426,10 @@ class LayerRendererGeoJson extends LayerRenderer
                 $this->drawFeatureLabel($canvas, $style, $style['label'], $p);
             }
             if (!empty($style['externalGraphic'])) {
-                $anchorXy = array(
+                $anchorXy = [
                     'x' => $p[0],
                     'y' => $p[1],
-                );
+                ];
                 $this->markerRenderer->addFeatureGraphic($canvas, $anchorXy, $style);
             }
 
@@ -476,7 +474,7 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param string $text
      * @param float[] $centroid in pixel space
      */
-    protected function drawFeatureLabel(ExportCanvas $canvas, $style, $text, $centroid)
+    protected function drawFeatureLabel(ExportCanvas $canvas, array $style, $text, $centroid)
     {
         $color = $this->getColor($style['fontColor'], $style['fontOpacity'], $canvas->resource);
         $bgcolor = $this->getColor($style['labelOutlineColor'], $style['labelOutlineOpacity'], $canvas->resource);
@@ -495,12 +493,12 @@ class LayerRendererGeoJson extends LayerRenderer
             intval($textSize[0] + 16), intval($textSize[1] + 16));
 
         $haloFactor = $canvas->featureTransform->lineScale;
-        $haloOffsets = array(
-            array(0, +$haloFactor),
-            array(0, -$haloFactor),
-            array(-$haloFactor, 0),
-            array(+$haloFactor, 0),
-        );
+        $haloOffsets = [
+            [0, +$haloFactor],
+            [0, -$haloFactor],
+            [-$haloFactor, 0],
+            [+$haloFactor, 0],
+        ];
         foreach ($haloOffsets as $xy) {
             imagettftext($haloSubCanvas->resource, $fontSize, 0,
                 $anchor[0] + $xy[0] - $haloSubCanvas->getOffsetX(),
@@ -524,7 +522,7 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param float $textHeight in pixels
      * @return float[]
      */
-    protected function getFeatureLabelAnchor(ExportCanvas $canvas, $style, $centroid, $textWidth, $textHeight)
+    protected function getFeatureLabelAnchor(ExportCanvas $canvas, array $style, array $centroid, $textWidth, $textHeight): array
     {
         $offsetScale = $canvas->featureTransform->lineScale;
 
@@ -554,7 +552,7 @@ class LayerRendererGeoJson extends LayerRenderer
                 $y = $centroid[1] + 1 * $textHeight + $offsetScale * $style['labelYOffset'];
                 break;
         }
-        return array($x, $y);
+        return [$x, $y];
     }
 
     /**
@@ -563,14 +561,14 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param float $radius in pixel space
      * @return float[][]
      */
-    protected function generatePointOutlineCoords($centerX, $centerY, $radius)
+    protected function generatePointOutlineCoords($centerX, $centerY, $radius): array
     {
         $step = min(M_PI / 8, M_PI / 4 / $radius);
-        $points = array();
+        $points = [];
         for ($a = 0; $a < 2 * M_PI; $a += $step) {
             $x = round($centerX + sin($a) * $radius);
             $y = round($centerY + cos($a) * $radius);
-            $points[] = array($x, $y);
+            $points[] = [$x, $y];
         }
         return $points;
     }
@@ -585,7 +583,7 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param boolean $close ; use true for polygons, false for line strings
      * @param FeatureBounds|null $bounds of all $rings; will be calculated if omitted, but can be passed in as an optimization
      */
-    protected function drawLineSetsInternal(ExportCanvas $canvas, $style, $coordSets, $close, ?FeatureBounds $bounds = null)
+    protected function drawLineSetsInternal(ExportCanvas $canvas, array $style, $coordSets, $close, ?FeatureBounds $bounds = null)
     {
         if (!$bounds) {
             $bounds = new FeatureBounds();
@@ -638,7 +636,7 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param array $style
      * @return bool
      */
-    protected function checkLineStyleVisibility($canvas, $style)
+    protected function checkLineStyleVisibility($canvas, array $style)
     {
         $thickness = $style['strokeWidth'] * $canvas->featureTransform->lineScale;
         if ($thickness <= 0) {
@@ -657,10 +655,10 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param array $style
      * @return float
      */
-    protected function getLabelFontSize(ExportCanvas $canvas, $style)
+    protected function getLabelFontSize(ExportCanvas $canvas, array $style): float
     {
         $fontSizeRule = !empty($style['fontSize']) ? $style['fontSize'] : '10px';
-        $fontSize = \floatval(\preg_replace('#[^\d]*$#', '', $fontSizeRule)) ?: 10;
+        $fontSize = \floatval(\preg_replace('#[^\d]*$#', '', (string) $fontSizeRule)) ?: 10;
         return floatval($fontSize * $canvas->featureTransform->lineScale);
     }
 
@@ -678,7 +676,7 @@ class LayerRendererGeoJson extends LayerRenderer
         if (isset($this->customFonts[$fontFamily])) {
             $fontFamily = $this->customFonts[$fontFamily];
             foreach ($fontFamily as $style => $file) {
-                if (strtolower($style) === $fontStyle) return $file . ".ttf";
+                if (strtolower((string) $style) === $fontStyle) return $file . ".ttf";
             }
             // fall back to first defined entry
             return $fontFamily[array_key_first($fontFamily)] . '.ttf';
@@ -731,15 +729,15 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param string|integer[] $pattern
      * @return array[]
      */
-    protected function normalizeLinePattern($pattern)
+    protected function normalizeLinePattern($pattern): array
     {
-        $infiniteDraw = array(
+        $infiniteDraw = [
             'type' => 'draw',
             'length' => null,
-        );
+        ];
         if (!$pattern || $pattern === 'solid') {
             /** No gaps anywhere */
-            return array($infiniteDraw);
+            return [$infiniteDraw];
         }
         if (\is_array($pattern)) {
             // Repeat pattern if odd number of components
@@ -749,71 +747,64 @@ class LayerRendererGeoJson extends LayerRenderer
                 $pattern = \array_merge($pattern, $pattern);
             }
 
-            $descriptors = array();
+            $descriptors = [];
             $drawToggle = true;
             foreach ($pattern as $length) {
-                $descriptors[] = array(
+                $descriptors[] = [
                     'length' => $length,
                     'type' => $drawToggle ? 'draw' : 'gap',
-                );
+                ];
                 $drawToggle = !$drawToggle;
             }
             return $descriptors;
         }
 
-        $dot = array(
+        $dot = [
             'type' => 'dot',
             'length' => 0,
-        );
-        $gap = array(
+        ];
+        $gap = [
             'type' => 'gap',
             'length' => 45,
-        );
-        $dash = array(
+        ];
+        $dash = [
             'type' => 'draw',
             'length' => 45,
-        );
-        $longDash = array(
+        ];
+        $longDash = [
             'type' => 'draw',
             'length' => 85,
-        );
-        switch ($pattern) {
-            case 'solid' :
-                return array(
-                    $infiniteDraw,
-                );
-            case 'dot' :
-                return array(
-                    $dot,
-                    $gap,
-                );
-            case 'dash' :
-                return array(
-                    $dash,
-                    $gap,
-                );
-            case 'dashdot' :
-                return array(
-                    $dash,
-                    $gap,
-                    $dot,
-                    $gap,
-                );
-            case 'longdash' :
-                return array(
-                    $longDash,
-                    $gap,
-                );
-            case 'longdashdot':
-                return array(
-                    $longDash,
-                    $gap,
-                    $dot,
-                    $gap,
-                );
-            default:
-                throw new \InvalidArgumentException("Unsupported pattern name " . print_r($pattern, true));
-        }
+        ];
+        return match ($pattern) {
+            'solid' => [
+                $infiniteDraw,
+            ],
+            'dot' => [
+                $dot,
+                $gap,
+            ],
+            'dash' => [
+                $dash,
+                $gap,
+            ],
+            'dashdot' => [
+                $dash,
+                $gap,
+                $dot,
+                $gap,
+            ],
+            'longdash' => [
+                $longDash,
+                $gap,
+            ],
+            'longdashdot' => [
+                $longDash,
+                $gap,
+                $dot,
+                $gap,
+            ],
+            default => throw new \InvalidArgumentException("Unsupported pattern name " . print_r($pattern, true)),
+        };
     }
 
     /**
@@ -823,10 +814,10 @@ class LayerRendererGeoJson extends LayerRenderer
      * @param boolean $closeLoop
      * @return array[]
      */
-    protected function generatePatternFragments($pattern, $lineCoords, $patternScale, $closeLoop)
+    protected function generatePatternFragments($pattern, $lineCoords, $patternScale, $closeLoop): array
     {
-        $dots = array();
-        $lines = array();
+        $dots = [];
+        $lines = [];
         $lineCoords = array_values($lineCoords);
         if ($closeLoop) {
             $segmentIterator = new LineLoopIterator($lineCoords);
@@ -890,10 +881,10 @@ class LayerRendererGeoJson extends LayerRenderer
                 $nextFragmentStart += $takenSegmentLength;
             }
         }
-        return array(
+        return [
             'dots' => $dots,
             'lines' => $lines,
-        );
+        ];
     }
 
     /**
@@ -905,7 +896,7 @@ class LayerRendererGeoJson extends LayerRenderer
      * @see generatePatternFragments
      *
      */
-    protected function renderPatternFragments(GdCanvas $canvas, $fragments, $color, $thickness)
+    protected function renderPatternFragments(GdCanvas $canvas, array $fragments, $color, $thickness)
     {
         imagesetthickness($canvas->resource, $thickness);
         foreach ($fragments['dots'] as $dot) {

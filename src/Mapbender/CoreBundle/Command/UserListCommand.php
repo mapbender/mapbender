@@ -18,9 +18,9 @@ class UserListCommand extends AbstractUserCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var User[] $users */
-        $users = $this->getRepository()->findBy(array(), array(
+        $users = $this->getRepository()->findBy([], [
             'username' => 'ASC',
-        ));
+        ]);
         foreach ($users as $user) {
             $sinceDt = $user->getRegistrationTime();
             if ($sinceDt) {

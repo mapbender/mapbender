@@ -14,10 +14,10 @@ class VectorTilesDataSource extends DataSource
     const TYPE = "vector_tiles";
 
     public function __construct(
-        private VectorTilesConfigGenerator   $configService,
-        private VectorTilesInstanceFactory $instanceFactory,
-        private VectorTilesLoader                $loader,
-        private VectorTilesRenderer     $layerRenderer,
+        private readonly VectorTilesConfigGenerator   $configService,
+        private readonly VectorTilesInstanceFactory $instanceFactory,
+        private readonly VectorTilesLoader                $loader,
+        private readonly VectorTilesRenderer     $layerRenderer,
     )
     {
     }

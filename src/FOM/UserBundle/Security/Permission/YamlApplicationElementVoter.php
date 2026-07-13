@@ -6,7 +6,6 @@ namespace FOM\UserBundle\Security\Permission;
 
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class YamlApplicationElementVoter extends YamlBaseVoter
 {

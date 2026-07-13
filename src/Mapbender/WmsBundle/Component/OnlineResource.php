@@ -9,21 +9,13 @@ use Mapbender\Component\Transformer\Target\MutableUrlTarget;
  */
 class OnlineResource implements MutableUrlTarget
 {
-    /** @var string|null */
-    public $format;
-
-    /** @var string|null */
-    public $href;
-
     /**
      *
      * @param string $format
      * @param string $href
      */
-    public function __construct($format = null, $href = null)
+    public function __construct(public $format = null, public $href = null)
     {
-        $this->format = $format;
-        $this->href   = $href;
     }
 
     /**
@@ -32,7 +24,7 @@ class OnlineResource implements MutableUrlTarget
      * @param string $format
      * @return $this
      */
-    public function setFormat($format)
+    public function setFormat($format): static
     {
         $this->format = $format;
 
@@ -55,7 +47,7 @@ class OnlineResource implements MutableUrlTarget
      * @param string $href
      * @return $this
      */
-    public function setHref($href)
+    public function setHref($href): static
     {
         $this->href = $href;
 
@@ -72,7 +64,7 @@ class OnlineResource implements MutableUrlTarget
         return $this->href;
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
         $this->setHref($transformer->process($this->getHref()));
     }

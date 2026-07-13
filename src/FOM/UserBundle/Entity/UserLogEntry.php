@@ -61,7 +61,7 @@ class UserLogEntry
      *
      * @param array $args
      */
-    private function fill(array $args)
+    private function fill(array $args): void
     {
         $properties = array_keys(get_object_vars($this));
         foreach ($args as $key => $value) {
@@ -72,7 +72,7 @@ class UserLogEntry
     }
 
     #[ORM\PrePersist]
-    public function createDateOnInsert()
+    public function createDateOnInsert(): void
     {
         $this->creationDate = new \DateTime();
     }

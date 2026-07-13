@@ -7,16 +7,7 @@ use Doctrine\DBAL\Exception;
 
 class PgRoutingDBInterface {
 
-    /**
-     * @var Connection $connection
-     */
-    private $connection;
-
-    private $routingTable;
-    private $nodesTable;
-
-    private $epsg;
-    private $srid;
+    private readonly string $epsg;
 
     /**
      * PgRoutingDBInterface constructor.
@@ -27,17 +18,13 @@ class PgRoutingDBInterface {
      * @throws Exception
      */
 
-    private $temptableerouting = "temptablerouting";
-    private $temptablenodes = "temptablenodes";
+    private string $temptableerouting = "temptablerouting";
+    private string $temptablenodes = "temptablenodes";
 
-    private $street_name = "strname";
+    private string $street_name = "strname";
 
-    public function __construct(Connection $connection, $routingTable, $nodesTable, $srid) {
-        $this->connection = $connection;
-        $this->routingTable = $routingTable;
-        $this->nodesTable = $nodesTable;
-        $this->srid = $srid;
-        $this->epsg = "EPSG:".$srid;
+    public function __construct(private readonly Connection $connection, private $routingTable, private $nodesTable, private $srid) {
+        $this->epsg = "EPSG:".$this->srid;
 
 
         $this->dropTempTables();
@@ -68,7 +55,7 @@ class PgRoutingDBInterface {
      * @param string $tableName
      * @return mixed
      */
-    private function getPrimaryKeyOfTable(string $tableName)
+    private function getPrimaryKeyOfTable(string $tableName): mixed
     {
         $db = $this->connection;
 
@@ -112,10 +99,10 @@ class PgRoutingDBInterface {
      * drop temporary used routing and node table
      * @throws Exception
      */
-    public function dropTempTables()
+    public function dropTempTables(): void
     {
         $db = $this->connection;
-        $tables = array($this->temptableerouting,$this->temptablenodes);
+        $tables = [$this->temptableerouting,$this->temptablenodes];
         foreach ($tables as &$table) {
             $table = $db->quoteIdentifier($table);
         }
@@ -157,7 +144,7 @@ class PgRoutingDBInterface {
         return $result;
     }
 
-    private function adjustTemporaryRoutingTable($ewkt,$weightingColumn){
+    private function adjustTemporaryRoutingTable(string $ewkt,string $weightingColumn): void{
         // inserts poi as new node into routing table and updates previous geometry
         $db = $this->connection;
 
@@ -211,7 +198,7 @@ class PgRoutingDBInterface {
         $db->query($queryUpdateRoutingTable)->fetchAll();
     }
 
-    private function adjustTemporaryNodeTable($ewkt){
+    private function adjustTemporaryNodeTable(string $ewkt): void{
         $db = $this->connection;
 
         $tempTableNodes = $db->quoteIdentifier($this->temptablenodes);
@@ -237,7 +224,7 @@ class PgRoutingDBInterface {
         $db->query($queryUpdateNodeTable)->fetchAll();
 
     }
-    public function adjustTemporaryTables($ewkt,$weightingColumn)
+    public function adjustTemporaryTables($ewkt,$weightingColumn): void
     {
         $this->adjustTemporaryNodeTable($ewkt);
         $this->adjustTemporaryRoutingTable($ewkt,$weightingColumn);
@@ -342,12 +329,12 @@ class PgRoutingDBInterface {
      * @return bool|string
      * @throws Exception
      */
-    public function getResultGeom(array $geom)
+    public function getResultGeom(array $geom): mixed
     {
         $db = $this->connection;
-        $filteredGeom = array_filter($geom, function($g) { return !!$g; });
+        $filteredGeom = array_filter($geom, fn($g): bool => !!$g);
         // Security: quote each WKT geometry string individually to prevent SQL injection
-        $wktGeomString = implode(",", array_map([$db, 'quote'], $filteredGeom));
+        $wktGeomString = implode(",", array_map($db->quote(...), $filteredGeom));
         // get Multiline as GeoJSON
         $query = "SELECT ST_AsGeoJSON(ST_Union( ARRAY[$wktGeomString])) As geom";
         return $db->executeQuery($query)->fetchOne();
@@ -360,7 +347,7 @@ class PgRoutingDBInterface {
      * @return array
      * @throws Exception
      */
-    public function getTransformedCoordinates()
+    public function getTransformedCoordinates(): array
     {
         $db = $this->connection;
 

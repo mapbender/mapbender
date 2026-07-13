@@ -4,7 +4,6 @@
 namespace Mapbender\WmsBundle\Command;
 
 
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\ManagerBundle\Form\Model\HttpOriginModel;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\Console\Input\InputArgument;

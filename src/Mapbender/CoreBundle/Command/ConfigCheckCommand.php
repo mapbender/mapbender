@@ -114,7 +114,7 @@ class ConfigCheckCommand extends Command
         $headers = ['Extension name', 'Is loaded?', 'Message'];
         $rows = [];
         $success = true;
-        $requiredExtensions = array('sqlite3', 'curl', 'gd', 'intl', 'mbstring', 'fileinfo', 'openssl', 'bz2', 'zip', 'xml');
+        $requiredExtensions = ['sqlite3', 'curl', 'gd', 'intl', 'mbstring', 'fileinfo', 'openssl', 'bz2', 'zip', 'xml'];
         foreach ($requiredExtensions as $requiredExtension) {
             if (extension_loaded($requiredExtension)) {
                 $rows[] = [$requiredExtension, 'yes', '<fg=green>ok</>'];
@@ -137,7 +137,7 @@ class ConfigCheckCommand extends Command
         $headers = ['Folder', 'User', 'Group', 'Permissions'];
         $rows = [];
 
-        $folders = array('var/log/', 'var/cache/', 'public/uploads/', 'public/xmlschemas/', 'public/');
+        $folders = ['var/log/', 'var/cache/', 'public/uploads/', 'public/xmlschemas/', 'public/'];
         foreach ($folders as $folder) {
             $filename = $this->rootDir . '/' . $folder;
             $info = new \SplFileInfo($filename);
@@ -165,7 +165,7 @@ class ConfigCheckCommand extends Command
         $output->title("Check Asset Folders");
         $headers = ['Folder', 'is Symlink?'];
         $rows = [];
-        $ignoreFolders = array('.', '..', '.gitignore', '.gitkeep');
+        $ignoreFolders = ['.', '..', '.gitignore', '.gitkeep'];
         $webDirs = scandir($this->rootDir . '/public/bundles');
         foreach ($webDirs as $webDir) {
             if (!in_array($webDir, $ignoreFolders)) {
@@ -192,7 +192,7 @@ class ConfigCheckCommand extends Command
             $process->run();
             $outputCmd = $process->isSuccessful() ? $process->getOutput() : null;
             if ($outputCmd !== null) {
-                $fcgiLines = array_filter(explode("\n", $outputCmd), fn($line) => str_contains($line, 'fcgi'));
+                $fcgiLines = array_filter(explode("\n", $outputCmd), fn($line): bool => str_contains((string) $line, 'fcgi'));
                 if (!empty($fcgiLines)) {
                     $output->writeln(implode("\n", $fcgiLines));
                 } else {
@@ -228,9 +228,9 @@ class ConfigCheckCommand extends Command
         $output->title("Check PHP ini");
         $headers = ['Parameter', 'Value'];
         $rows = [];
-        $checks = array('date.timezeone', 'max_input_vars', 'MaxRequestLen', 'max_execution_time', 'memory_limit', 'upload_max_filesize',
+        $checks = ['date.timezeone', 'max_input_vars', 'MaxRequestLen', 'max_execution_time', 'memory_limit', 'upload_max_filesize',
             'oci8.max_persistent', 'oci8.default_prefetch', 'session.save_handler', 'zend_extension', 'opcache.enable', 'opcache.memory_consumption',
-            'opcache.interned_strings_buffer', 'opcache.max_accelerated_files', 'opcache.max_wasted_percentage',);
+            'opcache.interned_strings_buffer', 'opcache.max_accelerated_files', 'opcache.max_wasted_percentage',];
         foreach ($checks as $check) {
 
             $rows[] = [$check, ini_get($check)];

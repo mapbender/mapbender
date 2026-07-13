@@ -42,7 +42,7 @@ abstract class AbstractUser implements UserInterface, LegacyPasswordAuthenticate
     /**
      * @param integer $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
@@ -96,7 +96,7 @@ abstract class AbstractUser implements UserInterface, LegacyPasswordAuthenticate
     /**
      * @param string $salt
      */
-    public function setSalt($salt)
+    public function setSalt($salt): void
     {
         $this->salt = $salt;
     }
@@ -115,9 +115,9 @@ abstract class AbstractUser implements UserInterface, LegacyPasswordAuthenticate
      */
     public function getRoles(): array
     {
-        return array(
+        return [
             'ROLE_USER',
-        );
+        ];
     }
 
     /**

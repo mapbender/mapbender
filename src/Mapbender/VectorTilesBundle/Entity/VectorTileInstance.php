@@ -54,7 +54,7 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     #[ORM\Column(name: 'legend_property_map', type: 'text', nullable: true)]
     protected ?string $legendPropertyMap = "";
 
-    public function setSource($source)
+    public function setSource($source): void
     {
         $this->source = $source;
     }
@@ -196,7 +196,7 @@ class VectorTileInstance extends SourceInstance implements SupportsOpacity
     }
 
 
-    public function getLayers()
+    public function getLayers(): array
     {
         return [];
     }

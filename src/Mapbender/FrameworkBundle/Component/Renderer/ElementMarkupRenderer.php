@@ -3,6 +3,8 @@
 
 namespace Mapbender\FrameworkBundle\Component\Renderer;
 
+use Twig\Environment;
+use Twig\Error\Error;
 use Mapbender\Component\ClassUtil;
 use Mapbender\Component\Element\ButtonLike;
 use Mapbender\Component\Element\ElementView;
@@ -11,11 +13,9 @@ use Mapbender\Component\Element\StaticView;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\Component\Enumeration\ScreenTypes;
 use Mapbender\CoreBundle\Component\ElementInventoryService;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Mapbender\FrameworkBundle\Component\IconIndex;
-use Twig;
 
 
 /**
@@ -25,32 +25,12 @@ use Twig;
  */
 class ElementMarkupRenderer
 {
-    /** @var Twig\Environment */
-    protected $templatingEngine;
-    /** @var TranslatorInterface */
-    protected $translator;
-    /** @var ElementInventoryService */
-    protected $inventory;
-    /** @var bool */
-    protected $allowResponsiveElements;
-    /** @var bool */
-    protected $debug;
-    /** @var IconIndex */
-    protected $iconIndex;
-
-    public function __construct(Twig\Environment $templatingEngine,
-                                TranslatorInterface $translator,
-                                ElementInventoryService $inventory,
-                                $allowResponsiveElements,
-                                $debug,
-                                IconIndex $iconIndex)
+    /**
+     * @param bool $allowResponsiveElements
+     * @param bool $debug
+     */
+    public function __construct(protected Environment $templatingEngine, protected TranslatorInterface $translator, protected ElementInventoryService $inventory, protected $allowResponsiveElements, protected $debug, protected IconIndex $iconIndex)
     {
-        $this->templatingEngine = $templatingEngine;
-        $this->translator = $translator;
-        $this->inventory = $inventory;
-        $this->allowResponsiveElements = $allowResponsiveElements;
-        $this->debug = $debug;
-        $this->iconIndex = $iconIndex;
     }
 
     /**
@@ -58,17 +38,17 @@ class ElementMarkupRenderer
      * @param bool $forceLabel force display of the element label, overriding the element's own configuration
      * @return string
      */
-    public function renderElements($elements, $forceLabel = false)
+    public function renderElements($elements, $forceLabel = false): string
     {
-        $wrappers = array();
-        $markupFragments = array();
+        $wrappers = [];
+        $markupFragments = [];
         foreach ($elements as $element) {
             if (!$element instanceof Element) {
-                throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
+                throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? $element::class : gettype($element));
             }
             $regionName = $element->getRegion();
             if (!array_key_exists($regionName, $wrappers)) {
-                $wrappers[$regionName] = $this->getRegionGlue($regionName);
+                $wrappers[$regionName] = static::getRegionGlue($regionName);
             }
             $wrapper = $wrappers[$regionName];
             if ($visibilityClass = $this->getElementVisibilityClass($element)) {
@@ -77,9 +57,9 @@ class ElementMarkupRenderer
                     $wrapper['tagName'] = 'div';
                 }
             }
-            $markupFragments[] = $this->renderContent($element, $wrapper['tagName'], array_filter(array(
+            $markupFragments[] = $this->renderContent($element, $wrapper['tagName'], array_filter([
                 'class' => $wrapper['class'],
-            )), $forceLabel);
+            ]), $forceLabel);
         }
         return implode('', $markupFragments);
     }
@@ -88,17 +68,17 @@ class ElementMarkupRenderer
      * @param Element[] $elements
      * @return string
      */
-    public function renderFloatingElements($elements)
+    public function renderFloatingElements($elements): string
     {
         $markup = '';
         foreach ($elements as $element) {
             if (!$element instanceof Element) {
-                throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? \get_class($element) : gettype($element));
+                throw new \InvalidArgumentException("Unsupported type " . ($element && \is_object($element)) ? $element::class : gettype($element));
             }
-            $content = $this->renderContent($element, 'div', array());
-            $markup .= $this->wrapTag($content, 'div', array(
+            $content = $this->renderContent($element, 'div', []);
+            $markup .= $this->wrapTag($content, 'div', [
                 'class' => rtrim('element-wrapper ' . $this->getElementVisibilityClass($element)),
-            ));
+            ]);
         }
         return $markup;
     }
@@ -111,14 +91,14 @@ class ElementMarkupRenderer
                 if ($view instanceof LegacyView) {
                     return $this->wrapTag($view->getContent(), $wrapperTag, $attributes);
                 } else {
-                    return $this->renderView($view, $wrapperTag, $attributes + array(
+                    return $this->renderView($view, $wrapperTag, $attributes + [
                         'id' => $element->getId(),
-                    ), $forceLabel);
+                    ], $forceLabel);
                 }
             } else {
                 return '';
             }
-        } catch (\Twig\Error\Error $e) {
+        } catch (Error $e) {
             if ($this->debug) {
                 throw $e;
             } else {
@@ -138,10 +118,10 @@ class ElementMarkupRenderer
      * @param bool $forceLabel force display of the element label, overriding the element's own configuration
      * @return string
      */
-    protected function renderView(ElementView $view, $wrapperTag, $baseAttributes, $forceLabel = false)
+    protected function renderView(ElementView $view, $wrapperTag, array $baseAttributes, $forceLabel = false)
     {
         if (!$view->cacheable) {
-            $baseAttributes += array('class' => '');
+            $baseAttributes += ['class' => ''];
             $baseAttributes['class'] = ltrim($baseAttributes['class'] . ' -js-reload-uncacheable');
         }
         $attributes = $this->prepareAttributes($view->attributes, $baseAttributes);
@@ -153,27 +133,30 @@ class ElementMarkupRenderer
         } elseif ($view instanceof StaticView) {
             $content = $view->getContent();
         } else {
-            throw new \Exception("Don't know how to render " . get_class($view));
+            throw new \Exception("Don't know how to render " . $view::class);
         }
         return $this->wrapTag($content, $wrapperTag ?: 'div', $attributes);
     }
 
-    protected function prepareAttributes($viewAttributes, $baseAttributes)
+    /**
+     * @return mixed[]
+     */
+    protected function prepareAttributes(array $viewAttributes, array $baseAttributes): array
     {
-        $classes = array('mb-element');
+        $classes = ['mb-element'];
         if (!empty($viewAttributes['class'])) {
             $classes[] = $viewAttributes['class'];
         }
         if (!empty($baseAttributes['class'])) {
             $classes[] = $baseAttributes['class'];
         }
-        $attributes = array_replace($viewAttributes + $baseAttributes, array(
+        $attributes = array_replace($viewAttributes + $baseAttributes, [
             'class' => implode(' ', array_filter($classes)),
-        ));
-        $translatable = array(
+        ]);
+        $translatable = [
             'title',
             'data-title',
-        );
+        ];
         foreach ($translatable as $attribute) {
             if (!empty($attributes[$attribute])) {
                 $attributes[$attribute] = $this->translator->trans($attributes[$attribute]);
@@ -186,20 +169,16 @@ class ElementMarkupRenderer
      * @param Element $element
      * @return string|null
      */
-    public function getElementVisibilityClass(Element $element)
+    public function getElementVisibilityClass(Element $element): ?string
     {
         if (!$this->allowResponsiveElements) {
             return null;
         }
-        switch ($element->getScreenType()) {
-            case ScreenTypes::ALL:
-            default:
-                return null;
-            case ScreenTypes::MOBILE_ONLY:
-                return 'hide-screentype-desktop';
-            case ScreenTypes::DESKTOP_ONLY:
-                return 'hide-screentype-mobile';
-        }
+        return match ($element->getScreenType()) {
+            ScreenTypes::MOBILE_ONLY => 'hide-screentype-desktop',
+            ScreenTypes::DESKTOP_ONLY => 'hide-screentype-mobile',
+            default => null,
+        };
     }
 
     public function getIcon($element, $additionalClass = ''){
@@ -217,7 +196,7 @@ class ElementMarkupRenderer
     }
 
 
-    public function isMenuSupported(Element $element)
+    public function isMenuSupported(Element $element): bool
     {
         $handling = $this->inventory->getHandlingClassName($element);
         if (!$handling || !ClassUtil::exists($handling)) {
@@ -238,7 +217,7 @@ class ElementMarkupRenderer
     protected function wrapTag($content, $tagName, $attributes)
     {
         if ($tagName) {
-            $renderedAttributes = array();
+            $renderedAttributes = [];
             foreach ($attributes as $name => $value) {
                 $value = $value !== null ? htmlspecialchars($value) : "";
                 $renderedAttributes[] = $name . '="' . $value . '"';
@@ -259,20 +238,20 @@ class ElementMarkupRenderer
      * @param string $regionName
      * @return string[]|null
      */
-    protected static function getRegionGlue($regionName)
+    protected static function getRegionGlue($regionName): array
     {
         // Legacy lenience in patterns: allow postfixes / prefixes around region names, e.g.
         // "some-custom-project-footer"
-        if (false !== strpos($regionName, 'footer') || false !== strpos($regionName, 'toolbar')) {
-            return array(
+        if (str_contains($regionName, 'footer') || str_contains($regionName, 'toolbar')) {
+            return [
                 'tagName' => 'li',
                 'class' => 'toolBarItem',
-            );
+            ];
         } else {
-            return array(
+            return [
                 'tagName' => null,
                 'class' => '',
-            );
+            ];
         }
     }
 }

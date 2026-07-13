@@ -11,7 +11,7 @@ use Mapbender\CoreBundle\Entity\Application;
 class ApplicationTemplateRegistry
 {
     /** @var IApplicationTemplateInterface[]|Template[] */
-    protected $handlers = array();
+    protected $handlers = [];
     /** @var IApplicationTemplateInterface|Template */
     protected $fallback;
 
@@ -38,11 +38,11 @@ class ApplicationTemplateRegistry
     /**
      * @return IApplicationTemplateInterface[]|Template[]
      */
-    public function getAll()
+    public function getAll(): array
     {
-        $noDuplicates = array();
+        $noDuplicates = [];
         foreach ($this->handlers as $handler) {
-            $noDuplicates += array(\get_class($handler) => $handler);
+            $noDuplicates += [$handler::class => $handler];
         }
         return \array_values($noDuplicates);
     }

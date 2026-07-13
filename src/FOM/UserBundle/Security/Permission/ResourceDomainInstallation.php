@@ -98,7 +98,7 @@ class ResourceDomainInstallation extends AbstractResourceDomain
 
     public function getPermissions(string $category): array
     {
-        return array_keys(array_filter($this->permissionList, fn($permission) => $permission['category'] === $category));
+        return array_keys(array_filter($this->permissionList, fn(array $permission): bool => $permission['category'] === $category));
     }
 
     protected function defaultGroups(): array

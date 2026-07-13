@@ -25,7 +25,7 @@ class UrlParseCommand extends AbstractHttpCapabilitiesProcessingCommand
         $this->showSource($output, $source);
     }
 
-    protected function getValidationOption(InputInterface $input)
+    protected function getValidationOption(InputInterface $input): mixed
     {
         return $input->getOption('validate');
     }

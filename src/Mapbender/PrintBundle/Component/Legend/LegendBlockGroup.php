@@ -12,7 +12,7 @@ class LegendBlockGroup extends LegendBlockCollection
     public function __construct($members = null)
     {
         $this->clear();
-        foreach ($members ?: array() as $member) {
+        foreach ($members ?: [] as $member) {
             $this->addBlock($member);
         }
     }
@@ -20,7 +20,7 @@ class LegendBlockGroup extends LegendBlockCollection
     /**
      * @param LegendBlock $block
      */
-    public function addBlock($block)
+    public function addBlock($block): void
     {
         $this->members[] = $block;
     }
@@ -28,13 +28,13 @@ class LegendBlockGroup extends LegendBlockCollection
     /**
      * @return \Iterator|LegendBlock[]
      */
-    public function iterateBlocks()
+    public function iterateBlocks(): \ArrayIterator
     {
         return new \ArrayIterator($this->members);
     }
 
-    public function clear()
+    public function clear(): void
     {
-        $this->members = array();
+        $this->members = [];
     }
 }

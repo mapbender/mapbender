@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class ColorConversionTest extends TestCase
 {
-    public function testAddOpacityToColor() {
+    public function testAddOpacityToColor(): void {
         $this->assertEquals('rgba(0, 0, 0, 0)', ColorUtils::addOpacityToColor([
             'color' => 'rgb(0, 0, 0)',
             'opacity' => 0,
@@ -52,7 +52,7 @@ class ColorConversionTest extends TestCase
         ], 'color', 'opacity'));
     }
 
-    public function testColorParsing()
+    public function testColorParsing(): void
     {
         $this->assertEquals([
             'red' => 0,

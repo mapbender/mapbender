@@ -54,7 +54,7 @@ class Group
      * @param string $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
 
@@ -77,7 +77,7 @@ class Group
      * @param string $description
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription($description): static
     {
         $this->description = $description;
 
@@ -100,7 +100,7 @@ class Group
      * @param User $user
      * @return $this
      */
-    public function addUser(User $user)
+    public function addUser(User $user): static
     {
         $this->users[] = $user;
         $user->addGroup($this);
@@ -112,7 +112,7 @@ class Group
      *
      * @param User $user
      */
-    public function removeUser(User $user)
+    public function removeUser(User $user): void
     {
         $user->getGroups()->removeElement($this);
         $this->users->removeElement($user);
@@ -131,7 +131,7 @@ class Group
     /**
      * @return string
      */
-    public function getRole()
+    public function getRole(): string
     {
         return 'ROLE_GROUP_' . strtoupper($this->getTitle());
     }

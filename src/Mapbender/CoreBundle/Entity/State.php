@@ -51,7 +51,7 @@ class State
      * @param  integer $id
      * @return State
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
 
@@ -74,7 +74,7 @@ class State
      * @param  string $title
      * @return State
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
 
@@ -97,7 +97,7 @@ class State
      * @param  string $slug
      * @return State
      */
-    public function setSlug($slug)
+    public function setSlug($slug): static
     {
         $this->slug = $slug;
 
@@ -120,7 +120,7 @@ class State
      * @param  string $json
      * @return State
      */
-    public function setJson($json)
+    public function setJson($json): static
     {
         $this->json = $json;
 

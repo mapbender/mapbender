@@ -4,7 +4,8 @@
 namespace Mapbender\ManagerBundle\Form\Type\Element;
 
 
-use Mapbender\Component\ClassUtil;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\Utils\ApplicationUtil;
@@ -35,17 +36,17 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'preSetData',
-        );
+        ];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         $name = $event->getForm()->getConfig()->getName();
         /** @var Element $element */
         $element = $event->getForm()->getParent()->getParent()->getData();
-        $mapElements = array();
+        $mapElements = [];
         foreach (ApplicationUtil::getMapElements($element->getApplication()) as $mapElement) {
             $mapElements[$mapElement->getId()] = $mapElement;
         }
@@ -73,9 +74,9 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
         }
     }
 
-    protected function addChoice($name, FormInterface $target, $mapElements, array $options)
+    protected function addChoice(self|string $name, FormInterface $target, $mapElements, array $options)
     {
-        $target->add($name, 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
+        $target->add($name, ChoiceType::class, [
             'choices' => array_keys($mapElements),
             'choice_label' => function($mapId) use ($mapElements) {
                 /** @var Element $mapElement */
@@ -84,21 +85,19 @@ class MapTargetType extends AbstractType implements EventSubscriberInterface
                 $className = $mapElements[$mapId]->getClass();
                 return $mapElement->getTitle() ?: $className::getClassTitle();
             },
-            'choice_value' => function($mapId) {
-                return $mapId !== null ? \intval($mapId) : $mapId;
-            },
+            'choice_value' => fn($mapId): ?int => $mapId !== null ? \intval($mapId) : $mapId,
             'label' => $options['label'],
             'required' => $options['required'],
-        ));
+        ]);
     }
 
-    protected function addHidden($name, FormInterface $target)
+    protected function addHidden(string $name, FormInterface $target)
     {
-        $child = $target->getConfig()->getFormFactory()->createNamedBuilder($name, 'Symfony\Component\Form\Extension\Core\Type\HiddenType', null, array(
+        $child = $target->getConfig()->getFormFactory()->createNamedBuilder($name, HiddenType::class, null, [
             'auto_initialize' => false,
             'label' => false,
-        ));
+        ]);
         $child->addModelTransformer(new IntegerToLocalizedStringTransformer());
-        $target->add($child->getForm(), 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
+        $target->add($child->getForm(), HiddenType::class);
     }
 }

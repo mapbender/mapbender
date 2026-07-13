@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Component\Source;
 
 
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
 interface SourceInstanceInformationInterface
 {

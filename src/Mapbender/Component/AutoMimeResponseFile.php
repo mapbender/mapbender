@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\File\File;
 class AutoMimeResponseFile extends File
 {
     /** @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types */
-    protected static $extensionMimeMap = array(
+    protected static $extensionMimeMap = [
         // textual
         'css' => 'text/css',
         'js' => 'text/javascript',
@@ -30,11 +30,11 @@ class AutoMimeResponseFile extends File
         'jpeg' => 'image/jpeg',
         'png' => 'image/png',
         'svg' => 'image/svg+xml',
-    );
+    ];
 
     public function getMimeType(): ?string
     {
-        if ($mime = $this->guessMimeTypeFromExtension($this->getExtension())) {
+        if ($mime = static::guessMimeTypeFromExtension($this->getExtension())) {
             return $mime;
         } else {
             return parent::getMimeType();
@@ -43,10 +43,10 @@ class AutoMimeResponseFile extends File
 
     public static function guessMimeTypeFromExtension($extension)
     {
-        $extension = \strtolower($extension);
+        $extension = \strtolower((string) $extension);
         if ($extension && !empty(static::$extensionMimeMap[$extension])) {
             $baseMime = static::$extensionMimeMap[$extension];
-            if (\preg_match('#^text/#', $baseMime)) {
+            if (\preg_match('#^text/#', (string) $baseMime)) {
                 return $baseMime . '; charset=UTF-8';
             } else {
                 return $baseMime;

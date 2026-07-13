@@ -10,23 +10,23 @@ class SearchRouterRouteTransformer implements DataTransformerInterface
     public function transform($value): array
     {
         if (!$value) {
-            return array();
+            return [];
         }
         $title = !empty($value['title']) ? $value['title'] : '';
         unset($value['title']);
-        return array(
+        return [
             'title' => $title,
             'configuration' => $value,
-        );
+        ];
     }
 
     public function reverseTransform($value): array
     {
         if (!$value) {
-            return array();
+            return [];
         }
-        return ($value['configuration'] ?: array()) + array(
+        return ($value['configuration'] ?: []) + [
             'title' => $value['title'] ?: '',
-        );
+        ];
     }
 }

@@ -18,16 +18,16 @@ class UrlUtil
      * @param array $paramsToRemove  array of lower case parameter names to remove from url
      * @return string URL without parameter $paramName
      */
-    public static function validateUrl($url, $paramsToAdd = array(), $paramsToRemove = array())
+    public static function validateUrl($url, $paramsToAdd = [], $paramsToRemove = [])
     {
         $parts = parse_url($url);
-        $queries   = array();
+        $queries   = [];
         if (isset($parts["query"])) {
             parse_str($parts["query"], $queries);
         }
         $paramsToRemove = array_map('strtolower', array_merge($paramsToRemove, array_keys($paramsToAdd)));
         foreach ($queries as $key => $value) {
-            if (in_array(strtolower($key), $paramsToRemove)) {
+            if (in_array(strtolower((string) $key), $paramsToRemove)) {
                 unset($queries[$key]);
             }
         }
@@ -62,10 +62,10 @@ class UrlUtil
             throw new \InvalidArgumentException("Empty parameter name");
         }
         $lcParamName = strtolower($paramName);
-        $urlParams = array();
+        $urlParams = [];
         parse_str(parse_url($url, PHP_URL_QUERY), $urlParams);
         foreach ($urlParams as $urlParam => $value) {
-            if (strtolower($urlParam) == $lcParamName) {
+            if (strtolower((string) $urlParam) == $lcParamName) {
                 return $value;
             }
         }
@@ -80,7 +80,7 @@ class UrlUtil
      * @param string[] $parts
      * @return string
      */
-    public static function reconstructFromParts($parts)
+    public static function reconstructFromParts(array $parts): string
     {
         $urlOut = "";
         if (!empty($parts['scheme'])) {
@@ -121,7 +121,7 @@ class UrlUtil
      * @param bool $anyHost to require the same hostname as in the current request context
      * @return array|null
      */
-    public static function routeParamsFromUrl(UrlMatcherInterface $matcher, $url, $anyHost = false)
+    public static function routeParamsFromUrl(UrlMatcherInterface $matcher, $url, $anyHost = false): ?array
     {
         $host = parse_url($url, PHP_URL_HOST);
         $path = parse_url($url, PHP_URL_PATH);
@@ -131,12 +131,12 @@ class UrlUtil
         }
         // To support installation in non-name-vhost / non-root configs, strip context base url first.
         // Context base commonly looks like ~'/somedir/mapender/local-fun-version/app_dev.php'
-        if ($routerContext->getBaseUrl() && 0 === strpos($path, $routerContext->getBaseUrl())) {
+        if ($routerContext->getBaseUrl() && str_starts_with($path, $routerContext->getBaseUrl())) {
             $path = '/' . ltrim(substr($path, strlen($routerContext->getBaseUrl())), '/');
         }
         try {
             return $matcher->match($path);
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             // no match
             return null;
         }
@@ -152,10 +152,10 @@ class UrlUtil
     public static function addCredentials($url, $username, $pass, $replace=true)
     {
         $parts = parse_url($url);
-        $credentialsParts = array(
+        $credentialsParts = [
             'user' => rawurlencode($username ?: ''),
             'pass' => rawurlencode($pass ?: ''),
-        );
+        ];
         if ($replace) {
             $parts = array_replace($parts, $credentialsParts);
         } else {

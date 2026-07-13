@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\RulerAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\StaticView;
 use Mapbender\CoreBundle\Entity\Element;
@@ -12,7 +13,7 @@ class Ruler extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.ruler.class.title";
     }
@@ -20,7 +21,7 @@ class Ruler extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.ruler.class.description";
     }
@@ -28,7 +29,7 @@ class Ruler extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
         return [
             'js' => [
@@ -49,15 +50,15 @@ class Ruler extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\RulerAdminType';
+        return RulerAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderManager/Element/ruler.html.twig';
     }
@@ -65,9 +66,9 @@ class Ruler extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'type' => 'line',
             'help' => 'mb.core.ruler.help',
             'precision' => 'auto',
@@ -78,18 +79,18 @@ class Ruler extends AbstractElementService
             'fontColor' => '#000000',
             'fontSize' => 12,
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbRuler';
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): StaticView
     {
         $view = new StaticView('');
         $view->attributes['class'] = 'mb-element-ruler';
@@ -98,7 +99,7 @@ class Ruler extends AbstractElementService
         return $view;
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'icon-line-ruler';
     }

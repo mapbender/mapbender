@@ -11,7 +11,7 @@ class LayerRendererTms extends LayerRendererTiled
      * @param $resolution
      * @return TileMatrix
      */
-    protected function getTileMatrix($layerDef, $resolution)
+    protected function getTileMatrix($layerDef, $resolution): TileMatrixTms
     {
         $matrixDef = $layerDef['matrix'];
         // this is NOT the top left corner, but actually the bottom left corner

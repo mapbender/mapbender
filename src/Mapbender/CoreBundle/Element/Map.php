@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Doctrine\Persistence\ObjectRepository;
+use Mapbender\CoreBundle\Entity\Layerset;
 use Doctrine\Persistence\ManagerRegistry;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ImportAwareInterface;
@@ -29,8 +31,7 @@ class Map extends AbstractElementService
 
     const MINIMUM_TILE_SIZE = 128;
 
-    /** @var \Doctrine\Persistence\ObjectRepository */
-    protected $srsRepository;
+    protected ObjectRepository $srsRepository;
 
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -40,7 +41,7 @@ class Map extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.map.class.title";
     }
@@ -48,7 +49,7 @@ class Map extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.map.class.description";
     }
@@ -56,31 +57,31 @@ class Map extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
         /* "standardized rendering pixel size" for WMTS 0.28 mm × 0.28 mm -> DPI for WMTS: 90.714285714 */
-        return array(
-            'layersets' => array(),
+        return [
+            'layersets' => [],
             'srs' => 'EPSG:4326',
-            'otherSrs' => array("EPSG:25832","EPSG:25833","EPSG:3857","EPSG:31466", "EPSG:31467"),
+            'otherSrs' => ["EPSG:25832","EPSG:25833","EPSG:3857","EPSG:31466", "EPSG:31467"],
             'base_dpi' => 96,
             'tileSize' => 512,
-            'extent_max' => array(0, 40, 20, 60.8),
-            'extent_start' => array(7.03, 50.71, 7.17, 50.76),
-            "scales" => array(7500000,5000000,1000000,500000,100000,50000,25000,10000,7500,5000,2500,1000),
+            'extent_max' => [0, 40, 20, 60.8],
+            'extent_start' => [7.03, 50.71, 7.17, 50.76],
+            "scales" => [7500000,5000000,1000000,500000,100000,50000,25000,10000,7500,5000,2500,1000],
             'fixedZoomSteps' => false,
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbMap';
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): StaticView
     {
         $view = new StaticView('');
         $view->attributes['class'] = 'mb-element-map';
@@ -88,16 +89,16 @@ class Map extends AbstractElementService
         return $view;
     }
 
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbMap.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/map.scss',
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -105,9 +106,9 @@ class Map extends AbstractElementService
      * @param Element $element
      * @return string[][]
      */
-    protected function buildSrsConfigs(Element $element)
+    protected function buildSrsConfigs(Element $element): array
     {
-        $customTitles = array();
+        $customTitles = [];
         $configuration = $element->getConfiguration();
         $mainSrsParts = preg_split("/\s*\|\s*/", trim($configuration["srs"]));
         $defaultSrsName = $mainSrsParts[0];
@@ -115,7 +116,7 @@ class Map extends AbstractElementService
         if (!empty($mainSrsParts[1])) {
             $customTitles[$mainSrsParts[0]] = $mainSrsParts[1];
         }
-        $srsNames = array($defaultSrsName);
+        $srsNames = [$defaultSrsName];
         if (!empty($configuration['otherSrs'])) {
             $otherSrsConfigs = $configuration['otherSrs'];
             if (\is_string($otherSrsConfigs)) {
@@ -123,7 +124,7 @@ class Map extends AbstractElementService
             }
 
             foreach ($otherSrsConfigs as $srs) {
-                $otherSrsParts = preg_split("/\s*\|\s*/", trim($srs));
+                $otherSrsParts = preg_split("/\s*\|\s*/", trim((string) $srs));
                 if ($otherSrsParts[0] !== $defaultSrsName) {
                     $srsNames[] = $otherSrsParts[0];
                     if (!empty($otherSrsParts[1])) {
@@ -138,22 +139,20 @@ class Map extends AbstractElementService
                 $defs[$i]['title'] = $customTitles[$def['name']];
             }
         }
-        return array(
+        return [
             'srs' => $defaultSrsName,
             'srsDefs' => $defs,
-        );
+        ];
     }
 
     /**
      * @param Element $element
      * @return array
      */
-    public function getClientConfiguration(Element $element)
+    public function getClientConfiguration(Element $element): array
     {
         // Remove nulls, readd defaults (only for yaml-based apps, for db-based apps validation is done using form constraints)
-        $conf = \array_filter($element->getConfiguration(), function ($v) {
-            return $v !== null;
-        });
+        $conf = \array_filter($element->getConfiguration(), fn($v): bool => $v !== null);
         $conf += static::getDefaultConfiguration();
         $conf['tileSize'] = \intval(max(self::MINIMUM_TILE_SIZE, $conf['tileSize']));
         $conf = $this->buildSrsConfigs($element) + $conf;
@@ -163,7 +162,7 @@ class Map extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
         return MapAdminType::class;
     }
@@ -171,7 +170,7 @@ class Map extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderManager/Element/map.html.twig';
     }
@@ -181,37 +180,37 @@ class Map extends AbstractElementService
      * @param string[] $names
      * @return string[][]
      */
-    protected function getSrsDefinitions(array $names)
+    protected function getSrsDefinitions(array $names): array
     {
         /** @var SRS[] $srses */
-        $srses = $this->srsRepository->findBy(array(
+        $srses = $this->srsRepository->findBy([
             'name' => $names,
-        ));
-        $defs = array();
+        ]);
+        $defs = [];
         foreach ($srses as $srs) {
-            $defs[] = array(
+            $defs[] = [
                 'name' => $srs->getName(),
                 'title' => $srs->getTitle(),
                 'definition' => $srs->getDefinition(),
-            );
+            ];
         }
         return $defs;
     }
 
-    public function onImport(Element $element, Mapper $mapper)
+    public function onImport(Element $element, Mapper $mapper): void
     {
         $configuration = $element->getConfiguration();
         if (!empty($configuration['layersets'])) {
-            $newIds = array();
+            $newIds = [];
             foreach ($configuration['layersets'] as $oldId) {
-                $newIds[] = $mapper->getIdentFromMapper('Mapbender\CoreBundle\Entity\Layerset', $oldId);
+                $newIds[] = $mapper->getIdentFromMapper(Layerset::class, $oldId);
             }
             $configuration['layersets'] = $newIds;
             $element->setConfiguration($configuration);
         }
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         $config = $entity->getConfiguration();
         if (isset($config['layerset']) && !isset($config['layersets'])) {
@@ -229,11 +228,11 @@ class Map extends AbstractElementService
         unset($config['extents']);
 
         $defaults = static::getDefaultConfiguration();
-        $config += array(
+        $config += [
             'otherSrs' => $defaults['otherSrs'],
             'scales' => $defaults['scales'],
             'tileSize' => $defaults['tileSize'],
-        );
+        ];
 
         if (is_string($config['otherSrs'])) {
             $config['otherSrs'] = explode(',', $config['otherSrs']);

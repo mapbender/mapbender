@@ -6,14 +6,11 @@ namespace Mapbender\CoreBundle\Component;
  */
 class StateHandler
 {
-    /** @var Size */
-    private $window;
-    /** @var BoundingBox */
-    private $extent;
-    /** @var BoundingBox */
-    private $maxextent;
+    private ?Size $window = null;
+    private ?BoundingBox $extent = null;
+    private ?BoundingBox $maxextent = null;
     /** @var array[] */
-    private $sources = array();
+    private $sources = [];
     
     /**
      * Sets window
@@ -21,7 +18,7 @@ class StateHandler
      * @param Size $value
      * @return $this
      */
-    public function setWindow(Size $value){
+    public function setWindow(Size $value): static{
         $this->window = $value;
         return $this;
     }
@@ -43,7 +40,7 @@ class StateHandler
      * @param BoundingBox $value
      * @return $this
      */
-    public function setExtent(BoundingBox $value){
+    public function setExtent(BoundingBox $value): static{
         $this->extent = $value;
         return $this;
     }
@@ -65,7 +62,7 @@ class StateHandler
      * @param BoundingBox $value
      * @return $this
      */
-    public function setMaxextent(BoundingBox $value){
+    public function setMaxextent(BoundingBox $value): static{
         $this->maxextent = $value;
         return $this;
     }
@@ -85,7 +82,7 @@ class StateHandler
      * @param array[] $value
      * @return $this
      */
-    public function setSources($value){
+    public function setSources($value): static{
         $this->sources = $value;
         return $this;
     }
@@ -105,7 +102,7 @@ class StateHandler
      * @param array $value
      * @return $this
      */
-    public function addSource($value)
+    public function addSource($value): static
     {
         $this->sources[] = $value;
         return $this;
@@ -114,17 +111,17 @@ class StateHandler
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $windowArr = $this->window->toArray();
         $extentArr = $this->extent->toArray();
         $maxExtentArr = $this->maxextent === null ? $this->extent->toArray() : $this->maxextent->toArray();
         $sourcesArr = $this->sources;
-        return array(
+        return [
             "window" => $windowArr,
             "extent" => $extentArr,
             "maxextent" => $maxExtentArr,
             "sources" => $sourcesArr,
-        );
+        ];
     }
 }

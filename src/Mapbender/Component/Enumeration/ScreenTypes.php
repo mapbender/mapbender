@@ -10,12 +10,12 @@ class ScreenTypes
     const MOBILE_ONLY = 'mobile';
     const DESKTOP_ONLY = 'desktop';
 
-    public static function getValidValues()
+    public static function getValidValues(): array
     {
-        return array(
+        return [
             static::ALL,
             static::MOBILE_ONLY,
             static::DESKTOP_ONLY,
-        );
+        ];
     }
 }

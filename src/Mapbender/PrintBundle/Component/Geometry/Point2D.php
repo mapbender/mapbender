@@ -16,17 +16,17 @@ class Point2D extends Tuple
      */
     public function __construct($x, $y)
     {
-        parent::__construct(array(
+        parent::__construct([
             $x,
             $y,
-        ));
+        ]);
     }
 
     /**
      * @param float[] $a
      * @return Point2D
      */
-    public static function fromArray(array $a)
+    public static function fromArray(array $a): static
     {
         if (array_key_exists('x', $a) && array_key_exists('y', $a)) {
             return new static($a['x'], $a['y']);

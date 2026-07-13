@@ -8,7 +8,7 @@ use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 #[ORM\Entity()]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_ogc_api_features_instancelayer')]
-class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
+class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringable
 {
     #[ORM\ManyToOne(targetEntity: OgcApiFeaturesInstance::class, cascade: ['refresh', 'persist'], inversedBy: 'layers')]
     #[ORM\JoinColumn(name: 'ogcapifeaturesinstance', referencedColumnName: 'id', onDelete: 'CASCADE')]
@@ -19,13 +19,13 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     protected $sourceItem;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    protected ?float $minScale;
+    protected ?float $minScale = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    protected ?float $maxScale;
+    protected ?float $maxScale = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    protected ?int $featureLimit;
+    protected ?int $featureLimit = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $active = true;
@@ -37,13 +37,13 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
     protected ?bool $selected = true;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    protected ?bool $allowInfo;
+    protected ?bool $allowInfo = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    protected ?bool $info;
+    protected ?bool $info = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    protected ?int $priority;
+    protected ?int $priority = null;
 
     #[ORM\Column(name: 'style_id', type: 'integer', nullable: true)]
     protected ?int $styleId = null;
@@ -151,12 +151,12 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem
         return $this;
     }
 
-    public function getPriority()
+    public function getPriority(): ?int
     {
         return $this->priority;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->getId();
     }

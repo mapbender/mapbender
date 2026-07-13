@@ -16,7 +16,7 @@ use Mapbender\PrintBundle\Component\TemplateRegion;
 class RegionCollection implements \ArrayAccess, \IteratorAggregate
 {
     /** @var TemplateRegion[] */
-    protected $regions = array();
+    protected $regions = [];
 
     /**
      * @param string
@@ -31,7 +31,7 @@ class RegionCollection implements \ArrayAccess, \IteratorAggregate
      * @param $name
      * @return bool
      */
-    public function hasMember($name)
+    public function hasMember($name): bool
     {
         return !empty($this->regions[$name]);
     }
@@ -40,12 +40,12 @@ class RegionCollection implements \ArrayAccess, \IteratorAggregate
      * @param string $name
      * @param TemplateRegion $region
      */
-    public function addMember($name, TemplateRegion $region)
+    public function addMember($name, TemplateRegion $region): void
     {
         if (!$name || preg_match('#^\d+#', $name)) {
             throw new \InvalidArgumentException("All region names should be non-empty strings, got " . print_r($name, true));
         }
-        $this->regions += array($name => array());
+        $this->regions += [$name => []];
         $this->regions[$name][] = $region;
     }
 
@@ -68,11 +68,11 @@ class RegionCollection implements \ArrayAccess, \IteratorAggregate
 
     public function offsetSet($offset, $value): void
     {
-        throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
+        throw new \RuntimeException(static::class . " does not support array-style mutation");
     }
 
     public function offsetUnset($offset): void
     {
-        throw new \RuntimeException(get_class($this) . " does not support array-style mutation");
+        throw new \RuntimeException(static::class . " does not support array-style mutation");
     }
 }

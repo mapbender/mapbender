@@ -39,7 +39,7 @@ class UrlProcessor
      */
     public function getProxyBaseUrl(): string
     {
-        return $this->getProxyUrl(array(), UrlGeneratorInterface::ABSOLUTE_PATH);
+        return $this->getProxyUrl([], UrlGeneratorInterface::ABSOLUTE_PATH);
     }
 
     /**
@@ -47,9 +47,9 @@ class UrlProcessor
      */
     public function proxifyUrl(string $url): string
     {
-        $params = array(
+        $params = [
             'url' => $this->signer->signUrl($url),
-        );
+        ];
         return $this->getProxyUrl($params, UrlGeneratorInterface::ABSOLUTE_PATH);
     }
 

@@ -27,7 +27,7 @@ class SimpleSearchAdminType extends AbstractType
                 'label' => 'mb.manager.element.openInline',
                 'help' => 'mb.manager.element.openInlineHelp',
             ], $this->trans))
-            ->add('configurations', CollapsibleCollectionType::class, array(
+            ->add('configurations', CollapsibleCollectionType::class, [
                 'label' => 'mb.core.simplesearch.admin.configurations',
                 'allow_add' => true,
                 'attr' => ['data-defaults' => json_encode(SimpleSearch::getDefaultChildConfiguration())],
@@ -36,12 +36,9 @@ class SimpleSearchAdminType extends AbstractType
                 'entry_type' => SimpleSearchAdminConfigurationType::class,
                 'error_bubbling' => false,
                 'constraints' => [
-                    new Count([
-                        'min' => 1,
-                        'minMessage' => 'mb.core.simplesearch.errors.no_configuration_added',
-                    ]),
+                    new Count(min: 1, minMessage: 'mb.core.simplesearch.errors.no_configuration_added'),
                 ]
-            ))
+            ])
         ;
     }
 }

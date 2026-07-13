@@ -14,13 +14,13 @@ class PrintClientQualityAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('dpi', NumberType::class, array(
+            ->add('dpi', NumberType::class, [
                 'required' => false,
-            ))
-            ->add('label', TextType::class, array(
+            ])
+            ->add('label', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.printclientquality.admin.label',
-            ))
+            ])
         ;
     }
 

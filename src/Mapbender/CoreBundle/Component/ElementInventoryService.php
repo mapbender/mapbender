@@ -4,11 +4,11 @@
 namespace Mapbender\CoreBundle\Component;
 
 
+use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\ElementServiceFrontendInterface;
 use Mapbender\Component\Element\ElementServiceInterface;
 use Mapbender\Component\Element\HttpHandlerProvider;
 use Mapbender\Component\Element\ImportAwareInterface;
-use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementConfigFilter;
 
@@ -27,31 +27,31 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      *
      * @var string[]
      */
-    protected $movedElementClasses = array(
+    protected $movedElementClasses = [
         'Mapbender\DataSourceBundle\Element\DataManagerElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
         'Mapbender\DataSourceBundle\Element\DataStoreElement' => 'Mapbender\DataManagerBundle\Element\DataManagerElement',
         'Mapbender\DataSourceBundle\Element\QueryBuilderElement' => 'Mapbender\QueryBuilderBundle\Element\QueryBuilderElement',
-    );
+    ];
 
     protected $inventoryDirty = true;
     /** @var string[] */
-    protected $legacyInventory = array();
+    protected $legacyInventory = [];
     /** @var string[] */
-    protected $fullInventory = array();
+    protected $fullInventory = [];
     /** @var string[] */
-    protected $activeInventory = array();
+    protected $activeInventory = [];
     /** @var string[] */
-    protected $canonicals = array();
+    protected $canonicals = [];
     /** @var string[] */
-    protected $noCreationClassNames = array();
+    protected $noCreationClassNames = [];
     /** @var string[] */
-    protected $disabledClassesFromConfig = array();
+    protected $disabledClassesFromConfig = [];
     /** @var ElementServiceInterface[] */
-    protected $serviceElements = array();
+    protected $serviceElements = [];
 
     public function __construct($disabledClasses)
     {
-        $this->disabledClassesFromConfig = $disabledClasses ?: array();
+        $this->disabledClassesFromConfig = $disabledClasses ?: [];
     }
 
     public function getHandlingClassName(Element $element): string
@@ -76,14 +76,14 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      * @param Element $element
      * @return ElementServiceInterface|null
      */
-    public function getHandlerService(Element $element)
+    public function getHandlerService(Element $element): ?ElementServiceInterface
     {
         return $this->getHandlerServiceInternal($element);
     }
 
     /**
      * @param Element $element
-     * @return \Mapbender\Component\Element\ElementHttpHandlerInterface|null
+     * @return ElementHttpHandlerInterface|null
      */
     public function getHttpHandler(Element $element)
     {
@@ -100,7 +100,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      * @param Element $element
      * @return ElementServiceFrontendInterface|null
      */
-    public function getFrontendHandler(Element $element)
+    public function getFrontendHandler(Element $element): ?ElementServiceInterface
     {
         // Assumes prepareFrontend has already updated class; see ApplicationController::elementAction
         return $this->getHandlerServiceInternal($element);
@@ -110,7 +110,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      * @param Element $element
      * @return ImportAwareInterface|null
      */
-    public function getImportProcessor(Element $element)
+    public function getImportProcessor(Element $element): (ImportAwareInterface&ElementServiceInterface)|null
     {
         $handler = $this->getHandlerServiceInternal($element);
         if ($handler && ($handler instanceof ImportAwareInterface)) {
@@ -123,7 +123,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
     /**
      * @param string[] $classNames
      */
-    public function setInventory($classNames)
+    public function setInventory($classNames): void
     {
         // map value:value to ease array_intersect_key in getActiveInventory
         $this->legacyInventory = array_combine($classNames, $classNames);
@@ -137,13 +137,13 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      * @noinspection PhpUnused
      * @see \Mapbender\FrameworkBundle\DependencyInjection\Compiler\RegisterElementServicesPass::process()
      */
-    public function registerService(ElementServiceInterface $instance, $handledClassNames, $canonical = null)
+    public function registerService(ElementServiceInterface $instance, $handledClassNames, $canonical = null): void
     {
-        $this->registerServices(array(array(
+        $this->registerServices([[
             $instance,
             $handledClassNames,
-            $canonical ?: \get_class($instance),
-        )));
+            $canonical ?: $instance::class,
+        ]]);
     }
 
     /**
@@ -156,14 +156,14 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      *   1 => handled class names (string[])
      *   2 => canonical name (string)
      */
-    public function registerServices(array $serviceInfoList)
+    public function registerServices(array $serviceInfoList): void
     {
         foreach ($serviceInfoList as $serviceInfo) {
             $instance = $serviceInfo[0];
             $handledClassNames = $serviceInfo[1];
             $canonical = $serviceInfo[2];
 
-            $serviceClass = \get_class($instance);
+            $serviceClass = $instance::class;
             $handledClassNames = array_diff($handledClassNames, $this->getDisabledClasses());
             foreach (array_unique($handledClassNames) as $handledClassName) {
                 $this->serviceElements[$handledClassName] = $instance;
@@ -188,7 +188,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      * @param string $classNameFrom the old/deprecated class name
      * @param string $classNameTo   the current class name that should handle the element
      */
-    public function replaceElement($classNameFrom, $classNameTo)
+    public function replaceElement($classNameFrom, $classNameTo): void
     {
         if (!$classNameFrom || !$classNameTo) {
             throw new \InvalidArgumentException("Empty class name");
@@ -214,7 +214,7 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      *
      * @param string $className
      */
-    public function disableElementCreation($className)
+    public function disableElementCreation($className): void
     {
         if (!$className) {
             throw new \InvalidArgumentException("Class name empty");
@@ -240,29 +240,29 @@ class ElementInventoryService extends ElementConfigFilter implements HttpHandler
      *
      * @return string[]
      */
-    public function getRawInventory()
+    public function getRawInventory(): array
     {
         $this->resolveInventory();
         return array_values($this->fullInventory);
     }
 
-    protected function getDisabledClasses()
+    protected function getDisabledClasses(): array
     {
         return array_merge($this->disabledClassesFromConfig, $this->getInternallyDisabledClasses());
     }
 
-    public function isClassDisabled($className)
+    public function isClassDisabled($className): bool
     {
         return \in_array($className, $this->getDisabledClasses());
     }
 
-    protected function getInternallyDisabledClasses()
+    protected function getInternallyDisabledClasses(): array
     {
-        return array(
+        return [
             'Mapbender\WmcBundle\Element\WmcLoader',
             'Mapbender\WmcBundle\Element\WmcList',
             'Mapbender\WmcBundle\Element\WmcEditor',
-        );
+        ];
     }
 
     protected function getHandlerServiceInternal(Element $element): ?ElementServiceInterface

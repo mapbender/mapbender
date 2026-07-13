@@ -4,6 +4,8 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Mapbender\CoreBundle\Form\Type\LayersetType;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -23,7 +25,7 @@ class LayersetController extends ApplicationControllerBase
      */
     #[ManagerRoute('/application/{slug}/layerset/new', methods: ['GET', 'POST'], name: 'mapbender_manager_layerset_new')]
     #[ManagerRoute('/application/{slug}/layerset/{layersetId}/edit', methods: ['GET', 'POST'], name: 'mapbender_manager_layerset_edit')]
-    public function edit(Request $request, $slug, $layersetId = null)
+    public function edit(Request $request, $slug, $layersetId = null): RedirectResponse|Response
     {
         if ($layersetId) {
             $layerset = $this->requireLayerset($layersetId);
@@ -35,7 +37,7 @@ class LayersetController extends ApplicationControllerBase
         }
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
 
-        $form = $this->createForm('Mapbender\CoreBundle\Form\Type\LayersetType', $layerset);
+        $form = $this->createForm(LayersetType::class, $layerset);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
@@ -49,15 +51,15 @@ class LayersetController extends ApplicationControllerBase
                     $this->addFlash('error', $error->getMessage());
                 }
             }
-            return $this->redirectToRoute('mapbender_manager_application_edit', array(
+            return $this->redirectToRoute('mapbender_manager_application_edit', [
                 'slug' => $slug,
                 '_fragment' => 'tabLayers',
-            ));
+            ]);
         }
 
-        return $this->render('@MapbenderManager/Layerset/form.html.twig', array(
+        return $this->render('@MapbenderManager/Layerset/form.html.twig', [
             'form' => $form->createView(),
-        ));
+        ]);
     }
 
     /**
@@ -74,9 +76,9 @@ class LayersetController extends ApplicationControllerBase
         $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
         if ($request->getMethod() === Request::METHOD_GET) {
             // Render confirmation dialog content
-            return $this->render('@MapbenderManager/Application/deleteLayerset.html.twig', array(
+            return $this->render('@MapbenderManager/Application/deleteLayerset.html.twig', [
                 'layerset' => $layerset,
-            ));
+            ]);
         } else {
             if (!$this->isCsrfTokenValid('layerset_delete', $request->request->get('token'))) {
                 throw new BadRequestHttpException();

@@ -7,10 +7,8 @@ use Mapbender\RoutingBundle\Component\ReverseGeocodingDriver\SqlDriver;
 
 class ReverseGeocodingHandler {
 
-    protected SqlDriver $sqlDriver;
-
-    public function __construct(SqlDriver $sqlDriver) {
-        $this->sqlDriver = $sqlDriver;
+    public function __construct(protected SqlDriver $sqlDriver)
+    {
     }
 
     public function doReverseGeocoding ($requestParams, $configuration): JsonResponse

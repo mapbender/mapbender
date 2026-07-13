@@ -12,25 +12,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PruneInvalidWmsSourcesHandler extends AbstractInitDbHandler
 {
-    /** @var EntityManagerInterface */
-    protected $entityManager;
-
     /**
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(protected EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
-    public function onInitDb(InitDbEvent $event)
+    public function onInitDb(InitDbEvent $event): void
     {
         $output = $event->getOutput();
         $this->entityManager->beginTransaction();
-        $repository = $this->entityManager->getRepository('Mapbender\WmsBundle\Entity\WmsSource');
+        $repository = $this->entityManager->getRepository(WmsSource::class);
         $wmsSources = $repository->findAll();
 
-        $removals = array();
+        $removals = [];
         $nValid = 0;
         foreach ($wmsSources as $wmsSource) {
             /** @var WmsSource $wmsSource */

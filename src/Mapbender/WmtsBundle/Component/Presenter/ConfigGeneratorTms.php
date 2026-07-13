@@ -24,27 +24,30 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
         ];
     }
 
-    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer)
+    protected function getLayerTreeOptions(SourceInstanceItem $instanceLayer): array
     {
-        return array(
+        return [
             'info' => false,
             'selected' => $instanceLayer->getSelected(),
             'toggle' => $instanceLayer->getToggle(),
-            'allow' => array(
+            'allow' => [
                 'info' => false,
                 'selected' => $instanceLayer->getAllowSelected(),
                 'toggle' => $instanceLayer->getToggle(),
                 'reorder' => false,
-            ),
-        );
+            ],
+        ];
     }
 
-    protected function getLayerConfigs($sourceInstance)
+    /**
+     * @return mixed[][]
+     */
+    protected function getLayerConfigs($sourceInstance): array
     {
         // Deduplicate by title, merging matrix sets.
         // TMS XML structure cannot model multiple matrix sets / multiple CRSes
         // on the same layer. Instead, layers are repeated with different matrix sets.
-        $titleMap = array();
+        $titleMap = [];
         foreach ($sourceInstance->getLayers() as $layer) {
             if ($layer->getActive()) {
                 $title = $layer->getSourceItem()->getTitle();
@@ -55,23 +58,23 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
                 }
             }
         }
-        $layerConfigs = array();
+        $layerConfigs = [];
         foreach ($titleMap as $layer) {
             $layerConfigs[] = $this->formatInstanceLayer($layer);
         }
         return $layerConfigs;
     }
 
-    protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer)
+    protected function getLayerLegendConfig(SourceInstanceItem $instanceLayer): array
     {
-        return array();
+        return [];
     }
 
     protected function formatTileMatrix(TileMatrix $tilematrix)
     {
-        return parent::formatTileMatrix($tilematrix) + array(
+        return parent::formatTileMatrix($tilematrix) + [
             'href' => $tilematrix->getHref(),
-        );
+        ];
     }
 
     /**
@@ -82,9 +85,9 @@ class ConfigGeneratorTms extends ConfigGeneratorCommon
     {
         $options = parent::formatInstanceLayerOptions($instanceLayer);
         foreach ($instanceLayer->getSourceItem()->getTileResources() as $ru) {
-            $options += \array_filter(array(
+            $options += \array_filter([
                 'extension' => $ru->getExtension(),
-            ));
+            ]);
         }
         return $options;
     }

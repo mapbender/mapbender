@@ -48,7 +48,7 @@ class RequestInformation implements MutableUrlTarget
      * @param string $value
      * @return $this
      */
-    public function setHttpGetRestful($value)
+    public function setHttpGetRestful($value): static
     {
         $this->httpGetRestful = $value;
         return $this;
@@ -67,7 +67,7 @@ class RequestInformation implements MutableUrlTarget
      * @param string $value
      * @return $this
      */
-    public function setHttpGetKvp($value)
+    public function setHttpGetKvp($value): static
     {
         $this->httpGetKvp = $value;
         return $this;
@@ -85,13 +85,13 @@ class RequestInformation implements MutableUrlTarget
      * @param string $value
      * @return $this
      */
-    public function setHttpPost($value)
+    public function setHttpPost($value): static
     {
         $this->httpPost = $value;
         return $this;
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
         if ($url = $this->getHttpGetKvp()) {
             $this->setHttpGetKvp($transformer->process($url));

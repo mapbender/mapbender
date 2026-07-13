@@ -14,8 +14,7 @@ class ApplicationExtension extends AbstractExtension
 {
     /** @var string */
     protected $baseDirectory;
-    /** @var string */
-    protected $baseUrlPath;
+    protected string $baseUrlPath;
 
     /**
      * @param UploadsManager $uploadsManager
@@ -27,16 +26,16 @@ class ApplicationExtension extends AbstractExtension
         $this->baseUrlPath = $pathPackage->getUrl($uploadsManager->getWebRelativeBasePath(false));
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'mapbender_application';
     }
 
     public function getFunctions(): array
     {
-        return array(
-            'application_screenshot_path' => new TwigFunction('application_screenshot_path', array($this, 'application_screenshot_path')),
-        );
+        return [
+            'application_screenshot_path' => new TwigFunction('application_screenshot_path', $this->application_screenshot_path(...)),
+        ];
     }
 
     /** @noinspection PhpUnused */
@@ -44,7 +43,7 @@ class ApplicationExtension extends AbstractExtension
      * @param Application $application
      * @return string|null
      */
-    public function application_screenshot_path(Application $application)
+    public function application_screenshot_path(Application $application): ?string
     {
         if ($application->getSlug() && $application->getScreenshot() && $this->baseDirectory) {
             $filePath = "{$this->baseDirectory}/{$application->getSlug()}/{$application->getScreenshot()}";

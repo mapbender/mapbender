@@ -7,7 +7,7 @@ namespace Mapbender\Component\Element;
 class TemplateView extends ElementView
 {
     /** @var mixed[] */
-    public $variables = array();
+    public $variables = [];
     /** @var string */
     protected $template;
 
@@ -19,7 +19,7 @@ class TemplateView extends ElementView
     /**
      * @param string $template
      */
-    public function setTemplate($template)
+    public function setTemplate($template): void
     {
         if (!$template) {
             throw new \InvalidArgumentException("Template cannot be empty");

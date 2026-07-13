@@ -12,9 +12,9 @@ class BundleUtil
      * @return string
      * @throws \RuntimeException if matching fails
      */
-    public static function extractBundleNamespace($className)
+    public static function extractBundleNamespace($className): string
     {
-        $parts = array();
+        $parts = [];
         $matched = false;
         foreach (explode('\\', $className) as $part) {
             $parts[] = $part;
@@ -37,7 +37,7 @@ class BundleUtil
      * @return string
      * @throws \RuntimeException if matching fails
      */
-    public static function extractBundleNameFromClassName($className)
+    public static function extractBundleNameFromClassName($className): string
     {
         $namespaceParts = explode('\\', static::extractBundleNamespace($className));
         // convention alert: fuse last two parts
@@ -50,9 +50,9 @@ class BundleUtil
      * @param string $templatePath twig-style (":" separators")
      * @return string
      */
-    public static function extractBundleNameFromTemplatePath($templatePath)
+    public static function extractBundleNameFromTemplatePath($templatePath): string
     {
-        if (strpos($templatePath, '/') === 0) {
+        if (str_starts_with($templatePath, '/')) {
             throw new \UnexpectedValueException("Path " . var_export($templatePath) . " is absolute");
         }
         return implode('', array_slice(explode(':', $templatePath), 0, 1));
@@ -77,8 +77,8 @@ class BundleUtil
      * @return bool|string
      * @throws \RuntimeException if bundle matching fails
      */
-    public static function getNameInsideBundleNamespace($className)
+    public static function getNameInsideBundleNamespace($className): string
     {
-        return substr($className, strlen(static::extractBundleNamespace($className)) + 1);
+        return substr((string) $className, strlen(static::extractBundleNamespace($className)) + 1);
     }
 }

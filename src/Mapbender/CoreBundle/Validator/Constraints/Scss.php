@@ -13,6 +13,6 @@ class Scss extends Constraint
 {
     public function validatedBy(): string
     {
-        return 'Mapbender\CoreBundle\Validator\Constraints\ScssValidator';
+        return ScssValidator::class;
     }
 }

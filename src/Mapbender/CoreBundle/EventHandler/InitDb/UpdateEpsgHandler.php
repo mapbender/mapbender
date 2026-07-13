@@ -19,7 +19,7 @@ class UpdateEpsgHandler extends AbstractInitDbHandler
     {
     }
 
-    public function onInitDb(InitDbEvent $event)
+    public function onInitDb(InitDbEvent $event): void
     {
         $output = $event->getOutput();
 
@@ -27,7 +27,7 @@ class UpdateEpsgHandler extends AbstractInitDbHandler
 
         $output->writeln("Importing EPSG definitions from " . realpath($filepath));
         $file     = @fopen($filepath, "r");
-        $repo = $this->entityManager->getRepository($class = get_class(new SRS()));
+        $repo = $this->entityManager->getRepository($class = (new SRS())::class);
         $imported = 0;
         $updated  = 0;
         while (!feof($file)) {
@@ -39,7 +39,7 @@ class UpdateEpsgHandler extends AbstractInitDbHandler
             if ($temp[0] === null || strlen($temp[0]) === 0) {
                 continue;
             }
-            $srs = $repo->findOneBy(array('name' => $temp[0]));
+            $srs = $repo->findOneBy(['name' => $temp[0]]);
             if ($srs) {
                 $srs->setTitle($temp[1]);
                 $srs->setDefinition($temp[2]);

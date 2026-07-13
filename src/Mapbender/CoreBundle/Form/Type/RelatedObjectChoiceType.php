@@ -3,6 +3,7 @@
 
 namespace Mapbender\CoreBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -27,7 +28,7 @@ abstract class RelatedObjectChoiceType extends AbstractType
 {
     public function getParent(): string
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\ChoiceType';
+        return ChoiceType::class;
     }
 
     /**
@@ -36,16 +37,14 @@ abstract class RelatedObjectChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $type = $this;
-        $resolver->setRequired(array(
+        $resolver->setRequired([
             'choice_label',
             'parent_object',
-        ));
+        ]);
 
-        $resolver->setDefaults(array(
-            'choices' => function (Options $options) use ($type) {
-                return $type->getFilteredCollection($options['parent_object'], $options['choice_filter']);
-            },
-            'choice_value' => function(Options $options) use ($type) {
+        $resolver->setDefaults([
+            'choices' => fn(Options $options) => $type->getFilteredCollection($options['parent_object'], $options['choice_filter']),
+            'choice_value' => function(Options $options) use ($type): \Closure {
                 $parentObject = $options['parent_object'];
                 return function($choice) use ($parentObject, $type) {
                     if ($choice) {
@@ -60,10 +59,10 @@ abstract class RelatedObjectChoiceType extends AbstractType
             },
             'choice_filter' => null,
             'placeholder' => null,
-        ));
+        ]);
 
-        $resolver->setAllowedTypes('choice_filter', array('null', 'callable'));
-        $resolver->setAllowedTypes('parent_object', array('object'));
+        $resolver->setAllowedTypes('choice_filter', ['null', 'callable']);
+        $resolver->setAllowedTypes('parent_object', ['object']);
     }
 
     abstract protected function getRelatedObjectCollection($parentObject);

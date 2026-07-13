@@ -37,7 +37,7 @@ class SQLSearchEngine
     {
         $connection = $this->getConnection($config);
         $qb = $connection->createQueryBuilder();
-        $fieldConfig = $this->getFormFieldConfig($config, $key);
+        $fieldConfig = static::getFormFieldConfig($config, $key);
 
         $qb->select("DISTINCT t.{$connection->quoteIdentifier($key)}");
 
@@ -54,7 +54,7 @@ class SQLSearchEngine
         if (!empty($fieldConfig['options']['attr']['data-autocomplete-using'])) {
             $otherProps = explode(',', $fieldConfig['options']['attr']['data-autocomplete-using']);
             foreach ($otherProps as $otherProp) {
-                if (strlen($properties[$otherProp] ?? null)) {
+                if (strlen((string) ($properties[$otherProp] ?? null))) {
                     $qb->andWhere($this->getMatchExpression($connection, $otherProp, $properties[$otherProp], 'ilike-right', $qb));
                 } else {
                     $this->logger->warning('Key "' . $otherProp . '" for autocomplete-using does not exist in data.');
@@ -66,16 +66,16 @@ class SQLSearchEngine
         $qb->setMaxResults($this->getAutocompleteLimit());
 
         $stmt = $qb->executeQuery()->fetchAllAssociative();
-        $dataOut = array();
+        $dataOut = [];
         foreach ($stmt as $row) {
             if (!array_key_exists($key, $row)) {
                 $value = $row[trim($key, '"')];
             } else {
                 $value = $row[$key];
             }
-            $dataOut[] = array(
+            $dataOut[] = [
                 'value' => $value,
-            );
+            ];
         }
         return $dataOut;
     }
@@ -95,9 +95,9 @@ class SQLSearchEngine
         $options = $config['class_options'];
         $connection = $this->getConnection($config);
         $qb = $connection->createQueryBuilder();
-        $selectExpressions = array();
+        $selectExpressions = [];
         foreach ($options['attributes'] as $columName) {
-            $selectExpressions[] = 't.' . $connection->quoteIdentifier(trim($columName, '"'));
+            $selectExpressions[] = 't.' . $connection->quoteIdentifier(trim((string) $columName, '"'));
         }
         // add geometry
         $geomColumn = 't.' . $connection->quoteIdentifier(trim($options['geometry_attribute'], '"'));
@@ -114,11 +114,11 @@ class SQLSearchEngine
             if (!$value && !is_numeric($value)) {
                 continue;
             }
-            $fieldConfig = $this->getFormFieldConfig($config, $key);
+            $fieldConfig = static::getFormFieldConfig($config, $key);
             $matchMode = ArrayUtil::getDefault($fieldConfig, 'compare', 'ilike');
             $multiSearch = ArrayUtil::getDefault($fieldConfig, 'multi_value', false);
             if ($multiSearch) {
-                $separatorPattern = $this->getSeparatorPattern($fieldConfig);
+                $separatorPattern = static::getSeparatorPattern($fieldConfig);
                 $qb->andWhere($this->getMultiMatchExpression($connection, $key, $value, $matchMode, $qb, $separatorPattern));
             } else {
                 $qb->andWhere($this->getMatchExpression($connection, $key, $value, $matchMode, $qb));
@@ -129,12 +129,12 @@ class SQLSearchEngine
         }
 
         $stmt = $qb->executeQuery()->fetchAllAssociative();
-        return $this->rowsToGeoJson($stmt);
+        return static::rowsToGeoJson($stmt);
     }
 
     protected static function rowsToGeoJson(iterable $rows): array
     {
-        $features = array();
+        $features = [];
         foreach ($rows as $row) {
             if (!$row['geom']) {
                 continue;
@@ -144,16 +144,16 @@ class SQLSearchEngine
                 continue;
             }
             unset($row['geom']);
-            $features[] = array(
+            $features[] = [
                 'type' => 'Feature',
                 'properties' => $row,
                 'geometry' => $geometry,
-            );
+            ];
         }
         return $features;
     }
 
-    protected function getConnection($config): Connection
+    protected function getConnection(array $config): Connection
     {
         $connectionName = $config['class_options']['connection'] ?: 'default';
         /** @noinspection PhpIncompatibleReturnTypeInspection */
@@ -211,7 +211,7 @@ class SQLSearchEngine
         $values = array_map('trim', preg_split($separatorPattern, $value));
 
         // Remove empty entries (e.g. from trailing separators)
-        $values = array_values(array_filter($values, fn($v) => $v !== ''));
+        $values = array_values(array_filter($values, fn(string $v): bool => $v !== ''));
 
         // Only one value → default matching
         if (count($values) <= 1) {
@@ -225,7 +225,7 @@ class SQLSearchEngine
         }
 
         // like/ilike modes → combine conditions with OR
-        $orConditions = array();
+        $orConditions = [];
         foreach ($values as $singleValue) {
             $orConditions[] = $this->getMatchExpression($connection, $key, $singleValue, $mode, $qb);
         }
@@ -248,7 +248,7 @@ class SQLSearchEngine
             $referenceExpression = "LOWER({$referenceExpression})";
         }
 
-        $placeholders = array();
+        $placeholders = [];
         foreach ($values as $v) {
             $placeholder = $qb->createNamedParameter($v);
             $placeholders[] = $caseInsensitive ? "LOWER({$placeholder})" : $placeholder;
@@ -260,7 +260,7 @@ class SQLSearchEngine
     public static function getSeparatorPattern(array $fieldConfig): string
     {
         $separators = ArrayUtil::getDefault($fieldConfig, 'multi_value_separators', [',']);
-        $quoted = array_map(fn($s) => preg_quote($s, '/'), $separators);
+        $quoted = array_map(fn($s): string => preg_quote((string) $s, '/'), $separators);
         return '/' . implode('|', $quoted) . '/';
     }
 
@@ -280,10 +280,10 @@ class SQLSearchEngine
                 default => '',
             };
 
-            $value = strtr($value, array(
+            $value = strtr($value, [
                 '%' => '\%',
                 '_' => '\_',
-            ));
+            ]);
             return "$patternPrefix$value$patternSuffix";
         }
         return $value;
@@ -300,10 +300,10 @@ class SQLSearchEngine
         // by passing noTransform:true to class_options
         $noTransform = isset($config['class_options']['noTransform']) && $config['class_options']['noTransform'];
 
-        $boxPoints = array(
+        $boxPoints = [
             'ST_Point(' . $qb->createNamedParameter($extent[0]) . ', ' . $qb->createNamedParameter($extent[1]) . ')',
             'ST_Point(' . $qb->createNamedParameter($extent[2]) . ', ' . $qb->createNamedParameter($extent[3]) . ')',
-        );
+        ];
         $srsId = $this->srsIdFromName($srsName);
         $box = 'ST_SetSRID(ST_MakeBox2D(' . implode(', ', $boxPoints) . '), ' . $qb->createNamedParameter($srsId) . ')';
         $transformedBox = $noTransform ? "ST_Transform({$box}, ST_Srid({$geomReference}))" : "ST_Transform($box, 4326)";
@@ -317,7 +317,7 @@ class SQLSearchEngine
      */
     protected function srsIdFromName($srsName): int
     {
-        $parts = explode(':', $srsName);
+        $parts = explode(':', (string) $srsName);
         if (count($parts) === 1 && (strval(intval($parts[0])) === strval($parts[0])) && $parts[0]) {
             return intval($parts[0]);
         }

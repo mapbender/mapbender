@@ -28,7 +28,7 @@ class DimensionInst extends Dimension
         return $this->active;
     }
 
-    public function setActive($active)
+    public function setActive($active): static
     {
         $this->active = $active;
         return $this;
@@ -39,15 +39,15 @@ class DimensionInst extends Dimension
         return $this->type;
     }
 
-    public function setType($type)
+    public function setType($type): static
     {
         $this->type = $type;
         return $this;
     }
 
-    public static function findType($extent)
+    public static function findType($extent): ?string
     {
-        $array = explode(",", $extent);
+        $array = explode(",", (string) $extent);
         if (count($array) === 0) {
             return null;
         } elseif (count($array) === 1) {
@@ -70,7 +70,7 @@ class DimensionInst extends Dimension
     public static function getData($extent)
     {
         $array = is_string($extent) ? explode(",", $extent) : $extent;
-        $res = array();
+        $res = [];
 
         if (!$extent) {
             return $res;
@@ -93,7 +93,7 @@ class DimensionInst extends Dimension
                 }
             } else {
                 for ($i = 0; $i < count($array); $i++) {
-                    $res[$i] = array();
+                    $res[$i] = [];
                     foreach (explode("/", $array[$i]) as $value) {
                         $res[$i][] = self::getValidValue($value);
                     }
@@ -114,9 +114,9 @@ class DimensionInst extends Dimension
         }
     }
 
-    public function getConfiguration()
+    public function getConfiguration(): array
     {
-        return array(
+        return [
             'current' => $this->getCurrent(),
             'default' => $this->getDefault(),
             'multipleValues' => $this->getMultipleValues(),
@@ -125,12 +125,12 @@ class DimensionInst extends Dimension
             'nearestValue' => $this->getNearestValue(),
             'unitSymbol' => $this->getUnitSymbol(),
             'units' => $this->getUnits(),
-            'extent' => $this->getData($this->getExtent()),
+            'extent' => static::getData($this->getExtent()),
             'type' => $this->getType(),
-        );
+        ];
     }
 
-    public static function fromConfiguration(array $config)
+    public static function fromConfiguration(array $config): static
     {
         $inst = new static();
         $inst->current = $config['current'];
@@ -153,7 +153,7 @@ class DimensionInst extends Dimension
      * @param Dimension $dim
      * @return static
      */
-    public static function fromDimension(Dimension $dim)
+    public static function fromDimension(Dimension $dim): static
     {
         $diminst = new static();
         $diminst->setCurrent($dim->getCurrent());

@@ -8,16 +8,10 @@ use Symfony\Component\Form\DataTransformerInterface;
 class ElementIdTransformer implements DataTransformerInterface
 {
     /**
-     * @var ObjectRepository
-     */
-    private $repository;
-
-    /**
      * @param ObjectRepository $repository
      */
-    public function __construct(ObjectRepository $repository)
+    public function __construct(private readonly ObjectRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     /**
@@ -29,9 +23,9 @@ class ElementIdTransformer implements DataTransformerInterface
             return null;
         }
         /** @var Element|null $element */
-        $element = $this->repository->findOneBy(array(
+        $element = $this->repository->findOneBy([
             'id' => $value,
-        ));
+        ]);
         return $element;
     }
 

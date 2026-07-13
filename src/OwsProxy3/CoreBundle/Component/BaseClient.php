@@ -12,17 +12,15 @@ class BaseClient
     /** @var string */
     const DEFAULT_USER_AGENT = 'OWSProxy3';
 
-    /** @var array */
-    protected $proxyParams;
+    protected array $proxyParams;
     /** @var string */
     protected $userAgent;
-    /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(array $proxyParams, $userAgent = null, ?LoggerInterface $logger = null)
     {
         if (empty($proxyParams['host'])) {
-            $proxyParams = array();
+            $proxyParams = [];
         }
         $this->proxyParams = $proxyParams;
         $this->userAgent = $userAgent ?: self::DEFAULT_USER_AGENT;

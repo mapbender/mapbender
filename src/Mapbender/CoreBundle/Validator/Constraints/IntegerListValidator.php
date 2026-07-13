@@ -2,8 +2,6 @@
 
 namespace Mapbender\CoreBundle\Validator\Constraints;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\CoreBundle\Entity\SRS;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 

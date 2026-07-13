@@ -51,7 +51,7 @@ class Style
      * @param boolean $isDefault
      * @return $this
      */
-    public function setIsDefault($isDefault)
+    public function setIsDefault($isDefault): static
     {
         $this->isDefault = $isDefault;
         return $this;
@@ -69,7 +69,7 @@ class Style
      * @param string $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
         return $this;
@@ -87,7 +87,7 @@ class Style
      * @param string $abstract
      * @return $this
      */
-    public function setAbstract($abstract)
+    public function setAbstract($abstract): static
     {
         $this->abstract = $abstract;
         return $this;
@@ -105,7 +105,7 @@ class Style
      * @param string $identifier
      * @return $this
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier): static
     {
         $this->identifier = $identifier;
         return $this;
@@ -120,7 +120,7 @@ class Style
         return $this->legendurl;
     }
 
-    public function setLegendurl(LegendUrl $legendurl)
+    public function setLegendurl(LegendUrl $legendurl): static
     {
         $this->legendurl = $legendurl;
         return $this;

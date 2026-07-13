@@ -13,21 +13,17 @@ use Twig\TwigFunction;
 class ElementExtension extends AbstractExtension
 {
 
-    /** @var ElementFilter */
-    protected $elementFilter;
-
     /**
      * @param ElementFilter $elementFilter
      */
-    public function __construct(ElementFilter $elementFilter)
+    public function __construct(protected ElementFilter $elementFilter)
     {
-        $this->elementFilter = $elementFilter;
     }
 
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return 'mapbender_element';
     }
@@ -37,12 +33,12 @@ class ElementExtension extends AbstractExtension
      */
     public function getFunctions(): array
     {
-        return array(
-            'element_class_title' => new TwigFunction('element_class_title', array($this, 'element_class_title')),
-            'element_default_title' => new TwigFunction('element_default_title', array($this, 'element_default_title')),
-            'element_title' => new TwigFunction('element_title', array($this, 'element_title')),
-            'is_typeof_element_disabled' => new TwigFunction('is_typeof_element_disabled', array($this, 'is_typeof_element_disabled')),
-        );
+        return [
+            'element_class_title' => new TwigFunction('element_class_title', $this->element_class_title(...)),
+            'element_default_title' => new TwigFunction('element_default_title', $this->element_default_title(...)),
+            'element_title' => new TwigFunction('element_title', $this->element_title(...)),
+            'is_typeof_element_disabled' => new TwigFunction('is_typeof_element_disabled', $this->is_typeof_element_disabled(...)),
+        ];
     }
 
     /**
@@ -50,7 +46,7 @@ class ElementExtension extends AbstractExtension
      * @param Element $element
      * @return string|null
      */
-    public function element_class_title($element)
+    public function element_class_title(Element $element)
     {
         return $this->elementFilter->getClassTitle($element);
     }
@@ -72,7 +68,7 @@ class ElementExtension extends AbstractExtension
      * @param Element $element
      * @return string|null
      */
-    public function element_default_title($element)
+    public function element_default_title(Element $element)
     {
         return $this->elementFilter->getDefaultTitle($element);
     }

@@ -14,16 +14,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ElementEntityFactory
 {
-    /** @var ElementFilter */
-    protected $elementFilter;
-    /** @var TranslatorInterface */
-    protected $translator;
-
-    public function __construct(ElementFilter $elementFilter,
-                                TranslatorInterface $translator)
+    public function __construct(protected ElementFilter $elementFilter, protected TranslatorInterface $translator)
     {
-        $this->elementFilter = $elementFilter;
-        $this->translator = $translator;
     }
 
     /**
@@ -32,7 +24,7 @@ class ElementEntityFactory
      * @param Application|null $application
      * @return Element
      */
-    public function newEntity($className, $region, ?Application $application = null)
+    public function newEntity($className, $region, ?Application $application = null): Element
     {
         $canonicalClass = $this->elementFilter->getInventory()->getCanonicalClassName($className);
         $entity = new Element();

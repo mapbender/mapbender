@@ -29,7 +29,7 @@ class SspiAuthenticationProvider implements AuthenticationManagerInterface
         throw new AuthenticationException('No such user.');
     }
 
-    public function supports(TokenInterface $token)
+    public function supports(TokenInterface $token): bool
     {
         return $token instanceof SspiUserToken;
     }

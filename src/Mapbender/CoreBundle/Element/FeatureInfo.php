@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\FeatureInfoAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ColorUtils;
@@ -22,7 +23,7 @@ class FeatureInfo extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.featureinfo.class.title";
     }
@@ -30,7 +31,7 @@ class FeatureInfo extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.featureinfo.class.description";
     }
@@ -38,7 +39,7 @@ class FeatureInfo extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public function getClientConfiguration(Element $element)
+    public function getClientConfiguration(Element $element): float|int|array
     {
         $config = $element->getConfiguration();
         $defaults = self::getDefaultConfiguration();
@@ -58,9 +59,9 @@ class FeatureInfo extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             "autoActivate" => false,
             "deactivateOnClose" => true,
             "printResult" => false,
@@ -83,13 +84,13 @@ class FeatureInfo extends AbstractElementService
             'fontSizeDefault' => 12,
             'fontSizeHover' => 12,
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbFeatureInfo';
     }
@@ -97,39 +98,39 @@ class FeatureInfo extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\FeatureInfoAdminType';
+        return FeatureInfoAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbFeatureInfo.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/featureinfo.scss',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.core.featureinfo.error.*',
-            ),
-        );
+            ],
+        ];
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/featureinfo.html.twig');
         $view->attributes['class'] = 'mb-element-featureinfo';
         $view->attributes['data-title'] = $element->getTitle();
-        $config = $element->getConfiguration() ?: array();
+        $config = $element->getConfiguration() ?: [];
         $view->variables['displayType'] = ArrayUtil::getDefault($config, 'displayType', 'tabs');
-        $view->variables['iframe_scripts'] = array(
+        $view->variables['iframe_scripts'] = [
             file_get_contents(__DIR__ . '/../Resources/public/elements/featureinfo-mb-action.js'),
-        );
+        ];
         if (!empty($config['highlighting'])) {
             $view->variables['iframe_scripts'][] = file_get_contents(__DIR__ . '/../Resources/public/elements/featureinfo-highlighting.js');
         }
@@ -139,19 +140,19 @@ class FeatureInfo extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderCore/ElementAdmin/featureinfo.html.twig';
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         $config = $entity->getConfiguration();
         if (!empty($config['featureColorDefault'])) {
-            $config += array('fillColorDefault' => $config['featureColorDefault']);
+            $config += ['fillColorDefault' => $config['featureColorDefault']];
         }
         if (!empty($config['featureColorHover'])) {
-            $config += array('fillColorHover' => $config['featureColorHover']);
+            $config += ['fillColorHover' => $config['featureColorHover']];
         }
         unset($config['featureColorDefault']);
         unset($config['featureColorHover']);
@@ -166,7 +167,7 @@ class FeatureInfo extends AbstractElementService
         $entity->setConfiguration($config);
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconInfoActive';
     }

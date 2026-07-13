@@ -6,14 +6,10 @@ namespace Mapbender\Component\Transformer;
 
 class ChangeTrackingEntry
 {
-    protected $before;
-    protected $after;
-    protected $occurrences;
+    protected int $occurrences;
 
-    public function __construct($before, $after)
+    public function __construct(protected $before, protected $after)
     {
-        $this->before = $before;
-        $this->after = $after;
         $this->occurrences = 1;
     }
 
@@ -41,7 +37,7 @@ class ChangeTrackingEntry
         return $this->after;
     }
 
-    public function incrementOccurrences()
+    public function incrementOccurrences(): void
     {
         ++$this->occurrences;
     }

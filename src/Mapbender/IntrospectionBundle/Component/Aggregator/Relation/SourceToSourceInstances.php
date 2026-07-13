@@ -28,7 +28,7 @@ class SourceToSourceInstances
         $this->setSource($source);
     }
 
-    public function setSource(Source $source)
+    public function setSource(Source $source): void
     {
         $this->source = $source;
         $this->setSourceInstances(null);
@@ -45,7 +45,7 @@ class SourceToSourceInstances
     /**
      * @return SourceInstance[]
      */
-    public function getSourceInstances()
+    public function getSourceInstances(): array
     {
         $this->ensureSort();
         $enabled = array_values($this->instances['enabled']);
@@ -56,19 +56,19 @@ class SourceToSourceInstances
     /**
      * @param SourceInstance[]|null $instances
      */
-    public function setSourceInstances(?array $instances = null)
+    public function setSourceInstances(?array $instances = null): void
     {
-        $instances = $instances ?: array();
-        $this->instances = array(
-            'enabled' => array(),
-            'disabled' => array(),
-        );
+        $instances = $instances ?: [];
+        $this->instances = [
+            'enabled' => [],
+            'disabled' => [],
+        ];
         foreach ($instances as $instance) {
             $this->addSourceInstance($instance);
         }
     }
 
-    public function addSourceInstance(SourceInstance $instance)
+    public function addSourceInstance(SourceInstance $instance): void
     {
         if ($instance->getEnabled()) {
             $groupKey = 'enabled';

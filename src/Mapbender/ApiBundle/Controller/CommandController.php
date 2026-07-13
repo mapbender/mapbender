@@ -2,6 +2,7 @@
 
 namespace Mapbender\ApiBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
 use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
@@ -21,7 +22,8 @@ class CommandController extends AbstractController
 {
     public function __construct(
         protected ApplicationResolver $applicationResolver,
-        #[Autowire('%kernel.debug%')] private bool $debug = false,
+        #[Autowire('%kernel.debug%')] private readonly bool $debug = false,
+        private readonly ?KernelInterface $kernel = null,
     ) {
     }
 
@@ -54,7 +56,7 @@ class CommandController extends AbstractController
             )
         ]
     )]
-    public function prepareWmsShowCommand(Request $request, KernelInterface $kernel): JsonResponse
+    public function prepareWmsShowCommand(Request $request): JsonResponse
     {
         $missingPermissions = [];
         if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
@@ -84,7 +86,7 @@ class CommandController extends AbstractController
             $inputArgs['id'] = $id;
         }
 
-        return $this->executeCommand($inputArgs, $kernel);
+        return $this->executeCommand($inputArgs, $this->kernel);
     }
 
     #[Route('/api/wms/reload', name: 'api_wms_reload', methods: ['GET'])]
@@ -131,7 +133,7 @@ class CommandController extends AbstractController
             )
         ]
     )]
-    public function prepareWmsReloadCommand(Request $request, KernelInterface $kernel): JsonResponse
+    public function prepareWmsReloadCommand(Request $request): JsonResponse
     {
         $missingPermissions = [];
         if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
@@ -157,7 +159,7 @@ class CommandController extends AbstractController
             return new JsonResponse([
                 'success' => false,
                 'error' => 'Both "id" and "serviceUrl" are required',
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $inputArgs = [
@@ -175,7 +177,7 @@ class CommandController extends AbstractController
             $inputArgs['--deselect-new-layers'] = true;
         }
 
-        return $this->executeCommand($inputArgs, $kernel);
+        return $this->executeCommand($inputArgs, $this->kernel);
     }
 
     #[Route('/api/wms/add', name: 'api_wms_add', methods: ['GET'])]
@@ -215,7 +217,7 @@ class CommandController extends AbstractController
             )
         ]
     )]
-    public function prepareWmsAddCommand(Request $request, KernelInterface $kernel): JsonResponse
+    public function prepareWmsAddCommand(Request $request): JsonResponse
     {
         $missingPermissions = [];
         if (!$this->isGranted(ResourceDomainInstallation::ACTION_ACCESS_API)) {
@@ -240,7 +242,7 @@ class CommandController extends AbstractController
             return new JsonResponse([
                 'success' => false,
                 'error' => 'Parameter "serviceUrl" is required',
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $inputArgs = [
@@ -256,7 +258,7 @@ class CommandController extends AbstractController
             $inputArgs['--deselect-new-layers'] = true;
         }
 
-        return $this->executeCommand($inputArgs, $kernel);
+        return $this->executeCommand($inputArgs, $this->kernel);
     }
 
     #[Route('/api/wms/assign', name: 'api_wms_assign', methods: ['GET'])]
@@ -330,7 +332,7 @@ class CommandController extends AbstractController
             )
         ]
     )]
-    public function prepareWmsAssignCommand(Request $request, KernelInterface $kernel): JsonResponse
+    public function prepareWmsAssignCommand(Request $request): JsonResponse
     {
         $application = $request->get('application');
         $source = $request->get('source');
@@ -340,7 +342,7 @@ class CommandController extends AbstractController
             return new JsonResponse([
                 'success' => false,
                 'error' => 'Both "application" and "source" are required',
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $missingPermissions = [];
@@ -373,7 +375,7 @@ class CommandController extends AbstractController
             '-v' => true, // Ignore PHP deprecated messages to reduce the output
         ];
 
-        return $this->executeCommand($inputArgs, $kernel);
+        return $this->executeCommand($inputArgs, $this->kernel);
     }
 
     #[Route('/api/application/clone', name: 'api_application_clone', methods: ['GET'])]
@@ -398,7 +400,7 @@ class CommandController extends AbstractController
             )
         ]
     )]
-    public function prepareApplicationCloneCommand(Request $request, KernelInterface $kernel): JsonResponse
+    public function prepareApplicationCloneCommand(Request $request): JsonResponse
     {
         $slug = $request->get('slug');
 
@@ -406,7 +408,7 @@ class CommandController extends AbstractController
             return new JsonResponse([
                 'success' => false,
                 'error' => 'Parameter "slug" is required',
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $missingPermissions = [];
@@ -435,10 +437,10 @@ class CommandController extends AbstractController
             '-v' => true, // Ignore PHP deprecated messages to reduce the output
         ];
 
-        return $this->executeCommand($inputArgs, $kernel);
+        return $this->executeCommand($inputArgs, $this->kernel);
     }
 
-    function executeCommand($inputArgs, $kernel)
+    function executeCommand(array $inputArgs, $kernel)
     {
         $application = new Application($kernel);
         // Deactivate AutoExit so that it does not terminate PHP execution
@@ -471,7 +473,7 @@ class CommandController extends AbstractController
             return new JsonResponse([
                 'success' => false,
                 'error' => $this->debug ? $e->getMessage() : 'Internal server error',
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

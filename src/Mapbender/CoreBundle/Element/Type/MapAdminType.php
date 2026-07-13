@@ -9,7 +9,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,11 +21,8 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
 {
     use MapbenderTypeTrait;
 
-    private TranslatorInterface $trans;
-
-    public function __construct(TranslatorInterface $trans)
+    public function __construct(private TranslatorInterface $trans)
     {
-        $this->trans = $trans;
     }
 
 
@@ -35,9 +31,9 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'application' => null,
-        ));
+        ]);
     }
 
     /**
@@ -47,31 +43,31 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
     {
         $builder->addModelTransformer($this);
         $builder
-            ->add('layersets', LayersetAdminType::class, array(
+            ->add('layersets', LayersetAdminType::class, [
                 'application' => $options['application'],
                 'required' => true,
                 'label' => 'mb.core.map.admin.layersets',
                 'multiple' => true,
                 'expanded' => true,
-                'attr' => array(
+                'attr' => [
                     'class' => 'input inputWrapper choiceExpandedSortable',
-                ),
-            ))
-            ->add('tileSize', IntegerType::class, array(
+                ],
+            ])
+            ->add('tileSize', IntegerType::class, [
                 'required' => false,
                 'label' => 'mb.core.map.admin.tilesize',
                 'constraints' => [
                     new Type("integer"),
                     new Positive(),
                 ],
-            ))
-            ->add('srs', TextType::class, array(
+            ])
+            ->add('srs', TextType::class, [
                 'label' => 'mb.core.map.admin.srs',
                 'constraints' => [
                     new NotBlank(),
                     new ValidSrs(),
                 ],
-            ))
+            ])
             ->add('base_dpi', IntegerType::class, $this->createInlineHelpText([
                 'label' => 'mb.manager.admin.map.base_dpi',
                 'help' => 'mb.manager.admin.map.base_dpi.help',
@@ -88,25 +84,25 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                 'label' => 'mb.manager.admin.map.start_extent',
                 'help' => 'mb.manager.admin.map.start_extent.help',
             ], $this->trans))
-            ->add('fixedZoomSteps', CheckboxType::class, array(
+            ->add('fixedZoomSteps', CheckboxType::class, [
                 'label' => 'mb.core.map.admin.fixedZoomSteps',
                 'required' => false,
-            ))
-            ->add('scales', TextType::class, array(
+            ])
+            ->add('scales', TextType::class, [
                 'label' => 'mb.core.map.admin.scales',
                 'required' => true,
                 'constraints' => [
                     new NotBlank(),
                     new IntegerList(),
                 ]
-            ))
-            ->add('otherSrs', TextType::class, array(
+            ])
+            ->add('otherSrs', TextType::class, [
                 'label' => 'mb.core.map.admin.othersrs',
                 'required' => false,
                 'constraints' => [
                     new ValidSrs(multiple: true),
                 ]
-            ))
+            ])
         ;
     }
 

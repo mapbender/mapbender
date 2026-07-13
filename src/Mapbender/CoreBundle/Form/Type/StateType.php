@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -10,12 +12,12 @@ class StateType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
-            'label_attr' => array(
+        $resolver->setDefaults([
+            'label_attr' => [
                 'class' => 'hidden',
-            ),
+            ],
             'compound' => true,
-        ));
+        ]);
     }
 
     /**
@@ -24,12 +26,12 @@ class StateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('id', 'Symfony\Component\Form\Extension\Core\Type\HiddenType', array(
+            ->add('id', HiddenType::class, [
                 'required' => false,
-            ))
-            ->add('slug', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
-            ->add('json', 'Symfony\Component\Form\Extension\Core\Type\HiddenType')
-            ->add('title', 'Symfony\Component\Form\Extension\Core\Type\TextType')
+            ])
+            ->add('slug', HiddenType::class)
+            ->add('json', HiddenType::class)
+            ->add('title', TextType::class)
         ;
     }
 }

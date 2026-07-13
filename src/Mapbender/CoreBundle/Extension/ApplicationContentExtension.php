@@ -14,26 +14,18 @@ use Twig\TwigFunction;
 class ApplicationContentExtension extends AbstractExtension
 {
 
-    /** @var ApplicationMarkupRenderer */
-    protected $renderer;
-    /** @var bool */
-    protected $debug;
-
     /**
      * @param ApplicationMarkupRenderer $renderer
      * @param bool $debug
      */
-    public function __construct(ApplicationMarkupRenderer $renderer,
-                                $debug)
+    public function __construct(protected ApplicationMarkupRenderer $renderer, protected $debug)
     {
-        $this->renderer = $renderer;
-        $this->debug = $debug;
     }
 
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return 'mapbender_application_content';
     }
@@ -43,15 +35,15 @@ class ApplicationContentExtension extends AbstractExtension
      */
     public function getFunctions(): array
     {
-        return array(
-            'region_markup' => new TwigFunction('region_markup', array($this, 'region_markup')),
-            'region_content' => new TwigFunction('region_content', array($this, 'region_content')),
-            'anchored_content_elements' => new TwigFunction('anchored_content_elements', array($this, 'anchored_content_elements')),
-            'unanchored_content_elements' => new TwigFunction('unanchored_content_elements', array($this, 'unanchored_content_elements')),
-            'map_markup' => new TwigFunction('map_markup', array($this, 'map_markup')),
-            'toolbar_menu_content' => new TwigFunction('toolbar_menu_content', array($this, 'toolbar_menu_content')),
-            'toolbar_inline_content' => new TwigFunction('toolbar_inline_content', array($this, 'toolbar_inline_content')),
-        );
+        return [
+            'region_markup' => new TwigFunction('region_markup', $this->region_markup(...)),
+            'region_content' => new TwigFunction('region_content', $this->region_content(...)),
+            'anchored_content_elements' => new TwigFunction('anchored_content_elements', $this->anchored_content_elements(...)),
+            'unanchored_content_elements' => new TwigFunction('unanchored_content_elements', $this->unanchored_content_elements(...)),
+            'map_markup' => new TwigFunction('map_markup', $this->map_markup(...)),
+            'toolbar_menu_content' => new TwigFunction('toolbar_menu_content', $this->toolbar_menu_content(...)),
+            'toolbar_inline_content' => new TwigFunction('toolbar_inline_content', $this->toolbar_inline_content(...)),
+        ];
     }
 
     /**
@@ -79,7 +71,7 @@ class ApplicationContentExtension extends AbstractExtension
      */
     public function region_markup(Application $application, $regionName, $suppressEmptyRegion = true)
     {
-        if (false !== strpos($regionName, 'content')) {
+        if (str_contains((string) $regionName, 'content')) {
             throw new \LogicException("No support for 'content' region in region_markup");
         }
         return $this->renderer->renderRegionByName($application, $regionName, $suppressEmptyRegion);
@@ -104,7 +96,7 @@ class ApplicationContentExtension extends AbstractExtension
     {
         if (!$anchorValue) {
             $validAnchors = Template::getValidOverlayAnchors();
-            $parts = array();
+            $parts = [];
             foreach ($validAnchors as $anchorValue) {
                 $parts[] = $this->renderer->renderFloatingElements($application, $anchorValue);
             }
@@ -118,7 +110,7 @@ class ApplicationContentExtension extends AbstractExtension
      * @param Application $application
      * @return string
      */
-    public function unanchored_content_elements(Application $application)
+    public function unanchored_content_elements(Application $application): string
     {
         return
             '<div class="hidden">'

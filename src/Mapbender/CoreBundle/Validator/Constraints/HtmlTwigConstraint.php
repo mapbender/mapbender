@@ -10,12 +10,12 @@ use Symfony\Component\Validator\Constraint;
  */
 class HtmlTwigConstraint extends Constraint
 {
-    public function __construct(array $variables = array())
+    public function __construct(array $variables = [])
     {
         parent::__construct(null);
-        $this->payload = array(
+        $this->payload = [
             'variables' => $variables,
-        );
+        ];
     }
 
     public function validatedBy(): string

@@ -19,12 +19,15 @@ class IconPackageFa4 implements IconPackageInterface
     }
 
 
-    public function getStyleSheets()
+    public function getStyleSheets(): array
     {
         return ['components/font-awesome/css/all.css'];
     }
 
-    public function getChoices(bool $showAll = false)
+    /**
+     * @return mixed[]
+     */
+    public function getChoices(bool $showAll = false): array
     {
         $choices = [];
         if ($this->showDefaultIcons || $showAll) $choices = [
@@ -146,9 +149,9 @@ class IconPackageFa4 implements IconPackageInterface
         }
         }
 
-        return HtmlUtil::renderTag('i', '', array(
+        return HtmlUtil::renderTag('i', '', [
             'class' => $class . ' ' . $additionalClass,
-        ));
+        ]);
     }
 
     public function isHandled($iconCode)
@@ -162,13 +165,13 @@ class IconPackageFa4 implements IconPackageInterface
         return \in_array($iconCode, $this->getChoices(true)) || \array_key_exists($iconCode, $this->getAliases());
     }
 
-    public function getAliases()
+    public function getAliases(): array
     {
-        return array(
+        return [
             'iconWmcEditor' => 'iconEdit',
             'iconSketch' => 'iconEdit',
             'iconGpsTarget' => 'iconCoordinates',
             'iconReset' => 'iconRefresh',
-        );
+        ];
     }
 }

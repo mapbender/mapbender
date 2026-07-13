@@ -36,7 +36,7 @@ class ComponentsController
      * @return Response
      */
     #[Route(path: '/components/{packageName}/{path}', requirements: ['path' => '.+'], methods: ['GET'])]
-    public function componentsAction(Request $request, $packageName, $path)
+    public function componentsAction(Request $request, $packageName, $path): BinaryFileResponse
     {
         if ($this->matchHidden($path)) {
             throw new NotFoundHttpException();
@@ -55,7 +55,7 @@ class ComponentsController
      * @param string $filePath
      * @return \SplFileInfo|null
      */
-    protected function locateFile($packageName, $filePath)
+    protected function locateFile($packageName, $filePath): ?AutoMimeResponseFile
     {
         $packagePath = $this->getPackagePath($packageName);
         if ($packagePath) {
@@ -72,23 +72,14 @@ class ComponentsController
      * @param string $packageName
      * @return string|null
      */
-    protected function getPackagePath($packageName)
+    protected function getPackagePath($packageName): ?string
     {
-        switch ($packageName) {
-            default:
-                $path = $this->getVendorPath() . "/components/{$packageName}";
-                break;
-            case 'bootstrap-colorpicker':
-            case 'jquery-ui-touch-punch':
-                $path = $this->getWebPath() . "/bundles/mapbendercore/{$packageName}";
-                break;
-            case 'mapbender-icons':
-                $path = $this->getVendorPath() . "/mapbender/{$packageName}";
-                break;
-            case 'open-sans':
-                $path = $this->getVendorPath() . "/wheregroup/{$packageName}";
-                break;
-        }
+        $path = match ($packageName) {
+            'bootstrap-colorpicker', 'jquery-ui-touch-punch' => $this->getWebPath() . "/bundles/mapbendercore/{$packageName}",
+            'mapbender-icons' => $this->getVendorPath() . "/mapbender/{$packageName}",
+            'open-sans' => $this->getVendorPath() . "/wheregroup/{$packageName}",
+            default => $this->getVendorPath() . "/components/{$packageName}",
+        };
         if (\is_dir($path) && \is_readable($path)) {
             return $path;
         } else {
@@ -113,14 +104,14 @@ class ComponentsController
      * @param string $path
      * @return bool
      */
-    protected function matchHidden($path)
+    protected function matchHidden($path): bool
     {
-        $patterns = array(
+        $patterns = [
             '#(^|/)\.#',
             '#(^|/)(composer|component|package|bower).json$#',
             '#(^|/)[^/]+\.(md|txt)$#',
             '#(^|/)Makefile[^/]*$#',
-        );
+        ];
         foreach ($patterns as $pattern) {
             if (\preg_match($pattern, $path)) {
                 return true;

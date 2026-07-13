@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SupportsOpacity;
-use Mapbender\CoreBundle\Entity\SupportsProxy;
 
 /**
  * @author Paul Schmidt
@@ -45,7 +44,7 @@ class WmtsInstance extends SourceInstance implements SupportsOpacity
         if ($this->id) {
             $originalLayers = $this->getLayers()->getValues();
             $this->setId(null);
-            $clonedLayers = array();
+            $clonedLayers = [];
             foreach ($originalLayers as $layer) {
                 /** @var WmtsInstanceLayer $layer */
                 $layerClone = clone $layer;
@@ -60,7 +59,7 @@ class WmtsInstance extends SourceInstance implements SupportsOpacity
      * @param WmtsInstanceLayer[]|ArrayCollection $layers
      * @return $this
      */
-    public function setLayers($layers)
+    public function setLayers($layers): static
     {
         $this->layers = $layers;
         return $this;
@@ -102,7 +101,7 @@ class WmtsInstance extends SourceInstance implements SupportsOpacity
      * @param WmtsSource $source
      * @return $this
      */
-    public function setSource($source = null)
+    public function setSource($source = null): static
     {
         $this->source = $source;
         return $this;
@@ -119,7 +118,7 @@ class WmtsInstance extends SourceInstance implements SupportsOpacity
     /**
      * @param WmtsInstanceLayer $layer
      */
-    public function addLayer(WmtsInstanceLayer $layer)
+    public function addLayer(WmtsInstanceLayer $layer): void
     {
         $this->layers->add($layer);
         $layer->setSourceInstance($this);
@@ -128,7 +127,7 @@ class WmtsInstance extends SourceInstance implements SupportsOpacity
     /**
      * @param WmtsInstanceLayer $layer
      */
-    public function removeLayer(WmtsInstanceLayer $layer)
+    public function removeLayer(WmtsInstanceLayer $layer): void
     {
         $this->layers->removeElement($layer);
     }

@@ -35,19 +35,9 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      * Making this constant reduces interaction complexity.
      */
     const ELEMENT_ACTION_NAME_QUEUE = 'queue';
-
-    /** @var EntityManagerInterface */
-    protected $entityManager;
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-    /** @var UrlGeneratorInterface */
-    protected $router;
-    /** @var Filesystem */
-    protected $filesystem;
     /** @var string */
     protected $storagePath;
-    /** @var string */
-    protected $loadPath;
+    protected string $loadPath;
 
     /**
      * @param EntityManagerInterface $entityManager
@@ -57,38 +47,31 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      * @param string $storagePath
      * @param string $loadPath
      */
-    public function __construct(EntityManagerInterface $entityManager,
-                                TokenStorageInterface $tokenStorage,
-                                UrlGeneratorInterface $router,
-                                Filesystem $filesystem,
+    public function __construct(protected EntityManagerInterface $entityManager,
+                                protected TokenStorageInterface $tokenStorage,
+                                protected UrlGeneratorInterface $router,
+                                protected Filesystem $filesystem,
                                 $storagePath,
                                 $loadPath)
     {
-        $this->entityManager = $entityManager;
-        $this->tokenStorage = $tokenStorage;
-        $this->router = $router;
         if (!is_dir($storagePath)) {
             @mkdir($storagePath);
         }
         if (!is_dir($storagePath) || !is_writable($storagePath)) {
             throw new \RuntimeException("Storage path " . var_export($storagePath, true) . " is not a writable directory");
         }
-        $this->filesystem = $filesystem;
         $this->storagePath = realpath($storagePath);
         $this->loadPath = rtrim($loadPath, '/\\');
     }
 
-    /**
-     * @return QueuedPrintJobRepository
-     */
-    public function getRepository()
+    public function getRepository(): QueuedPrintJobRepository
     {
         /** @var QueuedPrintJobRepository $repository */
         $repository = $this->entityManager->getRepository(QueuedPrintJob::class);
         return $repository;
     }
 
-    public function getDomainKey()
+    public function getDomainKey(): string
     {
         return 'print-queue';
     }
@@ -136,7 +119,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                 $fullPath = "{$this->storagePath}/{$fileName}";
                 try {
                     $this->filesystem->remove($fullPath);
-                } catch (IOException $e) {
+                } catch (IOException) {
                     // No file to delete
                     // This will happen if storagePath != loadPath.
                 }
@@ -150,7 +133,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      * @param array $jobData
      * @param string $filename
      */
-    public function putJob(array $jobData, $filename)
+    public function putJob(array $jobData, $filename): void
     {
         $entity = new QueuedPrintJob();
         $entity->setPayload($jobData);
@@ -168,7 +151,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      * @param mixed[] $configuration
      * @return bool
      */
-    protected function accessAllowed($entity, $configuration)
+    protected function accessAllowed($entity, $configuration): bool
     {
         $queueAccess = ArrayUtil::getDefault($configuration, 'queueAccess', null) ?: 'private';
         return $queueAccess === 'global' || $entity->getUserId() == $this->getCurrentUserId();
@@ -179,7 +162,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      * @param mixed[] $configuration
      * @return bool
      */
-    protected function deleteAllowed($entity, $configuration)
+    protected function deleteAllowed($entity, $configuration): bool
     {
         $queueAccess = ArrayUtil::getDefault($configuration, 'queueAccess', null) ?: 'private';
         return $queueAccess === 'global' || $entity->getUserId() == $this->getCurrentUserId();
@@ -195,15 +178,15 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
         $queueAccess = ArrayUtil::getDefault($configuration, 'queueAccess', null) ?: 'private';
         if ($queueAccess === 'private') {
             $userId = $this->getCurrentUserId();
-            $criteria = array(
+            $criteria = [
                 'userId' => $userId,
-            );
+            ];
         } else {
-            $criteria = array();
+            $criteria = [];
         }
-        $order = array(
+        $order = [
             'id' => 'DESC',
-        );
+        ];
         return $this->getRepository()->findBy($criteria, $order);
     }
 
@@ -212,40 +195,40 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      * @param Element $elementEntity
      * @return array[]
      */
-    protected function formatQueueList($entities, Element $elementEntity)
+    protected function formatQueueList($entities, Element $elementEntity): array
     {
-        $dataOut = array();
-        $elementAction = $this->router->generate('mapbender_core_application_element', array(
+        $dataOut = [];
+        $elementAction = $this->router->generate('mapbender_core_application_element', [
             'id' => $elementEntity->getId(),
             'slug' => $elementEntity->getApplication()->getSlug(),
-        ));
+        ]);
         $elementConfig = $elementEntity->getConfiguration();
         foreach ($entities as $entity) {
             if ($entity->getCreated()) {
-                $calculated = array(
+                $calculated = [
                     'status' => 'mb.print.printclient.joblist.status.finished',
                     'downloadUrl' => rtrim($elementAction, '/') . "/open?id={$entity->getId()}",
-                );
+                ];
             } elseif ($entity->getStarted()) {
-                $calculated = array(
+                $calculated = [
                     'status' => 'mb.print.printclient.joblist.status.processing',
                     'downloadUrl' => null,
-                );
+                ];
             } else {
-                $calculated = array(
+                $calculated = [
                     'status' => 'mb.print.printclient.joblist.status.pending',
                     'downloadUrl' => null,
-                );
+                ];
             }
             if ($this->deleteAllowed($entity, $elementConfig)) {
-                $calculated += array(
+                $calculated += [
                     'deleteUrl' => rtrim($elementAction, '/') . "/delete",
-                );
+                ];
             }
-            $dataOut[] = $calculated + array(
+            $dataOut[] = $calculated + [
                 'id' => $entity->getId(),
-                'ctime' => $this->dateTimeToTimestamp($entity->getQueued()),
-            );
+                'ctime' => static::dateTimeToTimestamp($entity->getQueued()),
+            ];
         }
         return $dataOut;
     }
@@ -267,7 +250,7 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
                 // it's not part of the basic UserInterface!
                 /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 return $user->getId();
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 return $user->getUserIdentifier();
             }
         } else {
@@ -280,14 +263,14 @@ class PrintQueuePlugin implements PrintClientHttpPluginInterface
      * @param QueuedPrintJob $entity
      * @return Response
      */
-    protected function getOpenResponse($entity)
+    protected function getOpenResponse($entity): Response|BinaryFileResponse
     {
         $fileName = $entity->getFilename();
         $mimeType = 'application/pdf';
-        $headers = array(
+        $headers = [
             'Content-Type' => $mimeType,
             'Content-Disposition' => "inline; filename=\"{$fileName}\"",
-        );
+        ];
         $fullPath = "{$this->loadPath}/{$fileName}";
 
         if (preg_match('#^[\w]+://#', $fullPath)) {

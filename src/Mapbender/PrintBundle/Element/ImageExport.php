@@ -2,6 +2,7 @@
 
 namespace Mapbender\PrintBundle\Element;
 
+use Mapbender\PrintBundle\Element\Type\ImageExportAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
@@ -19,26 +20,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ImageExport extends AbstractElementService implements ElementHttpHandlerInterface
 {
-    /** @var UrlGeneratorInterface */
-    protected $urlGenerator;
-    /** @var ImageExportService */
-    protected $exportService;
-    /** @var UrlProcessor */
-    protected $sourceUrlProcessor;
-
-    public function __construct(UrlGeneratorInterface $urlGenerator,
-                                ImageExportService $exportService,
-                                UrlProcessor $sourceUrlProcessor)
+    public function __construct(protected UrlGeneratorInterface $urlGenerator, protected ImageExportService $exportService, protected UrlProcessor $sourceUrlProcessor)
     {
-        $this->urlGenerator = $urlGenerator;
-        $this->exportService = $exportService;
-        $this->sourceUrlProcessor = $sourceUrlProcessor;
     }
 
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    static public function getClassTitle(): string
     {
         return "mb.print.imageexport.class.title";
     }
@@ -46,7 +35,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    static public function getClassDescription(): string
     {
         return "mb.print.imageexport.class.description";
     }
@@ -54,7 +43,7 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbImageExport';
     }
@@ -62,67 +51,67 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderPrintBundle/Resources/public/MbImageExport.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderPrintBundle/Resources/public/sass/element/imageexport.scss',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.print.imageexport.popup.*',
                 'mb.print.imageexport.info.*',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\PrintBundle\Element\Type\ImageExportAdminType';
+        return ImageExportAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderPrint/ElementAdmin/imageexport.html.twig';
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderPrint/Element/imageexport.html.twig');
         $view->attributes['class'] = 'mb-element-imageexport';
         $view->attributes['data-title'] = $element->getTitle();
-        $view->variables['submitUrl'] = $this->urlGenerator->generate('mapbender_core_application_element', array(
+        $view->variables['submitUrl'] = $this->urlGenerator->generate('mapbender_core_application_element', [
             'slug' => $element->getApplication()->getSlug(),
             'id' => $element->getId(),
             'action' => 'export',
-        ));
+        ]);
         return $view;
     }
 
-    public function getHttpHandler(Element $element)
+    public function getHttpHandler(Element $element): static
     {
         return $this;
     }
 
-    public function handleRequest(Element $element, Request $request)
+    public function handleRequest(Element $element, Request $request): Response
     {
         $action = $request->attributes->get('action');
         switch ($action) {
@@ -130,10 +119,10 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
                 $data = $this->prepareJobData($request, $element);
                 $format = $request->request->get('imageformat');
                 $image = $this->exportService->runJob($data);
-                return new Response($this->exportService->dumpImage($image, $format), Response::HTTP_OK, array(
+                return new Response($this->exportService->dumpImage($image, $format), Response::HTTP_OK, [
                     'Content-Disposition' => 'attachment; filename=export_' . date('YmdHis') . ".{$format}",
-                    'Content-Type' => $this->getMimetype($format),
-                ));
+                    'Content-Type' => static::getMimetype($format),
+                ]);
             default:
                 throw new BadRequestHttpException("No such action");
         }
@@ -141,10 +130,10 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
 
     protected function prepareJobData(Request $request, Element $element)
     {
-        $data = json_decode($request->get('data'), true);
+        $data = json_decode((string) $request->get('data'), true);
         $data['application'] = $element->getApplication();
         // resolve tunnel requests
-        foreach (ArrayUtil::getDefault($data, 'layers', array()) as $ix => $layerData) {
+        foreach (ArrayUtil::getDefault($data, 'layers', []) as $ix => $layerData) {
             if (!empty($layerData['url'])) {
                 $data['layers'][$ix]['url'] = $this->sourceUrlProcessor->getInternalUrl($element->getApplication(), $layerData['url']);
             }
@@ -156,19 +145,15 @@ class ImageExport extends AbstractElementService implements ElementHttpHandlerIn
      * @param string $format
      * @return string
      */
-    public static function getMimetype($format)
+    public static function getMimetype($format): string
     {
-        switch ($format) {
-            case 'png':
-                return 'image/png';
-            case 'jpeg':
-            case 'jpg':
-                return 'image/jpeg';
-            default:
-                throw new \InvalidArgumentException("Unsupported format $format");
-        }
+        return match ($format) {
+            'png' => 'image/png',
+            'jpeg', 'jpg' => 'image/jpeg',
+            default => throw new \InvalidArgumentException("Unsupported format $format"),
+        };
     }
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'icon-image-export';
     }

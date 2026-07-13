@@ -30,7 +30,7 @@ class WmtsSource extends HttpTileSource
         $this->themes = new ArrayCollection();
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
         parent::mutateUrls($transformer);
         if ($requestInfo = $this->getGetTile()) {

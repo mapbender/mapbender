@@ -18,36 +18,34 @@ class Fullscreen extends Template
     /**
      * @inheritdoc
      */
-    public static function getRegionsProperties()
+    public static function getRegionsProperties(): array
     {
-        return array(
-            'sidepane' => array(
-                'accordion' => array(
+        return [
+            'sidepane' => [
+                'accordion' => [
                     'name' => 'accordion',
-                ),
-                'tabs' => array(
+                ],
+                'tabs' => [
                     'name' => 'tabs',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getTitle()
+    public static function getTitle(): string
     {
         return 'Fullscreen';
     }
 
     public function getRegionTemplate(Application $application, $regionName)
     {
-        switch ($regionName) {
-            default:
-                return parent::getRegionTemplate($application, $regionName);
-            case 'toolbar':
-                return '@MapbenderCore/Template/fullscreen/toolbar.html.twig';
-        }
+        return match ($regionName) {
+            'toolbar' => '@MapbenderCore/Template/fullscreen/toolbar.html.twig',
+            default => parent::getRegionTemplate($application, $regionName),
+        };
     }
 
     public function getRegionClasses(Application $application, $regionName)
@@ -67,12 +65,12 @@ class Fullscreen extends Template
         return $classes;
     }
 
-    public function getSassVariablesAssets(Application $application)
+    public function getSassVariablesAssets(Application $application): array
     {
-        return array(
+        return [
             '@MapbenderCoreBundle/Resources/public/sass/libs/_variables.scss',
             '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen_variables.scss',
-        );
+        ];
     }
 
     /**
@@ -80,38 +78,34 @@ class Fullscreen extends Template
      */
     public function getAssets($type)
     {
-        switch ($type) {
-            case 'css':
-                return array(
-                    '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss',
-                    '@MapbenderCoreBundle/Resources/public/sass/modules/_popup_dialog.scss',
-                    '@MapbenderCoreBundle/Resources/public/sass/modules/_tab_navigator.scss',
-                );
-            case 'js':
-                return array(
-                    '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
-                );
-            case 'trans':
-            default:
-                return parent::getAssets($type);
-        }
+        return match ($type) {
+            'css' => [
+                '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss',
+                '@MapbenderCoreBundle/Resources/public/sass/modules/_popup_dialog.scss',
+                '@MapbenderCoreBundle/Resources/public/sass/modules/_tab_navigator.scss',
+            ],
+            'js' => [
+                '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
+            ],
+            default => parent::getAssets($type),
+        };
     }
 
     /**
      * @inheritdoc
      */
-    public static function getRegions()
+    public static function getRegions(): array
     {
-        return array('toolbar', 'sidepane', 'content', 'footer');
+        return ['toolbar', 'sidepane', 'content', 'footer'];
     }
 
-    public function getTwigTemplate()
+    public function getTwigTemplate(): string
     {
         return '@MapbenderCore/Template/fullscreen.html.twig';
     }
 
-    public function getBodyClass(Application $application)
+    public function getBodyClass(Application $application): string
     {
         return 'desktop-template';
     }
@@ -120,37 +114,29 @@ class Fullscreen extends Template
      * @param string $regionName
      * @return string|null
      */
-    public static function getRegionSettingsFormType($regionName)
+    public static function getRegionSettingsFormType($regionName): ?string
     {
-        switch ($regionName) {
-            case 'sidepane':
-                return SidepaneSettingsType::class;
-            case 'toolbar':
-            case 'footer':
-                return ToolbarSettingsType::class;
-            default:
-                return null;
-        }
+        return match ($regionName) {
+            'sidepane' => SidepaneSettingsType::class,
+            'toolbar', 'footer' => ToolbarSettingsType::class,
+            default => null,
+        };
     }
 
     public static function getRegionPropertiesDefaults($regionName)
     {
-        switch ($regionName) {
-            case 'toolbar':
-            case 'footer':
-                return array(
-                    'item_alignment' => 'right',
-                    'generate_button_menu' => false,
-                );
-            case 'sidepane':
-                return array(
-                    'name' => 'accordion',
-                    'align' => 'left',
-                    'closed' => false,
-                    'resizable' => true,
-                );
-            default:
-                return parent::getRegionPropertiesDefaults($regionName);
-        }
+        return match ($regionName) {
+            'toolbar', 'footer' => [
+                'item_alignment' => 'right',
+                'generate_button_menu' => false,
+            ],
+            'sidepane' => [
+                'name' => 'accordion',
+                'align' => 'left',
+                'closed' => false,
+                'resizable' => true,
+            ],
+            default => parent::getRegionPropertiesDefaults($regionName),
+        };
     }
 }

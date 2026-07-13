@@ -2,6 +2,8 @@
 
 namespace FOM\UserBundle\Command;
 
+use Symfony\Component\Security\Acl\Domain\Acl;
+use Mapbender\WmsBundle\Entity\WmsSource;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\ORM\AbstractQuery;
@@ -30,7 +32,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Mapbender 4 introduced a new, simplified security system replacing Symfony's deprecated ACL bundle.
  * This command migrates most existing permissions
  */
-#[AsCommand(self::COMMAND)]
+#[AsCommand(self::COMMAND, help: <<<'TXT'
+The symfony/acl-bundle is deprecated since Symfony 4.0 and since Mapbender 4 is replaced by a voter-based security system.
+This commands converts existing permissions to the new system
+TXT)]
 class MigrateACLCommand extends Command
 {
     const COMMAND = 'mapbender:security:migrate-from-acl';
@@ -48,7 +53,7 @@ class MigrateACLCommand extends Command
     public const MASK_MASTER = 64;        // 1 << 6
     public const MASK_OWNER = 128;        // 1 << 7
 
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
         parent::__construct(self::COMMAND);
     }
@@ -57,11 +62,6 @@ class MigrateACLCommand extends Command
     {
         $this
             ->setDescription('Migrates from Symfony ACL bundle to new mapbender security')
-            ->setHelp(<<<EOT
-The symfony/acl-bundle is deprecated since Symfony 4.0 and since Mapbender 4 is replaced by a voter-based security system.
-This commands converts existing permissions to the new system
-EOT
-            )
         ;
     }
 
@@ -245,7 +245,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
             return;
         }
 
-        if ($entry["class_type"] === "Symfony\Component\Security\Acl\Domain\Acl" && $entry["object_identifier"] === null) {
+        if ($entry["class_type"] === Acl::class && $entry["object_identifier"] === null) {
             $mask = $entry["mask"];
             $newEntry->setResourceDomain(ResourceDomainInstallation::SLUG);
             if (($mask & self::MASK_EDIT) > 0) {
@@ -256,10 +256,10 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
 
         // For WMSSource, User and Group the owner has been set which is no longer needed.
         // For all other classes, show a warning message
-        if ($entry["class_type"] !== "Mapbender\WmsBundle\Entity\WmsSource"
+        if ($entry["class_type"] !== WmsSource::class
             && $entry["class_type"] !== "Mapbender\WmsBundle\Entity\WmtsSource"
-            && $entry["class_type"] !== "FOM\UserBundle\Entity\User"
-            && $entry["class_type"] !== "FOM\UserBundle\Entity\Group"
+            && $entry["class_type"] !== User::class
+            && $entry["class_type"] !== Group::class
         ) {
             echo "WARNING: Invalid class type " . $entry["class_type"] . "(object identifier " . $entry["object_identifier"] . ") for entry id " . $entry["id"] . "\n";
         }
@@ -314,7 +314,7 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         return null;
     }
 
-    private function saveEntry(Permission $newEntry, string $permission)
+    private function saveEntry(Permission $newEntry, string $permission): void
     {
         // ignore rights for superuser, they can do everything anyway
         if ($newEntry->getSubjectDomain() === SubjectDomainUser::SLUG && $newEntry->getUser()?->getId() === 1) return;
@@ -323,12 +323,12 @@ LEFT JOIN acl_security_identities s ON s.id = e.security_identity_id;
         $this->em->persist($entry);
     }
 
-    private function ensureTableExists()
+    private function ensureTableExists(): void
     {
         try {
             $check = $this->em->getRepository(Permission::class)->createQueryBuilder('p')->select('p.id')->setMaxResults(1)->getQuery()->getResult();
             return;
-        } catch (TableNotFoundException $e) {
+        } catch (TableNotFoundException) {
             $schemaTool = new SchemaTool($this->em);
             $classMetadata = $this->em->getClassMetadata(Permission::class);
             $sqls = $schemaTool->getCreateSchemaSql([$classMetadata]);

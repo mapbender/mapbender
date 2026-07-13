@@ -33,21 +33,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class ElementClassesCommand extends Command
 {
-    /** @var KernelInterface */
-    protected $kernel;
-    /** @var ElementFormFactory */
-    protected $elementFormFactory;
-    /** @var ElementInventoryService */
-    protected $inventory;
-
-    public function __construct(KernelInterface $kernel,
-                                ElementInventoryService $inventory,
-                                ElementFormFactory $elementFormFactory)
+    public function __construct(protected KernelInterface $kernel,
+                                protected ElementInventoryService $inventory,
+                                protected ElementFormFactory $elementFormFactory)
     {
-        $this->kernel = $kernel;
-        $this->inventory = $inventory;
-        $this->elementFormFactory = $elementFormFactory;
-
         parent::__construct(null);
     }
 
@@ -65,30 +54,30 @@ class ElementClassesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $elementNames = $this->inventory->getActiveInventory();
-        $headers = array(
+        $headers = [
             'Name',
             'Comments',
             'Widget Constructor',
             'AdminType',
             'AdminTemplate',
             'Implicit asset references',
-        );
+        ];
 
-        $rows = array();
+        $rows = [];
         $application = new Application();
         foreach ($elementNames as $elementName) {
             try {
                 $entity = new Element();
-                $entity->setConfiguration(array());
+                $entity->setConfiguration([]);
                 $entity->setClass($elementName);
                 $entity->setApplication($application);
                 $handler = $this->inventory->getFrontendHandler($entity);
                 $rows[$elementName] = $this->formatElementInfo($entity, $handler);
             } catch (\Exception $e) {
-                $rows[$elementName] = array(
+                $rows[$elementName] = [
                     "<error>$elementName</error>",
                     "<error>{$e->getMessage()}</error>",
-                );
+                ];
             }
         }
         $this->renderInfoPerNamespace($input, $output, $headers, $rows);
@@ -99,12 +88,12 @@ class ElementClassesCommand extends Command
     {
         ksort($rows);
         // split the information into buckets by bundle namespace
-        $namespaceBuckets = array();
+        $namespaceBuckets = [];
         foreach ($rows as $elementName => $cells) {
-            $classNameParts = explode('\\', $elementName);
+            $classNameParts = explode('\\', (string) $elementName);
             $bundleNamespace = implode('\\', array_slice($classNameParts, 0, 2));
             if (!array_key_exists($bundleNamespace, $namespaceBuckets)) {
-                $namespaceBuckets[$bundleNamespace] = array();
+                $namespaceBuckets[$bundleNamespace] = [];
             }
             $tail = array_slice($classNameParts, 2);
             // Highlight classes that are not immediately in namespace "<bundle>\Element\".
@@ -133,16 +122,16 @@ class ElementClassesCommand extends Command
      * @return string[]
      * @throws \ReflectionException
      */
-    protected function formatElementInfo(Element $element, ElementServiceInterface $handler)
+    protected function formatElementInfo(Element $element, ElementServiceInterface $handler): array
     {
-        $cells = array(
+        $cells = [
             $element->getClass(),
             $this->formatElementComments($element),
-            $this->formatGetWidgetName($handler, $element),
+            static::formatGetWidgetName($handler, $element),
             $this->formatAdminType($element),
             $this->formatAdminTemplateInfo($element),
             $this->formatAssetRefStatus($handler, $element),
-        );
+        ];
         return $cells;
     }
 
@@ -151,13 +140,13 @@ class ElementClassesCommand extends Command
      * @param Element $element
      * @return string
      */
-    protected static function formatGetWidgetName(ElementServiceInterface $handler, Element $element)
+    protected static function formatGetWidgetName(ElementServiceInterface $handler, Element $element): string
     {
         try {
             $widgetConstructor = $handler->getWidgetName($element);
             $rc = new \ReflectionClass($element->getClass());
             $rm = $rc->getMethod('getWidgetName');
-        } catch (\ReflectionException $e) {
+        } catch (\ReflectionException) {
             return '<error>No reflection</error>';
         }
         if (!$widgetConstructor) {
@@ -183,7 +172,7 @@ class ElementClassesCommand extends Command
      * @param Element $element
      * @return string
      */
-    protected function formatAdminType($element)
+    protected function formatAdminType(Element $element): string|array
     {
         try {
             $rc = new \ReflectionClass($element->getClass());
@@ -207,7 +196,7 @@ class ElementClassesCommand extends Command
             }
         } catch (\RuntimeException $e) {
             // assume servicy admin type
-            if (false === strpos($adminType, '\\')) {
+            if (!str_contains($adminType, '\\')) {
                 $formatted = "service <info>{$adminType}</info>";
                 $adminTypeBNS = null;
             } else {
@@ -233,24 +222,24 @@ class ElementClassesCommand extends Command
      * @param Element $element
      * @return string
      */
-    protected function formatAssetRefStatus(ElementServiceInterface $handler, Element $element)
+    protected function formatAssetRefStatus(ElementServiceInterface $handler, Element $element): string
     {
         $explicitRefPattern = '^(/|\.\./|(@[\w]+Bundle/)|([\w]+Bundle:))';
-        $assetRefs = $handler->getRequiredAssets($element) ?: array(array());   // for array_merge safety with empty input
-        $implicitRefs = array();
+        $assetRefs = $handler->getRequiredAssets($element) ?: [[]];   // for array_merge safety with empty input
+        $implicitRefs = [];
         foreach (call_user_func_array('array_merge', $assetRefs) as $ref) {
-            if (!preg_match("#{$explicitRefPattern}#", $ref)) {
+            if (!preg_match("#{$explicitRefPattern}#", (string) $ref)) {
                 $implicitRefs[] = $ref;
             }
         }
         if (!$implicitRefs) {
             return '<info>none</info>';
         } else {
-            $glue = array(
+            $glue = [
                 '</comment>',
                 "\n",
                 '<comment>',
-            );
+            ];
             return $glue[2] . implode(implode('', $glue), $implicitRefs) . $glue[0];
         }
     }
@@ -263,7 +252,7 @@ class ElementClassesCommand extends Command
      * @param string $twigPath
      * @return string
      */
-    protected static function resourcePathFromTwigPath($twigPath)
+    protected static function resourcePathFromTwigPath($twigPath): string
     {
         $parts = explode(':', ltrim($twigPath, '@'));
         $parts[1] = "Resources/views/{$parts[1]}";
@@ -276,14 +265,14 @@ class ElementClassesCommand extends Command
      * @param string $twigPath e.g. "MapbenderCoreBundle:<view-section>:some_template.html.twig"
      * @return bool
      */
-    protected function templateExists($twigPath)
+    protected function templateExists($twigPath): bool
     {
         // Kernel::locateResource seems to be the best general purpose resource locator
         /** Symfony file locators throw InvalidArgumentException if files are not found... */
         try {
-            $realPath = $this->kernel->locateResource($this->resourcePathFromTwigPath($twigPath));
+            $realPath = $this->kernel->locateResource(static::resourcePathFromTwigPath($twigPath));
             return file_exists($realPath) && filesize($realPath);
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
             return false;
         }
     }
@@ -294,7 +283,7 @@ class ElementClassesCommand extends Command
      * @param string[] $headers
      * @param array[] $rows
      */
-    protected function renderTable(InputInterface $input, OutputInterface $output, $headers, $rows)
+    protected function renderTable(InputInterface $input, OutputInterface $output, array $headers, array $rows)
     {
         $tableHelper = new SymfonyStyle($input, $output);
         $tableHelper->table($headers, $rows);
@@ -339,25 +328,25 @@ class ElementClassesCommand extends Command
      * @return string
      * @throws \ReflectionException
      */
-    protected function formatElementComments($element)
+    protected function formatElementComments($element): string
     {
-        $issues = array();
+        $issues = [];
         $rc = new \ReflectionClass($element->getClass());
         $classDoc = $rc->getDocComment();
-        if (strpos($classDoc, '@deprecated') !== false) {
+        if (str_contains($classDoc, '@deprecated')) {
             $issues[] = "<comment>deprecated</comment>";
         }
-        $detectOverrides = array(
-            'getConfiguration' => array(null, 'error'),
-            'render' => array(null, 'error'),
-            'getType'=> array('comment', null),
-            'getFormTemplate' => array('comment', null),
-            'getFrontendTemplatePath' => array('comment', null),
-            'getWidgetName' => array('comment', null),
-        );
+        $detectOverrides = [
+            'getConfiguration' => [null, 'error'],
+            'render' => [null, 'error'],
+            'getType'=> ['comment', null],
+            'getFormTemplate' => ['comment', null],
+            'getFrontendTemplatePath' => ['comment', null],
+            'getWidgetName' => ['comment', null],
+        ];
 
         foreach ($detectOverrides as $methodName => $treatment) {
-            $isOverridden = $this->detectMethodOverride($rc, $methodName);
+            $isOverridden = static::detectMethodOverride($rc, $methodName);
             $messageStyle = $treatment[intval($isOverridden)];
             if ($messageStyle !== null) {
                 $messagePrefix = $isOverridden ? 'own' : 'missing';
@@ -369,7 +358,7 @@ class ElementClassesCommand extends Command
             }
         }
         $parentClass = $rc->getParentClass();
-        if (0 !== strpos($parentClass->getNamespaceName(), 'Mapbender\CoreBundle\Component')) {
+        if (!str_starts_with($parentClass->getNamespaceName(), 'Mapbender\CoreBundle\Component')) {
             $parentName = $parentClass->getName();
             $parentNote = "<note>parent: $parentName</note>";
         } else {
@@ -378,7 +367,7 @@ class ElementClassesCommand extends Command
         return trim(trim(implode(', ', $issues), "\n") . "\n{$parentNote}", "\n");
     }
 
-    protected static function detectMethodOverride(\ReflectionClass $rc, $methodName)
+    protected static function detectMethodOverride(\ReflectionClass $rc, $methodName): bool
     {
         $rm = $rc->getMethod($methodName);
         return $rm && ($rc->getName() == $rm->class);

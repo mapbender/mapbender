@@ -20,12 +20,12 @@ class WmtsInstanceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('layers', SourceInstanceLayerCollectionType::class, array(
+            ->add('layers', SourceInstanceLayerCollectionType::class, [
                 'entry_type' => WmtsInstanceLayerType::class,
-                'entry_options' => array(
+                'entry_options' => [
                     'data_class' => WmtsInstanceLayer::class,
-                ),
-            ))
+                ],
+            ])
         ;
     }
 }

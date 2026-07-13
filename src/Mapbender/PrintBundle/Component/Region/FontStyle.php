@@ -4,8 +4,6 @@
 namespace Mapbender\PrintBundle\Component\Region;
 
 
-use Mapbender\PrintBundle\Component\OdgParser;
-
 /**
  * Font style for template regions. Initialized by OdgParser and assigned to 'fields'-style regions only,
  * at least currently.
@@ -16,8 +14,7 @@ class FontStyle
     protected $fontName;
     /** @var string */
     protected $color;
-    /** @var float */
-    protected $size;
+    protected float $size;
 
     /**
      * @param string $fontName
@@ -70,7 +67,7 @@ class FontStyle
      * @see \FPDF::MultiCell()
      * @return float
      */
-    public function getLineHeightMm()
+    public function getLineHeightMm(): float
     {
         // Font size is in 'pt'. Convert pt to mm for line height.
         // see https://en.wikipedia.org/wiki/Point_(typography)

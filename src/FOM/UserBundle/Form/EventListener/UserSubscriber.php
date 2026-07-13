@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle\Form\EventListener;
 
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
@@ -20,15 +21,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class UserSubscriber implements EventSubscriberInterface
 {
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-
     /**
      * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(TokenStorageInterface $tokenStorage)
+    public function __construct(protected TokenStorageInterface $tokenStorage)
     {
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -36,16 +33,16 @@ class UserSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'preSetData',
             FormEvents::SUBMIT => 'submit',
-        );
+        ];
     }
 
     /**
      * @param FormEvent $event
      */
-    public function submit(FormEvent $event)
+    public function submit(FormEvent $event): void
     {
         /** @var User|null $user */
         $user = $event->getData();
@@ -65,7 +62,7 @@ class UserSubscriber implements EventSubscriberInterface
     /**
      * @param FormEvent $event
      */
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         /** @var User|null $user */
         $user = $event->getData();
@@ -74,20 +71,20 @@ class UserSubscriber implements EventSubscriberInterface
         }
 
         $currentUser = $this->getCurrentUser();
-        $event->getForm()->add('activated', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+        $event->getForm()->add('activated', CheckboxType::class, [
             'data' => $user->getRegistrationToken() ? false : true,
             'label' => 'fom.user.user.container.activated',
             'required' => false,
             'mapped' => false,
             'disabled' => ($currentUser && $currentUser === $user),
-        ));
+        ]);
     }
 
     /**
      * Retrieves current user ONLY IF its a manageable FOM\UserBundle\Enity\User instance, otherwise null.
      * @return User|null
      */
-    protected function getCurrentUser()
+    protected function getCurrentUser(): ?User
     {
         $token = $this->tokenStorage->getToken();
         if (!($token instanceof NullToken)) {

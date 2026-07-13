@@ -2,24 +2,23 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Validator\Constraints\Regex;
 use Mapbender\CoreBundle\Element\SimpleSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SimpleSearchAdminConfigurationType extends AbstractType
 {
     use MapbenderTypeTrait;
 
-    private TranslatorInterface $trans;
-
-    public function __construct(TranslatorInterface $trans)
+    public function __construct(private TranslatorInterface $trans)
     {
-        $this->trans = $trans;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -32,7 +31,7 @@ class SimpleSearchAdminConfigurationType extends AbstractType
                 'help' => 'mb.core.simplesearch.admin.title.help',
                 'required' => true,
                 'constraints' => [
-                    new Constraints\NotBlank()
+                    new NotBlank()
                 ],
             ], $this->trans))
             ->add('placeholder', TextType::class, $this->createInlineHelpText([
@@ -45,8 +44,8 @@ class SimpleSearchAdminConfigurationType extends AbstractType
                 'help' => 'mb.core.simplesearch.admin.query_url.help',
                 'required' => true,
                 'constraints' => [
-                    new Constraints\NotBlank(),
-                    new Constraints\Url()
+                    new NotBlank(),
+                    new Url()
                 ],
             ], $this->trans))
             ->add('query_key', TextType::class, $this->createInlineHelpText([
@@ -54,7 +53,7 @@ class SimpleSearchAdminConfigurationType extends AbstractType
                 'help' => 'mb.core.simplesearch.admin.query_key.help',
                 'required' => true,
                  'constraints' => [
-                    new Constraints\NotBlank(),
+                    new NotBlank(),
                 ],
             ], $this->trans))
             ->add('query_ws_replace', TextType::class, $this->createInlineHelpText([
@@ -68,11 +67,8 @@ class SimpleSearchAdminConfigurationType extends AbstractType
                 'help' => 'mb.core.simplesearch.admin.query_format.help',
                 'required' => true,
                  'constraints' => [
-                    new Constraints\NotBlank(),
-                    new Constraints\Regex([
-                        'pattern' => '#.*%.*#',
-                        'message' => 'mb.core.simplesearch.errors.invalid_query_format',
-                    ]),
+                    new NotBlank(),
+                    new Regex(pattern: '#.*%.*#', message: 'mb.core.simplesearch.errors.invalid_query_format'),
                 ],
             ], $this->trans))
             ->add('token_regex', TextType::class, $this->createInlineHelpText([
@@ -100,7 +96,7 @@ class SimpleSearchAdminConfigurationType extends AbstractType
                 'help' => 'mb.core.simplesearch.admin.label_attribute.help',
                 'required' => true,
                  'constraints' => [
-                    new Constraints\NotBlank(),
+                    new NotBlank(),
                 ],
             ], $this->trans))
             ->add('geom_attribute', TextType::class, $this->createInlineHelpText([
@@ -108,30 +104,27 @@ class SimpleSearchAdminConfigurationType extends AbstractType
                 'help' => 'mb.core.simplesearch.admin.geom_attribute.help',
                 'required' => true,
                  'constraints' => [
-                    new Constraints\NotBlank(),
+                    new NotBlank(),
                 ],
             ], $this->trans))
             ->add('geom_format', ChoiceType::class, $this->createInlineHelpText([
                 'label' => 'mb.core.simplesearch.admin.geom_format',
                 'help' => 'mb.core.simplesearch.admin.geom_format.help',
-                'choices' => array(
+                'choices' => [
                     'WKT' => 'WKT',
                     'GeoJSON' => 'GeoJSON',
-                ),
+                ],
                 'required' => true,
             ], $this->trans))
             ->add('sourceSrs', TextType::class, $this->createInlineHelpText([
                 'label' => 'mb.core.simplesearch.admin.sourceSrs',
                 'help' => 'mb.core.simplesearch.admin.sourceSrs.help',
-                'constraints' => array(
-                    new Constraints\Regex([
-                        'pattern' => '#^EPSG:\d+$#',
-                        'message' => 'mb.core.simplesearch.errors.invalid_epsg_code'
-                    ])
-                ),
-                'attr' => array(
+                'constraints' => [
+                    new Regex(pattern: '#^EPSG:\d+$#', message: 'mb.core.simplesearch.errors.invalid_epsg_code')
+                ],
+                'attr' => [
                     'placeholder' => $defaults['sourceSrs'],
-                ),
+                ],
                 'empty_data' => $defaults['sourceSrs'],
                 'required' => false,
             ], $this->trans))

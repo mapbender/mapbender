@@ -8,16 +8,16 @@ use Mapbender\PrintBundle\Component\Export\Box;
 
 class TileMatrixWmts extends TileMatrix
 {
-    /** @var string */
-    protected $urlTemplate;
     /** @var float */
     protected $extentTop;
 
-    public function __construct($urlTemplate, $resolution, $identifier, $origin, $tileWidth, $tileHeight)
+    /**
+     * @param string $urlTemplate
+     */
+    public function __construct(protected $urlTemplate, $resolution, $identifier, $origin, $tileWidth, $tileHeight)
     {
         parent::__construct($resolution, $identifier, $origin[0], $tileWidth, $tileHeight);
         $this->extentTop = $origin[1];
-        $this->urlTemplate = $urlTemplate;
     }
 
     /**
@@ -25,23 +25,23 @@ class TileMatrixWmts extends TileMatrix
      * @param int $tileY
      * @return string
      */
-    public function getTileUrl($tileX, $tileY)
+    public function getTileUrl($tileX, $tileY): string
     {
         // @todo: styles support
-        return strtr($this->urlTemplate, array(
+        return strtr($this->urlTemplate, [
             '{TileMatrix}' => $this->identifier,
             '{TileCol}' => $tileX,
             '{TileRow}' => $tileY,
-        ));
+        ]);
     }
 
     /**
      * @param Box $extent
      * @return ImageTile[]
      */
-    public function getTileRequests(Box $extent)
+    public function getTileRequests(Box $extent): array
     {
-        $tilesOut = array();
+        $tilesOut = [];
         $unitsPerTile = $this->getUnitsPerTile();
         $fy0 = -($extent->top - $this->extentTop) / $unitsPerTile['y'];
         $fx0 = ($extent->left - $this->extentLeft) / $unitsPerTile['x'];

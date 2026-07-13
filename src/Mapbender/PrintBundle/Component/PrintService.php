@@ -2,6 +2,7 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use setasign\Fpdi\Fpdi;
 use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
@@ -75,7 +76,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @return string
      * @throws \Exception on invalid template
      */
-    public function doPrint($jobData)
+    public function doPrint(array $jobData)
     {
         if (isset($jobData['application']) && !$jobData['application'] instanceof Application) {
             $jobData['application'] = $this->applicationResolver->getApplicationEntityUnsecure($jobData['application']);
@@ -119,7 +120,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string $fileName
      * @throws \Exception on invalid template
      */
-    public function storePrint(array $jobData, $fileName)
+    public function storePrint(array $jobData, $fileName): void
     {
         // NOTE: FPDI's 'direct' file output mode isn't any more efficient than its string output mode
         //       (uses the same amount of memory). This may be more worthwhile with a different PDF lib...
@@ -132,7 +133,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return Template|array
      */
-    protected function getTemplateData($jobData)
+    protected function getTemplateData(array $jobData)
     {
         return $this->templateParser->getConf($jobData['template']);
     }
@@ -141,7 +142,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param Template|array $templateData
      * @param array $jobData
      */
-    protected function setup($templateData, $jobData)
+    protected function setup(Template|array $templateData, array $jobData)
     {
         // @todo: eliminate instance variable $this->data
         $this->data = $jobData;
@@ -149,7 +150,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $this->conf = $templateData;
     }
 
-    protected function getTargetBox($templateData, $jobData)
+    protected function getTargetBox(array $templateData, array $jobData): Box
     {
         $targetWidth = round($templateData['map']['width'] / 25.4 * $jobData['quality']);
         $targetHeight = round($templateData['map']['height'] / 25.4 * $jobData['quality']);
@@ -157,7 +158,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         return new Box(0, $targetHeight, $targetWidth, 0);
     }
 
-    protected function getJobExtent($jobData)
+    protected function getJobExtent(array $jobData)
     {
         $box = parent::getJobExtent($jobData);
         // Print only: extend on rotation
@@ -200,10 +201,10 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $pdf->setSourceFile($pdfPath);
         $pdf->SetAutoPageBreak(false);
         if ($templateData['orientation'] == 'portrait') {
-            $format = array($templateData['pageSize']['width'], $templateData['pageSize']['height']);
+            $format = [$templateData['pageSize']['width'], $templateData['pageSize']['height']];
             $orientation = 'P';
         } else {
-            $format = array($templateData['pageSize']['height'], $templateData['pageSize']['width']);
+            $format = [$templateData['pageSize']['height'], $templateData['pageSize']['width']];
             $orientation = 'L';
         }
         $pdf->addPage($orientation, $format);
@@ -217,12 +218,12 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @return \FPDF|PDF_Extensions
      * @throws \Exception
      */
-    protected function buildPdf($mapImageName, $templateData, $jobData)
+    protected function buildPdf($mapImageName, $templateData, array $jobData)
     {
         // @todo: eliminate instance variable $this->pdf
         $this->pdf = $pdf = $this->makeBlankPdf($templateData, $jobData['template']);
         // PDF_Extensions extends Fpdi, which provides importPage() and useTemplate()
-        /** @var \setasign\Fpdi\Fpdi $pdf */
+        /** @var Fpdi $pdf */
         $tplidx = $pdf->importPage(1);
 
         $hasTransparentBg = $this->checkPdfBackground($jobData['template']);
@@ -257,7 +258,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string $mapImageName
      * @param Template|array $templateData
      */
-    protected function addMapImage($pdf, $mapImageName, $templateData)
+    protected function addMapImage(PDF_Extensions|\FPDF $pdf, $mapImageName, $templateData)
     {
         $region = $templateData['map'];
         $this->addImageToPdfRegion($pdf, $mapImageName, $region);
@@ -274,9 +275,9 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @see handleRegion
      *
      */
-    protected function getFirstPageSpecialRegionNames($jobData)
+    protected function getFirstPageSpecialRegionNames($jobData): array
     {
-        return array(
+        return [
             // Map is already rendered (c.f. method name xD)
             'map',
             // Legend can perform page breaks, which means
@@ -288,7 +289,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             // for spill pages produced during legend rendering (which we also suppress, so...)
             // NOTE: the only real effect of blacklisting it is suppressing a warning in afterMainMap
             'legendpage_image',
-        );
+        ];
     }
 
     /**
@@ -347,7 +348,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param Template $template
      * @param array $jobData
      */
-    public function finishMainPage($pdf, $template, $jobData)
+    public function finishMainPage($pdf, $template, $jobData): void
     {
         // default implementation: do nothing
     }
@@ -363,18 +364,13 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function handleRegion($pdf, $region, $jobData)
     {
-        switch ($region->getName()) {
-            default:
-                return false;
-            case 'northarrow':
-                return $this->addNorthArrow($pdf, $region, $jobData);
-            case 'overview':
-                return $this->addOverviewMap($pdf, $region, $jobData);
-            case 'scalebar':
-                return $this->addScaleBar($pdf, $region, $jobData);
-            case 'dynamic_image':
-                return $this->addDynamicImage($pdf, $region, $jobData);
-        }
+        return match ($region->getName()) {
+            'northarrow' => $this->addNorthArrow($pdf, $region, $jobData),
+            'overview' => $this->addOverviewMap($pdf, $region, $jobData),
+            'scalebar' => $this->addScaleBar($pdf, $region, $jobData),
+            'dynamic_image' => $this->addDynamicImage($pdf, $region, $jobData),
+            default => false,
+        };
     }
 
     /**
@@ -424,7 +420,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         foreach ($template->getTextFields() as $region) {
             $fieldName = $region->getName();
             // skip extent fields, see special handling in addCoordinates method
-            if (preg_match("/^extent/", $fieldName)) {
+            if (preg_match("/^extent/", (string) $fieldName)) {
                 continue;
             }
             $text = $this->getTextFieldContent($fieldName, $jobData);
@@ -446,7 +442,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function applyFontStyle($pdf, $region)
     {
-        list($r, $g, $b) = CSSColorParser::parse($region['color']);
+        [$r, $g, $b] = CSSColorParser::parse($region['color']);
         $pdf->SetTextColor($r, $g, $b);
         $pdf->SetFont($region['font'], '', floatval($region['fontsize']));
     }
@@ -459,7 +455,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return string|null
      */
-    protected function getTextFieldContent($fieldName, $jobData)
+    protected function getTextFieldContent($fieldName, array $jobData)
     {
         $pluginText = $this->getPluginHost()->getTextFieldContent($fieldName, $jobData);
         if ($pluginText !== null) {
@@ -489,7 +485,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return bool to indicate success (always true here)
      */
-    protected function addNorthArrow($pdf, $region, $jobData)
+    protected function addNorthArrow(PDF_Extensions|\FPDF $pdf, TemplateRegion $region, array $jobData): bool
     {
         $northarrow = $this->resourceDir . '/images/northarrow.png';
         $rotation = intval($jobData['rotation']);
@@ -498,9 +494,9 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             $image = imagecreatefrompng($northarrow);
             $transColor = imagecolorallocatealpha($image, 255, 255, 255, 127);
             $rotatedImage = imagerotate($image, $rotation, $transColor);
-            $srcSize = array(imagesx($image), imagesy($image));
+            $srcSize = [imagesx($image), imagesy($image)];
 
-            $destSize = array(imagesx($rotatedImage), imagesy($rotatedImage));
+            $destSize = [imagesx($rotatedImage), imagesy($rotatedImage)];
             $x = intval(abs(($srcSize[0] - $destSize[0]) / 2));
             $y = intval(abs(($srcSize[1] - $destSize[1]) / 2));
 
@@ -520,7 +516,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return bool
      */
-    protected function addOverviewMap($pdf, $region, $jobData)
+    protected function addOverviewMap(PDF_Extensions|\FPDF $pdf, TemplateRegion $region, array $jobData): bool
     {
         if (empty($jobData['overview'])) {
             return false;
@@ -535,26 +531,26 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $cnt = $ovData['center'];
         $ovWidth = $ovData['height'] * $region['width'] / $region['height'];
         $ovExtent = Box::fromCenterAndSize($cnt['x'], $cnt['y'], $ovWidth, $ovData['height']);
-        $image = $this->buildExportImage(array(
+        $image = $this->buildExportImage([
             'layers' => $ovData['layers'],
             'width' => $ovImageWidth,
             'height' => $ovImageHeight,
             'extent' => $ovExtent->getAbsWidthAndHeight(),
             'center' => $ovExtent->getCenterXy(),
             'quality' => $quality,
-        ));
+        ]);
 
         $ovTransform = FeatureTransform::boxToBox($ovExtent, $ovPixelBox, 1.0);
         /** @var \GdImage $image */
         $red = imagecolorallocate($image, 255, 0, 0);
         // GD imagepolygon expects a flat, numerically indexed, 1d list of concatenated coordinates,
         // and we have 2D sub-arrays with 'x' and 'y' keys. Convert.
-        $flatPoints = call_user_func_array('array_merge', array_map('array_values', array(
+        $flatPoints = call_user_func_array('array_merge', array_map('array_values', [
             $ovTransform->transformXy($jobData['extent_feature'][0]),
             $ovTransform->transformXy($jobData['extent_feature'][3]),
             $ovTransform->transformXy($jobData['extent_feature'][2]),
             $ovTransform->transformXy($jobData['extent_feature'][1]),
-        )));
+        ]));
         imagepolygon($image, $flatPoints, 4, $red);
 
         $this->addImageToPdfRegion($pdf, $image, $region);
@@ -571,7 +567,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return bool to indicate success (always true here)
      */
-    protected function addScaleBar($pdf, $region, $jobData)
+    protected function addScaleBar($pdf, $region, array $jobData): bool
     {
         $totalWidth = $region['width'];
         // Quantize bar length to whole scale units
@@ -620,7 +616,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return bool
      */
-    protected function addCoordinates($pdf, $template, $jobData)
+    protected function addCoordinates($pdf, $template, array $jobData): bool
     {
         if (empty($jobData['extent_feature']) || empty($jobData['extent'])) {
             $this->logger->warning("Skipping coordinates rendering, missing data");
@@ -636,34 +632,34 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         }
 
         $efData = $jobData['extent_feature'];
-        $fieldDataMapping = array(
+        $fieldDataMapping = [
             // @todo: clean up magic number offsets; these should depend on font
             //        size, text length and direction
-            'extent_ll_x' => array(
+            'extent_ll_x' => [
                 'value' => $efData[0]['x'],
                 'offsetX' => 3,
                 'offsetY' => 30,
                 'direction' => 'U',
-            ),
-            'extent_ll_y' => array(
+            ],
+            'extent_ll_y' => [
                 'value' => $efData[0]['y'],
                 'offsetX' => 0,
                 'offsetY' => 3,
                 'direction' => 'R',
-            ),
-            'extent_ur_x' => array(
+            ],
+            'extent_ur_x' => [
                 'value' => $efData[2]['x'],
                 'offsetX' => 1,
                 'offsetY' => 0,
                 'direction' => 'D',
-            ),
-            'extent_ur_y' => array(
+            ],
+            'extent_ur_y' => [
                 'value' => $efData[2]['y'],
                 'offsetX' => $offsetXUrY,
                 'offsetY' => 3,
                 'direction' => 'R',
-            ),
-        );
+            ],
+        ];
         foreach ($fieldDataMapping as $fieldName => $fieldConfig) {
             if (!$template->hasTextField($fieldName)) {
                 continue;
@@ -685,7 +681,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return bool to indicate success
      */
-    protected function addDynamicImage($pdf, $region, $jobData)
+    protected function addDynamicImage($pdf, $region, array $jobData): bool
     {
         if (empty($jobData['dynamic_image']['path'])) {
             return false;
@@ -708,7 +704,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return float
      */
-    protected function getDefaultDpi($jobData)
+    protected function getDefaultDpi(array $jobData): float
     {
         if (empty($jobData['mapDpi'])) {
             return 72.0;
@@ -721,7 +717,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param array $jobData
      * @return float
      */
-    protected function getLineScale($jobData)
+    protected function getLineScale($jobData): float
     {
         if (empty($jobData['quality'])) {
             return 1.0;
@@ -734,7 +730,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param string $templateName
      * @return bool
      */
-    private function checkPdfBackground($templateName)
+    private function checkPdfBackground($templateName): bool
     {
         $pdfString = file_get_contents($this->templateParser->getTemplateFilePath($templateName, 'pdf'));
         return !str_contains($pdfString, '/Outlines');
@@ -745,7 +741,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @param float $dpi
      * @return float
      */
-    public static function dotsToMm($dots, $dpi)
+    public static function dotsToMm($dots, $dpi): float
     {
         return $dots * 25.4 / $dpi;
     }
@@ -852,7 +848,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
             $pdf->setSourceFile($pdfPath);
         }
         // PDF_Extensions extends Fpdi, which provides importPage() and useTemplate()
-        /** @var \setasign\Fpdi\Fpdi $pdf */
+        /** @var Fpdi $pdf */
         $tplidx = $pdf->importPage(1);
         $pdf->useTemplate($tplidx);
 

@@ -16,12 +16,12 @@ class StringUtil
      * @param string $x
      * @return string
      */
-    public static function camelToSnakeCase($x)
+    public static function camelToSnakeCase($x): string
     {
         // insert underscores before upper case letter following lower-case
         $withUnderscores = preg_replace('/([^A-Z])([A-Z])/', '\\1_\\2', $x);
         // lower-case the whole thing
-        return strtolower($withUnderscores);
+        return strtolower((string) $withUnderscores);
     }
 
     /**
@@ -32,11 +32,11 @@ class StringUtil
      * @param bool $firstUpper to capitalize first letter of output (default true)
      * @return string
      */
-    public static function snakeToCamelCase($x, $firstUpper = true)
+    public static function snakeToCamelCase($x, $firstUpper = true): string
     {
         $fragments = explode('_', $x);
         if ($fragments && !$firstUpper) {
-            $parts = array_merge(array($fragments[0]), array_map('ucfirst', array_slice($fragments, 1)));
+            $parts = array_merge([$fragments[0]], array_map('ucfirst', array_slice($fragments, 1)));
         } else {
             $parts = array_map('ucfirst', $fragments);
         }

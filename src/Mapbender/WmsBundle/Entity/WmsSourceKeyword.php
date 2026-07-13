@@ -25,7 +25,7 @@ class WmsSourceKeyword extends Keyword
      *
      * @param ContainingKeyword $wmssource
      */
-    public function setReferenceObject(ContainingKeyword $wmssource)
+    public function setReferenceObject(ContainingKeyword $wmssource): void
     {
         $this->reference = $wmssource;
     }

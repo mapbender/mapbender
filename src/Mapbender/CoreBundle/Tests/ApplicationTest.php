@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Tests;
 
+use Symfony\Component\HttpFoundation\Request;
 use FOM\UserBundle\Security\Permission\YamlApplicationVoter;
 use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Entity\Application;
@@ -12,7 +13,7 @@ class ApplicationTest extends TestBase
 {
     #[Group("unit")]
     #[Group("dataIntegrity")]
-    public function testYamlApplicationStructure()
+    public function testYamlApplicationStructure(): void
     {
         foreach ($this->getYamlApplications() as $application) {
             $this->assertTrue($application instanceof Application);
@@ -24,21 +25,21 @@ class ApplicationTest extends TestBase
     }
 
     #[Group("functional")]
-    public function testLoginForm()
+    public function testLoginForm(): void
     {
-        $client = $this->getBrowser()->request('GET', '/user/login');
+        $client = $this->getBrowser()->request(Request::METHOD_GET, '/user/login');
         $this->assertTrue($client->filterXPath('//*[contains(text(), "Login")]')->count() > 0);
     }
 
     #[Group("functional")]
-    public function testPublicYamlApplicationAccess()
+    public function testPublicYamlApplicationAccess(): void
     {
         $client = $this->getBrowser();
         foreach ($this->getYamlApplications() as $application) {
             $yamlRoles = $application->getYamlRoles();
             if (empty($yamlRoles) || (count($yamlRoles) === 1 && $yamlRoles[0] === YamlApplicationVoter::ROLE_PUBLIC)) {
                 $slug = $application->getSlug();
-                $client->request('GET', '/application/' . rawurlencode($slug));
+                $client->request(Request::METHOD_GET, '/application/' . rawurlencode($slug));
                 $response = $client->getResponse();
                 $this->assertTrue($response->isSuccessful(), 'Tried accessing application ' . $slug);
             }

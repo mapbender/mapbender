@@ -93,7 +93,7 @@ class Base64VLQ
         return ($value << 1) + 0;
     }
 
-    private static function encodeDigit($value): string
+    private static function encodeDigit(int $value): string
     {
         return self::$encodingMap[$value];
     }

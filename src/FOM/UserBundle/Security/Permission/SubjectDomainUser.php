@@ -13,7 +13,7 @@ class SubjectDomainUser extends AbstractSubjectDomain
     const SLUG = "user";
 
 
-    public function __construct(private EntityManagerInterface $doctrine, protected bool $isAssignable)
+    public function __construct(private readonly EntityManagerInterface $doctrine, protected bool $isAssignable)
     {
 
     }
@@ -42,7 +42,7 @@ class SubjectDomainUser extends AbstractSubjectDomain
         if (!$this->isAssignable) return [];
         $users = $this->doctrine->getRepository(User::class)->findBy([], ['username' => 'ASC']);
         return array_map(
-            fn(User $user) => new AssignableSubject(
+            fn(User $user): AssignableSubject => new AssignableSubject(
                 self::SLUG,
                 $user->getUserIdentifier(),
                 $this->getIconClass(),

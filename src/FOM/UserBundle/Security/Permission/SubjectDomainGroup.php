@@ -18,7 +18,7 @@ class SubjectDomainGroup extends AbstractSubjectDomain
         return self::SLUG;
     }
 
-    public function __construct(private EntityManagerInterface $doctrine, protected bool $isAssignable)
+    public function __construct(private readonly EntityManagerInterface $doctrine, protected bool $isAssignable)
     {
 
     }
@@ -48,7 +48,7 @@ class SubjectDomainGroup extends AbstractSubjectDomain
         if (!$this->isAssignable) return [];
         $groups = $this->doctrine->getRepository(Group::class)->findBy([], ['title' => 'ASC']);
         return array_map(
-            fn(Group $group) => new AssignableSubject(
+            fn(Group $group): AssignableSubject => new AssignableSubject(
                 self::SLUG,
                 $group->getTitle(),
                 $this->getIconClass(),

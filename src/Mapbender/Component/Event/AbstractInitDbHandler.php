@@ -10,9 +10,9 @@ abstract class AbstractInitDbHandler implements EventSubscriberInterface
 {
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             'mapbender.init.db' => ['onInitDb'],
-        );
+        ];
     }
 
     abstract public function onInitDb(InitDbEvent $event);

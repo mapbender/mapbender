@@ -13,13 +13,13 @@ class ClassUtil
      * @param string $name
      * @return bool
      */
-    public static function exists($name)
+    public static function exists($name): bool
     {
         try {
             return \class_exists($name, true);
             // Debug mode class loader in Symfony 2 throws \RuntimeException
             // Some versions of Symfony 3 have thrown ContextErrorException
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -29,9 +29,9 @@ class ClassUtil
      * @return string[]
      * @throws \InvalidArgumentException if $instanceOrName is falsy
      */
-    public static function getParents($instanceOrName)
+    public static function getParents($instanceOrName): array
     {
-        $classes = array();
+        $classes = [];
         $currentName = static::toName($instanceOrName);
         for ($i = 0; $currentName; ++$i) {
             if ($i) {
@@ -49,9 +49,9 @@ class ClassUtil
      * @return string[]
      * @throws \InvalidArgumentException if $instanceOrName or $stopClass are falsy
      */
-    public static function getParentsUntil($instanceOrName, $stopClass, $includeStop = false)
+    public static function getParentsUntil($instanceOrName, $stopClass, $includeStop = false): array
     {
-        $namesOut = array();
+        $namesOut = [];
         $stopClass = static::toName($stopClass);
         foreach (static::getParents($instanceOrName) as $parentName) {
             if ($includeStop || $parentName != $stopClass) {
@@ -102,6 +102,6 @@ class ClassUtil
         if (!$instanceOrName) {
             throw new \InvalidArgumentException("Unsupported value " . var_export($instanceOrName, true));
         }
-        return is_object($instanceOrName) ? get_class($instanceOrName) : $instanceOrName;
+        return is_object($instanceOrName) ? $instanceOrName::class : $instanceOrName;
     }
 }

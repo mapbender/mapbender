@@ -1,6 +1,9 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -13,29 +16,29 @@ class CoordinatesDisplayAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('numDigits', 'Symfony\Component\Form\Extension\Core\Type\IntegerType', array(
+            ->add('numDigits', IntegerType::class, [
                 'required' => true,
                 'label' => 'mb.core.coordinesdisplay.admin.numdigits',
-            ))
-            ->add('label', 'Symfony\Component\Form\Extension\Core\Type\CheckboxType', array(
+            ])
+            ->add('label', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.coordinesdisplay.admin.label',
-            ))
-            ->add('empty', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('empty', TextType::class, [
                 'required' => false,
                 'trim' => false,
                 'label' => 'mb.core.coordinesdisplay.admin.empty',
-            ))
-            ->add('prefix', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('prefix', TextType::class, [
                 'required' => false,
                 'trim' => false,
                 'label' => 'mb.core.coordinesdisplay.admin.prefix',
-            ))
-            ->add('separator', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ])
+            ->add('separator', TextType::class, [
                 'required' => false,
                 'trim' => false,
                 'label' => 'mb.core.coordinesdisplay.admin.separator',
-            ))
+            ])
         ;
     }
 

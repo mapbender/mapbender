@@ -10,26 +10,23 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class DimensionSetDimensionChoiceTransformer implements DataTransformerInterface
 {
-    protected $dimensionInstances;
-
     /**
      * @param DimensionInst[] $dimensionInstances
      */
-    public function __construct($dimensionInstances)
+    public function __construct(protected $dimensionInstances)
     {
-        $this->dimensionInstances = $dimensionInstances;
     }
 
     public function transform($value): array
     {
         if (!$value) {
-            return array();
+            return [];
         }
         if (!\is_array($value)) {
             throw new TransformationFailedException('Expected an array.');
         }
 
-        $instances = array();
+        $instances = [];
         foreach ($value as $k => $val) {
             foreach ($this->dimensionInstances as $inst) {
                 if ($this->getInstanceIdent($inst) == $val) {
@@ -44,13 +41,13 @@ class DimensionSetDimensionChoiceTransformer implements DataTransformerInterface
     public function reverseTransform($value): array
     {
         if (!$value) {
-            return array();
+            return [];
         }
         if (!\is_array($value)) {
             throw new TransformationFailedException('Expected an array.');
         }
 
-        $strings = array();
+        $strings = [];
         foreach ($value as $k => $inst) {
             /** @var DimensionInst $inst */
             $strings[$k] = $this->getInstanceIdent($inst);
@@ -58,7 +55,7 @@ class DimensionSetDimensionChoiceTransformer implements DataTransformerInterface
         return $strings;
     }
 
-    protected function getInstanceIdent(DimensionInst $inst)
+    protected function getInstanceIdent(DimensionInst $inst): string
     {
         return $inst->id . "-" . $inst->getName() . "-" . $inst->getType();
     }

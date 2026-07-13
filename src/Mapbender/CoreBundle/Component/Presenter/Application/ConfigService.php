@@ -57,10 +57,10 @@ class ConfigService
 
         $this->eventDispatcher->dispatch(new ApplicationEvent($entity), ApplicationEvent::EVTNAME_BEFORE_CONFIG);
 
-        $configuration = array(
+        $configuration = [
             'application' => $this->getBaseConfiguration($entity),
             'elements' => $this->getElementConfiguration($activeElements),
-        );
+        ];
         $this->preloadSources($entity);
         $configuration['layersets'] = $this->getLayerSetConfigs($entity);
 
@@ -71,7 +71,7 @@ class ConfigService
 
     public function getBaseConfiguration(Application $entity): array
     {
-        return array(
+        return [
             'title' => $entity->getTitle(),
             'urls' => $this->getUrls($entity),
             'publicOptions' => $entity->getPublicOptions(),
@@ -79,7 +79,7 @@ class ConfigService
             'debug' => $this->debug,
             'mapEngineCode' => 'current',
             'persistentView' => $entity->getPersistentView(),
-        );
+        ];
     }
 
     /**
@@ -87,15 +87,15 @@ class ConfigService
      */
     public function getUrls(Application $entity): array
     {
-        $config = array('slug' => $entity->getSlug());
+        $config = ['slug' => $entity->getSlug()];
 
-        return array(
+        return [
             'base' => $this->router->getContext()->getBaseUrl(),
             'asset' => $this->assetBaseUrl,
             'element' => $this->router->generate('mapbender_core_application_element', $config),
             'proxy' => $this->urlProcessor->getProxyBaseUrl(),
             'config' => $this->router->generate('mapbender_core_application_configuration', $config),
-        );
+        ];
     }
 
     /**
@@ -103,16 +103,16 @@ class ConfigService
      */
     public function getLayerSetConfigs(Application $entity): array
     {
-        $configs = array();
+        $configs = [];
         foreach ($entity->getLayersets() as $layerSet) {
-            $configs[] = array(
+            $configs[] = [
                 'id' => strval($layerSet->getId()),
                 'title' => $layerSet->getTitle() ?: strval($layerSet->getId()),
                 'selected' => $layerSet->getSelected(),
                 'instances' => $this->getSourceInstanceConfigs($layerSet),
-            );
+            ];
         }
-        return array_values(array_filter($configs, fn($config) => !empty($config['instances'])));
+        return array_values(array_filter($configs, fn(array $config): bool => !empty($config['instances'])));
     }
 
     /**
@@ -120,7 +120,7 @@ class ConfigService
      */
     protected function getSourceInstanceConfigs(Layerset $layerset): array
     {
-        $configs = array();
+        $configs = [];
         foreach ($this->filterActiveSourceInstanceAssignments($layerset) as $assignment) {
             $configGenerator = $this->sourceTypeDirectory->getConfigGenerator($assignment->getInstance());
             if (!$configGenerator->isInstanceEnabled($assignment->getInstance())) {
@@ -138,15 +138,15 @@ class ConfigService
      */
     protected function getElementConfiguration(array $elements): array
     {
-        $elementConfig = array();
+        $elementConfig = [];
         foreach ($elements as $element) {
             $handler = $this->elementFilter->getInventory()->getFrontendHandler($element);
             if ($handler) {
                 try {
-                    $values = array(
+                    $values = [
                         'init' => $handler->getWidgetName($element),
                         'configuration' => $handler->getClientConfiguration($element),
-                    );
+                    ];
                     if ($handler instanceof ValidatableConfigurationInterface) {
                         try {
                             $handler::validate($values['configuration'], null, $this->translator);

@@ -28,7 +28,7 @@ class MinMax
      *
      * @return float|null
      */
-    public function getMin()
+    public function getMin(): ?float
     {
         $value = $this->min;
         if ($value == INF) {
@@ -43,7 +43,7 @@ class MinMax
      * @param float|null $value
      * @return $this
      */
-    public function setMin($value)
+    public function setMin($value): static
     {
         $this->min = $value === null ? null : floatval($value);
         return $this;
@@ -54,7 +54,7 @@ class MinMax
      *
      * @return float|null
      */
-    public function getMax()
+    public function getMax(): ?float
     {
         $value = $this->max;
         if ($value == INF) {
@@ -69,7 +69,7 @@ class MinMax
      * @param float|null $value
      * @return $this
      */
-    public function setMax($value)
+    public function setMax($value): static
     {
         $this->max = $value === null ? null : floatval($value);
         return $this;

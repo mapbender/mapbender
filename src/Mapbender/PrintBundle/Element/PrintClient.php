@@ -2,6 +2,11 @@
 
 namespace Mapbender\PrintBundle\Element;
 
+use Mapbender\PrintBundle\Element\Type\PrintClientAdminType;
+use Mapbender\PrintBundle\Form\PrintClientSettingsType;
+use Symfony\Component\Form\FormInterface;
+use FOM\UserBundle\Entity\User;
+use FOM\UserBundle\Entity\Group;
 use Doctrine\Common\Collections\Collection;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
@@ -30,50 +35,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class PrintClient extends AbstractElementService implements ConfigMigrationInterface, ElementHttpHandlerInterface
 {
-    /** @var UrlGeneratorInterface */
-    protected $urlGenerator;
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-    /** @var UrlProcessor */
-    protected $sourceUrlProcessor;
-    /** @var OdgParser */
-    protected $odgParser;
-    /** @var PrintServiceInterface */
-    protected $printService;
-    /** @var PrintPluginHost */
-    protected $pluginRegistry;
-    /** @var string|null */
-    protected $memoryLimit;
-    /** @var boolean */
-    protected $enableQueue;
-
-    public function __construct(UrlGeneratorInterface $urlGenerator,
-                                FormFactoryInterface  $formFactory,
-                                TokenStorageInterface $tokenStorage,
-                                UrlProcessor          $sourceUrlProcessor,
-                                OdgParser             $odgParser,
-                                PrintServiceInterface $printService,
-                                PrintPluginHost       $pluginRegistry,
-                                                      $memoryLimit,
-                                                      $enableQueue)
+    /**
+     * @param string|null $memoryLimit
+     * @param bool $enableQueue
+     */
+    public function __construct(protected UrlGeneratorInterface $urlGenerator, protected FormFactoryInterface  $formFactory, protected TokenStorageInterface $tokenStorage, protected UrlProcessor          $sourceUrlProcessor, protected OdgParser             $odgParser, protected PrintServiceInterface $printService, protected PrintPluginHost       $pluginRegistry, protected $memoryLimit, protected $enableQueue)
     {
-        $this->urlGenerator = $urlGenerator;
-        $this->formFactory = $formFactory;
-        $this->tokenStorage = $tokenStorage;
-        $this->sourceUrlProcessor = $sourceUrlProcessor;
-        $this->odgParser = $odgParser;
-        $this->printService = $printService;
-        $this->pluginRegistry = $pluginRegistry;
-        $this->memoryLimit = $memoryLimit;
-        $this->enableQueue = $enableQueue;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.printclient.class.title";
     }
@@ -81,7 +54,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.printclient.class.description";
     }
@@ -89,107 +62,107 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/ol.interaction.Transform.js',
                 '@MapbenderPrintBundle/Resources/public/MbImageExport.js',
                 '@MapbenderPrintBundle/Resources/public/element/MbPrintJobList.js',
                 '@MapbenderPrintBundle/Resources/public/element/MbPrint.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderPrintBundle/Resources/public/sass/element/printclient.scss',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.core.printclient.btn.*',
                 'mb.print.printclient.joblist.*',
                 'mb.print.imageexport.info.*',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
-            "templates" => array(
-                array(
+        return [
+            "templates" => [
+                [
                     'template' => "a4portrait",
                     "label" => "A4 Portrait",
-                ),
-                array(
+                ],
+                [
                     'template' => "a4landscape",
                     "label" => "A4 Landscape",
-                ),
-                array(
+                ],
+                [
                     'template' => "a3portrait",
                     "label" => "A3 Portrait",
-                ),
-                array(
+                ],
+                [
                     'template' => "a3landscape",
                     "label" => "A3 Landscape",
-                ),
-                array(
+                ],
+                [
                     'template' => "a4_landscape_offical",
                     "label" => "A4 Landscape offical",
-                ),
-                array(
+                ],
+                [
                     'template' => "a2_landscape_offical",
                     "label" => "A2 Landscape offical",
-                ),
-            ),
-            "scales" => array(
+                ],
+            ],
+            "scales" => [
                 500,
                 1000,
                 5000,
                 10000,
                 25000,
-            ),
-            "quality_levels" => array(
-                array(
+            ],
+            "quality_levels" => [
+                [
                     'dpi' => "72",
                     'label' => "Draft (72dpi)",
-                ),
-                array(
+                ],
+                [
                     'dpi' => "288",
                     'label' => "Document (288dpi)",
-                ),
-            ),
+                ],
+            ],
             "rotatable" => true,
             "legend" => true,
             "legend_default_behaviour" => true,
-            "optional_fields" => array(
-                "title" => array(
+            "optional_fields" => [
+                "title" => [
                     "label" => 'mb.core.printclient.class.title',
-                    "options" => array(
+                    "options" => [
                         "required" => false,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             'required_fields_first' => false,
             "replace_pattern" => null,
             "file_prefix" => 'mapbender',
             'renderMode' => 'direct',
             'queueAccess' => 'global',
             'element_icon' => self::getDefaultIcon(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\PrintBundle\Element\Type\PrintClientAdminType';
+        return PrintClientAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderPrint/ElementAdmin/printclient.html.twig';
     }
@@ -197,20 +170,20 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbPrint';
     }
 
     public function getClientConfiguration(Element $element)
     {
-        return $element->getConfiguration() + array(
+        return $element->getConfiguration() + [
                 // NOTE: intl extension locale is runtime-controlled by Symfony to reflect framework configuration
                 'locale' => \locale_get_default(),
-            );
+            ];
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $config = $element->getConfiguration();
         $queueMode = $this->enableQueue && !empty($config['renderMode']) && $config['renderMode'] === 'queued';
@@ -224,68 +197,68 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         $view->attributes['class'] = 'mb-element-printclient';
         $view->attributes['data-title'] = $element->getTitle();
 
-        $submitUrl = $this->urlGenerator->generate('mapbender_core_application_element', array(
+        $submitUrl = $this->urlGenerator->generate('mapbender_core_application_element', [
             'slug' => $element->getApplication()->getSlug(),
             'id' => $element->getId(),
             'action' => $queueMode ? PrintQueuePlugin::ELEMENT_ACTION_NAME_QUEUE : 'print',
-        ));
-        $view->variables = array(
+        ]);
+        $view->variables = [
             'submitUrl' => $submitUrl,
             'settingsTemplate' => $this->getSettingsTemplate(),
             'settingsForm' => $this->getSettingsForm($element)->createView(),
             // for legacy custom templates only
             'id' => $element->getId(),
             'title' => $element->getTitle(),
-            'configuration' => $config + array(
+            'configuration' => $config + [
                     'required_fields_first' => false,
                     'type' => 'dialog',
-                ),
-        );
+                ],
+        ];
         if ($queueMode) {
             /**
              * Generate an iframe name that can be used for ~"invisible" form submission, Ajax posts etc.
              */
             $submitFrameName = "submit-frame-{$element->getId()}";
-            $view->variables += array(
+            $view->variables += [
                 'formTarget' => $submitFrameName,
                 'submitFrameName' => $submitFrameName,
-            );
+            ];
         } else {
-            $view->variables += array(
+            $view->variables += [
                 'formTarget' => '_blank',
-            );
+            ];
         }
         return $view;
     }
 
-    protected function getSettingsTemplate()
+    protected function getSettingsTemplate(): string
     {
         return '@MapbenderPrint/Element/printclient-settings.html.twig';
     }
 
-    protected function getSettingsFormType()
+    protected function getSettingsFormType(): string
     {
-        return 'Mapbender\PrintBundle\Form\PrintClientSettingsType';
+        return PrintClientSettingsType::class;
     }
 
-    protected function getSettingsForm(Element $element)
+    protected function getSettingsForm(Element $element): FormInterface
     {
         $formType = $this->getSettingsFormType();
         $config = $element->getConfiguration();
-        $options = array(
-            'templates' => ArrayUtil::getDefault($config, 'templates', array()),
+        $options = [
+            'templates' => ArrayUtil::getDefault($config, 'templates', []),
             'required_fields_first' => ArrayUtil::getDefault($config, 'required_fields_first', false),
-            'custom_fields' => ArrayUtil::getDefault($config, 'optional_fields', array()) ?: array(),
-            'quality_levels' => ArrayUtil::getDefault($config, 'quality_levels', array()),
-            'scales' => ArrayUtil::getDefault($config, 'scales', array()),
+            'custom_fields' => ArrayUtil::getDefault($config, 'optional_fields', []) ?: [],
+            'quality_levels' => ArrayUtil::getDefault($config, 'quality_levels', []),
+            'scales' => ArrayUtil::getDefault($config, 'scales', []),
             'show_rotation' => ArrayUtil::getDefault($config, 'rotatable', true),
             'show_printLegend' => ArrayUtil::getDefault($config, 'legend', true),
             'compound' => true,
-        );
-        $data = array(
+        ];
+        $data = [
             'rotation' => '0',
             'printLegend' => !!ArrayUtil::getDefault($config, 'legend_default_behaviour', true),
-        );
+        ];
 
         return $this->formFactory->createNamed('', $formType, $data, $options);
     }
@@ -294,16 +267,16 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      * @param Element $element
      * @return string
      */
-    protected function generateFilename(Element $element)
+    protected function generateFilename(Element $element): string
     {
         $configuration = $element->getConfiguration();
         $prefix = ArrayUtil::getDefault($configuration, 'file_prefix', null);
-        $prefix = $prefix ?: ArrayUtil::getDefault($this->getDefaultConfiguration(), 'file_prefix', null);
+        $prefix = $prefix ?: ArrayUtil::getDefault(static::getDefaultConfiguration(), 'file_prefix', null);
         $prefix = $prefix ?: 'mapbender_print';
         return $prefix . '_' . date("YmdHis") . '.pdf';
     }
 
-    public function getHttpHandler(Element $element)
+    public function getHttpHandler(Element $element): static
     {
         return $this;
     }
@@ -324,10 +297,10 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
                 $displayInline = true;
                 $filename = $this->generateFilename($element);
 
-                $response = new Response($pdfBody, Response::HTTP_OK, array(
+                $response = new Response($pdfBody, Response::HTTP_OK, [
                     'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
                     'Content-Disposition' => 'attachment; filename=' . $filename
-                ));
+                ]);
 
                 return $response;
 
@@ -367,7 +340,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      * @param Request $request
      * @return array
      */
-    protected function extractRequestData(Request $request)
+    protected function extractRequestData(Request $request): array
     {
         $data = $request->request->all();
         if (isset($data['data'])) {
@@ -477,35 +450,35 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
     /**
      * @return array
      */
-    protected function getUserSpecifics()
+    protected function getUserSpecifics(): array
     {
         // initialize safe defaults
-        $values = array(
+        $values = [
             'userId' => null,
             'userName' => null,
-            'legendpage_image' => array(
+            'legendpage_image' => [
                 'type' => 'resource',
                 'path' => 'images/legendpage_image.png',
-            ),
-        );
-        $fomGroups = array();
+            ],
+        ];
+        $fomGroups = [];
         $token = $this->tokenStorage->getToken();
         if ($token && !$token instanceof NullToken) {
             $user = $token->getUser();
             // getUser's return value can be a lot of different things
-            if (is_object($user) && ($user instanceof \FOM\UserBundle\Entity\User)) {
-                $values = array_replace($values, array(
+            if (is_object($user) && ($user instanceof User)) {
+                $values = array_replace($values, [
                     'userId' => $user->getId(),
                     'userName' => $user->getUserIdentifier(),
-                ));
-                $fomGroups = $user->getGroups() ?: array();
+                ]);
+                $fomGroups = $user->getGroups() ?: [];
                 if (is_object($fomGroups) && ($fomGroups instanceof Collection)) {
                     $fomGroups = $fomGroups->getValues();
                 }
             } elseif (is_object($user) && ($user instanceof UserInterface)) {
-                $values = array_replace($values, array(
+                $values = array_replace($values, [
                     'userName' => $user->getUserIdentifier(),
-                ));
+                ]);
             } elseif ($user) {
                 // b) an object with a __toString method or just a string
                 $values['userName'] = "{$user}";
@@ -524,31 +497,30 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      *
      * Unused param $user is provided for override methods, if you want to look into your
      * LDAP or something. This can have a multitude of types.
-     * @param \FOM\UserBundle\Entity\Group|mixed $group
+     * @param Group|mixed $group
      * @param UserInterface|object|string $user
      * @return array
      * @see AbstractToken::setUser()
-     *
      */
-    protected function getGroupSpecifics($group, $user)
+    protected function getGroupSpecifics($group, $user): array
     {
-        if (is_object($group) && ($group instanceof \FOM\UserBundle\Entity\Group)) {
-            return array(
-                'legendpage_image' => array(
+        if (is_object($group) && ($group instanceof Group)) {
+            return [
+                'legendpage_image' => [
                     'type' => 'resource',
                     'path' => 'images/' . $group->getTitle() . '.png',
-                ),
-                'dynamic_image' => array(
+                ],
+                'dynamic_image' => [
                     'type' => 'resource',
                     'path' => 'images/' . $group->getTitle() . '.png',
-                ),
-                'dynamic_text' => array(
+                ],
+                'dynamic_text' => [
                     'type' => 'text',
                     'text' => $group->getDescription(),
-                ),
-            );
+                ],
+            ];
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -558,7 +530,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      * @param $dpi
      * @return mixed
      */
-    private function replaceUrlPattern($url, $pattern, $dpi)
+    private function replaceUrlPattern($url, array $pattern, $dpi)
     {
         if (!isset($pattern['replacement'][$dpi])) {
             return $url;
@@ -573,7 +545,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
      * @param $dpi
      * @return string
      */
-    private function addUrlPattern($url, $pattern, $dpi)
+    private function addUrlPattern($url, array $pattern, $dpi)
     {
         if (!isset($pattern['default'][$dpi]))
             return $url;
@@ -592,7 +564,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         }
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         $values = $entity->getConfiguration();
         if ($values && !empty($values['scales'])) {
@@ -604,7 +576,7 @@ class PrintClient extends AbstractElementService implements ConfigMigrationInter
         }
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconPrint';
     }

@@ -14,7 +14,7 @@ class SourceTwigExtension extends AbstractExtension
 
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'mbcore_source';
     }
@@ -22,9 +22,9 @@ class SourceTwigExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('source_label', [$this, 'getSourceLabel']),
-            new TwigFilter('source_label_long', [$this, 'getSourceLabelLong']),
-            new TwigFilter('source_accent_color', [$this, 'getSourceAccentColor']),
+            new TwigFilter('source_label', $this->getSourceLabel(...)),
+            new TwigFilter('source_label_long', $this->getSourceLabelLong(...)),
+            new TwigFilter('source_accent_color', $this->getSourceAccentColor(...)),
         ];
     }
 

@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_wmts_theme')]
-class Theme
+class Theme implements \Stringable
 {
 
     /**
@@ -38,7 +38,7 @@ class Theme
     protected $abstract;
 
     #[ORM\Column(type: 'json', nullable: false)] // ;
-    protected $layerrefs;
+    protected array $layerrefs;
 
     #[ORM\ManyToOne(targetEntity: Theme::class, inversedBy: 'themes')]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', nullable: true)]
@@ -51,7 +51,7 @@ class Theme
     public function __construct()
     {
         $this->themes = new ArrayCollection();
-        $this->layerrefs = array();
+        $this->layerrefs = [];
     }
 
     /**
@@ -66,7 +66,7 @@ class Theme
      * @param WmtsSource $wmtssource
      * @return Theme
      */
-    public function setSource(WmtsSource $wmtssource)
+    public function setSource(WmtsSource $wmtssource): static
     {
         $this->source = $wmtssource;
         return $this;
@@ -92,7 +92,7 @@ class Theme
      * @param string $identifier
      * @return $this
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier): static
     {
         $this->identifier = $identifier;
         return $this;
@@ -110,7 +110,7 @@ class Theme
      * @param string $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
         return $this;
@@ -128,7 +128,7 @@ class Theme
      * @param string $abstract
      * @return $this
      */
-    public function setAbstract($abstract)
+    public function setAbstract($abstract): static
     {
         $this->abstract = $abstract;
         return $this;
@@ -146,7 +146,7 @@ class Theme
      * @param array $layerrefs
      * @return $this
      */
-    public function setLayerRefs($layerrefs)
+    public function setLayerRefs($layerrefs): static
     {
         $this->layerrefs = $layerrefs;
         return $this;
@@ -156,7 +156,7 @@ class Theme
      * @param string $layerref
      * @return $this
      */
-    public function addLayerRef($layerref)
+    public function addLayerRef($layerref): static
     {
         $this->layerrefs[] = $layerref;
         return $this;
@@ -166,7 +166,7 @@ class Theme
      * @param Theme|null $parent
      * @return $this
      */
-    public function setParent(?Theme $parent = NULL)
+    public function setParent(?Theme $parent = NULL): static
     {
         $this->parent = $parent;
         return $this;
@@ -184,7 +184,7 @@ class Theme
      * @param ArrayCollection $themes
      * @return $this
      */
-    public function setThemes(ArrayCollection $themes)
+    public function setThemes(ArrayCollection $themes): static
     {
         $this->themes = $themes;
         return $this;
@@ -194,7 +194,7 @@ class Theme
      * @param Theme $theme
      * @return $this
      */
-    public function addTheme($theme)
+    public function addTheme($theme): static
     {
         $this->themes->add($theme);
         return $this;
@@ -208,7 +208,7 @@ class Theme
         return $this->themes;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->id;
     }

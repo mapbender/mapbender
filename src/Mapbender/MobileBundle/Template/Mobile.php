@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\MobileBundle\Template;
 
+use Mapbender\CoreBundle\Form\Type\Template\BaseToolbarType;
 use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 
@@ -10,75 +11,68 @@ use Mapbender\CoreBundle\Entity\Application;
  */
 class Mobile extends Template
 {
-    public static function getTitle()
+    public static function getTitle(): string
     {
         return 'Mapbender Mobile template';
     }
 
-    public static function getRegions()
+    public static function getRegions(): array
     {
-        return array(
+        return [
             'footer',
             'content',
             'mobilePane',
-        );
+        ];
     }
 
-    public function getSassVariablesAssets(Application $application)
+    public function getSassVariablesAssets(Application $application): array
     {
-        return array(
+        return [
             '@MapbenderCoreBundle/Resources/public/sass/libs/_variables.scss',
             '@MapbenderMobileBundle/Resources/public/sass/theme/variables.scss',
-        );
+        ];
     }
 
     public function getAssets($type)
     {
-        switch ($type) {
-            case 'css':
-                return array(
-                    '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss',
-                );
-            case 'js':
-                return array(
-                    '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
-                    '@MapbenderMobileBundle/Resources/public/js/mobile.js',
-                );
-            default:
-                return parent::getAssets($type);
-        }
+        return match ($type) {
+            'css' => [
+                '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss',
+            ],
+            'js' => [
+                '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
+                '@MapbenderMobileBundle/Resources/public/js/mobile.js',
+            ],
+            default => parent::getAssets($type),
+        };
     }
 
-    public function getTwigTemplate()
+    public function getTwigTemplate(): string
     {
         return '@MapbenderMobile/Template/mobile.html.twig';
     }
 
-    public function getBodyClass(Application $application)
+    public function getBodyClass(Application $application): string
     {
         return 'mobile-template';
     }
 
-    public static function getRegionSettingsFormType($regionName)
+    public static function getRegionSettingsFormType($regionName): ?string
     {
-        switch ($regionName) {
-            case 'footer':
-                return 'Mapbender\CoreBundle\Form\Type\Template\BaseToolbarType';
-            default:
-                return null;
-        }
+        return match ($regionName) {
+            'footer' => BaseToolbarType::class,
+            default => null,
+        };
     }
 
     public static function getRegionPropertiesDefaults($regionName)
     {
-        switch ($regionName) {
-            case 'footer':
-                return array(
-                    'item_alignment' => 'center',
-                    'generate_button_menu' => false,
-                );
-            default:
-                return parent::getRegionPropertiesDefaults($regionName);
-        }
+        return match ($regionName) {
+            'footer' => [
+                'item_alignment' => 'center',
+                'generate_button_menu' => false,
+            ],
+            default => parent::getRegionPropertiesDefaults($regionName),
+        };
     }
 }

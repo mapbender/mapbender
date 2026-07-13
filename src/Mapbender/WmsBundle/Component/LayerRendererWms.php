@@ -85,21 +85,21 @@ class LayerRendererWms extends LayerRenderer
             // layer definitions are compatible
             // concatenate LAYERS= and STYLES=
             // @todo: this should be properly case insensitive
-            $queryA = array();
+            $queryA = [];
             parse_str(parse_url($layerDef['url'], PHP_URL_QUERY), $queryA);
-            $queryB = array();
+            $queryB = [];
             parse_str(parse_url($nextLayerDef['url'], PHP_URL_QUERY), $queryB);
             $layersA = ArrayUtil::getDefault($queryA, 'LAYERS', '') ?: ArrayUtil::getDefault($queryA, 'layers', '');
             $layersB = ArrayUtil::getDefault($queryB, 'LAYERS', '') ?: ArrayUtil::getDefault($queryB, 'layers', '');
             $stylesA = ArrayUtil::getDefault($queryA, 'STYLES', '') ?: ArrayUtil::getDefault($queryA, 'styles', '');
             $stylesB = ArrayUtil::getDefault($queryB, 'STYLES', '') ?: ArrayUtil::getDefault($queryB, 'styles', '');
-            $newUrl = UrlUtil::validateUrl($layerDef['url'], array(
+            $newUrl = UrlUtil::validateUrl($layerDef['url'], [
                 'LAYERS' => "{$layersA},{$layersB}",
                 'STYLES' => "{$stylesA},{$stylesB}",
-            ));
-            return array_replace($layerDef, array(
+            ]);
+            return array_replace($layerDef, [
                 'url' => $newUrl,
-            ));
+            ]);
         } else {
             return false;
         }
@@ -111,7 +111,7 @@ class LayerRendererWms extends LayerRenderer
      * @param Box $extent
      * @return resource|null
      */
-    protected function getLayerImage($layerDef, $baseUrl, Box $extent)
+    protected function getLayerImage(array $layerDef, $baseUrl, Box $extent)
     {
         $gridOptions = $this->getGridOptions($layerDef);
         // Base grid total dimensions on WITH and HEIGHT in baseUrl. Resolution clamping in extended preprocessUrl may
@@ -168,16 +168,16 @@ class LayerRendererWms extends LayerRenderer
      * @param Box $extent
      * @return string
      */
-    protected function preprocessUrl($layerDef, $canvas, Box $extent)
+    protected function preprocessUrl(array $layerDef, ExportCanvas $canvas, Box $extent)
     {
-        $serviceParams = array(
+        $serviceParams = [
             'SERVICE' => 'WMS',
             'REQUEST' => 'GetMap',
-        );
+        ];
         if (false === stripos($layerDef['url'], 'TRANSPARENT=')) {
-            $serviceParams += array(
+            $serviceParams += [
                 'TRANSPARENT' => 'TRUE',
-            );
+            ];
         }
         $params = $this->getBboxAndSizeParams($extent, $canvas->getWidth(), $canvas->getHeight(), !empty($layerDef['changeAxis']));
         $params = $this->adjustParamsForResolution($params, $layerDef, $canvas, $extent);
@@ -189,10 +189,10 @@ class LayerRendererWms extends LayerRenderer
 
     protected function getBboxAndSizeParams(Box $extent, int $width, int $height, bool $flipXy): array
     {
-        $params = array(
+        $params = [
             'WIDTH' => intval($width),
             'HEIGHT' => intval($height),
-        );
+        ];
         if ($flipXy) {
             $params['BBOX'] = $extent->bottom . ',' . $extent->left . ',' . $extent->top . ',' . $extent->right;
         } else {
@@ -223,11 +223,11 @@ class LayerRendererWms extends LayerRenderer
      */
     protected function getSymbolizationParams(ExportCanvas $canvas, string $url): array
     {
-        $existingParams = array();
+        $existingParams = [];
         parse_str(parse_url($url, PHP_URL_QUERY), $existingParams);
 
         $symbolResolution = $this->getSymbolResolution($canvas, $existingParams['WIDTH'], $existingParams['HEIGHT']);
-        return array(
+        return [
             // There is no standard param for this, but several vendor specific solutions
             // 1) Mapserver; not really documented, see https://github.com/mapserver/mapserver/issues/5350
             'MAP_RESOLUTION' => $symbolResolution,
@@ -235,7 +235,7 @@ class LayerRendererWms extends LayerRenderer
             'format_options' => "dpi:{$symbolResolution}",
             // 3) QGis server; see https://docs.qgis.org/2.18/en/docs/user_manual/working_with_ogc/server/services.html#getmap
             'DPI' => $symbolResolution,
-        );
+        ];
     }
 
     /**
@@ -310,7 +310,7 @@ class LayerRendererWms extends LayerRenderer
      */
     protected function calculateGridFromUrl(string $url, WmsGridOptions $gridOptions): WmsGrid
     {
-        $urlParams = array();
+        $urlParams = [];
         parse_str(parse_url($url, PHP_URL_QUERY), $urlParams);
         $layerWidth = intval($urlParams['WIDTH']);
         $layerHeight = intval($urlParams['HEIGHT']);
@@ -325,7 +325,7 @@ class LayerRendererWms extends LayerRenderer
     {
         // Step 1: calculate non-overlapping segments, allowing the first and the last segments
         //         to be longer than $unbufferedSegmentLength by $bufferLength
-        $unbufferedSegments = array();
+        $unbufferedSegments = [];
         for ($offset = 0; $offset < $total; ) {
             $allowedSegmentLength = $unbufferedSegmentLength;
             if ($offset === 0) {
@@ -351,7 +351,7 @@ class LayerRendererWms extends LayerRenderer
             throw new \LogicException("Split lengths do not add up to expected total {$total}. Actual sum: " . array_sum($unbufferedSegments));
         }
         // extend all unbuffered segments by stretching them, which also makes them overlap
-        $bufferedSegments = array();
+        $bufferedSegments = [];
         $nextOffset = 0;
         foreach ($unbufferedSegments as $i => $currentSegment) {
             $segOffset = $nextOffset;
@@ -373,17 +373,17 @@ class LayerRendererWms extends LayerRenderer
 
     protected function getSquashCompareCrtiteria(array $layerDef, Resolution $resolution): array
     {
-        $ignoredParams = array(
+        $ignoredParams = [
             'LAYERS',
             'STYLES',
             '_OLSALT',
             'WIDTH',
             'HEIGHT',
             '_SIGNATURE',
-        );
+        ];
 
-        $data = array(
-            'url' => UrlUtil::validateUrl($layerDef['url'], array(), $ignoredParams),
+        $data = [
+            'url' => UrlUtil::validateUrl($layerDef['url'], [], $ignoredParams),
             // Client may submit sourceId to actually prevent squashing of layers that look and feel compatible
             // (= effectively the same source in an application mulitple times)
             'sourceId' => ArrayUtil::getDefault($layerDef, 'sourceId', null),
@@ -391,7 +391,7 @@ class LayerRendererWms extends LayerRenderer
             // squashed safely.
             'minResolution' => ArrayUtil::getDefault($layerDef, 'minResolution', null),
             'maxResolution' => ArrayUtil::getDefault($layerDef, 'maxResolution', null),
-        );
+        ];
 
         // Add comparison criteria based on min / max resolution of the layers, but
         // also taking into account the actual required resolution for this job.

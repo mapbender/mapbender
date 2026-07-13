@@ -24,10 +24,10 @@ class BatchPrintClientAdminType extends PrintClientAdminType
         
         // Add batch print specific configuration alongside other checkboxes
         $builder
-            ->add('enableGeofileUpload', CheckboxType::class, array(
+            ->add('enableGeofileUpload', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.admin.batchprintclient.label.enableGeofileUpload',
-            ))
+            ])
         ;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace FOM\UserBundle;
 
+use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Component\Menu\SecurityMenu;
 use FOM\UserBundle\DependencyInjection\Compiler\ForwardUserEntityClassPass;
 use Mapbender\ManagerBundle\Component\Menu\RegisterMenuRoutesPass;
@@ -38,7 +39,7 @@ class FOMUserBundle extends Bundle
         $container->addResource(new FileResource($xmlLoader->getLocator()->locate('controllers.xml')));
 
         $this->addMenu($container);
-        $container->addCompilerPass(new ForwardUserEntityClassPass('fom.user_entity', 'FOM\UserBundle\Entity\User'));
+        $container->addCompilerPass(new ForwardUserEntityClassPass('fom.user_entity', User::class));
     }
 
     protected function addMenu(ContainerBuilder $container)

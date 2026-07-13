@@ -4,7 +4,6 @@
 namespace Mapbender\CoreBundle\Component\Source;
 
 
-use Doctrine\ORM\Mapping\Entity;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;

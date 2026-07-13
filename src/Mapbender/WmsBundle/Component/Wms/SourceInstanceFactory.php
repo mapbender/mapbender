@@ -4,6 +4,7 @@
 namespace Mapbender\WmsBundle\Component\Wms;
 
 
+use Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\CoreBundle\Entity\Source;
@@ -97,12 +98,12 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
 
     public function matchInstanceToPersistedSource(ImportState $importState, array $data, EntityPool $entityPool): bool
     {
-        $identFields = array(
+        $identFields = [
             'title',
             'type',
             'name',
             'onlineResource',
-        );
+        ];
         $criteria = ImportHandler::extractArrayFields($data, $identFields);
         foreach ($this->entityManager->getRepository(WmsSource::class)->findBy($criteria) as $source) {
             if ($this->compareSource($importState, $entityPool, $source, $data)) {
@@ -114,7 +115,7 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
         return false;
     }
 
-    private function compareSource(ImportState $state, EntityPool $entityPool, $source, array $data)
+    private function compareSource(ImportState $state, EntityPool $entityPool, $source, array $data): bool
     {
         foreach ($data['layers'] as $layerData) {
             $layerClass = ImportHandler::extractClassName($layerData);
@@ -243,7 +244,7 @@ class SourceInstanceFactory extends \Mapbender\CoreBundle\Component\Source\Sourc
 
     public function getFormType(SourceInstance $instance): string
     {
-        return 'Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType';
+        return WmsInstanceInstanceLayersType::class;
     }
 
     public function getFormTemplate(SourceInstance $instance): string

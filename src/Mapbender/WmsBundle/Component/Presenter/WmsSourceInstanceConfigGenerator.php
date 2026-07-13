@@ -76,9 +76,9 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         $config = array_merge($config, [
             'title' => $root['title'] ?: $root['lsTitle'] ?: $sourceInstance->getTitle(),
             'options' => $this->getOptionsConfiguration($sourceInstance),
-            'children' => array(
+            'children' => [
                 $this->getLayerConfiguration($application, $sourceInstance, $root, $idPrefix),
-            ),
+            ],
         ]);
 
         return $this->postProcessUrls($application, $sourceInstance, $config);
@@ -92,7 +92,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             $ratio = floatval($ratio);
         }
 
-        return array(
+        return [
             'url' => $this->getUrlOption($sourceInstance),
             'opacity' => ($sourceInstance->getOpacity() / 100),
             'proxy' => $this->useProxy($sourceInstance),
@@ -109,7 +109,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             'refreshInterval' => $sourceInstance->getRefreshInterval(),
             'layerOrder' => $sourceInstance->getLayerOrder(),
             'iframeSandboxParams' => $this->fiIframeSandboxParams,
-        );
+        ];
     }
 
     /**
@@ -117,16 +117,16 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      */
     protected function getLayerConfiguration(Application $application, WmsInstance $instance, array $instanceLayer, ?string $idPrefix): array
     {
-        $configuration = array(
+        $configuration = [
             "options" => $this->getLayerOptionsConfiguration($application, $instance, $instanceLayer, $idPrefix),
-            "state" => array(
+            "state" => [
                 "visibility" => null,
                 "info" => null,
                 "outOfScale" => null,
                 "outOfBounds" => null,
-            ),
-        );
-        $children = array();
+            ],
+        ];
+        $children = [];
         foreach ($this->getSublayersFromCache($instanceLayer) as $childLayer) {
             if ($childLayer['active']) {
                 $children[] = $this->getLayerConfiguration($application, $instance, $childLayer, $idPrefix);
@@ -154,7 +154,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
                 $style->setLegendUrl(null);
             }
         }
-        $configuration = array(
+        $configuration = [
             "id" => ($idPrefix ?? '') . $layer['id'],
             "priority" => $layer['priority'],
             "name" => strval($layer['lsName']),
@@ -167,10 +167,10 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             "treeOptions" => $this->getTreeOptionsLayerConfig($layer),
             "metadataUrl" => $this->getMetadataUrl($application, $instance, $layer),
             "availableStyles" => $styles,
-        );
-        $configuration += array_filter(array(
+        ];
+        $configuration += array_filter([
             'legend' => $this->getLegendConfig($application, $instance, $layer),
-        ));
+        ]);
         return $configuration;
     }
 
@@ -198,16 +198,16 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     protected function getTreeOptionsLayerConfig(array $instanceLayer): array
     {
         $hasChildren = !!count($this->getSublayersFromCache($instanceLayer));
-        return array(
+        return [
             "info" => $instanceLayer['info'],
             "selected" => $instanceLayer['selected'],
             "toggle" => $hasChildren ? $instanceLayer['toggle'] : null,
-            "allow" => array(
+            "allow" => [
                 "info" => $instanceLayer['allowinfo'],
                 "selected" => $instanceLayer['allowselected'],
                 "toggle" => $hasChildren ? $instanceLayer['allowtoggle'] : null,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -248,7 +248,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
             // WmsLoader special: public username + password transmission
             $originUrl = $sourceInstance->getSource()->getOriginUrl();
             $originHasCredentials = !!\parse_url($originUrl, PHP_URL_USER);
-            $getMapHasCredentials = !!\parse_url($url, PHP_URL_USER);
+            $getMapHasCredentials = !!\parse_url((string) $url, PHP_URL_USER);
             if ($originHasCredentials && !$getMapHasCredentials) {
                 $username = \urldecode(\parse_url($originUrl, PHP_URL_USER));
                 $password = \urldecode(\parse_url($originUrl, PHP_URL_PASS) ?: '');
@@ -267,7 +267,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * @param WmsInstance $sourceInstance
      * @return float[][]
      */
-    public function getBboxConfiguration(WmsInstance $sourceInstance)
+    public function getBboxConfiguration(WmsInstance $sourceInstance): array
     {
         $rootLayer = $this->getRootLayerFromCache($sourceInstance);
         return $this->getLayerBboxConfiguration($rootLayer);
@@ -348,10 +348,10 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * @param WmsInstance $sourceInstance
      * @return array[]
      */
-    public function getDimensionsConfiguration(WmsInstance $sourceInstance)
+    public function getDimensionsConfiguration(WmsInstance $sourceInstance): array
     {
-        $dimensionConfigs = array();
-        $sourceDimensions = array();
+        $dimensionConfigs = [];
+        $sourceDimensions = [];
         foreach ($sourceInstance->getSource()->getDimensions() as $sourceDimension) {
             $sourceDimensions[$sourceDimension->getName()] = $sourceDimension;
         }
@@ -359,7 +359,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         foreach ($sourceInstance->getDimensions() as $dimensionInstance) {
             if ($dimensionInstance->getActive() && !empty($sourceDimensions[$dimensionInstance->getName()])) {
                 $sourceDimension = $sourceDimensions[$dimensionInstance->getName()];
-                $dimensionConfigs[] = array(
+                $dimensionConfigs[] = [
                     // Instance-editables
                     'default' => $dimensionInstance->getDefault(),
                     'extent' => DimensionInst::getData($dimensionInstance->getExtent()),
@@ -373,7 +373,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
                     'nearestValue' => $sourceDimension->getNearestValue(),
                     'unitSymbol' => $sourceDimension->getUnitSymbol(),
                     'units' => $sourceDimension->getUnits(),
-                );
+                ];
             }
         }
         return $dimensionConfigs;
@@ -385,18 +385,18 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
     public function getLegendConfig(Application $application, WmsInstance $instance, array $instanceLayer): array
     {
         if (!$instanceLayer['legendEnabled']) {
-            return array();
+            return [];
         }
 
         $legendUrl = $this->getInternalLegendUrl($instanceLayer);
 
         if ($legendUrl) {
             $publicLegendUrl = $this->proxifyLegendUrl($application, $instance, $instanceLayer, $legendUrl);
-            return array(
+            return [
                 "url" => $publicLegendUrl,
-            );
+            ];
         }
-        return array();
+        return [];
     }
 
     private function proxifyLegendUrl(Application $application, WmsInstance $instance, array $instanceLayer, string $legendUrl): string
@@ -469,7 +469,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
      * @return mixed[]
      * @todo: this should and can be part of the initial generation
      */
-    protected function proxifyLayerUrls($layerConfig, ?SourceInstance $sourceInstance = null)
+    protected function proxifyLayerUrls(array $layerConfig, ?SourceInstance $sourceInstance = null): array
     {
         /** @var ?WmsInstance $sourceInstance */
         if (isset($layerConfig['children'])) {
@@ -524,12 +524,12 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
         $originUrl = $sourceInstance->getSource()->getOriginUrl();
 
         // if the legend url has basic auth data already, just return it
-        if (preg_match('/^(https?:\/\/)([^@]+)@/', $sourceUrl)) {
+        if (preg_match('/^(https?:\/\/)([^@]+)@/', (string) $sourceUrl)) {
             return $sourceUrl;
         }
 
         // Regex to extract the auth info (user:pass) from the source URL
-        preg_match('/^(https?:\/\/)([^@]+)@/', $originUrl, $sourceMatches);
+        preg_match('/^(https?:\/\/)([^@]+)@/', (string) $originUrl, $sourceMatches);
 
         // If the origin url doesn't have authentication info, return the source url unchanged
         if (empty($sourceMatches) || !isset($sourceMatches[2])) {
@@ -538,7 +538,7 @@ class WmsSourceInstanceConfigGenerator extends SourceInstanceConfigGenerator
 
         $authInfo = $sourceMatches[2];
 
-        return preg_replace('/^(https?:\/\/)/', '${1}' . $authInfo . '@', $sourceUrl);
+        return preg_replace('/^(https?:\/\/)/', '${1}' . $authInfo . '@', (string) $sourceUrl);
 
     }
 

@@ -22,9 +22,9 @@ class EntityUtil
      * @param string $suffix suffix to generate an unique value
      * @return string an unique value
      */
-    public static function getUniqueValue(EntityManagerInterface $em, $entityName, $uniqueField, $toUniqueValue, $suffix = "")
+    public static function getUniqueValue(EntityManagerInterface $em, string $entityName, $uniqueField, $toUniqueValue, $suffix = "")
     {
-        $criteria               = array();
+        $criteria               = [];
         $criteria[$uniqueField] = $toUniqueValue;
         $obj                    = $em->getRepository($entityName)->findOneBy($criteria);
         if ($obj === null) {
@@ -45,7 +45,7 @@ class EntityUtil
      * @param mixed $entity string | entity object
      * @return string full class name
      */
-    public static function getRealClass($entity)
+    public static function getRealClass($entity): string
     {
         if (is_object($entity) || is_string($entity)) {
             return DoctrineClassUtil::getRealClass($entity);
@@ -59,7 +59,7 @@ class EntityUtil
      * @param string $propertyName
      * @return string
      */
-    public static function getGetter($entity, $propertyName)
+    public static function getGetter($entity, $propertyName): ?string
     {
         $temp = 'get' . strtolower(str_replace('_', '', $propertyName));
         foreach (get_class_methods(self::getRealClass($entity)) as $method) {
@@ -76,7 +76,7 @@ class EntityUtil
      * @param string $property a property name
      * @return string a "getter" name
      */
-    public static function getValueFromGetter($entity, $property)
+    public static function getValueFromGetter($entity, $property): mixed
     {
         $reflMeth = new \ReflectionMethod(self::getRealClass($entity), self::getGetter($entity, $property));
         return $reflMeth->invoke($entity);
@@ -87,19 +87,19 @@ class EntityUtil
      * @param ReflectionClass $class
      * @return null|\ReflectionMethod
      */
-    public static function getReturnMethod($fieldName, ReflectionClass $class)
+    public static function getReturnMethod($fieldName, ReflectionClass $class): ?\ReflectionMethod
     {
-        $prefixes = array(
+        $prefixes = [
             'get',
             'is',  // for some boolean entity properties
-        );
+        ];
         $camelCased = StringUtil::snakeToCamelCase($fieldName, true);
 
         foreach ($prefixes as $prefix) {
             $name = $prefix . $camelCased;
             try {
                 return $class->getMethod($name);
-            } catch (\ReflectionException $e) {
+            } catch (\ReflectionException) {
                 // do nothing
             }
         }
@@ -111,12 +111,12 @@ class EntityUtil
      * @param ReflectionClass $class
      * @return null|\ReflectionMethod
      */
-    public static function getSetMethod($fieldName, ReflectionClass $class)
+    public static function getSetMethod($fieldName, ReflectionClass $class): ?\ReflectionMethod
     {
         $name = 'set' . StringUtil::snakeToCamelCase($fieldName, true);
         try {
             return $class->getMethod($name);
-        } catch (\ReflectionException $e) {
+        } catch (\ReflectionException) {
             return null;
         }
     }
@@ -127,7 +127,7 @@ class EntityUtil
      * @param ClassMetadata $classMeta
      * @param bool $includeIdent
      */
-    public static function copyEntityFields($target, $source, ClassMetadata $classMeta, $includeIdent = false)
+    public static function copyEntityFields($target, $source, ClassMetadata $classMeta, $includeIdent = false): void
     {
         $reflectionClass = $classMeta->getReflectionClass();
         $fieldNames = $classMeta->getFieldNames();

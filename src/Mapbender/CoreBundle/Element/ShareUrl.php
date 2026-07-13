@@ -4,52 +4,54 @@
 namespace Mapbender\CoreBundle\Element;
 
 
+use Mapbender\CoreBundle\Element\Type\ShareUrlAdminType;
 use Mapbender\Component\Element\ButtonLike;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
 
 class ShareUrl extends ButtonLike
 {
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return 'mb.core.ShareUrl.class.title';
     }
 
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return 'mb.core.ShareUrl.class.description';
     }
 
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbShareUrl';
     }
 
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\ShareUrlAdminType';
+        return ShareUrlAdminType::class;
     }
 
     /**
      * @inheritdoc
+     * @return mixed[]
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        $required = parent::getRequiredAssets($element) + array(
-            'js' => array(),
-            'css' => array(),
-            'trans' => array(),
-        );
+        $required = parent::getRequiredAssets($element) + [
+            'js' => [],
+            'css' => [],
+            'trans' => [],
+        ];
         // Remove / replace base button script
-        $required['js'] = array_merge($required['js'], array(
+        $required['js'] = array_merge($required['js'], [
             '@MapbenderCoreBundle/Resources/public/elements/MbShareUrl.js',
-        ));
-        $required['css'] = array_merge($required['css'], array(
+        ]);
+        $required['css'] = array_merge($required['css'], [
             '@MapbenderCoreBundle/Resources/public/sass/element/mbShareUrl.scss',
-        ));
-        $required['trans'] = array_merge($required['trans'], array(
+        ]);
+        $required['trans'] = array_merge($required['trans'], [
             'mb.core.ShareUrl.*',
-        ));
+        ]);
         return $required;
     }
 
@@ -62,7 +64,7 @@ class ShareUrl extends ButtonLike
         return $defaults;
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/ShareUrl.html.twig');
         parent::initializeView($view, $element);
@@ -70,7 +72,7 @@ class ShareUrl extends ButtonLike
         return $view;
     }
 
-    public static function getDefaultIcon()
+    public static function getDefaultIcon(): string
     {
         return 'iconShare';
     }

@@ -18,17 +18,17 @@ class FeatureBounds
     /**
      * @param float[][] $points in any coordinate system
      */
-    public function __construct($points = array())
+    public function __construct($points = [])
     {
-        $this->minima = array(null, null);
-        $this->maxima = array(null, null);
+        $this->minima = [null, null];
+        $this->maxima = [null, null];
         $this->addPoints($points);
     }
 
     /**
      * @param float[][] $points in any coordinate system
      */
-    public function addPoints($points)
+    public function addPoints($points): void
     {
         foreach ($points as $point) {
             // don't know if point is numerically indexed or has 'x' / 'y' keys
@@ -80,7 +80,7 @@ class FeatureBounds
     /**
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return $this->minima[1] === null;
     }
@@ -88,7 +88,7 @@ class FeatureBounds
     /**
      * @return float|null
      */
-    public function getWidth()
+    public function getWidth(): int|float|null
     {
         return $this->isEmpty() ? null : ($this->getMaxX() - $this->getMinX());
     }
@@ -96,7 +96,7 @@ class FeatureBounds
     /**
      * @return float|null
      */
-    public function getHeight()
+    public function getHeight(): int|float|null
     {
         return $this->isEmpty() ? null : ($this->getMaxY() - $this->getMinY());
     }

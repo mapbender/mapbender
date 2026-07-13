@@ -16,16 +16,10 @@ namespace Mapbender\PrintBundle\Component\Export;
 class Affine2DTransform
 {
     /**
-     * @var float[][] 3x2 matrix
+     * @param float[][] $rows
      */
-    protected $rows;
-
-    /**
-     * @param float[][] $matrixRows
-     */
-    protected function __construct($matrixRows)
+    protected function __construct(protected $rows)
     {
-        $this->rows = $matrixRows;
     }
 
     /**
@@ -34,46 +28,46 @@ class Affine2DTransform
      * @param Box $to
      * @return Affine2DTransform
      */
-    public static function boxToBox(Box $from, Box $to)
+    public static function boxToBox(Box $from, Box $to): static
     {
-        return new static(array(
-            array(
+        return new static([
+            [
                 $to->getWidth() / $from->getWidth(),
                 0.0,
                 ($to->left - $from->left * $to->getWidth() / $from->getWidth()),
-            ),
-            array(
+            ],
+            [
                 0.0,
                 $to->getHeight() / $from->getHeight(),
                 ($to->bottom - $from->bottom * $to->getHeight() / $from->getHeight()),
-            ),
-        ));
+            ],
+        ]);
     }
 
     /**
      * @param float[] $pair numerically indexed; x at index 0, y at index 1
      * @return float[] numerically indexed, same as input (x at index 0, y at index 1)
      */
-    public function transformPair(array $pair)
+    public function transformPair(array $pair): array
     {
         // straight 2d vector x matrix
-        return array(
+        return [
             $pair[0] * $this->rows[0][0] + $pair[1] * $this->rows[0][1] + 1.0 * $this->rows[0][2],
             $pair[0] * $this->rows[1][0] + $pair[1] * $this->rows[1][1] + 1.0 * $this->rows[1][2],
-        );
+        ];
     }
 
     /**
      * @param float[] $p with entries 'x' and 'y'
      * @return float[] 2 entries 'x' and 'y'
      */
-    public function transformXy(array $p)
+    public function transformXy(array $p): array
     {
         // straight 2d vector x matrix
-        return array(
+        return [
             'x' => $p['x'] * $this->rows[0][0] + $p['y'] * $this->rows[0][1] + 1.0 * $this->rows[0][2],
             'y' => $p['x'] * $this->rows[1][0] + $p['y'] * $this->rows[1][1] + 1.0 * $this->rows[1][2],
-        );
+        ];
     }
 }
 

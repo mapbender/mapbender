@@ -34,7 +34,7 @@ abstract class LayerRendererTiled extends LayerRenderer
             imagesx($layerImage), imagesy($layerImage));
     }
 
-    protected function buildLayerImage(ExportCanvas $canvas, $layerDef, Box $extent)
+    protected function buildLayerImage(ExportCanvas $canvas, array $layerDef, Box $extent)
     {
         $targetResolution = $canvas->getResolution($extent)->getHorizontal();
         $tileMatrix = $this->getTileMatrix($layerDef, $targetResolution);

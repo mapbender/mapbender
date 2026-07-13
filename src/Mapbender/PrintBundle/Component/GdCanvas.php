@@ -16,7 +16,7 @@ class GdCanvas extends BaseCanvas
         $width = intval(round($width));
         $height = intval(round($height));
         if ($width <= 0 || $height <= 0) {
-            throw new \InvalidArgumentException("Invalid width / height " . print_r(array($width, $height), true));
+            throw new \InvalidArgumentException("Invalid width / height " . print_r([$width, $height], true));
         }
         $this->resource = imagecreatetruecolor($width, $height);
         $bg = imagecolorallocate($this->resource, 255, 255, 255);
@@ -27,7 +27,7 @@ class GdCanvas extends BaseCanvas
     /**
      * @return int GDish representation for fully white but also fully transparent color
      */
-    public function getTransparent()
+    public function getTransparent(): int
     {
         return IMG_COLOR_TRANSPARENT;
     }
@@ -35,7 +35,7 @@ class GdCanvas extends BaseCanvas
     /**
      * @return int
      */
-    public function getWidth()
+    public function getWidth(): int
     {
         return imagesx($this->resource);
     }
@@ -43,7 +43,7 @@ class GdCanvas extends BaseCanvas
     /**
      * @return int
      */
-    public function getHeight()
+    public function getHeight(): int
     {
         return imagesy($this->resource);
     }
@@ -55,7 +55,7 @@ class GdCanvas extends BaseCanvas
      * @param int $height
      * @return GdSubCanvas
      */
-    public function getSubRegion($offsetX, $offsetY, $width, $height)
+    public function getSubRegion($offsetX, $offsetY, $width, $height): GdSubCanvas
     {
         return new GdSubCanvas($this, $offsetX, $offsetY, $width, $height);
     }
@@ -64,7 +64,7 @@ class GdCanvas extends BaseCanvas
      * @param float[][] $coordinates (pixel space)
      * @param int $color
      */
-    public function drawPolygonOutline($coordinates, $color)
+    public function drawPolygonOutline($coordinates, $color): void
     {
         $pointsFlat = call_user_func_array('array_merge', $coordinates);
         imagepolygon($this->resource, $pointsFlat, count($coordinates), $color);
@@ -74,7 +74,7 @@ class GdCanvas extends BaseCanvas
      * @param float[][] $coordinates (pixel space)
      * @param int $color
      */
-    public function drawPolygonBody($coordinates, $color)
+    public function drawPolygonBody($coordinates, $color): void
     {
         $pointsFlat = call_user_func_array('array_merge', $coordinates);
         imagesetthickness($this->resource, 0);
@@ -85,7 +85,7 @@ class GdCanvas extends BaseCanvas
      * @param float[][] $coordinates (pixel space)
      * @param int $color
      */
-    public function drawLineString($coordinates, $color)
+    public function drawLineString(array $coordinates, $color): void
     {
         if (PHP_VERSION_ID >= 70200 && count($coordinates) > 2) {
             // imageopenpolygon supports continuous evaluation of IMG_COLOR_STYLED instructions
@@ -109,7 +109,7 @@ class GdCanvas extends BaseCanvas
      * @param float $diameterX
      * @param float $diameterY
      */
-    public function drawFilledEllipse($centerX, $centerY, $color, $diameterX, $diameterY)
+    public function drawFilledEllipse($centerX, $centerY, $color, $diameterX, $diameterY): void
     {
         imagefilledellipse($this->resource,
             intval(round($centerX)), intval(round($centerY)),
@@ -118,7 +118,7 @@ class GdCanvas extends BaseCanvas
             $color);
     }
 
-    final public function drawFilledCircle($centerX, $centerY, $color, $diameter)
+    final public function drawFilledCircle($centerX, $centerY, $color, $diameter): void
     {
         $this->drawFilledEllipse($centerX, $centerY, $color, $diameter, $diameter);
     }

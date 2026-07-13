@@ -9,8 +9,8 @@ use Symfony\Component\Form\DataTransformerInterface;
 class PermissionDataTransformer implements DataTransformerInterface
 {
     public function __construct(
-        private PermissionManager $permissionManager,
-        private array $actions
+        private readonly PermissionManager $permissionManager,
+        private readonly array $actions
     )
     {
     }
@@ -22,14 +22,14 @@ class PermissionDataTransformer implements DataTransformerInterface
         $permissionEntity = $value[0];
 
         $subjectDomain = $this->permissionManager->findSubjectDomainFor($permissionEntity);
-        $permissionList = array_map(fn(Permission $permission) => $permission->getAction(), $value);
-        $permissionMap = array_map(fn(string $permission) => in_array($permission, $permissionList), $this->actions);
-        return array(
+        $permissionList = array_map(fn(Permission $permission): ?string => $permission->getAction(), $value);
+        $permissionMap = array_map(fn(string $permission): bool => in_array($permission, $permissionList), $this->actions);
+        return [
             'permissions' => $permissionMap,
             'icon' => $subjectDomain->getIconClass(),
             'title' => $subjectDomain->getTitle($permissionEntity),
             'subjectJson' => $permissionEntity->getSubjectJson(),
-        );
+        ];
     }
 
     /**

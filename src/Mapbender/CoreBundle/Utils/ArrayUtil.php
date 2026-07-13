@@ -38,6 +38,6 @@ class ArrayUtil
         //       will be used.
         $lcKeys = array_map('strtolower', array_keys($arr));
         $arrWithLcKeys = array_combine($lcKeys, array_values($arr));
-        return static::getDefault($arrWithLcKeys, strtolower($key), $default);
+        return static::getDefault($arrWithLcKeys, strtolower((string) $key), $default);
     }
 }

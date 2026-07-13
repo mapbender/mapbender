@@ -2,6 +2,8 @@
 
 namespace FOM\UserBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -14,22 +16,22 @@ class UserRegistrationType extends AbstractType
 
     public function getParent(): string
     {
-        return 'FOM\UserBundle\Form\Type\UserPasswordMixinType';
+        return UserPasswordMixinType::class;
     }
 
-    public function buildForm(FormBuilderInterface $builder,array $options)
+    public function buildForm(FormBuilderInterface $builder,array $options): void
     {
-        $builder->add("username", 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+        $builder->add("username", TextType::class, [
             'required' => true,
             'label' => 'fom.user.user.container.username',
-            'attr' => array(
+            'attr' => [
                 'autofocus' => 'on',
-            ),
-        ));
+            ],
+        ]);
 
-        $builder->add("email", 'Symfony\Component\Form\Extension\Core\Type\EmailType', array(
+        $builder->add("email", EmailType::class, [
             'required' => true,
             'label' => 'fom.user.registration.form.email',
-        ));
+        ]);
     }
 }

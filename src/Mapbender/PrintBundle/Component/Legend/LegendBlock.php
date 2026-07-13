@@ -8,21 +8,17 @@ use Mapbender\PrintBundle\Component\GdCanvas;
 
 class LegendBlock extends GdCanvas implements LegendBlockContainer
 {
-    /** @var string */
-    protected $title;
-    /** @var boolean */
-    protected $rendered = false;
+    protected bool $rendered;
 
     /**
      * @param \GdImage $image GDish
      * @param string $title
      */
-    public function __construct($image, $title)
+    public function __construct($image, protected $title)
     {
         parent::__construct(1, 1);
         imagedestroy($this->resource);
         $this->resource = $image;
-        $this->title = $title;
         $this->rendered = false;
     }
 
@@ -37,7 +33,7 @@ class LegendBlock extends GdCanvas implements LegendBlockContainer
     /**
      * @param bool $rendered
      */
-    public function setIsRendered($rendered)
+    public function setIsRendered($rendered): void
     {
         $this->rendered = !!$rendered;
     }
@@ -52,8 +48,8 @@ class LegendBlock extends GdCanvas implements LegendBlockContainer
         return $this->rendered;
     }
 
-    public function getBlocks()
+    public function getBlocks(): array
     {
-        return array($this);
+        return [$this];
     }
 }

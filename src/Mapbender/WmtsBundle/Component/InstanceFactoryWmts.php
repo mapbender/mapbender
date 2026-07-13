@@ -14,7 +14,7 @@ class InstanceFactoryWmts extends InstanceFactoryCommon
     public static function createInstanceLayer(WmtsLayerSource $sourceLayer, ?WmtsInstanceLayer $parent = null)
     {
         $instanceLayer = parent::createInstanceLayer($sourceLayer);
-        $infoFormats = array_values(array_filter($sourceLayer->getInfoformats() ?: array()));
+        $infoFormats = array_values(array_filter($sourceLayer->getInfoformats() ?: []));
         if ($infoFormats) {
             $instanceLayer->setInfoformat($infoFormats[0]);
             $instanceLayer->setInfo(true);

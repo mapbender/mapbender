@@ -14,15 +14,11 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 
 class Collector
 {
-    /** @var ManagerRegistry */
-    protected $managerRegistry;
-
     /** @var WorkingSet|null */
     protected $defaultWorkingSet;
 
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(protected ManagerRegistry $managerRegistry)
     {
-        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -68,7 +64,7 @@ class Collector
      * @param $name
      * @return ObjectRepository
      */
-    protected function getEntityRepository($name)
+    protected function getEntityRepository(string $name): ObjectRepository
     {
         return $this->managerRegistry->getRepository($name);
     }
@@ -76,7 +72,7 @@ class Collector
     /**
      * @return WmsSource[]
      */
-    protected function getSources()
+    protected function getSources(): array
     {
         return $this->getEntityRepository(Source::class)->findAll();
     }
@@ -84,7 +80,7 @@ class Collector
     /**
      * @return WmsInstance[]
      */
-    protected function getSourceInstances()
+    protected function getSourceInstances(): array
     {
         return $this->getEntityRepository(SourceInstance::class)->findAll();
     }
@@ -92,7 +88,7 @@ class Collector
     /**
      * @return Application[]
      */
-    protected function getApplications()
+    protected function getApplications(): array
     {
         return $this->getEntityRepository(Application::class)->findAll();
     }
@@ -100,7 +96,7 @@ class Collector
     /**
      * @return Layerset[]
      */
-    protected function getLayersets()
+    protected function getLayersets(): array
     {
         return $this->getEntityRepository(Layerset::class)->findAll();
     }

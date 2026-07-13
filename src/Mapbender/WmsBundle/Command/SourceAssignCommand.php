@@ -23,7 +23,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand('mapbender:wms:assign')]
 class SourceAssignCommand extends AbstractSourceCommand
 {
-    public function __construct(private SourceInstanceController $sourceInstanceController, ManagerRegistry $managerRegistry, Importer $importer)
+    public function __construct(private readonly SourceInstanceController $sourceInstanceController, ManagerRegistry $managerRegistry, Importer $importer)
     {
         parent::__construct($managerRegistry, $importer);
     }
@@ -60,7 +60,7 @@ class SourceAssignCommand extends AbstractSourceCommand
 
         $sourceId = $input->getArgument(self::ARGUMENT_SOURCE);
 
-        $this->sourceInstanceController->createNewSourceInstance($application, $sourceId, $layerset->getId(), $this->getEntityManager(), $input->getOptions());
+        $this->sourceInstanceController->createNewSourceInstance($application, $sourceId, $layerset->getId(), $this->getEntityManager());
         $io->success("New source instance added.");
         return Command::SUCCESS;
     }
@@ -89,7 +89,7 @@ class SourceAssignCommand extends AbstractSourceCommand
         $layersets = $this->getEntityManager()->getRepository(Layerset::class)->findBy(['application' => $application]);
 
         if ($layersetIdOrSlug) {
-            $layersetFiltered = array_filter($layersets, fn(Layerset $l) => $l->getId() == $layersetIdOrSlug || $l->getTitle() == $layersetIdOrSlug);
+            $layersetFiltered = array_filter($layersets, fn(Layerset $l): bool => $l->getId() == $layersetIdOrSlug || $l->getTitle() == $layersetIdOrSlug);
             if (count($layersetFiltered) < 1) {
                 $io->error("Could not find layerset $layersetIdOrSlug in application {$application->getTitle()}");
                 return null;
@@ -97,7 +97,7 @@ class SourceAssignCommand extends AbstractSourceCommand
             return reset($layersetFiltered);
         }
 
-        $mainLayerset = array_filter($layersets, fn(Layerset $l) => $l->getTitle() == 'main');
+        $mainLayerset = array_filter($layersets, fn(Layerset $l): bool => $l->getTitle() == 'main');
         return count($mainLayerset) > 0 ? reset($mainLayerset) : reset($layersets);
     }
 

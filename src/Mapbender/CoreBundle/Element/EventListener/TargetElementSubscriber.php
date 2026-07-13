@@ -13,10 +13,6 @@ use Symfony\Component\Form\FormEvents;
 
 class TargetElementSubscriber implements EventSubscriberInterface
 {
-    /** @var string */
-    protected $targetClassName;
-    /** @var Application */
-    protected $application;
     /** @var Collection|Element[] */
     protected $matchingElements;
 
@@ -24,15 +20,13 @@ class TargetElementSubscriber implements EventSubscriberInterface
      * @param Application $application
      * @param string $targetClassName
      */
-    public function __construct(Application $application, $targetClassName)
+    public function __construct(protected Application $application, protected $targetClassName)
     {
-        $this->targetClassName = $targetClassName;
-        $this->application = $application;
-        $this->matchingElements = $this->application->getElements()->filter(function($element) use ($targetClassName) {
+        $this->matchingElements = $this->application->getElements()->filter(function($element) use ($targetClassName): bool {
             /** @var Element $element */
             try {
                 return is_a($element->getClass(), $targetClassName, true);
-            } catch (\ErrorException $e) {
+            } catch (\ErrorException) {
                 // thrown by debug mode class loader on Symfony 3.4+
                 return false;
             }
@@ -41,12 +35,12 @@ class TargetElementSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'preSetData',
-        );
+        ];
     }
 
-    public function preSetData(FormEvent $event)
+    public function preSetData(FormEvent $event): void
     {
         if (!$event->getData()) {
             if ($this->matchingElements->count()) {

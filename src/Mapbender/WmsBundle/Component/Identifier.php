@@ -26,7 +26,7 @@ class Identifier
      * @param string $value
      * @return $this
      */
-    public function setAuthority($value)
+    public function setAuthority($value): static
     {
         $this->authority = $value;
         return $this;
@@ -44,7 +44,7 @@ class Identifier
      * @param string $value
      * @return $this
      */
-    public function setValue($value)
+    public function setValue($value): static
     {
         $this->value = $value;
         return $this;

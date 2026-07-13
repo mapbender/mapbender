@@ -62,7 +62,7 @@ class Contact
      * @param  string  $person
      * @return $this
      */
-    public function setPerson($person)
+    public function setPerson($person): static
     {
         $this->person = $person;
 
@@ -85,7 +85,7 @@ class Contact
      * @param  string  $position
      * @return $this
      */
-    public function setPosition($position)
+    public function setPosition($position): static
     {
         $this->position = $position;
 
@@ -108,7 +108,7 @@ class Contact
      * @param  string  $organization
      * @return $this
      */
-    public function setOrganization($organization)
+    public function setOrganization($organization): static
     {
         $this->organization = $organization;
 
@@ -131,7 +131,7 @@ class Contact
      * @param  string  $voiceTelephone
      * @return $this
      */
-    public function setVoiceTelephone($voiceTelephone)
+    public function setVoiceTelephone($voiceTelephone): static
     {
         $this->voiceTelephone = $voiceTelephone;
 
@@ -154,7 +154,7 @@ class Contact
      * @param  string  $facsimileTelephone
      * @return $this
      */
-    public function setFacsimileTelephone($facsimileTelephone)
+    public function setFacsimileTelephone($facsimileTelephone): static
     {
         $this->facsimileTelephone = $facsimileTelephone;
 
@@ -177,7 +177,7 @@ class Contact
      * @param  string  $electronicMailAddress
      * @return $this
      */
-    public function setElectronicMailAddress($electronicMailAddress)
+    public function setElectronicMailAddress($electronicMailAddress): static
     {
         $this->electronicMailAddress = $electronicMailAddress;
 
@@ -200,7 +200,7 @@ class Contact
      * @param  string  $address
      * @return $this
      */
-    public function setAddress($address)
+    public function setAddress($address): static
     {
         $this->address = $address;
 
@@ -223,7 +223,7 @@ class Contact
      * @param  string  $addressType
      * @return $this
      */
-    public function setAddressType($addressType)
+    public function setAddressType($addressType): static
     {
         $this->addressType = $addressType;
 
@@ -246,7 +246,7 @@ class Contact
      * @param  string  $addressCity
      * @return $this
      */
-    public function setAddressCity($addressCity)
+    public function setAddressCity($addressCity): static
     {
         $this->addressCity = $addressCity;
 
@@ -269,7 +269,7 @@ class Contact
      * @param  string  $addressStateOrProvince
      * @return $this
      */
-    public function setAddressStateOrProvince($addressStateOrProvince)
+    public function setAddressStateOrProvince($addressStateOrProvince): static
     {
         $this->addressStateOrProvince = $addressStateOrProvince;
 
@@ -292,7 +292,7 @@ class Contact
      * @param  string  $addressPostCode
      * @return $this
      */
-    public function setAddressPostCode($addressPostCode)
+    public function setAddressPostCode($addressPostCode): static
     {
         $this->addressPostCode = $addressPostCode;
 
@@ -315,7 +315,7 @@ class Contact
      * @param  string  $addressCountry
      * @return $this
      */
-    public function setAddressCountry($addressCountry)
+    public function setAddressCountry($addressCountry): static
     {
         $this->addressCountry = $addressCountry;
 

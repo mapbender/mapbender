@@ -31,10 +31,10 @@ class HttpFoundationClient extends CurlClientCommon
      */
     public function handleQuery(ProxyQuery $query)
     {
-        $this->logger->debug("HttpFoundationClient::handleQuery {$query->getMethod()}", array(
+        $this->logger->debug("HttpFoundationClient::handleQuery {$query->getMethod()}", [
             'url' => $query->getUrl(),
             'headers' => $query->getHeaders(),
-        ));
+        ]);
         return $this->handleQueryInternal($query);
     }
 
@@ -75,15 +75,15 @@ class HttpFoundationClient extends CurlClientCommon
      * @param string|false $rawResponse
      * @return Response
      */
-    protected function parseResponse($ch, $rawResponse)
+    protected function parseResponse($ch, $rawResponse): Response
     {
         $headerLength = strlen($rawResponse) - \curl_getinfo($ch, CURLINFO_SIZE_DOWNLOAD);
         $body = substr($rawResponse, $headerLength);
         $response = new Response($body, \curl_getinfo($ch, CURLINFO_HTTP_CODE));
         $responseHeaders = $this->parseResponseHeaders(substr($rawResponse, 0, $headerLength));
-        $responseHeaders =  Utils::filterHeaders($responseHeaders, array(
+        $responseHeaders =  Utils::filterHeaders($responseHeaders, [
             'transfer-encoding',
-        ));
+        ]);
         $response->headers->add($responseHeaders);
         return $response;
     }

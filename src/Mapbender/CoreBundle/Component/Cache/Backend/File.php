@@ -48,7 +48,7 @@ class File
      * @param string $value will be stored exactly as given
      * @param string $signature to determine reusability of the cache entry later in get
      */
-    public function put($keyPath, $value, $signature)
+    public function put($keyPath, $value, $signature): void
     {
         // Bake the $signature completely into the stored value. This is done to
         // 1) achieve complete atomicity of put / get
@@ -79,7 +79,7 @@ class File
      * @param string $signature to verify reusability
      * @return string|false string on hit, boolean false on miss
      */
-    public function get($keyPath, $signature)
+    public function get($keyPath, $signature): string
     {
         $fullPath = $this->getFullPath($keyPath);
 
@@ -121,7 +121,7 @@ class File
      * @param string[] $keyPath
      * @return string
      */
-    protected function getFullPath($keyPath)
+    protected function getFullPath($keyPath): string
     {
         // prepend root path
         array_unshift($keyPath, $this->rootPath);

@@ -9,24 +9,22 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class RewriteFormThemeCompilerPass implements CompilerPassInterface
 {
-    /** @var string, twig template reference */
-    protected $fromTheme;
-    /** @var string, twig template reference */
-    protected $toTheme;
-
-    public function __construct($fromTheme, $toTheme)
+    public function __construct(
+        /** @var string, twig template reference */
+        protected $fromTheme,
+        /** @var string, twig template reference */
+        protected $toTheme
+    )
     {
-        $this->fromTheme = $fromTheme;
-        $this->toTheme = $toTheme;
     }
 
     public function process(ContainerBuilder $container): void
     {
-        $this->patchTwigThemes($container, $this->fromTheme, $this->toTheme);
-        $this->patchResourceReferenceArray($container, 'twig.form.resources', $this->fromTheme, $this->toTheme);
+        static::patchTwigThemes($container, $this->fromTheme, $this->toTheme);
+        static::patchResourceReferenceArray($container, 'twig.form.resources', $this->fromTheme, $this->toTheme);
     }
 
-    public static function patchTwigThemes(ContainerBuilder $container, $from, $to)
+    public static function patchTwigThemes(ContainerBuilder $container, $from, $to): void
     {
         $definition = $container->getDefinition('twig');
         $initializer = $definition->getArgument(1);
@@ -42,7 +40,7 @@ class RewriteFormThemeCompilerPass implements CompilerPassInterface
         $definition->replaceArgument(1, $initializer);
     }
 
-    public static function patchResourceReferenceArray(ContainerBuilder $container, $parameterKey, $from, $to)
+    public static function patchResourceReferenceArray(ContainerBuilder $container, string $parameterKey, $from, $to): void
     {
         $parameterValue = $container->getParameter($parameterKey);
         foreach (array_keys($parameterValue) as $index) {

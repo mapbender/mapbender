@@ -11,11 +11,11 @@ abstract class AbstractObjectHelper
     /** @var string */
     protected $className;
     /** @var \ReflectionMethod[] */
-    protected $setters = array();
+    protected $setters = [];
     /** @var \ReflectionMethod[] */
-    protected $getters = array();
+    protected $getters = [];
     /** @var string[] */
-    protected $propertyNames = array();
+    protected $propertyNames = [];
 
     /**
       * @param string $className
@@ -27,13 +27,13 @@ abstract class AbstractObjectHelper
          foreach ($rfl->getProperties() as $prop) {
              $propertyName = $prop->getName();
              $this->propertyNames[] = $propertyName;
-             $getterMethod = static::getPropertyAccessor($rfl, $propertyName, array(
+             $getterMethod = static::getPropertyAccessor($rfl, $propertyName, [
                  'get',
                  'is',
-             ));
-             $setterMethod = static::getPropertyAccessor($rfl, $propertyName, array(
+             ]);
+             $setterMethod = static::getPropertyAccessor($rfl, $propertyName, [
                  'set',
-             ));
+             ]);
              if ($getterMethod) {
                  $this->getters[$propertyName] = $getterMethod;
              }
@@ -93,7 +93,7 @@ abstract class AbstractObjectHelper
       */
      public function extractProperties($object, $propertyNames)
      {
-         $values = array();
+         $values = [];
          foreach ($this->getGetters($propertyNames) as $propertyName => $getter) {
              $values[$propertyName] = $getter->invoke($object);
          }
@@ -108,9 +108,9 @@ abstract class AbstractObjectHelper
       */
      public function extractProperty($object, $propertyName)
      {
-         $data = $this->extractProperties($object, array($propertyName));
+         $data = $this->extractProperties($object, [$propertyName]);
          if (!array_key_exists($propertyName, $data)) {
-             throw new \LogicException("No getter for property {$propertyName} on " . get_class($object));
+             throw new \LogicException("No getter for property {$propertyName} on " . $object::class);
          }
          return $data[$propertyName];
      }

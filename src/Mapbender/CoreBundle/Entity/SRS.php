@@ -49,7 +49,7 @@ class SRS
      * @param integer $id
      * @return $this
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
 
@@ -68,7 +68,7 @@ class SRS
      * @param string $name
      * @return $this
      */
-    public function setName($name)
+    public function setName($name): static
     {
         $this->name = $name;
 
@@ -87,7 +87,7 @@ class SRS
      * @param string $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
 
@@ -108,7 +108,7 @@ class SRS
      * @param string $definition
      * @return $this
      */
-    public function setDefinition($definition)
+    public function setDefinition($definition): static
     {
         $this->definition = $definition;
 

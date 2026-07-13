@@ -4,6 +4,9 @@
 namespace Mapbender\CoreBundle\Element;
 
 
+use Twig\Environment;
+use Mapbender\CoreBundle\Entity\Element;
+use Doctrine\Persistence\ObjectRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +19,6 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\ViewManagerState;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStringTransformer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,12 +30,11 @@ use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Twig;
 
 class ViewManagerHttpHandler implements ElementHttpHandlerInterface
 {
     public function __construct(
-        protected Twig\Environment          $templating,
+        protected Environment          $templating,
         protected EntityManagerInterface    $em,
         protected TokenStorageInterface     $tokenStorage,
         protected CsrfTokenManagerInterface $csrfTokenManager,
@@ -48,7 +49,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
      * @return Response
      * @throws HttpException
      */
-    public function handleRequest(Entity\Element $element, Request $request)
+    public function handleRequest(Element $element, Request $request)
     {
         switch ($request->attributes->get('action')) {
             default:
@@ -85,15 +86,15 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
      * @param Request $request
      * @return Response
      */
-    protected function getListingResponse(Entity\Element $element, Request $request)
+    protected function getListingResponse(Element $element, Request $request): Response
     {
         $config = $element->getConfiguration();
-        $vars = array(
+        $vars = [
             'records' => $this->loadListing($element->getApplication(), $config),
             'showDate' => $config['showDate'],
             'grants' => $this->getGrantsVariables($config),
             'row_template' => $this->getRowTemplate(),
-        );
+        ];
         $content = $this->templating->render('@MapbenderCore/Element/view_manager-listing.html.twig', $vars);
         return new Response($content);
     }
@@ -104,7 +105,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
      * @param int|null $viewId
      * @return ViewManagerState[]
      */
-    protected function loadListing(Entity\Application $application, array $config, $viewId = null)
+    protected function loadListing(Application $application, array $config, $viewId = null)
     {
         $showPublic = !!$config['publicEntries'];
         $showPrivate = !!$config['privateEntries'] && !$this->isCurrentUserAnonymous();
@@ -115,27 +116,27 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         if ($showPublic && !$showPrivate) {
             $criteria->andWhere(Criteria::expr()->isNull('userId'));
         } else {
-            $privateExpression = new CompositeExpression(CompositeExpression::TYPE_AND, array(
+            $privateExpression = new CompositeExpression(CompositeExpression::TYPE_AND, [
                 Criteria::expr()->eq('userId', $this->getUserId()),
-            ));
+            ]);
             if ($showPrivate && !$showPublic) {
                 $criteria->andWhere($privateExpression);
             } else {
                 assert($showPrivate && $showPublic);
-                $criteria->andWhere(new CompositeExpression(CompositeExpression::TYPE_OR, array(
+                $criteria->andWhere(new CompositeExpression(CompositeExpression::TYPE_OR, [
                     Criteria::expr()->isNull('userId'),
                     Criteria::expr()->eq('userId', $this->getUserId()),
-                )));
+                ]));
             }
         }
 
-        $criteria->orderBy(array(
+        $criteria->orderBy([
             'title' => Criteria::ASC,
-        ));
+        ]);
         return $this->getRepository()->matching($criteria);
     }
 
-    protected function getSaveResponse(Entity\Element $element, Request $request)
+    protected function getSaveResponse(Element $element, Request $request): Response
     {
         $token = new CsrfToken('view_manager', $request->request->get('token'));
         if (!$this->csrfTokenManager->isTokenValid($token)) {
@@ -169,16 +170,16 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         $this->em->flush();
 
         $config = $element->getConfiguration();
-        $vars = array(
+        $vars = [
             'record' => $record,
             'showDate' => $config['showDate'],
             'grants' => $this->getGrantsVariables($element->getConfiguration()),
-        );
+        ];
         $content = $this->templating->render($this->getRowTemplate(), $vars);
         return new Response($content);
     }
 
-    protected function getDeleteResponse(Entity\Element $element, Request $request)
+    protected function getDeleteResponse(Element $element, Request $request): Response
     {
         $token = new CsrfToken('view_manager', $request->request->get('token'));
         if (!$this->csrfTokenManager->isTokenValid($token)) {
@@ -214,23 +215,20 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         $record->setMtime(new \DateTime());
     }
 
-    /**
-     * @return \Doctrine\Persistence\ObjectRepository
-     */
-    protected function getRepository()
+    protected function getRepository(): ObjectRepository
     {
         /** @var EntityRepository */
-        $repository = $this->em->getRepository('Mapbender\CoreBundle\Entity\ViewManagerState');
+        $repository = $this->em->getRepository(ViewManagerState::class);
         return $repository;
     }
 
-    protected function isCurrentUserAnonymous()
+    protected function isCurrentUserAnonymous(): bool
     {
         $token = $this->tokenStorage->getToken();
         return !$token || ($token instanceof NullToken);
     }
 
-    protected function getUserId()
+    protected function getUserId(): ?string
     {
         $token = $this->tokenStorage->getToken();
         if ($token && !($token instanceof NullToken)) {
@@ -251,37 +249,33 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         return false;
     }
 
-    public function getGrantsVariables($config)
+    public function getGrantsVariables(array $config): array
     {
         $isAdmin = $this->isAdmin();
         $isAnon = !$isAdmin && $this->isCurrentUserAnonymous();
         $saveDefault = $isAnon ? $config['allowAnonymousSave'] : true;
-        return array(
-            'savePublic' => $config['publicEntries'] && ($isAdmin || ($saveDefault && \in_array($config['publicEntries'], array(
+        return [
+            'savePublic' => $config['publicEntries'] && ($isAdmin || ($saveDefault && \in_array($config['publicEntries'], [
                             ViewManager::ACCESS_READWRITE,
                             ViewManager::ACCESS_READWRITEDELETE,
-                        )))),
+                        ]))),
             'savePrivate' => !$isAnon && $config['privateEntries'],
             'deletePublic' => $isAdmin || !$isAnon && ($config['publicEntries'] === ViewManager::ACCESS_READWRITEDELETE),
-        );
+        ];
     }
 
-    protected function checkGrant(Entity\Element $element, $operation)
+    protected function checkGrant(Element $element, $operation)
     {
         $grantsVariables = $this->getGrantsVariables($element->getConfiguration());
-        switch ($operation) {
-            default:
-                return false;
-            case 'deletePublic':
-                return $grantsVariables['deletePublic'];
-            case 'savePublic':
-                return $grantsVariables['savePublic'];
-            case 'savePrivate':
-                return $grantsVariables['savePrivate'];
-        }
+        return match ($operation) {
+            'deletePublic' => $grantsVariables['deletePublic'],
+            'savePublic' => $grantsVariables['savePublic'],
+            'savePrivate' => $grantsVariables['savePrivate'],
+            default => false,
+        };
     }
 
-    protected function getRowTemplate()
+    protected function getRowTemplate(): string
     {
         return '@MapbenderCore/Element/view_manager-listing-row.html.twig';
     }
@@ -306,20 +300,20 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
     protected function filterPermittedLayersets(array $layersets, array $idMap): array
     {
         for ($layersetIndex = 0; $layersetIndex < count($layersets); $layersetIndex++) {
-            $layersets[$layersetIndex]['children'] = array_values(array_filter($layersets[$layersetIndex]['children'], function ($instanceAsArray) use ($idMap) {
+            $layersets[$layersetIndex]['children'] = array_values(array_filter($layersets[$layersetIndex]['children'], function (array $instanceAsArray) use ($idMap): bool {
                 $instanceOrAssignment = $idMap[$instanceAsArray['id']] ?? null;
                 return $instanceOrAssignment !== null && $this->security->isGranted(ResourceDomainSourceInstance::ACTION_VIEW, $instanceOrAssignment);
             }));
         }
 
         // remove layersets that are empty after filtering out those without access
-        $nonEmptyLayersets = array_filter($layersets, fn($layerset) => count($layerset['children']) > 0);
+        $nonEmptyLayersets = array_filter($layersets, fn(array $layerset): bool => count($layerset['children']) > 0);
         return array_values($nonEmptyLayersets);
     }
 
     protected function filterPermittedSourceStates(array $sources, array $idMap): array
     {
-        return array_values(array_filter($sources, function ($instanceAsArray) use ($idMap) {
+        return array_values(array_filter($sources, function (array $instanceAsArray) use ($idMap): bool {
             $instanceOrAssignment = $idMap[$instanceAsArray['id']] ?? null;
             return $instanceOrAssignment !== null && $this->security->isGranted(ResourceDomainSourceInstance::ACTION_VIEW, $instanceOrAssignment);
         }));

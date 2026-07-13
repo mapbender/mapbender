@@ -35,9 +35,9 @@ class ExportHandler extends ExchangeHandler
     {
         $entityBuffer = new ExportDataPool();
         gc_enable();
-        $time = array(
+        $time = [
             'start' => microtime(true)
-        );
+        ];
         foreach ($this->getApplicationSourceInstances($application) as $source) {
             $this->handleValue($entityBuffer, $source);
             gc_collect_cycles();
@@ -62,10 +62,10 @@ class ExportHandler extends ExchangeHandler
      * @param Application $app
      * @return SourceInstance[]
      */
-    protected function getApplicationSourceInstances(Application $app)
+    protected function getApplicationSourceInstances(Application $app): array
     {
-        $instanceIds = array();
-        $instances = array();
+        $instanceIds = [];
+        $instances = [];
         foreach ($app->getLayersets() as $layerSet) {
             foreach ($layerSet->getInstances() as $instance) {
                 $instanceId = $instance->getId();
@@ -85,9 +85,9 @@ class ExportHandler extends ExchangeHandler
      * @param array $array
      * @return array normalized array
      */
-    private function handleArray(ExportDataPool $exportPool, $array)
+    private function handleArray(ExportDataPool $exportPool, array $array): array
     {
-        $result = array();
+        $result = [];
         foreach ($array as $key => $item) {
             $result[$key] = $this->handleValue($exportPool, $item);
         }
@@ -176,18 +176,18 @@ class ExportHandler extends ExchangeHandler
             if (!$subObject) {
                 $data[$fieldName] = null;
             } elseif ($subObject instanceof Collection) {
-                $data[$fieldName] = array();
+                $data[$fieldName] = [];
                 foreach ($subObject as $item) {
                     try {
                         $data[$fieldName][] = $this->handleObject($exportPool, $item);
-                    } catch (UnpersistedEntity $e) {
+                    } catch (UnpersistedEntity) {
                         // ignore
                     }
                 }
             } else {
                 try {
                     $data[$fieldName] = $this->handleObject($exportPool, $subObject);
-                } catch (UnpersistedEntity $e) {
+                } catch (UnpersistedEntity) {
                     // ignore
                 }
             }
@@ -216,14 +216,14 @@ class ExportHandler extends ExchangeHandler
         return $this->createInstanceIdent($object, $values);
     }
 
-    public function createInstanceIdent($object, $params = array())
+    public function createInstanceIdent(object|string $object, $params = []): array
     {
         return array_merge(
-            array(
-                self::KEY_CLASS => array(
+            [
+                self::KEY_CLASS => [
                     DoctrineClassUtil::getRealClass($object),
-                )
-            ),
+                ]
+            ],
             $params
         );
     }

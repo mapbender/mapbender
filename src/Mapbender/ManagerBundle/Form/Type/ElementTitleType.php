@@ -4,6 +4,7 @@
 namespace Mapbender\ManagerBundle\Form\Type;
 
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Mapbender\CoreBundle\Component\ElementBase\MinimalInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -16,7 +17,7 @@ class ElementTitleType extends AbstractType implements DataTransformerInterface
 {
     public function getParent(): string
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\TextType';
+        return TextType::class;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -47,10 +48,10 @@ class ElementTitleType extends AbstractType implements DataTransformerInterface
         if (!$form->getConfig()->getRequired()) {
             /** @var MinimalInterface|string $elementClass */
             $elementClass = $options['element_class'];
-            $attr = array(
+            $attr = [
                 // NOTE: placeholder runs through translation in default form theme
                 'placeholder' => $elementClass::getClassTitle(),
-            );
+            ];
             if (!empty($view->vars['attr'])) {
                 $attr = $attr + $view->vars['attr'];
             }

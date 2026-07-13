@@ -36,7 +36,7 @@ class ExportJob extends ExchangeJob
      * @param Application $application
      * @return $this
      */
-    public function setApplication(Application $application)
+    public function setApplication(Application $application): static
     {
         $this->application = $application;
         return $this;
@@ -54,7 +54,7 @@ class ExportJob extends ExchangeJob
      * @param $format
      * @return $this
      */
-    public function setFormat($format)
+    public function setFormat($format): static
     {
         if (self::FORMAT_JSON !== $format && self::FORMAT_YAML !== $format) {
             throw new \InvalidArgumentException("Unsupported format " . print_r($format, true));

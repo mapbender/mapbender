@@ -34,7 +34,7 @@ class SourceMetaDataController
         protected TypeDirectoryService       $typeDirectoryService,
         protected bool                       $showProxiedServiceUrls,
         private readonly ApplicationResolver $applicationResolver,
-        private Security                     $security,
+        private readonly Security                     $security,
     )
     {
     }
@@ -63,12 +63,12 @@ class SourceMetaDataController
         if (!$template) {
             throw new NotFoundHttpException();
         }
-        $content = $this->templateEngine->render($template, array(
+        $content = $this->templateEngine->render($template, [
             'instance' => $instance,
             'source' => $source,
             'startLayerInstance' => $startLayerInstance,
             'secureUrls' => !$this->showProxiedServiceUrls && $dataSource->areServiceUrlsInternal($instance)
-        ));
+        ]);
         return new Response($content);
     }
 

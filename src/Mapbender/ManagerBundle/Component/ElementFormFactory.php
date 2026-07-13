@@ -11,7 +11,6 @@ use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\FrameworkBundle\Component\ElementFilter;
 use Mapbender\ManagerBundle\Form\Type\Element\FloatingAnchorType;
 use Mapbender\ManagerBundle\Form\Type\ElementTitleType;
-use phpDocumentor\Reflection\Types\ClassString;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,14 +25,8 @@ use Symfony\Component\Form\FormTypeInterface;
  */
 class ElementFormFactory
 {
-    /** @var ElementFilter */
-    protected $elementFilter;
-    /** @var FormFactoryInterface */
-    protected $formFactory;
     /** @var bool */
     protected $strict;
-    /** @var FormRegistryInterface */
-    protected $formRegistry;
 
     /**
      * @param ElementFilter $elementFilter
@@ -41,18 +34,15 @@ class ElementFormFactory
      * @param FormRegistryInterface $formRegistry
      * @param bool $strict
      */
-    public function __construct(ElementFilter         $elementFilter,
-                                FormFactoryInterface  $formFactory,
-                                FormRegistryInterface $formRegistry,
+    public function __construct(protected ElementFilter         $elementFilter,
+                                protected FormFactoryInterface  $formFactory,
+                                protected FormRegistryInterface $formRegistry,
                                                       $strict = false)
     {
-        $this->elementFilter = $elementFilter;
-        $this->formFactory = $formFactory;
         $this->setStrict($strict);
-        $this->formRegistry = $formRegistry;
     }
 
-    public function setStrict($enable)
+    public function setStrict($enable): void
     {
         $this->strict = !!$enable;
     }
@@ -61,14 +51,14 @@ class ElementFormFactory
      * @param Element $element
      * @return array
      */
-    public function getConfigurationForm($element)
+    public function getConfigurationForm($element): array
     {
         // Add class and element id data attributes for functional test support
-        $options = array(
-            'attr' => array(
+        $options = [
+            'attr' => [
                 'class' => '-ft-element-form',
-            ),
-        );
+            ],
+        ];
         if ($element->getId()) {
             $options['attr']['id'] = 'element-' . $element->getId();
             $options['attr']['data-ft-element-id'] = $element->getId();
@@ -88,7 +78,7 @@ class ElementFormFactory
         $this->addCommonTypes($formType, $handlingClass);
         $configurationType = $this->getConfigurationFormType($element);
 
-        $options = array();
+        $options = [];
 
         $twigTemplate = $handlingClass::getFormTemplate();
         $options['label'] = false;
@@ -106,19 +96,19 @@ class ElementFormFactory
         $regionName = $element->getRegion();
         $this->addRegionDependantConfiguration($handlingClass, $regionName, $formType);
 
-        return array(
+        return [
             'form' => $formType->getForm(),
             'theme' => $twigTemplate,
-        );
+        ];
     }
 
     protected function addCommonTypes(FormBuilderInterface $form, string $elementClass): void
     {
-        $form->add('title', ElementTitleType::class, array(
+        $form->add('title', ElementTitleType::class, [
             'element_class' => $elementClass,
             'label' => 'mb.core.admin.title',
             'required' => false,
-        ));
+        ]);
     }
 
     protected function addRegionDependantConfiguration(string $elementClass, ?string $regionName, FormBuilderInterface $form): void
@@ -131,10 +121,10 @@ class ElementFormFactory
             }
         }
         if ($regionName && str_contains($regionName, 'sidepane')) {
-            $form->get('configuration')->add('element_icon', IconClassType::class, array(
+            $form->get('configuration')->add('element_icon', IconClassType::class, [
                 'required' => false,
                 'label' => 'mb.core.basebutton.admin.elementIcon',
-            ));
+            ]);
         }
     }
 
@@ -143,7 +133,7 @@ class ElementFormFactory
      * @return string|null
      * @throws \RuntimeException
      */
-    public function getConfigurationFormType(Element $element)
+    public function getConfigurationFormType(Element $element): ?string
     {
         /** @var class-string<AbstractElementService> $handlingClass */
         $handlingClass = $this->elementFilter->getHandlingClassName($element);

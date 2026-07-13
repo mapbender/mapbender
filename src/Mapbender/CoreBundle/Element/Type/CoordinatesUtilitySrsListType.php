@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -13,17 +14,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CoordinatesUtilitySrsListType extends AbstractType implements DataTransformerInterface
 {
-    /** @var UrlGeneratorInterface */
-    protected $urlGenerator;
-
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(protected UrlGeneratorInterface $urlGenerator)
     {
-        $this->urlGenerator = $urlGenerator;
     }
 
     public function getParent(): string
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\TextType';
+        return TextType::class;
     }
 
     public function getBlockPrefix(): string
@@ -38,12 +35,12 @@ class CoordinatesUtilitySrsListType extends AbstractType implements DataTransfor
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
-            'attr' => array(
+        $resolver->setDefaults([
+            'attr' => [
                 'class' => 'srs-autocomplete',
                 'data-autocomplete-url' => $this->urlGenerator->generate('srs_autocomplete'),
-            ),
-        ));
+            ],
+        ]);
     }
 
     /**
@@ -57,7 +54,7 @@ class CoordinatesUtilitySrsListType extends AbstractType implements DataTransfor
         if (!\is_array($value)) {
             throw new TransformationFailedException("Expected array, got " . gettype($value));
         }
-        $parts = array();
+        $parts = [];
         foreach ($value as $srsInfo) {
             if (!empty($srsInfo['title'])) {
                 $parts[] = "{$srsInfo['name']} | {$srsInfo['title']}";
@@ -82,7 +79,7 @@ class CoordinatesUtilitySrsListType extends AbstractType implements DataTransfor
             throw new TransformationFailedException("Expected string, got " . gettype($value));
         }
         $inputs = array_filter(array_map('\trim', explode(',', $value)), '\strlen');
-        $srsDefs = array();
+        $srsDefs = [];
         foreach ($inputs as $srsInput) {
             $srsInputParts = explode('|', $srsInput, 2);
             $srsName = trim($srsInputParts[0]);
@@ -92,10 +89,10 @@ class CoordinatesUtilitySrsListType extends AbstractType implements DataTransfor
                 $srsTitle = '';
             }
             if (!empty($srsName)) {
-                $srsDefs[] = array(
+                $srsDefs[] = [
                     'name' => $srsName,
                     'title' => $srsTitle,
-                );
+                ];
             }
         }
         return $srsDefs;

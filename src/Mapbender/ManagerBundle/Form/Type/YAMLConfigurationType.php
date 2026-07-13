@@ -2,6 +2,7 @@
 
 namespace Mapbender\ManagerBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,15 +19,15 @@ class YAMLConfigurationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer(new YAMLDataTransformer(jsonEncode: $options['json_encode'] ?? false));
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'preSubmit'));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, $this->preSubmit(...));
     }
 
     public function getParent(): string
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\TextareaType';
+        return TextareaType::class;
     }
 
-    public function preSubmit(FormEvent $event)
+    public function preSubmit(FormEvent $event): void
     {
         try {
             Yaml::parse($event->getData() ?: '');
@@ -39,12 +40,12 @@ class YAMLConfigurationType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 'class' => 'code-yaml',
-            ),
+            ],
             'json_encode' => false,
-        ));
+        ]);
     }
 }

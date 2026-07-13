@@ -13,20 +13,13 @@ use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractPrintQueueExecutionCommand extends AbstractPrintQueueCommand
 {
-    /** @var PrintServiceInterface */
-    protected $printService;
-
-    protected $memoryLimit;
-
     public function __construct(ManagerRegistry $managerRegistry,
                                 Filesystem $filesystem,
-                                PrintServiceInterface $printService,
+                                protected PrintServiceInterface $printService,
                                 $storagePath,
-                                $memoryLimit)
+                                protected $memoryLimit)
     {
         parent::__construct($managerRegistry, $filesystem, $storagePath);
-        $this->printService = $printService;
-        $this->memoryLimit = $memoryLimit;
     }
 
     protected function beforePrint()
@@ -49,7 +42,7 @@ abstract class AbstractPrintQueueExecutionCommand extends AbstractPrintQueueComm
         $outputPath = $this->getJobStoragePath($job);
         $this->beforePrint();
         $this->printService->storePrint($job->getPayload(), $outputPath);
-        if (!$this->repository->findOneBy(array('id' => $job->getId()))) {
+        if (!$this->repository->findOneBy(['id' => $job->getId()])) {
             $output->writeln("WARNING: after print execution, entity #{$job->getId()} can no longer be found");
             if ($this->filesystem->exists($outputPath)) {
                 $output->writeln("Assuming job has been canceled. Deleting just created pdf at {$outputPath}");

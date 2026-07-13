@@ -61,7 +61,7 @@ class BasicProfile extends AbstractProfile
      * @param string $organizationName
      * @return $this
      */
-    public function setOrganizationName($organizationName)
+    public function setOrganizationName($organizationName): static
     {
         $this->organizationName = $organizationName;
 
@@ -84,7 +84,7 @@ class BasicProfile extends AbstractProfile
      * @param string $organizationRole
      * @return $this
      */
-    public function setOrganizationRole($organizationRole)
+    public function setOrganizationRole($organizationRole): static
     {
         $this->organizationRole = $organizationRole;
 
@@ -105,9 +105,9 @@ class BasicProfile extends AbstractProfile
      * Get array of possible organization roles, e.g for form or validation
      * @return array Key-Value pairs of roles
      */
-    static public function getOrganizationRoleChoices()
+    static public function getOrganizationRoleChoices(): array
     {
-        return array(
+        return [
             self::ORG_ROLE_AUTHOR =>                'Author',
             self::ORG_ROLE_CUSTODIAN =>             'Custodian',
             self::ORG_ROLE_DISTRIBUTOR =>           'Distributor',
@@ -119,7 +119,7 @@ class BasicProfile extends AbstractProfile
             self::ORG_ROLE_PUBLISHER =>             'Publisher',
             self::ORG_ROLE_RESOURCEPROVIDER =>      'Resource Provider',
             self::ORG_ROLE_USER =>                  'User'
-        );
+        ];
     }
 
     /**
@@ -128,7 +128,7 @@ class BasicProfile extends AbstractProfile
      * @param string $firstName
      * @return $this
      */
-    public function setFirstName($firstName)
+    public function setFirstName($firstName): static
     {
         $this->firstName = $firstName;
 
@@ -151,7 +151,7 @@ class BasicProfile extends AbstractProfile
      * @param string $lastName
      * @return $this
      */
-    public function setLastName($lastName)
+    public function setLastName($lastName): static
     {
         $this->lastName = $lastName;
 
@@ -174,7 +174,7 @@ class BasicProfile extends AbstractProfile
      * @param string $notes
      * @return $this
      */
-    public function setNotes($notes)
+    public function setNotes($notes): static
     {
         $this->notes = $notes;
 
@@ -197,7 +197,7 @@ class BasicProfile extends AbstractProfile
      * @param string $phone
      * @return $this
      */
-    public function setPhone($phone)
+    public function setPhone($phone): static
     {
         $this->phone = $phone;
 
@@ -220,7 +220,7 @@ class BasicProfile extends AbstractProfile
      * @param string $street
      * @return $this
      */
-    public function setStreet($street)
+    public function setStreet($street): static
     {
         $this->street = $street;
 
@@ -243,7 +243,7 @@ class BasicProfile extends AbstractProfile
      * @param string $zipCode
      * @return $this
      */
-    public function setZipCode($zipCode)
+    public function setZipCode($zipCode): static
     {
         $this->zipCode = $zipCode;
 
@@ -266,7 +266,7 @@ class BasicProfile extends AbstractProfile
      * @param string $city
      * @return $this
      */
-    public function setCity($city)
+    public function setCity($city): static
     {
         $this->city = $city;
 
@@ -289,7 +289,7 @@ class BasicProfile extends AbstractProfile
      * @param string $country
      * @return $this
      */
-    public function setCountry($country)
+    public function setCountry($country): static
     {
         $this->country = $country;
 

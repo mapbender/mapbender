@@ -34,7 +34,7 @@ class LayerRendererMarkers extends LayerRenderer
         }
     }
 
-    protected function addMarker(ExportCanvas $canvas, $markerDef, $opacity)
+    protected function addMarker(ExportCanvas $canvas, array $markerDef, $opacity)
     {
         $image = $this->getMarkerImage($markerDef, $opacity);
         if ($image) {
@@ -51,15 +51,15 @@ class LayerRendererMarkers extends LayerRenderer
      * @param float[] $anchorXy in canvas pixel space
      * @param array $featureStyle
      */
-    public function addFeatureGraphic(ExportCanvas $canvas, $anchorXy, $featureStyle)
+    public function addFeatureGraphic(ExportCanvas $canvas, $anchorXy, array $featureStyle): void
     {
         $iconPath = rtrim($this->imageRoot, '/') . '/' . ltrim($featureStyle['externalGraphic'], '/');
         $image = $this->getImage($iconPath, ArrayUtil::getDefault($featureStyle, 'graphicOpacity', 1));
         if ($image) {
-            $offsetXy = array(
+            $offsetXy = [
                 'x' => ArrayUtil::getDefault($featureStyle, 'graphicXOffset', 0),
                 'y' => ArrayUtil::getDefault($featureStyle, 'graphicYOffset', 0),
-            );
+            ];
             $iconWidth = ArrayUtil::getDefault($featureStyle, 'graphicWidth', imagesx($image));
             $iconHeight = ArrayUtil::getDefault($featureStyle, 'graphicHeight', imagesy($image));
             $this->addIcon($canvas, $image, $anchorXy, $offsetXy, $iconWidth, $iconHeight);
@@ -75,7 +75,7 @@ class LayerRendererMarkers extends LayerRenderer
      * @param int $width
      * @param int $height
      */
-    protected function addIcon(ExportCanvas $canvas, $image, $anchorXy, $offsetXy, $width, $height)
+    protected function addIcon(ExportCanvas $canvas, $image, array $anchorXy, array $offsetXy, $width, $height)
     {
         $transform = $canvas->featureTransform;
         $x = $anchorXy['x'] + $offsetXy['x'] * $transform->lineScale;
@@ -91,7 +91,7 @@ class LayerRendererMarkers extends LayerRenderer
      * @param float $opacity
      * @return resource|null
      */
-    protected function getMarkerImage($markerDef, $opacity)
+    protected function getMarkerImage(array $markerDef, $opacity)
     {
         $markerPath = rtrim($this->imageRoot, '/') . '/' . ltrim($markerDef['path'], '/');
         return $this->getImage($markerPath, $opacity);

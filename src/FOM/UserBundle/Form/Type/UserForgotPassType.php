@@ -2,24 +2,25 @@
 
 namespace FOM\UserBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints;
 
 class UserForgotPassType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('search', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
+            ->add('search', TextType::class, [
                 'label' => 'fom.user.password.form.username_email',
-                'attr' => array(
+                'attr' => [
                     'autofocus' => 'on',
-                ),
-                'constraints' => array(
-                    new Constraints\NotBlank(),
-                ),
-            ))
+                ],
+                'constraints' => [
+                    new NotBlank(),
+                ],
+            ])
         ;
 
     }

@@ -1,6 +1,8 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Element\Type\OverviewAdminType;
+use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ImportAwareInterface;
 use Mapbender\Component\Element\TemplateView;
@@ -25,7 +27,7 @@ class Overview extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.overview.class.title";
     }
@@ -33,7 +35,7 @@ class Overview extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.overview.class.description";
     }
@@ -41,22 +43,22 @@ class Overview extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'layerset' => null,
             'width' => 200,
             'height' => 100,
             'anchor' => 'right-bottom',
             'visibility' => self::VISIBILITY_OPEN_INITIALLY,
             'fixed' => false,
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbOverview';
     }
@@ -64,30 +66,30 @@ class Overview extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\OverviewAdminType';
+        return OverviewAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbOverview.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/overview.scss',
-            ),
-            'trans' => array(
+            ],
+            'trans' => [
                 'mb.core.overview.nolayer',
-            ),
-        );
+            ],
+        ];
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
         $view = new TemplateView('@MapbenderCore/Element/overview.html.twig');
         $view->attributes['class'] = 'mb-element-overview';
@@ -105,28 +107,28 @@ class Overview extends AbstractElementService
                 $view->variables['show_toggle'] = false;
                 break;
         }
-        $view->variables += array(
+        $view->variables += [
             'closed' => $config['visibility'] == self::VISIBILITY_CLOSED_INITIALLY,
             'width' => $config['width'],
             'height' => $config['height'],
-        );
+        ];
         return $view;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderManager/Element/overview.html.twig';
     }
 
-    public function onImport(Element $element, Mapper $mapper)
+    public function onImport(Element $element, Mapper $mapper): void
     {
         $configuration = $element->getConfiguration();
         if (isset($configuration['layerset'])) {
             $configuration['layerset'] = $mapper->getIdentFromMapper(
-                'Mapbender\CoreBundle\Entity\Layerset',
+                Layerset::class,
                 $configuration['layerset'],
                 true
             );
@@ -134,13 +136,13 @@ class Overview extends AbstractElementService
         }
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
-        $config = $entity->getConfiguration() ?: array();
+        $config = $entity->getConfiguration() ?: [];
         if (\array_key_exists('maximized', $config)) {
-            $config += array(
+            $config += [
                 'visibility' => ($config['maximized'] ? self::VISIBILITY_OPEN_INITIALLY : self::VISIBILITY_CLOSED_INITIALLY),
-            );
+            ];
             unset($config['maximized']);
             $entity->setConfiguration($config);
         }

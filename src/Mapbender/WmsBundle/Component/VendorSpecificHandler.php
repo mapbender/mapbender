@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Entity\Group;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\EntityUtil;
@@ -30,9 +31,9 @@ class VendorSpecificHandler
      * @param string $input
      * @return string|null
      */
-    public function findDynamicValuePortion($input)
+    public function findDynamicValuePortion($input): ?string
     {
-        $matches = array();
+        $matches = [];
         if (\preg_match('#\$[a-z]+\$#i', $input, $matches)) {
             return $matches[0];
         } else {
@@ -47,12 +48,12 @@ class VendorSpecificHandler
      * @param string $value
      * @return boolean true if a value is dynamic.
      */
-    public function isValueDynamic($value)
+    public function isValueDynamic($value): bool
     {
         return !!$this->findDynamicValuePortion($value);
     }
 
-    public function isValuePublic(VendorSpecific $vendorspec)
+    public function isValuePublic(VendorSpecific $vendorspec): bool
     {
         return !$vendorspec->getHidden();
     }
@@ -62,10 +63,10 @@ class VendorSpecificHandler
      * @param TokenInterface|null $userToken
      * @return string[]
      */
-    public function getPublicParams(SourceInstance $instance, TokenInterface $userToken=null)
+    public function getPublicParams(SourceInstance $instance, TokenInterface $userToken=null): array
     {
         $user = $this->getUserFromToken($userToken);
-        $params = array();
+        $params = [];
         foreach ($instance->getVendorspecifics() as $key => $vendorspec) {
             if ($this->isVendorSpecificValueValid($vendorspec) && $this->isValuePublic($vendorspec)) {
                 $paramName = $vendorspec->getParameterName();
@@ -80,10 +81,10 @@ class VendorSpecificHandler
      * @param TokenInterface|null $userToken
      * @return string[]
      */
-    public function getHiddenParams(SourceInstance $instance, TokenInterface $userToken=null)
+    public function getHiddenParams(SourceInstance $instance, TokenInterface $userToken=null): array
     {
         $user = $this->getUserFromToken($userToken);
-        $params = array();
+        $params = [];
         foreach ($instance->getVendorspecifics() as $key => $vendorspec) {
             if ($this->isVendorSpecificValueValid($vendorspec) && !$this->isValuePublic($vendorspec)) {
                 $paramName = $vendorspec->getParameterName();
@@ -98,10 +99,10 @@ class VendorSpecificHandler
      * @param TokenInterface|null $userToken
      * @return string[]
      */
-    public function getAllParams(SourceInstance $instance, TokenInterface $userToken=null)
+    public function getAllParams(SourceInstance $instance, TokenInterface $userToken=null): array
     {
         $user = $this->getUserFromToken($userToken);
-        $params = array();
+        $params = [];
         foreach ($instance->getVendorspecifics() as $key => $vendorspec) {
             if ($this->isVendorSpecificValueValid($vendorspec)) {
                 $paramName = $vendorspec->getParameterName();
@@ -116,7 +117,7 @@ class VendorSpecificHandler
      * @param SourceInstance|WmsInstance $instance; NOTE: lax typing to avoid conflicts with WMTS
      * @return bool
      */
-    public function hasHiddenParams(SourceInstance $instance)
+    public function hasHiddenParams(SourceInstance $instance): bool
     {
         foreach ($instance->getVendorspecifics() as $key => $vendorspec) {
             if ($this->isVendorSpecificValueValid($vendorspec) && !$this->isValuePublic($vendorspec)) {
@@ -130,7 +131,7 @@ class VendorSpecificHandler
      * @param TokenInterface $userToken
      * @return UserInterface|null
      */
-    protected function getUserFromToken(TokenInterface $userToken=null)
+    protected function getUserFromToken(TokenInterface $userToken=null): ?UserInterface
     {
         if (!$userToken || $userToken instanceof NullToken) {
             return null;
@@ -172,16 +173,16 @@ class VendorSpecificHandler
      * @param string $attributeName
      * @return string|null
      */
-    protected function extractDynamicReference(VendorSpecific $vs, $object, $attributeName)
+    protected function extractDynamicReference(VendorSpecific $vs, $object, $attributeName): ?string
     {
         if (!$object || !is_object($object)) {
             return null;
         }
         if ($vs->getVstype() === VendorSpecific::TYPE_VS_GROUP && !($object instanceof Group)) {
-            $values = array();
-            if ($object instanceof \FOM\UserBundle\Entity\User) {
+            $values = [];
+            if ($object instanceof User) {
                 $groups = $object->getGroups();
-                foreach ($groups ?: array() as $fomGroup) {
+                foreach ($groups ?: [] as $fomGroup) {
                     $values[] = $this->extractDynamicReference($vs, $fomGroup, $attributeName);
                 }
             }
@@ -193,7 +194,7 @@ class VendorSpecificHandler
         // NOTE that this is different from a TYPE_VS_GROUP, where the property extracted from the group entities can be
         // configured freely.
         if (is_array($attributeValue) || (is_object($attributeValue) && ($attributeValue instanceof \Traversable))) {
-            $groupIds = array();
+            $groupIds = [];
             foreach ($attributeValue as $item) {
                 if ($item instanceof Group) {
                     $groupIds[] = $item->getId();
@@ -205,7 +206,7 @@ class VendorSpecificHandler
         }
     }
 
-    public function isVendorSpecificValueValid(VendorSpecific $vs)
+    public function isVendorSpecificValueValid(VendorSpecific $vs): bool
     {
         if ($vs->getDefault()) {
             return true;

@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Element;
 
+use Mapbender\WmsBundle\Element\Type\DimensionsHandlerAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
@@ -18,7 +19,7 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.wms.dimhandler.class.title";
     }
@@ -26,7 +27,7 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.wms.dimhandler.class.description";
     }
@@ -34,19 +35,19 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             "tooltip" => "",
-            'dimensionsets' => array()
+            'dimensionsets' => []
 
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbDimensionHandler';
     }
@@ -54,45 +55,45 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
                 '@MapbenderWmsBundle/Resources/public/MbDimensionHandler.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\WmsBundle\Element\Type\DimensionsHandlerAdminType';
+        return DimensionsHandlerAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderWms/ElementAdmin/dimensionshandler.html.twig';
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): false|TemplateView
     {
         $dimensionsets = $this->normalizeDimensionsets($element);
         if (!$dimensionsets) {
             return false;
         }
 
-        if (preg_match('#(toolbar|footer)#', $element->getRegion())) {
+        if (preg_match('#(toolbar|footer)#', (string) $element->getRegion())) {
             $view = new TemplateView('@MapbenderWms/Element/dimensionshandler.toolbar.html.twig');
-            $view->attributes['title'] = $element->getTitle() ?: $this->getClassTitle();
+            $view->attributes['title'] = $element->getTitle() ?: static::getClassTitle();
         } else {
             $view = new TemplateView('@MapbenderWms/Element/dimensionshandler.html.twig');
         }
@@ -101,9 +102,12 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
         return $view;
     }
 
-    protected function normalizeDimensionsets(Element $element)
+    /**
+     * @return mixed[]
+     */
+    protected function normalizeDimensionsets(Element $element): array
     {
-        $dimensionsets = array();
+        $dimensionsets = [];
         foreach ($element->getConfiguration()['dimensionsets'] as $setConfig) {
             if (!empty($setConfig['group'])) {
                 if (empty($setConfig['title'])) {
@@ -115,19 +119,19 @@ class DimensionsHandler extends AbstractElementService implements ConfigMigratio
         return $dimensionsets;
     }
 
-    protected function generateDimensionLabel(array $setConfig)
+    protected function generateDimensionLabel(array $setConfig): string|array|null
     {
         foreach ($setConfig['group'] as $targetDimension) {
-            return \preg_replace('#^.*-(\w+)-\w*$#', '${1}', $targetDimension);
+            return \preg_replace('#^.*-(\w+)-\w*$#', '${1}', (string) $targetDimension);
         }
         // Uh-oh!
         return '';
     }
 
-    public static function updateEntityConfig(Element $entity)
+    public static function updateEntityConfig(Element $entity): void
     {
         $config = $entity->getConfiguration();
-        $dimensionsets = array();
+        $dimensionsets = [];
         if (!empty($config['dimensionsets'])) {
             foreach ($config['dimensionsets'] as $key => $setConfig) {
                 // Convert legacy serialized DimensionInst objects 'dimension' to scalar string 'extent'

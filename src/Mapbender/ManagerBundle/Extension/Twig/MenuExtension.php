@@ -12,37 +12,26 @@ use Twig\TwigFunction;
 
 class MenuExtension extends AbstractExtension
 {
-    /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
     /** @var MenuItem[] */
     protected $items;
-    /** @var string[] (serialized items) */
-    protected $itemData;
     /** @var bool */
     protected $initialized = false;
-    /** @var RequestStack */
-    protected $requestStack;
 
 
     /**
-     * @param MenuItem[] $items
+     * @param MenuItem[] $itemData
      * @param RequestStack $requestStack
      * @param AuthorizationCheckerInterface $authorizationChecker
      */
-    public function __construct($items,
-                                RequestStack $requestStack,
-                                AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(protected $itemData, protected RequestStack $requestStack, protected AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->itemData = $items;
-        $this->requestStack = $requestStack;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function getFunctions(): array
     {
-        return array(
-            'mapbender_manager_menu_items' => new TwigFunction('mapbender_manager_menu_items', array($this, 'mapbender_manager_menu_items')),
-        );
+        return [
+            'mapbender_manager_menu_items' => new TwigFunction('mapbender_manager_menu_items', $this->mapbender_manager_menu_items(...)),
+        ];
     }
 
     public function mapbender_manager_menu_items($legacyParamDummy = null)
@@ -50,7 +39,7 @@ class MenuExtension extends AbstractExtension
         return $this->getItems(true);
     }
 
-    public function getDefaultRoute()
+    public function getDefaultRoute(): ?string
     {
         $items = $this->getItems(false);
         if (!$items) {
@@ -63,12 +52,12 @@ class MenuExtension extends AbstractExtension
      * @param bool $filterAccess
      * @return MenuItem[]
      */
-    protected function getItems($filterAccess)
+    protected function getItems($filterAccess): array
     {
         if (!$this->initialized) {
             $this->initialize();
         }
-        $items = array();
+        $items = [];
         foreach ($this->items as $item) {
             if (!$filterAccess || $item->filter($this->authorizationChecker)) {
                 $items[] = $item;

@@ -21,17 +21,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ElementFilter extends ElementConfigFilter
 {
-    /** @var ElementInventoryService */
-    protected $inventory;
-    /** @var AuthorizationCheckerInterface  */
-    protected $authorizationChecker;
-
-
-    public function __construct(ElementInventoryService $inventory,
-                                AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(protected ElementInventoryService $inventory, protected AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->inventory = $inventory;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -78,7 +69,7 @@ class ElementFilter extends ElementConfigFilter
         }
     }
 
-    public function prepareForForm(Element $element)
+    public function prepareForForm(Element $element): void
     {
         $this->migrateConfig($element);
         $canonical = $this->inventory->getCanonicalClassName($element->getClass());
@@ -109,9 +100,9 @@ class ElementFilter extends ElementConfigFilter
      * @param bool $checkTargets
      * @return Element[]
      */
-    public function filterFrontend($elements, $requireGrant, $checkTargets)
+    public function filterFrontend($elements, $requireGrant, $checkTargets): array
     {
-        $elementsOut = array();
+        $elementsOut = [];
         foreach ($elements as $element) {
             if ($this->isEnabled($element, $requireGrant, $checkTargets)) {
                 $elementsOut[] = $element;
@@ -131,7 +122,7 @@ class ElementFilter extends ElementConfigFilter
      * @param Element $element
      * @throws UndefinedElementClassException
      */
-    public function migrateConfig(Element $element)
+    public function migrateConfig(Element $element): void
     {
         $handlingClass = $this->inventory->getHandlingClassName($element);
         $this->migrateConfigInternal($element, $handlingClass);

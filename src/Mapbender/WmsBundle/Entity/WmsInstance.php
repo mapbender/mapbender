@@ -82,15 +82,15 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
     public function __construct()
     {
         $this->layers     = new ArrayCollection();
-        $this->dimensions = array();
-        $this->vendorspecifics = array();
+        $this->dimensions = [];
+        $this->vendorspecifics = [];
     }
 
-    private function __getLayersRecursive(WmsInstanceLayer $layer)
+    private function __getLayersRecursive(WmsInstanceLayer $layer): mixed
     {
         /** @var WmsInstanceLayer $layer */
         $sublayers = $layer->getSublayer()->getValues();
-        $sublayerlists = array_merge(array($sublayers), array_map(array($this, '__getLayersRecursive'), $sublayers));
+        $sublayerlists = array_merge([$sublayers], array_map($this->__getLayersRecursive(...), $sublayers));
         return \call_user_func_array('\array_merge', $sublayerlists);
     }
 
@@ -100,7 +100,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
             $this->setId(null);
             $rootLayer = clone $this->getRootlayer();
             $rootLayer->setSourceInstance($this);
-            $clonedLayers = array($rootLayer);
+            $clonedLayers = [$rootLayer];
             foreach ($this->__getLayersRecursive($rootLayer) as $extraLayer) {
                 /** @var WmsInstanceLayer $extraLayer */
                 $extraLayer->setSourceInstance($this);
@@ -117,7 +117,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      */
     public function getDimensions()
     {
-        return $this->dimensions ? : array();
+        return $this->dimensions ? : [];
     }
 
     /**
@@ -126,7 +126,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param DimensionInst[] $dimensions
      * @return $this
      */
-    public function setDimensions(array $dimensions)
+    public function setDimensions(array $dimensions): static
     {
         $this->dimensions = $dimensions;
         return $this;
@@ -135,10 +135,10 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
     /**
      * @return VendorSpecific[]
      */
-    public function getVendorspecifics()
+    public function getVendorspecifics(): array
     {
         if (!$this->vendorspecifics) {
-            $this->vendorspecifics = array();
+            $this->vendorspecifics = [];
         }
         $result = [];
         foreach ($this->vendorspecifics as $item) {
@@ -161,7 +161,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param ArrayCollection|DimensionInst[]|VendorSpecific[] $vendorspecifics
      * @return $this
      */
-    public function setVendorspecifics(array $vendorspecifics)
+    public function setVendorspecifics(array $vendorspecifics): static
     {
         $this->vendorspecifics = $vendorspecifics;
         return $this;
@@ -173,7 +173,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param WmsInstanceLayer[]|ArrayCollection $layers
      * @return $this
      */
-    public function setLayers($layers)
+    public function setLayers($layers): static
     {
         $this->layers = $layers;
         return $this;
@@ -208,7 +208,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param array $srs
      * @return $this
      */
-    public function setSrs($srs)
+    public function setSrs($srs): static
     {
         $this->srs = $srs;
         return $this;
@@ -230,7 +230,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param string $format
      * @return $this
      */
-    public function setFormat($format)
+    public function setFormat($format): static
     {
         $this->format = $format;
         return $this;
@@ -243,7 +243,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      */
     public function getFormat()
     {
-        return $this->format !== null ? $this->format : 'image/png';
+        return $this->format ?? 'image/png';
     }
 
     /**
@@ -252,7 +252,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param string $infoformat
      * @return $this
      */
-    public function setInfoformat($infoformat)
+    public function setInfoformat($infoformat): static
     {
         $this->infoformat = $infoformat;
         return $this;
@@ -274,7 +274,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param string $exceptionformat
      * @return $this
      */
-    public function setExceptionformat($exceptionformat)
+    public function setExceptionformat($exceptionformat): static
     {
         $this->exceptionformat = $exceptionformat;
         return $this;
@@ -296,7 +296,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param boolean $transparency
      * @return $this
      */
-    public function setTransparency($transparency)
+    public function setTransparency($transparency): static
     {
         $this->transparency = (bool) $transparency;
         return $this;
@@ -342,7 +342,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param boolean $tiled
      * @return $this
      */
-    public function setTiled($tiled)
+    public function setTiled($tiled): static
     {
         $this->tiled = (bool) $tiled;
         return $this;
@@ -364,7 +364,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param boolean $ratio
      * @return $this
      */
-    public function setRatio($ratio)
+    public function setRatio($ratio): static
     {
         if (is_numeric($ratio)) {
             $this->ratio = floatval($ratio);
@@ -389,7 +389,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param boolean $buffer
      * @return $this
      */
-    public function setBuffer($buffer)
+    public function setBuffer($buffer): static
     {
         $this->buffer = intval($buffer);
         return $this;
@@ -411,7 +411,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param WmsSource|null $source
      * @return $this
      */
-    public function setSource($source = null)
+    public function setSource($source = null): static
     {
         $this->source = $source;
         return $this;
@@ -443,7 +443,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param WmsInstanceLayer $layer
      * @return $this
      */
-    public function addLayer(WmsInstanceLayer $layer)
+    public function addLayer(WmsInstanceLayer $layer): static
     {
         $this->layers->add($layer);
         return $this;
@@ -503,7 +503,7 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @param WmsSource $source
      * @todo: this belongs in the (only recently added) {@see SourceInstanceFactory}
      */
-    public function populateFromSource(WmsSource $source)
+    public function populateFromSource(WmsSource $source): void
     {
         $this->setTitle($source->getTitle());
         $this->setFormat($this->getDefaultGetMapFormat($source));
@@ -538,9 +538,9 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      * @return $this
      * @throws \InvalidArgumentException if $value is not one of the expected values
      */
-    public function setLayerOrder($value)
+    public function setLayerOrder($value): static
     {
-        if (!in_array($value, $this->validLayerOrderChoices())) {
+        if (!in_array($value, static::validLayerOrderChoices())) {
             throw new \InvalidArgumentException("Invalid layer order value '$value'");
         }
         $this->layerOrder = $value;
@@ -550,12 +550,12 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
     /**
      * @return string[]
      */
-    public static function validLayerOrderChoices()
+    public static function validLayerOrderChoices(): array
     {
-        return array(
+        return [
             self::LAYER_ORDER_TOP_DOWN,
             self::LAYER_ORDER_BOTTOM_UP,
-        );
+        ];
     }
 
     public function isProtectedDynamicWms(): bool

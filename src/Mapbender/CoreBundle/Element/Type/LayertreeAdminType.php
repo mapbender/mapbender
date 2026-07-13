@@ -16,38 +16,38 @@ class LayertreeAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('autoOpen', CheckboxType::class, array(
+            ->add('autoOpen', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.autoOpen',
-            ))
-            ->add('useTheme', CheckboxType::class, array(
+            ])
+            ->add('useTheme', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.usetheme',
-            ))
-            ->add('allowReorder', CheckboxType::class, array(
+            ])
+            ->add('allowReorder', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.source.instancelayer.allowreordertoc',
-            ))
-            ->add('showBaseSource', CheckboxType::class, array(
+            ])
+            ->add('showBaseSource', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.showbasesources',
-            ))
-            ->add('hideInfo', CheckboxType::class, array(
+            ])
+            ->add('hideInfo', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.hideinfo',
-            ))
-            ->add('menu', $this->getMenuCollectionType(), array(
+            ])
+            ->add('menu', $this->getMenuCollectionType(), [
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.menu',
-            ))
-            ->add('themes', LayertreeThemeCollectionType::class, array(
+            ])
+            ->add('themes', LayertreeThemeCollectionType::class, [
                 'label' => 'mb.core.admin.layertree.label.themes',
                 'required' => false,
-            ))
-            ->add('showFilter', CheckboxType::class, array(
+            ])
+            ->add('showFilter', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.admin.layertree.label.filter',
-            ))
+            ])
         ;
     }
 

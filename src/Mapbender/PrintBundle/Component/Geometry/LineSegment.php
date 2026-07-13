@@ -7,26 +7,19 @@ use Mapbender\PrintBundle\Util\CoordUtil;
 
 class LineSegment
 {
-    /** @var Point2D */
-    protected $from;
-    /** @var Point2D */
-    protected $to;
-
     /**
      * @param Point2D $from
      * @param Point2D $to
      */
-    public function __construct(Point2D $from, Point2D $to)
+    public function __construct(protected Point2D $from, protected Point2D $to)
     {
-        $this->from = $from;
-        $this->to = $to;
     }
 
     /**
      * @param float[] $a
      * @return LineSegment
      */
-    public static function fromArray(array $a)
+    public static function fromArray(array $a): static
     {
         if (count($a) < 2) {
             throw new \InvalidArgumentException("Input array must have at least 2 elements, got " . count($a));
@@ -43,12 +36,12 @@ class LineSegment
         return new static($from, $to);
     }
 
-    public function toArray()
+    public function toArray(): array
     {
-        return array(
+        return [
             $this->from->toArray(),
             $this->to->toArray(),
-        );
+        ];
     }
 
     /**
@@ -102,7 +95,7 @@ class LineSegment
      * @param float $length in [-$offsetFrom;+$offsetFrom] for end points on this LineSegment
      * @return LineSegment
      */
-    public function getSlice($offsetFrom, $length)
+    public function getSlice($offsetFrom, $length): static
     {
         $length0 = $this->getLength();
         $ratioFrom = $offsetFrom / $length0;

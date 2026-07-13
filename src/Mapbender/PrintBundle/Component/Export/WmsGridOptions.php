@@ -5,23 +5,21 @@ namespace Mapbender\PrintBundle\Component\Export;
 
 class WmsGridOptions
 {
-    protected $maxGetMapDimensions;
-    protected $tileBuffer;
+    protected array $maxGetMapDimensions;
 
     /**
      * @param int[] $maxGetMapDimensions
      * @param int[] $tileBuffer
      */
-    public function __construct($maxGetMapDimensions, $tileBuffer)
+    public function __construct($maxGetMapDimensions, protected $tileBuffer)
     {
         $this->maxGetMapDimensions = array_values($maxGetMapDimensions);
-        $this->tileBuffer = $tileBuffer;
     }
 
     /**
      * @return int
      */
-    public function getUnbufferedWidth()
+    public function getUnbufferedWidth(): float|int
     {
         return $this->maxGetMapDimensions[0] - 2 * $this->getBufferHorizontal();
     }
@@ -29,7 +27,7 @@ class WmsGridOptions
     /**
      * @return int
      */
-    public function getUnbufferedHeight()
+    public function getUnbufferedHeight(): float|int
     {
         return $this->maxGetMapDimensions[1] - 2 * $this->getBufferVertical();
     }

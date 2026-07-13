@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 
+use Mapbender\CoreBundle\Element\Type\ScaleSelectorAdminType;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\TemplateView;
 use Mapbender\CoreBundle\Entity\Element;
@@ -21,7 +22,7 @@ class ScaleSelector extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassTitle()
+    public static function getClassTitle(): string
     {
         return "mb.core.scaleselector.class.title";
     }
@@ -29,7 +30,7 @@ class ScaleSelector extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public static function getClassDescription()
+    public static function getClassDescription(): string
     {
         return "mb.core.scaleselector.class.description";
     }
@@ -37,41 +38,41 @@ class ScaleSelector extends AbstractElementService
     /**
      * @inheritdoc
      */
-    public function getRequiredAssets(Element $element)
+    public function getRequiredAssets(Element $element): array
     {
-        return array(
-            'js' => array(
+        return [
+            'js' => [
                 '@MapbenderCoreBundle/Resources/public/elements/MbScaleSelector.js',
-            ),
-            'css' => array(
+            ],
+            'css' => [
                 '@MapbenderCoreBundle/Resources/public/sass/element/scaleselector.scss',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public static function getType()
+    public static function getType(): string
     {
-        return 'Mapbender\CoreBundle\Element\Type\ScaleSelectorAdminType';
+        return ScaleSelectorAdminType::class;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
+    public static function getDefaultConfiguration(): array
     {
-        return array(
+        return [
             'label' => false,
             "tooltip" => static::getClassTitle(),
-        );
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName(Element $element)
+    public function getWidgetName(Element $element): string
     {
         return 'MbScaleSelector';
     }
@@ -83,34 +84,34 @@ class ScaleSelector extends AbstractElementService
         return $config;
     }
 
-    public function getView(Element $element)
+    public function getView(Element $element): TemplateView
     {
-        $config = $element->getConfiguration() ?: array();
-        $defaults = $this->getDefaultConfiguration();
-        $title = $element->getTitle() ?: $this->getClassTitle();
+        $config = $element->getConfiguration() ?: [];
+        $defaults = static::getDefaultConfiguration();
+        $title = $element->getTitle() ?: static::getClassTitle();
         $view = new TemplateView('@MapbenderCore/Element/scaleselector.html.twig');
         $view->attributes['class'] = 'mb-element-scaleselector';
         $view->attributes['title'] = ArrayUtil::getDefault($config, 'tooltip', $title);
         $map = ApplicationUtil::getMapElement($element->getApplication());
-        $view->variables = array(
+        $view->variables = [
             'show_label' => ArrayUtil::getDefault($config, 'label', $defaults['label']),
             'scales' => $this->getScales($map),
             'title' => $title,
-        );
+        ];
         return $view;
     }
 
     /**
      * @inheritdoc
      */
-    public static function getFormTemplate()
+    public static function getFormTemplate(): string
     {
         return '@MapbenderManager/Element/scaleselector.html.twig';
     }
 
     private function getScales(?Element $map): array
     {
-        $scales = array();
+        $scales = [];
         if ($map) {
             $mapConfig = $map->getConfiguration();
             if (!empty($mapConfig['scales'])) {

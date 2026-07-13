@@ -330,7 +330,7 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
      */
     protected function getLayerDimensions(\DOMElement $layerEl)
     {
-        $dimensions = array();
+        $dimensions = [];
         foreach ($this->getChildNodesByTagName($layerEl, 'Dimension') as $dimensionEl) {
             $name = $dimensionEl->getAttribute('name');
             if (!$name) {
@@ -356,8 +356,8 @@ abstract class WmsCapabilitiesParser extends CapabilitiesDomParser
      */
     protected function parseKeywordList(?\DOMElement $listEl = null)
     {
-        $keywords = array();
-        $children = $listEl ? $this->getChildNodesByTagName($listEl, 'Keyword') : array();
+        $keywords = [];
+        $children = $listEl ? $this->getChildNodesByTagName($listEl, 'Keyword') : [];
         foreach ($children as $keywordEl) {
             $text = \trim($keywordEl->textContent);
             if ($text) {

@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Entity;
 
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -17,10 +18,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[UniqueEntity('title')]
 #[UniqueEntity('slug')]
-#[ORM\Entity(repositoryClass: \Mapbender\CoreBundle\Entity\Repository\ApplicationRepository::class)]
+#[ORM\Entity(repositoryClass: ApplicationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'mb_core_application')]
-class Application implements YamlDefinedPermissionEntity
+class Application implements YamlDefinedPermissionEntity, \Stringable
 {
     /** YAML based application type */
     const SOURCE_YAML = 1;
@@ -56,11 +57,8 @@ class Application implements YamlDefinedPermissionEntity
     #[ORM\Column(length: 1024, nullable: false)]
     protected $template;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(type: 'string', length: 15, nullable: false, options: ['default' => 'current'])]
-    protected $map_engine_code = self::MAP_ENGINE_CURRENT;
+    protected string $map_engine_code;
 
     /**
      * @var bool
@@ -110,7 +108,7 @@ class Application implements YamlDefinedPermissionEntity
     /**
      * @var array Public options array, this never stored in DB and only for YAML application.
      */
-    protected $publicOptions = array();
+    protected $publicOptions = [];
 
     public function __construct()
     {
@@ -124,7 +122,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param int $source
      * @return $this
      */
-    public function setSource($source)
+    public function setSource($source): static
     {
         $this->source = $source;
 
@@ -143,7 +141,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param $id
      * @return $this
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
         return $this;
@@ -163,7 +161,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param string $title
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
 
@@ -186,7 +184,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param string $slug
      * @return $this
      */
-    public function setSlug($slug)
+    public function setSlug($slug): static
     {
         $this->slug = $slug;
 
@@ -209,7 +207,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param string $description
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription($description): static
     {
         $this->description = $description;
 
@@ -232,7 +230,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param string $template
      * @return $this
      */
-    public function setTemplate($template)
+    public function setTemplate($template): static
     {
         $this->template = $template;
 
@@ -255,7 +253,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param ArrayCollection $regionProperties
      * @return $this
      */
-    public function setRegionProperties(ArrayCollection $regionProperties)
+    public function setRegionProperties(ArrayCollection $regionProperties): static
     {
         $this->regionProperties = $regionProperties;
 
@@ -275,7 +273,7 @@ class Application implements YamlDefinedPermissionEntity
     /**
      * @param RegionProperties $regionProperties
      */
-    public function addRegionProperties(RegionProperties $regionProperties)
+    public function addRegionProperties(RegionProperties $regionProperties): void
     {
         $this->regionProperties[] = $regionProperties;
     }
@@ -285,7 +283,7 @@ class Application implements YamlDefinedPermissionEntity
      *
      * @param Element $element
      */
-    public function addElement(Element $element)
+    public function addElement(Element $element): void
     {
         $this->elements[] = $element;
     }
@@ -306,7 +304,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param Collection $elements elements
      * @return $this
      */
-    public function setElements(Collection $elements)
+    public function setElements(Collection $elements): static
     {
         $this->elements = $elements;
         return $this;
@@ -317,7 +315,7 @@ class Application implements YamlDefinedPermissionEntity
      *
      * @param Layerset $layerset
      */
-    public function addLayerset(Layerset $layerset)
+    public function addLayerset(Layerset $layerset): void
     {
         $this->layersets[] = $layerset;
     }
@@ -328,7 +326,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param ArrayCollection $layersets layersets
      * @return Application
      */
-    public function setLayersets(ArrayCollection $layersets)
+    public function setLayersets(ArrayCollection $layersets): static
     {
         $this->layersets = $layersets;
         return $this;
@@ -416,7 +414,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param Source $source to filter by specific Source
      * @return ArrayCollection|SourceInstance[]
      */
-    public function getInstancesOfSource(Source $source)
+    public function getInstancesOfSource(Source $source): ArrayCollection
     {
         $instances = new ArrayCollection();
         foreach ($this->getLayersets() as $layerset) {
@@ -429,7 +427,7 @@ class Application implements YamlDefinedPermissionEntity
 
     public function getLayersetsWithInstancesOf(Source $source)
     {
-        return $this->getLayersets()->filter(function ($layerset) use ($source) {
+        return $this->getLayersets()->filter(function ($layerset) use ($source): bool {
             /** @var Layerset $layerset */
             return !!$layerset->getInstancesOf($source)->count();
         });
@@ -441,7 +439,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param string $screenshot
      * @return $this
      */
-    public function setScreenshot($screenshot)
+    public function setScreenshot($screenshot): static
     {
         $this->screenshot = $screenshot;
 
@@ -464,7 +462,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param array|null $extra_assets
      * @return $this
      */
-    public function setExtraAssets(?array $extra_assets = null)
+    public function setExtraAssets(?array $extra_assets = null): static
     {
         $this->extra_assets = $extra_assets;
 
@@ -487,7 +485,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param \DateTime $updated
      * @return $this
      */
-    public function setUpdated(\DateTime $updated)
+    public function setUpdated(\DateTime $updated): static
     {
         $this->updated = $updated;
         return $this;
@@ -509,7 +507,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param string $custom_css
      * @return $this
      */
-    public function setCustomCss($custom_css)
+    public function setCustomCss($custom_css): static
     {
         $this->custom_css = $custom_css;
         return $this;
@@ -538,9 +536,9 @@ class Application implements YamlDefinedPermissionEntity
         if (!$region) {
             throw new \InvalidArgumentException("Region must not be empty");
         }
-        $criteria = new Criteria(Criteria::expr()->eq('region', $region), array(
+        $criteria = new Criteria(Criteria::expr()->eq('region', $region), [
             'weight' => Criteria::ASC,
-        ));
+        ]);
         return $this->getElements()->matching($criteria)->getValues();
     }
 
@@ -549,7 +547,7 @@ class Application implements YamlDefinedPermissionEntity
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->getId();
     }
@@ -559,9 +557,9 @@ class Application implements YamlDefinedPermissionEntity
      *
      * @return RegionProperties[]
      */
-    public function getNamedRegionProperties()
+    public function getNamedRegionProperties(): array
     {
-        $result = array();
+        $result = [];
         foreach ($this->getRegionProperties() as $regionProperties) {
             $result[$regionProperties->getName()] = $regionProperties;
         }
@@ -597,7 +595,7 @@ class Application implements YamlDefinedPermissionEntity
     /**
      * @param array $publicOptions
      */
-    public function setPublicOptions($publicOptions)
+    public function setPublicOptions($publicOptions): void
     {
         $this->publicOptions = $publicOptions;
     }
@@ -617,7 +615,7 @@ class Application implements YamlDefinedPermissionEntity
      *
      * @return bool
      */
-    public function isYamlBased()
+    public function isYamlBased(): bool
     {
         return $this->source == self::SOURCE_YAML;
     }
@@ -627,7 +625,7 @@ class Application implements YamlDefinedPermissionEntity
      *
      * @return bool
      */
-    public function isDbBased()
+    public function isDbBased(): bool
     {
         return $this->source == self::SOURCE_DB;
     }
@@ -652,7 +650,7 @@ class Application implements YamlDefinedPermissionEntity
     /**
      * @param bool $value
      */
-    public function setPersistentView($value)
+    public function setPersistentView($value): void
     {
         $this->persistentView = $value;
     }
@@ -661,7 +659,7 @@ class Application implements YamlDefinedPermissionEntity
      * @param string $mapEngineCode
      * @return $this
      */
-    public function setMapEngineCode($mapEngineCode)
+    public function setMapEngineCode($mapEngineCode): static
     {
         if ($mapEngineCode !== self::MAP_ENGINE_CURRENT) {
             $mapEngineCode = Application::MAP_ENGINE_CURRENT;
@@ -686,7 +684,7 @@ class Application implements YamlDefinedPermissionEntity
      */
     #[ORM\PostPersist]
     #[ORM\PreUpdate]
-    public function bumpUpdate(LifecycleEventArgs $args)
+    public function bumpUpdate(LifecycleEventArgs $args): void
     {
         $this->setUpdated(new \DateTime('now'));
     }

@@ -36,7 +36,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
         /** @var OgcApiFeaturesSource $source */
         /** @var OgcApiFeaturesSource|array $formData */
         $url = is_array($formData) ? $formData['jsonUrl'] : $formData->getJsonUrl();
-        $url = rtrim($url, '/');
+        $url = rtrim((string) $url, '/');
 
         if (!str_ends_with($url, '/collections')) {
             $url = $url . '/collections';
@@ -115,7 +115,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
 
         $index = [];
         foreach ($grouped as $collectionId => $layers) {
-            usort($layers, static fn($a, $b) => ($a->getId() ?? \PHP_INT_MAX) <=> ($b->getId() ?? \PHP_INT_MAX));
+            usort($layers, static fn($a, $b): int => ($a->getId() ?? \PHP_INT_MAX) <=> ($b->getId() ?? \PHP_INT_MAX));
             $kept = $layers[0];
             $index[$collectionId] = $kept;
             for ($i = 1, $c = count($layers); $i < $c; $i++) {
@@ -151,7 +151,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
                 return null;
             }
             $keys = array_keys($features[0]['properties']);
-            $keys = array_values(array_filter($keys, fn ($k) => $k !== 'geometry'));
+            $keys = array_values(array_filter($keys, fn (int|string $k): bool => $k !== 'geometry'));
         } catch (\Throwable) {
             return null;
         }
@@ -258,7 +258,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
             foreach ($styleInfo['links'] as $link) {
                 $type = $link['type'] ?? '';
                 if ($type === 'application/vnd.mapbox.style+json'
-                    || str_contains($type, 'mapbox')
+                    || str_contains((string) $type, 'mapbox')
                     || (isset($link['href']) && str_contains($link['href'], 'f=mbs'))) {
                     return $link['href'];
                 }

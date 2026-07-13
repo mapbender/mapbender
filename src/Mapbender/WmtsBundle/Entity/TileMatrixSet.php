@@ -14,7 +14,7 @@ use Mapbender\WmtsBundle\Component\TileMatrix;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'mb_wmts_tilematrixset')]
-class TileMatrixSet implements MutableUrlTarget
+class TileMatrixSet implements MutableUrlTarget, \Stringable
 {
 
     /**
@@ -45,11 +45,11 @@ class TileMatrixSet implements MutableUrlTarget
     protected $supportedCrs;
 
     #[ORM\Column(type: 'json', nullable: false)] // ;
-    protected $tilematrices;
+    protected array $tilematrices;
 
     public function __construct()
     {
-        $this->tilematrices = array();
+        $this->tilematrices = [];
     }
 
     /**
@@ -80,7 +80,7 @@ class TileMatrixSet implements MutableUrlTarget
      * @param HttpTileSource $wmtssource
      * @return TileMatrixSet
      */
-    public function setSource(HttpTileSource $wmtssource)
+    public function setSource(HttpTileSource $wmtssource): static
     {
         $this->source = $wmtssource;
         return $this;
@@ -91,14 +91,14 @@ class TileMatrixSet implements MutableUrlTarget
      */
     public function getSupportedCrs()
     {
-        return str_contains($this->supportedCrs, "CRS84") ? "EPSG:4326" : $this->supportedCrs;
+        return str_contains((string) $this->supportedCrs, "CRS84") ? "EPSG:4326" : $this->supportedCrs;
     }
 
     /**
      * @param string $supportedCrs
      * @return $this
      */
-    public function setSupportedCrs($supportedCrs)
+    public function setSupportedCrs($supportedCrs): static
     {
         $this->supportedCrs = $supportedCrs;
         return $this;
@@ -115,7 +115,7 @@ class TileMatrixSet implements MutableUrlTarget
     /**
      * @param string $value
      */
-    public function setTitle($value)
+    public function setTitle($value): void
     {
         $this->title = $value;
     }
@@ -131,7 +131,7 @@ class TileMatrixSet implements MutableUrlTarget
     /**
      * @param string $value
      */
-    public function setAbstract($value)
+    public function setAbstract($value): void
     {
         $this->abstract = $value;
     }
@@ -147,7 +147,7 @@ class TileMatrixSet implements MutableUrlTarget
     /**
      * @param string $value
      */
-    public function setIdentifier($value)
+    public function setIdentifier($value): void
     {
         $this->identifier = $value;
     }
@@ -155,7 +155,7 @@ class TileMatrixSet implements MutableUrlTarget
     /**
      * @return TileMatrix[]
      */
-    public function getTilematrices()
+    public function getTilematrices(): array
     {
         $result = [];
         foreach ($this->tilematrices ?? [] as $item) {
@@ -180,7 +180,7 @@ class TileMatrixSet implements MutableUrlTarget
     /**
      * @param TileMatrix[] $tilematrices
      */
-    public function setTilematrices($tilematrices)
+    public function setTilematrices($tilematrices): void
     {
         $this->tilematrices = $tilematrices;
     }
@@ -188,7 +188,7 @@ class TileMatrixSet implements MutableUrlTarget
     /**
      * @param TileMatrix $tilematrix
      */
-    public function addTilematrix(TileMatrix $tilematrix)
+    public function addTilematrix(TileMatrix $tilematrix): void
     {
         $this->tilematrices[] = $tilematrix;
     }
@@ -197,14 +197,14 @@ class TileMatrixSet implements MutableUrlTarget
      * Returns the id, stringified.
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->id;
     }
 
-    public function mutateUrls(OneWayTransformer $transformer)
+    public function mutateUrls(OneWayTransformer $transformer): void
     {
-        $tileMatricesNew = array();
+        $tileMatricesNew = [];
         foreach ($this->getTilematrices() as $tileMatrix) {
             $tileMatrix->mutateUrls($transformer);
             $tileMatricesNew[] = clone $tileMatrix;

@@ -11,10 +11,6 @@ namespace Mapbender\IntrospectionBundle\Entity\Utils\Command;
  */
 class DataItemFormatting
 {
-    /** @var string */
-    public $nameKey;
-    /** @var bool */
-    public $hoistIds;
     /** @var bool */
     protected $embedFlags;
     /** @var string|false */
@@ -28,10 +24,8 @@ class DataItemFormatting
      *                                 non-empty string to place them into a sub-array with that key. False to not
      *                                 emit them at all.
      */
-    public function __construct($nameKey = 'name', $hoistIds = false, $flagEmbedding = true)
+    public function __construct(public $nameKey = 'name', public $hoistIds = false, $flagEmbedding = true)
     {
-        $this->nameKey = $nameKey;
-        $this->hoistIds = $hoistIds;
         $this->setFlagEmbeddingMode($flagEmbedding);
     }
 
@@ -40,7 +34,7 @@ class DataItemFormatting
      *                                 non-empty string to place them into a sub-array with that key. False to not
      *                                 emit them at all.
      */
-    public function setFlagEmbeddingMode($flagEmbedding = true)
+    public function setFlagEmbeddingMode($flagEmbedding = true): void
     {
         if (!$flagEmbedding) {
             $this->embedFlags = false;
@@ -68,17 +62,20 @@ class DataItemFormatting
         if ($this->embedFlags) {
             return $flagsIn;
         } elseif ($this->flagSubkey && $flagsIn) {
-            return array(
+            return [
                 $this->flagSubkey => $flagsIn,
-            );
+            ];
         } else {
-            return array();
+            return [];
         }
     }
 
-    public function apply($id, $name, $flags)
+    /**
+     * @return mixed[]
+     */
+    public function apply($id, $name, $flags): array
     {
-        $rv = array();
+        $rv = [];
         if (!$this->hoistIds) {
             $rv['id'] = $id;
         }

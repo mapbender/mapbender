@@ -14,10 +14,8 @@ class LineStringIterator implements \Iterator
     /** @var Point2D[] */
     protected $points;
 
-    /** @var \ArrayIterator */
-    protected $lineStartIterator;
-    /** @var \ArrayIterator */
-    protected $lineEndIterator;
+    protected \ArrayIterator $lineStartIterator;
+    protected \ArrayIterator $lineEndIterator;
 
     /**
      * @param array $points elements should be Point2D instances or arrays that can be promoted to Point2D
@@ -27,7 +25,7 @@ class LineStringIterator implements \Iterator
         if (count($points) === 1) {
             throw new \InvalidArgumentException("Cannot form lines from exactly 1 point");
         }
-        $this->points = array();
+        $this->points = [];
         foreach ($points as $point) {
             if ($point instanceof Point2D) {
                 $this->points[] = $point;

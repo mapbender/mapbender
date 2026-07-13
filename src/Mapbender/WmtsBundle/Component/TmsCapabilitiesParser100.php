@@ -23,15 +23,11 @@ use Mapbender\WmtsBundle\Entity\WmtsSourceKeyword;
 class TmsCapabilitiesParser100 extends CapabilitiesDomParser
 {
 
-    /** @var HttpTransportInterface */
-    protected $httpTransport;
-
     /**
      * @param HttpTransportInterface $httpTransport
      */
-    public function __construct(HttpTransportInterface $httpTransport)
+    public function __construct(protected HttpTransportInterface $httpTransport)
     {
-        $this->httpTransport = $httpTransport;
     }
 
     /**
@@ -50,7 +46,7 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
         $this->parseService($source, $root);
 
         $rootSource = null;
-        foreach ($this->getChildNodesFromNamePath($root, array('TileMaps', 'TileMap')) as $tileMapEl) {
+        foreach (static::getChildNodesFromNamePath($root, ['TileMaps', 'TileMap']) as $tileMapEl) {
             if ($rootSource === null) {
                 $rootSource = $this->getRootSource($source);
                 $source->addLayer($rootSource);
@@ -87,13 +83,13 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param HttpTileSource $source
      * @param \DOMElement $rootNode
      */
-    private function parseService(HttpTileSource $source, \DOMElement $rootNode)
+    private function parseService(HttpTileSource $source, \DOMElement $rootNode): void
     {
         $source->setVersion($rootNode->getAttribute('version'));
         $source->setTitle($this->getFirstChildNodeText($rootNode, 'Title'));
         $source->setDescription($this->getFirstChildNodeText($rootNode, 'Abstract'));
 
-        $keywords = \array_filter(\preg_split('#\s+#u', $this->getFirstChildNodeText($rootNode, 'KeywordList')));
+        $keywords = \array_filter(\preg_split('#\s+#u', (string) $this->getFirstChildNodeText($rootNode, 'KeywordList')));
         foreach ($keywords as $value) {
             $keyword = new WmtsSourceKeyword();
             $keyword->setValue($value);
@@ -134,17 +130,17 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
         $bbox->setSrs($srs);
         $layer->addBoundingBox($bbox);
         $originEl = $this->getFirstChildNode($cntx, 'Origin');
-        $origin = array(
+        $origin = [
             floatval($originEl->getAttribute('x')),
             floatval($originEl->getAttribute('y')),
-        );
+        ];
 
         $matrixSet = new TileMatrixSet();
         $matrixSet->setIdentifier($layerIdent);
         $matrixSet->setTitle($layer->getTitle());
         $matrixSet->setAbstract($layer->getAbstract());
         $matrixSet->setSupportedCrs($srs);
-        foreach ($this->getChildNodesFromNamePath($cntx, array('TileSets', 'TileSet')) as $tileSetEl) {
+        foreach (static::getChildNodesFromNamePath($cntx, ['TileSets', 'TileSet']) as $tileSetEl) {
             $tileMatrix = $this->parseTileSet($tileSetEl);
             $tileMatrix->setTopleftcorner($origin);
             $tileMatrix->setTilewidth($tileFormatEl->getAttribute('width'));
@@ -156,7 +152,7 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
         return $layer;
     }
 
-    protected function parseBoundingBox(\DOMElement $element)
+    protected function parseBoundingBox(\DOMElement $element): BoundingBox
     {
         $bbox = new BoundingBox();
         $bbox->setMinx($element->getAttribute('minx'));
@@ -166,7 +162,7 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
         return $bbox;
     }
 
-    protected function parseTileSet(\DOMElement $element)
+    protected function parseTileSet(\DOMElement $element): TileMatrix
     {
         $tileMatrix = new TileMatrix();
         $tileMatrix->setIdentifier($element->getAttribute('order'));
@@ -182,11 +178,11 @@ class TmsCapabilitiesParser100 extends CapabilitiesDomParser
      * @param string[] $path
      * @return \DOMElement[]
      */
-    protected static function getChildNodesFromNamePath(\DOMElement $parent, array $path)
+    protected static function getChildNodesFromNamePath(\DOMElement $parent, array $path): array
     {
         $path = \array_values($path);
         if (count($path) > 1) {
-            $matches = array();
+            $matches = [];
             $remainingPath = \array_slice($path, 1);
             foreach (static::getChildNodesByTagName($parent, $path[0]) as $nextParent) {
                 $matches = \array_merge($matches, static::getChildNodesFromNamePath($nextParent, $remainingPath));

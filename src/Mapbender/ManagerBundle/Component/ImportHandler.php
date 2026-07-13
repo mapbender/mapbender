@@ -2,6 +2,9 @@
 
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\WmsBundle\Component\LegendUrl;
+use Mapbender\WmsBundle\Component\OnlineResource;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use FOM\UserBundle\Entity\Group;
@@ -171,7 +174,7 @@ class ImportHandler extends ExchangeHandler
                 }
             }
         } else {
-            throw new \InvalidArgumentException("Invalid input type " . (is_object($data) ? get_class($data) : gettype($data)));
+            throw new \InvalidArgumentException("Invalid input type " . (get_debug_type($data)));
         }
     }
 
@@ -195,7 +198,7 @@ class ImportHandler extends ExchangeHandler
      * @param string[] $fieldNames
      * @return array
      */
-    public static function extractArrayFields(array $data, array $fieldNames)
+    public static function extractArrayFields(array $data, array $fieldNames): array
     {
         return array_intersect_key($data, array_flip($fieldNames));
     }
@@ -205,7 +208,7 @@ class ImportHandler extends ExchangeHandler
      * @param ImportState $state
      * @param array $data data to import
      */
-    private function importSources(ImportState $state, $data)
+    private function importSources(ImportState $state, $data): void
     {
         foreach ($data as $class => $content) {
             if (is_a($class, 'Mapbender\CoreBundle\Entity\Source', true)) {
@@ -225,9 +228,9 @@ class ImportHandler extends ExchangeHandler
      * @param array $data data to import
      * @return Application[]
      */
-    private function importApplicationEntities(ImportState $state, $data)
+    private function importApplicationEntities(ImportState $state, $data): array
     {
-        $apps = array();
+        $apps = [];
         foreach ($data as $class => $content) {
             if (is_a($class, 'Mapbender\CoreBundle\Entity\Application', true)) {
                 foreach ($content as $item) {
@@ -263,7 +266,7 @@ class ImportHandler extends ExchangeHandler
         foreach ($app->getElements() as $element) {
             $configuration = $element->getConfiguration();
             if (!empty($configuration['target'])) {
-                $newId = $entityPool->getIdentFromMapper(get_class($element), $configuration['target'], false);
+                $newId = $entityPool->getIdentFromMapper($element::class, $configuration['target'], false);
                 $configuration['target'] = $newId;
                 $element->setConfiguration($configuration);
             }
@@ -274,7 +277,7 @@ class ImportHandler extends ExchangeHandler
                 if ($importProcessor) {
                     $importProcessor->onImport($element, $entityPool);
                 }
-            } catch (ElementErrorException $e) {
+            } catch (ElementErrorException) {
                 // Likely an import from an application with custom element classes that are not defined here
                 // => ignore, we still have the entity imported
             }
@@ -295,7 +298,7 @@ class ImportHandler extends ExchangeHandler
         return $hasMatch;
     }
 
-    protected function isReference($data, array $criteria)
+    protected function isReference($data, array $criteria): bool
     {
         return !array_diff_key($criteria, $data);
     }
@@ -328,7 +331,7 @@ class ImportHandler extends ExchangeHandler
                 return $this->handleClass($state, $classInfo, $data);
             }
         } elseif (is_array($data)) {
-            $result = array();
+            $result = [];
             foreach ($data as $key => $item) {
                 $result[$key] = $this->handleData($state, $item);
             }
@@ -346,7 +349,7 @@ class ImportHandler extends ExchangeHandler
      * @param array $data
      * @return object|null
      */
-    protected function handleEntity(ImportState $state, EntityHelper $entityInfo, array $data)
+    protected function handleEntity(ImportState $state, EntityHelper $entityInfo, array $data): object
     {
         $classMeta = $entityInfo->getClassMeta();
         $className = $classMeta->getName();
@@ -376,7 +379,7 @@ class ImportHandler extends ExchangeHandler
                 $result = $this->handleData($state, $data[$assocItem['fieldName']]);
                 if (is_array($result)) {
                     if (count($result)) {
-                        $collection = new \Doctrine\Common\Collections\ArrayCollection($result);
+                        $collection = new ArrayCollection($result);
                         $setter->invoke($object, $collection);
                     }
                 } else {
@@ -394,7 +397,7 @@ class ImportHandler extends ExchangeHandler
      * @param array $data
      * @return object
      */
-    protected function handleClass(ImportState $state, AbstractObjectHelper $classInfo, array $data)
+    protected function handleClass(ImportState $state, AbstractObjectHelper $classInfo, array $data): object
     {
         $className = $classInfo->getClassName();
         $object = new $className();
@@ -403,9 +406,9 @@ class ImportHandler extends ExchangeHandler
                 // support hack for older exports without support for nested non-entity objects
                 if (empty($data[$propertyName][static::KEY_CLASS])) {
                     if ($subObjectClassName = $this->getLegacyExportMissingSubobjectClassName($className, $setter->getName())) {
-                        $data[$propertyName][static::KEY_CLASS] = array(
+                        $data[$propertyName][static::KEY_CLASS] = [
                             $subObjectClassName,
-                        );
+                        ];
                     }
                 }
                 $value = $this->handleData($state, $data[$propertyName]);
@@ -430,18 +433,18 @@ class ImportHandler extends ExchangeHandler
      * @param string $setterName
      * @return string|null
      */
-    protected function getLegacyExportMissingSubobjectClassName($className, $setterName)
+    protected function getLegacyExportMissingSubobjectClassName($className, $setterName): ?string
     {
         switch ($setterName) {
             case 'setLegendUrl':
                 if (\is_a($className, 'Mapbender\WmsBundle\Component\Style', true)) {
-                    return 'Mapbender\WmsBundle\Component\LegendUrl';
+                    return LegendUrl::class;
                 }
                 break;
             case 'setOnlineResource':
                 if (\is_a($className, 'Mapbender\WmsBundle\Component\LegendUrl', true) ||
                     \is_a($className, 'Mapbender\WmsBundle\Component\MetadataUrl', true)) {
-                    return 'Mapbender\WmsBundle\Component\OnlineResource';
+                    return OnlineResource::class;
                 }
                 break;
             default:

@@ -11,25 +11,21 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class UploadsManager
 {
-    /** @var Filesystem */
-    protected $fileSystem;
     /** @var string */
     protected $absoluteWebPath;
-    /** @var string */
-    protected $relativePath;
+    protected string $relativePath;
 
     /**
      * @param Filesystem $fileSystem
      * @param string $absoluteWebPath
      * @param string $relativePath under $absoluteWebPath where uploads will be stored / looked for
      */
-    public function __construct(Filesystem $fileSystem, $absoluteWebPath, $relativePath)
+    public function __construct(protected Filesystem $fileSystem, $absoluteWebPath, $relativePath)
     {
         $absoluteWebPath = realpath($absoluteWebPath);
         if (!$absoluteWebPath || !is_dir($absoluteWebPath)) {
             throw new \RuntimeException("Path '{$absoluteWebPath}' doesn't exist or is not a directory");
         }
-        $this->fileSystem = $fileSystem;
         $this->absoluteWebPath = $absoluteWebPath;
         $this->relativePath = trim($relativePath ?: '', '/\\');
     }
@@ -39,7 +35,7 @@ class UploadsManager
      * @return string
      * @throws IOException
      */
-    public function getAbsoluteBasePath($create)
+    public function getAbsoluteBasePath($create): string|false
     {
         $fullPath = $this->absoluteWebPath . '/' . $this->relativePath;
         if ($create) {
@@ -71,7 +67,7 @@ class UploadsManager
      * @return string
      * @throws IOException if $create=true and creation failed
      */
-    public function getSubdirectoryPath($path, $create)
+    public function getSubdirectoryPath($path, $create): string|false
     {
         $fullPath = $this->getAbsoluteBasePath(false) . "/" . trim($path, '/\\');
         if ($create) {
@@ -87,18 +83,18 @@ class UploadsManager
      * @param string $to
      * @throws IOException
      */
-    public function copySubdirectory($from, $to)
+    public function copySubdirectory($from, $to): void
     {
         $absFrom = $this->getSubdirectoryPath($from, false);
         // FileSystem::mirror will not create the target directory if the source is empty, so
         // we do it ourselves
         $absTo = $this->getSubdirectoryPath($to, true);
         if ($this->fileSystem->exists($absFrom) && is_dir($absFrom) && is_readable($absFrom)) {
-            $this->fileSystem->mirror($absFrom, $absTo, null, array(
+            $this->fileSystem->mirror($absFrom, $absTo, null, [
                 'delete' => true,
                 'override' => true,
                 'copy_on_windows' => true,
-            ));
+            ]);
         }
     }
 
@@ -125,7 +121,7 @@ class UploadsManager
         }
     }
 
-    public function removeSubdirectory($path)
+    public function removeSubdirectory($path): void
     {
         $absPath = $this->getSubdirectoryPath($path, false);
         $this->fileSystem->remove($absPath);

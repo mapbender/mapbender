@@ -6,19 +6,12 @@ namespace Mapbender\PrintBundle\Component\Export;
 
 class WmsTile
 {
-    /** @var Box */
-    protected $offsetBox;
-    /** @var WmsTileBuffer */
-    protected $buffer;
-
     /**
      * @param Box $offsetBox
      * @param WmsTileBuffer $buffer
      */
-    public function __construct(Box $offsetBox, WmsTileBuffer $buffer)
+    public function __construct(protected Box $offsetBox, protected WmsTileBuffer $buffer)
     {
-        $this->offsetBox = $offsetBox;
-        $this->buffer = $buffer;
     }
 
     /**
@@ -26,7 +19,7 @@ class WmsTile
      * @param BufferedSection $vertical
      * @return static
      */
-    public static function fromSections($horizontal, $vertical)
+    public static function fromSections($horizontal, $vertical): static
     {
         $offsetBox = new Box($horizontal->getBufferedOffset(), $vertical->getBufferedOffset(),
                              $horizontal->getBufferedEnd(), $vertical->getBufferedEnd());
@@ -59,12 +52,12 @@ class WmsTile
      * @param $fullHeight
      * @return Box
      */
-    public function getExtent(Box $fullExtent, $fullWidth, $fullHeight)
+    public function getExtent(Box $fullExtent, $fullWidth, $fullHeight): Box
     {
-        $resolution = array(
+        $resolution = [
             'h' => $fullExtent->getWidth() / $fullWidth,
             'v' => $fullExtent->getHeight() / $fullHeight,
-        );
+        ];
 
         $x0 = $resolution['h'] * $this->offsetBox->left + $fullExtent->left;
         $x1 = $resolution['h'] * $this->offsetBox->right + $fullExtent->left;
@@ -74,7 +67,7 @@ class WmsTile
         return new Box($x0, $y0, $x1, $y1);
     }
 
-    public function getWidth($includeBuffer)
+    public function getWidth($includeBuffer): int|float
     {
         if ($includeBuffer) {
             return intval(abs($this->offsetBox->getWidth()));
@@ -83,7 +76,7 @@ class WmsTile
         }
     }
 
-    public function getHeight($includeBuffer)
+    public function getHeight($includeBuffer): int|float
     {
         if ($includeBuffer) {
             return intval(abs($this->offsetBox->getHeight()));

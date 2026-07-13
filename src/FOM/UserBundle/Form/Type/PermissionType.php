@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PermissionType extends AbstractType
 {
-    public function __construct(private PermissionManager $permissionManager)
+    public function __construct(private readonly PermissionManager $permissionManager)
     {
     }
 
@@ -47,10 +47,10 @@ class PermissionType extends AbstractType
         $hiddenOptions = [
             'required' => true,
             'label' => false,
-            'attr' => array(
+            'attr' => [
                 'autocomplete' => 'off',
                 'readonly' => true,
-            ),
+            ],
         ];
         $builder->add('icon', HiddenType::class, $hiddenOptions);
         $builder->add('title', HiddenType::class, $hiddenOptions);
