@@ -124,10 +124,10 @@
             <argument>%mapbender.print.canvas_legend.class%</argument>
             <argument>%mapbender.print.font_legend%</argument>
             <argument>%mapbender.print.font%</argument>
-            <argument>%mapbender.print.font_size%%</argument>
+            <argument>%mapbender.print.font_size%</argument>
             <argument>%mapbender.print.legend_margin_x%</argument>
-            <argument>%mapbender.print.legend_margin_y%</argument>
             <argument>%mapbender.print.legend_margin_y_page%</argument>
+            <argument>%mapbender.print.legend_margin_y%</argument>
             <argument>%mapbender.print.legend_margin_title_to_image%</argument>
         </service>
         <service id="mapbender.print_plugin_host.service" class="%mapbender.print_plugin_host.service.class%">

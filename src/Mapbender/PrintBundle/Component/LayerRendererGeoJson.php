@@ -481,6 +481,9 @@ class LayerRendererGeoJson extends LayerRenderer
         $color = $this->getColor($style['fontColor'], $style['fontOpacity'], $canvas->resource);
         $bgcolor = $this->getColor($style['labelOutlineColor'], $style['labelOutlineOpacity'], $canvas->resource);
         $fontName = $this->fontPath . '/' . $this->getLabelFont($style);
+        if (!is_file($fontName) || !is_readable($fontName)) {
+            throw new \RuntimeException("Configured font '$fontName' for geojson printing not found");
+        }
         $fontSize = $this->getLabelFontSize($canvas, $style);
         $textSize = GdUtil::getTtfTextSize($fontName, $fontSize, $text);
         $anchor = $this->getFeatureLabelAnchor($canvas, $style, $centroid, $textSize[0], $textSize[1]);
@@ -675,10 +678,10 @@ class LayerRendererGeoJson extends LayerRenderer
         if (isset($this->customFonts[$fontFamily])) {
             $fontFamily = $this->customFonts[$fontFamily];
             foreach ($fontFamily as $style => $file) {
-                if (strtolower($style) === $fontStyle) return $file.".ttf";
+                if (strtolower($style) === $fontStyle) return $file . ".ttf";
             }
             // fall back to first defined entry
-            return $fontFamily[array_key_first($fontFamily)].'.ttf';
+            return $fontFamily[array_key_first($fontFamily)] . '.ttf';
         }
 
         // as default-font, use open sans which also lives in the fonts directory

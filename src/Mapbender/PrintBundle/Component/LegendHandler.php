@@ -245,7 +245,7 @@ class LegendHandler
 
     public function getLegendTitleFontSize(?TemplateRegion $region = null, bool $extraPage = false): float
     {
-        $fontStyle = $region?->getFontStyle() ?: new FontStyle($this->legendPageFontName, $this->defaultFontSize, OdgParser::DEFAULT_FONT_COLOR);;
+        $fontStyle = $region?->getFontStyle() ?: new FontStyle($this->legendPageFontName, $this->defaultFontSize, OdgParser::DEFAULT_FONT_COLOR);
         return $fontStyle->getSize();
     }
 
