@@ -76,14 +76,4 @@ class FontStyle
         // see https://en.wikipedia.org/wiki/Point_(typography)
         return .353 * $this->getSize();
     }
-
-    /**
-     * Returns new instance set up with OdgParser defaults.
-     *
-     * @return FontStyle
-     */
-    public static function defaultFactory()
-    {
-        return new static(OdgParser::DEFAULT_FONT_NAME, OdgParser::DEFAULT_FONT_SIZE, OdgParser::DEFAULT_FONT_COLOR);
-    }
 }

@@ -30,7 +30,7 @@ class LegendHandler
     protected PdfUtil $pdfUtil;
     protected float $maxColumnWidthMm = 100.;
     protected float $maxImageDpi = 96.;
-    protected string $legendPageFontName = 'Arial';
+    protected string $legendPageFontName;
     /**
      * @var bool if true, the columns are rendered only as wide as they need to be. If false, all columns are $maxColumnWidthMm wide
      */
@@ -41,9 +41,17 @@ class LegendHandler
         protected string         $resourceDir,
         ?string                  $tempDir,
         protected string         $canvasLegendClass,
+        ?string                  $legendFont,
+        string                   $defaultFont,
+        protected string         $defaultFontSize,
+        protected int            $marginX,
+        protected int            $marginYPage,
+        protected int            $marginY,
+        protected int            $marginTitleToImage,
     )
     {
         $this->pdfUtil = new PdfUtil($tempDir, 'mb_print_legend');
+        $this->legendPageFontName = $legendFont ?? $defaultFont;
     }
 
     /**
@@ -223,11 +231,10 @@ class LegendHandler
      */
     protected function getMargins(TemplateRegion $region): array
     {
-        // @todo: config values please
         return array(
-            'x' => 5,
-            'y' => $region instanceof FullPage ? 5 : 10,
-            'title_to_image' => 0,
+            'x' => $this->marginX,
+            'y' => $region instanceof FullPage ? $this->marginYPage : $this->marginY,
+            'title_to_image' => $this->marginTitleToImage,
         );
     }
 
@@ -238,7 +245,7 @@ class LegendHandler
 
     public function getLegendTitleFontSize(?TemplateRegion $region = null, bool $extraPage = false): float
     {
-        $fontStyle = $region?->getFontStyle() ?: FontStyle::defaultFactory();
+        $fontStyle = $region?->getFontStyle() ?: new FontStyle($this->legendPageFontName, $this->defaultFontSize, OdgParser::DEFAULT_FONT_COLOR);
         return $fontStyle->getSize();
     }
 

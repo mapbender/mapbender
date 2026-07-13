@@ -13,11 +13,8 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class OdgParser
 {
     const DEFAULT_ORIENTATION = 'landscape';
-    const DEFAULT_FONT_NAME = 'Arial';
     const DEFAULT_FONT_COLOR = '#000000';
     const DEFAULT_ALIGNMENT = 'L';
-
-    const DEFAULT_FONT_SIZE = '10pt';
 
     const STYLE_ATTRIBUTES = [
         'fontsize' => 'fo:font-size',
@@ -31,10 +28,11 @@ class OdgParser
     /** @var string */
     protected $sourcePath;
 
-    /**
-     * @param string $sourcePath
-     */
-    public function __construct($sourcePath)
+    public function __construct(
+        string $sourcePath,
+        protected string $defaultFont,
+        protected string $defaultFontSize,
+    )
     {
         $this->sourcePath = rtrim($sourcePath, '/');
     }
@@ -144,7 +142,7 @@ class OdgParser
             $templateRegion = $this->parseShapeIntoRegion($customShape);
             $templateRegion->setName($shapeName);
             // @todo: extract (non-default) font styles for all shapes?
-            $templateRegion->setFontStyle(FontStyle::defaultFactory());
+            $templateRegion->setFontStyle(new FontStyle($this->defaultFont, $this->defaultFontSize, OdgParser::DEFAULT_FONT_COLOR));
             $templateObject->addRegion($templateRegion);
         }
     }
@@ -286,8 +284,8 @@ class OdgParser
     public function parseStyleNodes(array $nodes): array
     {
         $data = [
-            'font' => static::DEFAULT_FONT_NAME,
-            'fontsize' => static::DEFAULT_FONT_SIZE,
+            'font' => $this->defaultFont,
+            'fontsize' => $this->defaultFontSize,
             'fontcolor' => static::DEFAULT_FONT_COLOR,
             'alignment' => static::DEFAULT_ALIGNMENT,
         ];
