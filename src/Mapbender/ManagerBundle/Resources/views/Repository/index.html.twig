@@ -116,7 +116,7 @@
         {% embed '@MapbenderManager/fragments/blocklist.html.twig' %}
             {%- block item_interactions -%}
                 {%- if grants.delete -%}
-                  <a class="btn btn-light" href="{{ path('mapbender_manager_repository_unowned_instance', {'instanceId': item.id}) }}"
+                  <a class="btn btn-light" href="{{ path('mapbender_manager_repository_instance', {'instanceId': item.id}) }}"
                     ><i class="fas fa-pencil"></i>
                   </a>
                 {%- endif -%}
