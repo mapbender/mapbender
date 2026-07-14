@@ -150,7 +150,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $this->conf = $templateData;
     }
 
-    protected function getTargetBox(array $templateData, array $jobData): Box
+    protected function getTargetBox(array|\ArrayAccess $templateData, array $jobData): Box
     {
         $targetWidth = round($templateData['map']['width'] / 25.4 * $jobData['quality']);
         $targetHeight = round($templateData['map']['height'] / 25.4 * $jobData['quality']);

@@ -53,7 +53,7 @@ class DataTreeNode extends DataItem
     /**
      * @return string[][]
      */
-    public function toGrid()
+    public function toGrid(): array
     {
         if ($this->name) {
             $rowsOut = [];

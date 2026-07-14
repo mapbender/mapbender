@@ -14,7 +14,7 @@ class DataItemList extends DataTreeNode
     /**
      * @inheritdoc
      */
-    public function toArray(DataItemFormatting $format)
+    public function toArray(DataItemFormatting $format): array
     {
         return $this->childrenToArray($format);
     }
