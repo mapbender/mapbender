@@ -4,7 +4,6 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -24,6 +23,7 @@ use Mapbender\ManagerBundle\Utils\WeightSortedCollectionUtil;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -31,14 +31,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SourceInstanceController extends ApplicationControllerBase
 {
+    private EntityManagerInterface $entityManager;
+
     public function __construct(
         protected TypeDirectoryService $typeDirectory,
-        protected TranslatorInterface $trans,
-        EntityManagerInterface $em,
-        protected PermissionManager $permissionManager,
-        private readonly ObjectManager $entityManager,
-    )    {
+        protected TranslatorInterface  $trans,
+        EntityManagerInterface         $em,
+        protected PermissionManager    $permissionManager,
+    )
+    {
         parent::__construct($em);
+        $this->entityManager = $em;
     }
 
     #[Route('/instance/{instanceId}', name: 'mapbender_manager_repository_instance', requirements: ['instanceId' => '\d+'])]
