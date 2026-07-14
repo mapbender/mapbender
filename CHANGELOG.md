@@ -1,4 +1,4 @@
-## v5.0.0-RC1
+## next major release
 Breaking changes (for details on migration process see [UPGRADING.md]):
 * PHP 8.2 is now the minimum supported PHP version
 * Symfony updated to version 7.4 LTS
@@ -23,6 +23,7 @@ Features:
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
 * [SearchRouter] Extend SQLSearchEngine to support multiple search values separated by configurable delimiters ([#PR1836](https://github.com/mapbender/mapbender/pull/1836))
 * [LayerTree] Also show metadata for YAML applications ([#PR1849](https://github.com/mapbender/mapbender/pull/1849))
+* [fom:user:resetroot command] Allow password to be transferred in more ways ([#PR1889](https://github.com/mapbender/mapbender/pull/1889))
 
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))

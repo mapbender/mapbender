@@ -2,17 +2,17 @@
 
 namespace FOM\UserBundle\Command;
 
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use FOM\UserBundle\Component\UserHelperService;
 use FOM\UserBundle\Entity\User;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
@@ -24,20 +24,24 @@ use Symfony\Component\Console\Question\Question;
  */
 #[AsCommand('fom:user:resetroot', help: <<<'TXT'
 The <info>fom:user:resetroot</info> command can be used to create or update
-the root user account. This account is identified by id 1, username, e-mail
-and password can be set.
-TXT)]
+the root user account. This account is identified by id 1. Username, e-mail
+and password can be set. The password can be set in multiple ways (in priority order):
+- option --password
+- Flag --generate-password (will generate a 12-digit password with alphanumeric letters/digits and common special chars)
+- ENV variable MAPBENDER_ROOT_PASSWORD
+- console input (unless --no-interaction is set)
+TXT
+)]
 class ResetRootAccountCommand extends Command
 {
     protected ?ObjectManager $entityManager;
     /** @var EntityRepository */
     protected ObjectRepository $userRepository;
-    /** @var string */
-    protected $userEntityClass;
+    protected string $userEntityClass;
 
-    public function __construct(ManagerRegistry $managerRegistry,
+    public function __construct(ManagerRegistry             $managerRegistry,
                                 protected UserHelperService $userHelper,
-                                $userEntityClass)
+                                                            $userEntityClass)
     {
         parent::__construct('fom:user:resetroot');
         $this->userRepository = $managerRegistry->getRepository($userEntityClass);
@@ -51,19 +55,15 @@ class ResetRootAccountCommand extends Command
             ->setDefinition([
                 new InputOption('username', '', InputOption::VALUE_REQUIRED, 'The username to use for the root account'),
                 new InputOption('email', '', InputOption::VALUE_REQUIRED, 'The e-mail address for the root account'),
-                new InputOption('password', '', InputOption::VALUE_REQUIRED, 'The password to set for the root account'),
-                new InputOption('silent', '', InputOption::VALUE_NONE, 'Perform a silent reset')])
-            ->setDescription('Resets the root account');
+                new InputOption('password', '', InputOption::VALUE_OPTIONAL, 'The password to set for the root account. Alternative methods of supplying password: Flag --generate-password, ENV variable MAPBENDER_ROOT_PASSWORD, console input'),
+                new InputOption('generate-password', '', InputOption::VALUE_NONE, 'Auto-generates the password if password option is not provided.'),
+                new InputOption('no-interaction', 'n', InputOption::VALUE_NONE, 'Do not ask any interactive question'),
+            ])
+            ->setDescription('Resets the root account')
+        ;
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output): void
-    {
-        parent::initialize($input, $output);
-
-        if ($input->getOption('silent')) {
-            $input->setInteractive(false);
-        }
-    }
+    protected ?string $passwordNotice = null;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -75,10 +75,9 @@ class ResetRootAccountCommand extends Command
             $root = new $userClass();
             $root->setId(1);
             $mode = 'created';
-            foreach (['username', 'email', 'password'] as $option) {
+            foreach (['username', 'email'] as $option) {
                 if (!$input->getOption($option)) {
-                    throw new \RuntimeException(
-                        sprintf('The %s option must be provided.', $option));
+                    throw new \RuntimeException("The $option option must be provided.");
                 }
             }
         } else {
@@ -90,15 +89,80 @@ class ResetRootAccountCommand extends Command
         if ($input->getOption('email')) {
             $root->setEmail($input->getOption('email'));
         }
-        if ($input->getOption('password')) {
-            $this->userHelper->setPassword($root, $input->getOption('password'));
+
+
+        $password = $this->getPassword($input, $output);
+        if ($password) {
+            $this->userHelper->setPassword($root, $password);
+        }
+
+        // if the user entity was just created we need to set a password. If it is not supplied and the
+        // generated flag is not set, just set to "root"
+        if ($mode === 'created' && !$password) {
+            $this->userHelper->setPassword($root, 'root');
+            $this->passwordNotice = 'root user password set to "root". Please change as soon as possible.';
         }
 
         $this->entityManager->persist($root);
         $this->entityManager->flush();
 
         $output->writeln("User {$root->getUserIdentifier()} {$mode}.");
+        if ($this->passwordNotice) $output->writeln($this->passwordNotice);
         return 0;
+    }
+
+    /**
+     * Reads the supplied password in this priority order
+     * - option --password
+     * - Flag --generate-password
+     * - ENV variable MAPBENDER_ROOT_PASSWORD
+     * - console input
+     */
+    protected function getPassword(InputInterface $input, OutputInterface $output): ?string
+    {
+        $this->passwordNotice = null;
+
+        if ($input->getOption('password')) {
+            return $input->getOption('password');
+        }
+
+        if ($input->getOption('generate-password')) {
+            $password = static::randomStr(12);
+            $this->passwordNotice = "Generated password: $password";
+            return $password;
+        }
+
+        $password = \getenv('MAPBENDER_ROOT_PASSWORD')
+            ?: $_ENV['MAPBENDER_ROOT_PASSWORD']
+            ?? $_SERVER['MAPBENDER_ROOT_PASSWORD']
+            ?? null;
+
+        if ($password) {
+            $this->passwordNotice = "Password set to value of MB_ROOT_PASSWORD env variable";
+            return $password;
+        }
+
+        if (!$input->getParameterOption('--no-interaction')) {
+            /** @var QuestionHelper $questionHelper */
+            $questionHelper = $this->getHelper('question');
+            $question = new Question('Enter the password to use for the root account: ', null);
+            return $questionHelper->ask($input, $output, $question);
+        }
+
+        return null;
+    }
+
+    private static function randomStr(
+        $length,
+        $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-.*+_'
+    )
+    {
+        $str = '';
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        for ($i = 0; $i < $length; ++$i) {
+            $str .= $keyspace[random_int(0, $max)];
+        }
+        return $str;
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
@@ -116,10 +180,6 @@ class ResetRootAccountCommand extends Command
             $default = $root ? $root->getEmail() : '';
             $question = new Question("Enter the e-mail adress to use for the root account [{$default}]: ", $default);
             $input->setOption('email', $questionHelper->ask($input, $output, $question));
-        }
-        if (!$input->getOption('password')) {
-            $question = new Question('Enter the password to use for the root account: ', null);
-            $input->setOption('password', $questionHelper->ask($input, $output, $question));
         }
     }
 
