@@ -27,7 +27,7 @@ The <info>fom:user:resetroot</info> command can be used to create or update
 the root user account. This account is identified by id 1. Username, e-mail
 and password can be set. The password can be set in multiple ways (in priority order):
 - option --password
-- Flag --generate-password (will generate a 12-digit password with alphanumeric letters/digits and common special chars)
+- Flag --generate-password (will generate a 12-character password with alphanumeric letters/digits and common special chars)
 - ENV variable MAPBENDER_ROOT_PASSWORD
 - console input (unless --no-interaction is set)
 TXT
@@ -55,7 +55,7 @@ class ResetRootAccountCommand extends Command
             ->setDefinition([
                 new InputOption('username', '', InputOption::VALUE_REQUIRED, 'The username to use for the root account'),
                 new InputOption('email', '', InputOption::VALUE_REQUIRED, 'The e-mail address for the root account'),
-                new InputOption('password', '', InputOption::VALUE_OPTIONAL, 'The password to set for the root account. Alternative methods of supplying password: Flag --generate-password, ENV variable MAPBENDER_ROOT_PASSWORD, console input'),
+                new InputOption('password', '', InputOption::VALUE_REQUIRED, 'The password to set for the root account. Alternative methods of supplying password: Flag --generate-password, ENV variable MAPBENDER_ROOT_PASSWORD, console input'),
                 new InputOption('generate-password', '', InputOption::VALUE_NONE, 'Auto-generates the password if password option is not provided.'),
                 new InputOption('no-interaction', 'n', InputOption::VALUE_NONE, 'Do not ask any interactive question'),
             ])
@@ -138,11 +138,11 @@ class ResetRootAccountCommand extends Command
             ?? null;
 
         if ($password) {
-            $this->passwordNotice = "Password set to value of MB_ROOT_PASSWORD env variable";
+            $this->passwordNotice = "Password set to value of MAPBENDER_ROOT_PASSWORD env variable";
             return $password;
         }
 
-        if (!$input->getParameterOption('--no-interaction')) {
+        if ($input->isInteractive()) {
             /** @var QuestionHelper $questionHelper */
             $questionHelper = $this->getHelper('question');
             $question = new Question('Enter the password to use for the root account: ', null);
