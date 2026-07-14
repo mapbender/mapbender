@@ -3,7 +3,7 @@ namespace Mapbender\ManagerBundle\Template;
 
 class LoginTemplate extends ManagerTemplate
 {
-    public function getAssets($type)
+    public function getAssets($type): array
     {
         return match ($type) {
             'css' => [
