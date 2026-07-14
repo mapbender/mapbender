@@ -94,7 +94,7 @@
 
         /**
          * Creates the native OpenLayers layers required for this source and stores them in the class variable nativeLayers
-         * For vector layers, call `nativeLayer.set('geojson-mblayer', true), otherwise the layer order will not be respected in print
+         * For vector layers, call `nativeLayer.set('geojson-mb-layer', true), otherwise the layer order will not be respected in print
          * @abstract
          * @param {String} srsName
          * @param {Object} [mapOptions]

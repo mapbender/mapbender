@@ -99,7 +99,7 @@
         }
 
         /**
-         * Filter features for print: exclude the print frame polygon itself
+         * Filter a features for print: exclude the print frame polygon itself
          * and any features outside the print frame extent (spatial filter).
          */
         filterFeature(feature) {

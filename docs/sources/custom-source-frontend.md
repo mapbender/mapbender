@@ -21,7 +21,7 @@ can be toggled individually. For example, in a WMS service within one url there 
 When extending from `Mapbender.Source` you need to implement the following methods:
 
 - `createNativeLayers(srsName, mapOptions)`: Eventually your data will be rendered on an [OpenLayers map](https://openlayers.org/).
-  Create and return the native layers you need here. For vector layers, call `nativeLayer.set('geojson-mblayer', true)`, otherwise the layer order will not be respected in print, but instead be added at the top, along with e.g. the sketches. For example, for a single vector layer:
+  Create and return the native layers you need here. For vector layers, call `nativeLayer.set('geojson-mb-layer', true)`, otherwise the layer order will not be respected in print, but instead be added at the top, along with e.g. the sketches. For example, for a single vector layer:
 
 ```js
 createNativeLayers(srsName, mapOptions)

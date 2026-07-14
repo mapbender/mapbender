@@ -427,7 +427,7 @@ window.Mapbender.MapModelOl4 = (function() {
     },
     /**
      * @param {ol.layer.Vector[]} vectorLayers the layers whose geometries should be converted to geojson
-     * @param {function(ol.feature.Feature): boolean} [featureFilter] a filter function to exclude certain features
+     * @param {function(ol.Feature): boolean} [featureFilter] a filter function to exclude certain features
      */
     dumpVectorLayerGeometriesForExport(vectorLayers, featureFilter) {
         const dataOut = [];

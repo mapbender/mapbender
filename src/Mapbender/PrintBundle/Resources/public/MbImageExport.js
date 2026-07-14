@@ -223,8 +223,8 @@
         }
 
         /**
-         * Filters a set of features for export. Override this in subclasses to exclude specific features.
-         * @param {ol.feature.Feature} feature
+         * Checks whether a feature should be exported. Override this in subclasses to exclude specific features.
+         * @param {ol.Feature} feature
          * @return {boolean}
          */
         filterFeature(feature) {
