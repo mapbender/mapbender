@@ -94,6 +94,7 @@
 
         /**
          * Creates the native OpenLayers layers required for this source and stores them in the class variable nativeLayers
+         * For vector layers, call `nativeLayer.set('geojson-mblayer', true), otherwise the layer order will not be respected in print
          * @abstract
          * @param {String} srsName
          * @param {Object} [mapOptions]
@@ -356,6 +357,7 @@
 
         /**
          * Returns information that is passed to the printing service when printing or exporting a map
+         * For vector layers, use Mapbender.Model.dumpVectorLayerGeometriesForExport
          * @param {Number[]} bounds
          * @param {Number} scale
          * @param {String} srsName

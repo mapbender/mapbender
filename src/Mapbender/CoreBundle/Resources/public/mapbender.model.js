@@ -413,6 +413,44 @@ window.Mapbender.MapModelOl4 = (function() {
     featureToGeoJsonGeometry: function(feature) {
         return this._geojsonFormat.writeFeatureObject(feature).geometry;
     },
+
+    _dumpFeatureGeometries(layer, features, resolution) {
+        return this.dumpGeoJsonFeatures(features, layer, resolution, true)
+            .map(function (gjFeature) {
+                // Legacy data format quirks (not actually GeoJson):
+                // 1) Strip "type: 'Feature'" outer container object
+                // 2) move style into geometry object
+                return Object.assign({}, gjFeature.geometry, {
+                    style: gjFeature.style
+                });
+            });
+    },
+    /**
+     * @param {ol.layer.Vector[]} vectorLayers the layers whose geometries should be converted to geojson
+     * @param {function(ol.feature.Feature): boolean} [featureFilter] a filter function to exclude certain features
+     */
+    dumpVectorLayerGeometriesForExport(vectorLayers, featureFilter) {
+        const dataOut = [];
+        for (let li = 0; li < vectorLayers.length; ++li) {
+            const layer = vectorLayers[li];
+
+            let features = layer.getSource().getFeatures();
+            if (featureFilter) {
+                features = features.filter(featureFilter);
+            }
+
+            if (!features.length) {
+                continue;
+            }
+            const layerFeatureData = this._dumpFeatureGeometries(layer, features);
+            dataOut.push({
+                "type": "GeoJSON+Style",
+                "opacity": layer.getOpacity(),
+                "geometries": layerFeatureData
+            });
+        }
+        return dataOut;
+    },
     dumpGeoJsonFeatures: function(features, layer, resolution, includeStyle) {
         // Sort features like the canvas renderer would
         /** @see https://github.com/openlayers/openlayers/blob/v6.4.3/src/ol/renderer/canvas/VectorLayer.js#L651 */

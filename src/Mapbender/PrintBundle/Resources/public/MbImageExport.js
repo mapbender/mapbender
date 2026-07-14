@@ -189,58 +189,6 @@
         }
 
         /**
-         * Should return true if the given feature geometry should be included in export.
-         *
-         * @param geometry
-         * @returns {boolean}
-         * @private
-         */
-        _filterFeatureGeometry(geometry) {
-            if (geometry.style.fillOpacity > 0 || geometry.style.strokeOpacity > 0) {
-                return true;
-            }
-            if (geometry.style.externalGraphic) {
-                return true;
-            }
-            if (geometry.style.label !== undefined) {
-                return true;
-            }
-            return false;
-        }
-
-        _dumpFeatureGeometries(layer, features, resolution) {
-            return this.map.model.dumpGeoJsonFeatures(features, layer, resolution, true)
-                .map(function (gjFeature) {
-                    // Legacy data format quirks (not actually GeoJson):
-                    // 1) Strip "type: 'Feature'" outer container object
-                    // 2) move style into geometry object
-                    return Object.assign({}, gjFeature.geometry, {
-                        style: gjFeature.style
-                    });
-                })
-                ;
-        }
-
-        /**
-         * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
-         * to have passsed through the _filterGeometryLayer check positively.
-         *
-         * @param {OpenLayers.Layer.Vector|OpenLayers.Layer} layer
-         * @returns VectorLayerData~export
-         * @private
-         */
-        _extractGeometryLayerData(layer) {
-            var postFilter = this._filterFeatureGeometry.bind(this);
-            var features = layer.features.filter(this._filterFeature.bind(this))
-            var geometries = this._dumpFeatureGeometries(layer, features);
-            return {
-                type: 'GeoJSON+Style',
-                opacity: 1,
-                geometries: geometries.filter(postFilter)
-            };
-        }
-
-        /**
          * Hook method to filter vector layers before including them in export.
          * Override this in subclasses to exclude specific layers.
          *
@@ -249,7 +197,7 @@
          * @private
          */
         _filterVectorLayer(layer) {
-            return true;
+            return !layer.get("geojson-mb-layer");
         }
 
         _collectGeometryLayers() {
@@ -270,32 +218,17 @@
                     }
                 }
             }
-
             this.map.model.olMap.getLayers().getArray().forEach(processLayer);
-            var dataOut = [];
-            for (var li = 0; li < vectorLayers.length; ++li) {
-                var layer = vectorLayers[li];
-                var features = this.filterFeatures(layer.getSource().getFeatures());
-                if (!features.length) {
-                    continue;
-                }
-                var layerFeatureData = this._dumpFeatureGeometries(layer, features);
-                dataOut.push({
-                    "type": "GeoJSON+Style",
-                    "opacity": layer.getOpacity(),
-                    "geometries": layerFeatureData
-                });
-            }
-            return dataOut;
+            return Mapbender.Model.dumpVectorLayerGeometriesForExport(vectorLayers, this.filterFeature.bind(this));
         }
 
         /**
          * Filters a set of features for export. Override this in subclasses to exclude specific features.
-         * @param {ol.Feature[]} features
-         * @return {ol.Feature[]}
+         * @param {ol.feature.Feature} feature
+         * @return {boolean}
          */
-        filterFeatures(features) {
-            return features;
+        filterFeature(feature) {
+            return true;
         }
         /**
          * Should return export data (sent to backend) for the given geometry layer. Given layer is guaranteed
