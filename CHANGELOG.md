@@ -23,6 +23,7 @@ Features:
 * [MetadataDialog] Make MetadataURL and DataUrl available and add twig filter linkify ([#PR1818](https://github.com/mapbender/mapbender/pull/1818))
 * [SearchRouter] Extend SQLSearchEngine to support multiple search values separated by configurable delimiters ([#PR1836](https://github.com/mapbender/mapbender/pull/1836))
 * [LayerTree] Also show metadata for YAML applications ([#PR1849](https://github.com/mapbender/mapbender/pull/1849))
+* Region properties "generate menu" (for toolbar and footer) and "start closed" (sidepane) can now be set differently for mobile and desktop ([#PR1874](https://github.com/mapbender/mapbender/pull/1874), [#PR1893](https://github.com/mapbender/mapbender/pull/1893))
 
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
