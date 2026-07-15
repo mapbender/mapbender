@@ -19,7 +19,8 @@ class CsvExport {
             csvFile += this.createRow(row);
         }
 
-        this.downloadAsFile(csvFile, this.settings.filename || 'download.csv')
+        const filename = this.settings.filename || 'download.csv';
+        Mapbender.FileUtil.downloadFile(csvFile, filename, 'text/csv;charset=utf-8;');
     }
 
     createRow(rowData) {
@@ -42,19 +43,4 @@ class CsvExport {
         }
         return finalVal + '\n';
     };
-
-    downloadAsFile(fileContents, filename) {
-        const blob = new Blob([fileContents], {type: 'text/csv;charset=utf-8;'});
-        const link = document.createElement("a");
-        if (link.download !== undefined) { // feature detection
-            // Browsers that support HTML5 download attribute
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", filename);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    }
 }

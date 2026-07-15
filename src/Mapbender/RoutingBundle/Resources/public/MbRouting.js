@@ -158,16 +158,20 @@
 
                 let exportData = '';
                 let format = null;
+                let mimeType = null;
 
                 switch (exportFormat) {
                     case 'geojson':
                         format = new ol.format.GeoJSON();
+                        mimeType = 'application/geo+json';
                         break;
                     case 'gpx':
                         format = new ol.format.GPX();
+                        mimeType = 'application/gpx+xml';
                         break;
                     case 'kml':
                         format = new ol.format.KML();
+                        mimeType = 'application/vnd.google-earth.kml+xml';
                         break;
                     default:
                         return;
@@ -179,7 +183,7 @@
                     featureProjection: Mapbender.Model.getCurrentProjectionCode(),
                 });
                 const timestamp = new Date().toISOString().replace('T', '_').slice(0, 16);
-                this._download(new Blob([exportData]), 'route-' + timestamp + '.' + exportFormat);
+                Mapbender.FileUtil.downloadFile(exportData, 'route-' + timestamp + '.' + exportFormat, mimeType);
             });
         }
 
@@ -199,15 +203,6 @@
                 return;
             }
             this.$element.find('.select-export-format').show();
-        }
-
-        _download(blob, filename) {
-            const a = document.createElement('a');
-            a.href = window.URL.createObjectURL(blob);
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
         }
 
         _autoSubmit() {

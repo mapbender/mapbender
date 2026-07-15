@@ -11,36 +11,36 @@ window.Mapbender.FileUtil = class {
      */
     static getFormatParserByFilename(filename) {
         var extension = filename.split('.').pop().toLowerCase();
-        
+
         switch (extension) {
             case 'kml':
                 return new ol.format.KML({
                     extractStyles: true,
                     showPointNames: false
                 });
-                
+
             case 'geojson':
             case 'json':
                 return new ol.format.GeoJSON();
-                
+
             case 'gpx':
                 return new ol.format.GPX();
-                
+
             case 'gml':
             case 'xml':
                 // GML format requires content inspection - use agnostic parser
                 return {
-                    readFeatures: function(content, options) {
+                    readFeatures: function (content, options) {
                         return Mapbender.FileUtil.findGmlFormat(content).readFeatures(content, options);
                     }
                 };
-                
+
             default:
                 // Unsupported format
                 return null;
         }
     }
-    
+
     /**
      * Detect the correct GML format by trying to parse with different versions
      * @param {string} gmlContent - The GML content as text
@@ -54,7 +54,7 @@ window.Mapbender.FileUtil = class {
             new ol.format.GML3(),
             new ol.format.GML32()
         ];
-        
+
         for (var i = 0; i < gmlFormats.length; i++) {
             var format = gmlFormats[i];
             try {
@@ -70,10 +70,10 @@ window.Mapbender.FileUtil = class {
                 continue;
             }
         }
-        
+
         throw new Error('Could not detect GML format version');
     }
-    
+
     /**
      * Read and parse features from a geospatial file
      * @param {File} file - File object from input
@@ -85,23 +85,23 @@ window.Mapbender.FileUtil = class {
      */
     static readGeospatialFile(file, options) {
         var parser = this.getFormatParserByFilename(file.name);
-        
+
         if (!parser) {
             if (options.onError) {
                 options.onError(new Error('Unsupported file format'), file);
             }
             return;
         }
-        
+
         var reader = new FileReader();
-        
-        reader.addEventListener('load', function() {
+
+        reader.addEventListener('load', function () {
             try {
                 var features = parser.readFeatures(reader.result, {
                     dataProjection: options.dataProjection || 'EPSG:4326',
                     featureProjection: options.featureProjection
                 });
-                
+
                 if (options.onSuccess) {
                     options.onSuccess(features, file);
                 }
@@ -111,14 +111,33 @@ window.Mapbender.FileUtil = class {
                 }
             }
         });
-        
-        reader.addEventListener('error', function() {
+
+        reader.addEventListener('error', function () {
             if (options.onError) {
                 options.onError(new Error('Failed to read file'), file);
             }
         });
-        
+
         // All supported formats use text
         reader.readAsText(file);
     }
+
+    /**
+     *
+     * @param {any} fileContents a blob or anything that is accepted in the Blob constructor, like strings or ArrayBuffers (https://developer.mozilla.org/en-US/docs/Web/API/Blob/Blob)
+     * @param {string} filename
+     * @param {?string} [mimeType] defaults to 'text/plain;charset=utf-8;'
+     */
+    static downloadFile(fileContents, filename, mimeType) {
+        const blob = fileContents instanceof Blob
+            ? fileContents
+            : new Blob([fileContents], {type: mimeType ?? 'text/plain;charset=utf-8;'});
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
 };
