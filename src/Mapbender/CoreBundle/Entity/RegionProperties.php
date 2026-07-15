@@ -54,7 +54,7 @@ class RegionProperties
         return $this;
     }
 
-    public function getId(): string|int
+    public function getId(): string|int|null
     {
         return $this->id;
     }

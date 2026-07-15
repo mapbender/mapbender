@@ -2,8 +2,9 @@
 <div class="{{ 'sidePane flex-fill ' ~ region_class | trim }}{% if region_props.resizable %} resizable{% endif %}
      {%- if region_props.width | default('') -%}
          {{ ' -js-closed-' ~ (region_props.closed | default('no')) }}" style="width: {{ region_props.width }};
-     {%- if (region_props.closed | default(false)) != 'no' -%}
-        {{ 'left' in region_class ? 'left' : 'right' }}: -{{ region_props.width }};"{% endif %}
+        {%- if (region_props.closed | default(false)) != 'no' -%}
+            {{ 'left' in region_class ? 'left' : 'right' }}: -{{ region_props.width }};
+        {% endif %}
      {%- endif -%}
 ">
   <div class="sideContent">
