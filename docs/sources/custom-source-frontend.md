@@ -21,13 +21,14 @@ can be toggled individually. For example, in a WMS service within one url there 
 When extending from `Mapbender.Source` you need to implement the following methods:
 
 - `createNativeLayers(srsName, mapOptions)`: Eventually your data will be rendered on an [OpenLayers map](https://openlayers.org/).
-  Create and return the native layers you need here. For example, for a single vector layer:
+  Create and return the native layers you need here. For vector layers, call `nativeLayer.set('geojson-mb-layer', true)`, otherwise the layer order will not be respected in print, but instead be added at the top, along with e.g. the sketches. For example, for a single vector layer:
 
 ```js
-createNativeLayers(srsName, mapOptions) {
-    this.nativeLayers = [new ol.layer.Vector({
-        source: new ol.source.Vector()
-    })];
+createNativeLayers(srsName, mapOptions)
+{
+    const vectorLayer = new ol.layer.Vector({source: new ol.source.Vector()});
+    vectorLayer.set("geojson-mb-layer", true);
+    this.nativeLayers = [vectorLayer];
     return this.nativeLayers;
 }
 ```
@@ -59,7 +60,7 @@ Also, you can override the following methods:
   modifies runtime settings you might need for your source. By default, this is only opacity.
 - `getConfiguredSettings()`: returns the initial settings set during initialisation
 - `checkRecreateOnSrsSwitch(oldProj, newProj)`: indicates whether this source should be recreated when a srs change occurs
-- `getPrintConfigs(bounds, scale, srsName)`: Returns information that is passed to the printing service when printing or exporting a map
+- `getPrintConfigs(bounds, scale, srsName)`: Returns information that is passed to the printing service when printing or exporting a map. For vector layers, use Mapbender.Model.dumpVectorLayerGeometriesForExport.
 
 The following methods are also available to be used which you probably don't need to override:
 
@@ -110,10 +111,10 @@ This works with the following code:
 
 ```js
 const source = Mapbender.Source.factory(sourceDef);
-Mapbender.model.addSource(source);
+Mapbender.Model.addSource(source);
 
 // shortcut
-const source2 = Mapbender.model.addSourceFromConfig(sourceDef);
+const source2 = Mapbender.Model.addSourceFromConfig(sourceDef);
 ```
 
 The sourceDef needs to be an JS object with the following properties:

@@ -27,10 +27,18 @@ class OgcApiSource extends Mapbender.Source {
             const styleDef = this._getStyleDef(child);
             this._applyStyle(vectorLayer, styleDef, collectionId);
             vectorLayer.set('_activeStyle', child.options.style || null);
+            vectorLayer.set('geojson-mb-layer', true);
             this.nativeLayers.push(vectorLayer);
         });
         this.setOpacity(this.options.opacity);
         return this.nativeLayers;
+    }
+
+    getPrintConfigs(bounds, scale, srsName) {
+        const layers = this.getNativeLayers().filter((l) => l.getVisible() && l.getOpacity());
+        if (!layers.length) return super.getPrintConfigs();
+
+        return Mapbender.Model.dumpVectorLayerGeometriesForExport(layers);
     }
 
     _hexToRgba(hex, opacity) {
