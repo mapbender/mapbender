@@ -93,7 +93,7 @@ class RegionProperties
     public function getProperties(): array
     {
         $properties = $this->properties;
-        return $this->convertLegacyBooleanFlagsToResponsiveOptions($properties, ['generate_button_menu']);
+        return $this->convertLegacyBooleanFlagsToResponsiveOptions($properties, ['generate_button_menu', 'closed']);
     }
 
     private function convertLegacyBooleanFlagsToResponsiveOptions(array $properties, array $legacyParameters): array

@@ -176,6 +176,7 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/MapModelBase.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mb-action.js',
+                    '@MapbenderCoreBundle/Resources/public/mapbender.responsive-menu.js',
                     '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
                     '/components/datatables/core/js/dataTables.min.js',
@@ -205,7 +206,6 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerPoolOl4.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender-model/VectorLayerBridgeOl4.js',
                     '@MapbenderCoreBundle/Resources/public/elements/MapbenderElement.js',
-                    '@MapbenderCoreBundle/Resources/public/mapbender.responsive-menu.js',
                 ];
             case 'css':
                 return [

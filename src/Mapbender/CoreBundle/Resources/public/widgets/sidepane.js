@@ -127,14 +127,30 @@ $(function () {
         }
 
         _setupInitialState() {
-            if (this.$element.hasClass('closed')) {
-                this.isOpen = false;
+            this.isOpen = this._getResponsiveDefaultOpen();
+
+            if (this.isOpen) {
+                this.$element.css('left', 'initial').css('right', 'initial');
+                this.$element.removeClass('closed');
+            } else {
+                this.$element.addClass('closed');
                 if (this.$element.hasClass("right")) {
                     this.$element.css({right: (this.$element.outerWidth(true) * -1) + "px"});
                 } else {
                     this.$element.css({left: (this.$element.outerWidth(true) * -1) + "px"});
                 }
             }
+        }
+
+        _getResponsiveDefaultOpen() {
+            if (this.$element.hasClass('-js-closed-no')) return true;
+            if (this.$element.hasClass('-js-closed-yes')) return false;
+
+            const isMobile = window.innerWidth < Mapbender.responsiveMenu.desktopBreakpoint;
+            return (
+                (this.$element.hasClass('-js-closed-only_desktop') && isMobile) ||
+                (this.$element.hasClass('-js-closed-only_mobile') && !isMobile)
+            );
         }
 
         _setupEvents() {
