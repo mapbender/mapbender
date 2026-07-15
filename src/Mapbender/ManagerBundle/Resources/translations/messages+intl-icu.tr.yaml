@@ -24,6 +24,11 @@ mb:
   manager:
     autoActivate: 'Otomatik etkinleştir'
     autoOpen: 'Otomatik aç'
+    responsive_options:
+      no: 'Hayır'
+      only_desktop: 'Yalnızca masaüstü'
+      yes: 'Masaüstü + mobil'
+      only_mobile: 'Yalnızca mobil'
     admin:
       map:
         max_extent: 'Maks. kapsam'

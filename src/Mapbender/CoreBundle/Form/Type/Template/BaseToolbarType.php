@@ -4,6 +4,7 @@
 namespace Mapbender\CoreBundle\Form\Type\Template;
 
 
+use Mapbender\CoreBundle\Entity\RegionProperties;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
@@ -28,12 +29,7 @@ class BaseToolbarType extends AbstractType
         ]);
         $builder->add('generate_button_menu', ChoiceType::class, [
             'label' => 'mb.manager.toolbar.menu_button.label',
-            'choices' => [
-                'mb.manager.toolbar.menu_button.choice.no_menu' => 'no_menu',
-                'mb.manager.toolbar.menu_button.choice.menu_desktop' => 'menu_desktop',
-                'mb.manager.toolbar.menu_button.choice.menu_mobile' => 'menu_mobile',
-                'mb.manager.toolbar.menu_button.choice.menu_mobile_desktop' => 'menu_mobile_desktop',
-            ],
+            'choices' => RegionProperties::responsiveOptions(),
             'required' => false,
             'placeholder' => false,
         ]);

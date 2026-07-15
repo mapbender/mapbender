@@ -24,6 +24,11 @@ mb:
   manager:
     autoActivate: 'Activer automatiquement'
     autoOpen: 'Ouverture automatique'
+    responsive_options:
+      no: 'Non'
+      only_desktop: 'Bureau uniquement'
+      yes: 'Bureau + mobile'
+      only_mobile: 'Mobile uniquement'
     admin:
       map:
         max_extent: 'Étendue maximum'

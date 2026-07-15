@@ -43,12 +43,12 @@ mb:
           center: 'По центру'
       menu_button:
           label: 'Меню'
-          choice:
-              no_menu: 'без меню (по умолчанию)'
-              menu_desktop: 'Показывать меню на десктопе'
-              menu_mobile_desktop: 'Показывать меню на десктопе и мобильных'
-              menu_mobile: 'Показывать меню только на мобильных'
       menu_label: 'Заголовок меню'
+    responsive_options:
+      no: 'Нет'
+      only_desktop: 'Только десктоп'
+      yes: 'Десктоп и мобильные'
+      only_mobile: 'Только мобильные'
     visibility: Видимость
     element:
       screentype:

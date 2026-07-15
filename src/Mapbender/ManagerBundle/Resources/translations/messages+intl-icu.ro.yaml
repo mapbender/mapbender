@@ -41,6 +41,11 @@ mb:
           center: Centru
       generate_button_menu: 'Grupează butoanele într-un meniu'
       menu_label: 'Titlu meniu'
+    responsive_options:
+      no: 'Nu'
+      only_desktop: 'Doar desktop'
+      yes: 'Desktop + mobil'
+      only_mobile: 'Doar mobil'
     visibility: Vizibilitate
     element:
       screentype:
