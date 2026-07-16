@@ -450,7 +450,10 @@
             var viewportHeight = window.innerHeight;
 
             // Calculate available space considering toolbars
-            var toolbarHeight = $('.toolBar.top')[0].getBoundingClientRect().height + $('.toolBar.bottom')[0].getBoundingClientRect().height;
+            var $topBar = $('.toolBar.top');
+            var $bottomBar = $('.toolBar.bottom');
+            var toolbarHeight = ($topBar.length ? $topBar[0].getBoundingClientRect().height : 0)
+                + ($bottomBar.length ? $bottomBar[0].getBoundingClientRect().height : 0);
             var maxAvailableHeight = (viewportHeight * this.mobileMaxHeightRatio) - toolbarHeight;
 
             // Check if popup is currently larger than available space and adjust height if necessary
