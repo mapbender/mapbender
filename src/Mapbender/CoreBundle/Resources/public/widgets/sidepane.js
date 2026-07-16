@@ -214,7 +214,7 @@ $(function () {
             const allowedWidth = Math.floor(window.innerWidth * this.MAX_SIZE_WINDOW_PERCENTAGE);
             if (this.sidePaneWidth() > allowedWidth) {
                 this.element.style.width = allowedWidth + "px";
-                if (this.element.style.left) {
+                if (this.element.style.left && this.element.style.left !== "0px") {
                     this.element.style.left = "-" + allowedWidth + "px";
                 }
             }
