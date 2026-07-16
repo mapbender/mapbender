@@ -282,6 +282,7 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
         _prepareTextStyle: function(svgStyles) {
             var alignBaseline = this._translateTextAlignment(svgStyles.labelAlign);
             return new ol.style.Text({
+                font: svgStyles.fontSize + 'px ' + svgStyles.fontFamily,
                 fill: new ol.style.Fill({color: Mapbender.StyleUtil.svgToCssColorRule(svgStyles, 'fontColor', 'fontOpacity')}),
                 stroke: new ol.style.Stroke({
                     color: Mapbender.StyleUtil.svgToCssColorRule(svgStyles, 'labelOutlineColor', 'labelOutlineOpacity'),
