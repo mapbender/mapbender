@@ -41,13 +41,13 @@ mb:
           center: 'По центру'
       menu_button:
           label: 'Меню'
-          choice:
-              no_menu: 'без меню (за замовчуванням)'
-              menu_desktop: 'Показувати меню на комп’ютері'
-              menu_mobile_desktop: 'Показувати меню на комп’ютері та мобільних'
-              menu_mobile: 'Показувати меню лише на мобільних'
       menu_label: 'Мітка меню'
       visibility: Видимість
+    responsive_options:
+      no: 'Ні'
+      only_desktop: 'Лише комп’ютер'
+      yes: 'Комп’ютер і мобільні'
+      only_mobile: 'Лише мобільні'
     element:
       screentype:
         mobile: 'Показати на екранах мобільних пристроїв'

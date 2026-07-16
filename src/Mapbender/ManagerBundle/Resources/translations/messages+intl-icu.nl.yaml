@@ -24,6 +24,11 @@ mb:
   manager:
     autoActivate: 'Automatisch geactiveerd'
     autoOpen: 'Automatisch openen'
+    responsive_options:
+      no: 'Nee'
+      only_desktop: 'Alleen desktop'
+      yes: 'Desktop + mobiel'
+      only_mobile: 'Alleen mobiel'
     admin:
       map:
         max_extent: 'Max. omvang (extent)'

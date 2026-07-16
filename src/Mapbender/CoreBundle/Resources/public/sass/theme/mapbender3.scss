@@ -250,13 +250,13 @@ ul.toolBar, .toolBar > ul {
   }
 
     // Responsive toolbar menu modes.
-    // The menu <ul> is rendered once (whenever the mode is not "no_menu").
+    // The menu <ul> is rendered once (whenever the menu mode is not "no").
     // Depending on the configured mode and viewport width, the menu-supported
     // items are either collapsed behind the burger button or shown inline
     // (like the non-button-menu case).
-    //   menu_mobile_desktop -> always burger (no modifier class, never expanded)
-    //   menu_mobile  (.has-menu-mobile)  -> burger < 1200px, inline >= 1200px
-    //   menu_desktop (.has-menu-desktop) -> burger >= 1200px, inline < 1200px
+    //   yes -> always burger (no modifier class, never expanded)
+    //   only_mobile  (.has-menu-mobile)  -> burger < 1200px, inline >= 1200px
+    //   only_desktop (.has-menu-desktop) -> burger >= 1200px, inline < 1200px
     @media (min-width: $desktopBreakpointWidth) {
         &.has-menu-mobile {
             @include toolbar-menu-inline;

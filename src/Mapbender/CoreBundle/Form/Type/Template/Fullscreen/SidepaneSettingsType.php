@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Form\Type\Template\Fullscreen;
 
 
+use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\Template\RegionSettingsType;
 use Mapbender\CoreBundle\Element\Type\MapbenderTypeTrait;
 use Mapbender\ManagerBundle\Form\Type\ScreentypeType;
@@ -72,9 +73,10 @@ class SidepaneSettingsType extends AbstractType
             'placeholder' => false,
             'empty_data' => 'left',
         ]);
-        $builder->add('closed', CheckboxType::class, [
-            'required' => false,
+        $builder->add('closed', ChoiceType::class, [
+            'required' => true,
             'label' => 'mb.manager.sidepane.closed',
+            'choices' => RegionProperties::responsiveOptions(),
         ]);
     }
 }

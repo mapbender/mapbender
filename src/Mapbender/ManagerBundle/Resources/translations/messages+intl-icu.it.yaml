@@ -43,12 +43,12 @@ mb:
           center: Centro
       menu_button:
           label: 'Menu'
-          choice:
-              no_menu: 'nessun menu (predefinito)'
-              menu_desktop: 'Mostra menu su desktop'
-              menu_mobile_desktop: 'Mostra menu su desktop+mobile'
-              menu_mobile: 'Mostra menu solo su mobile'
       menu_label: 'Menu label'
+    responsive_options:
+      no: 'No'
+      only_desktop: 'Solo desktop'
+      yes: 'Desktop + mobile'
+      only_mobile: 'Solo mobile'
     visibility: Visibilità
     element:
       screentype:

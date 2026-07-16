@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -41,43 +42,23 @@ class RegionProperties
     #[ORM\Column(type: 'json', nullable: true)]
     protected $properties;
 
-    /**
-     * RegionProperties constructor.
-     */
     public function __construct()
     {
         $this->properties = [];
     }
 
-    /**
-     * Set id. DANGER
-     *
-     * @param integer $id
-     * @return $this
-     */
-    public function setId($id): static
+    public function setId(string|int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
+    public function getId(): string|int|null
     {
         return $this->id;
     }
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return $this
-     */
     public function setName($name): static
     {
         $this->name = $name;
@@ -85,22 +66,11 @@ class RegionProperties
         return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * Set Application
-     *
-     * @param Application $application
-     * @return $this
-     */
     public function setApplication(Application $application): static
     {
         $this->application = $application;
@@ -108,22 +78,11 @@ class RegionProperties
         return $this;
     }
 
-    /**
-     * Get application
-     *
-     * @return Application
-     */
-    public function getApplication()
+    public function getApplication(): Application
     {
         return $this->application;
     }
 
-    /**
-     * Set properties
-     *
-     * @param array $properties
-     * @return $this
-     */
     public function setProperties(array $properties = []): static
     {
         $this->properties = $properties === null || !is_array($properties) ? [] : $properties;
@@ -131,25 +90,34 @@ class RegionProperties
         return $this;
     }
 
-    /**
-     * Get properties
-     *
-     * @return array
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         $properties = $this->properties;
-        // backwards compatibility: generate_button_menu used to be a boolean flag
-        if (array_key_exists('generate_button_menu', $properties)) {
-            $value = $properties['generate_button_menu'];
-            if ($value === true || $value === 1 || $value === '1') {
-                $properties['generate_button_menu'] = 'menu_mobile_desktop';
-            } elseif ($value === false || $value === 0 || $value === '') {
-                $properties['generate_button_menu'] = 'no_menu';
-            } elseif (!in_array($value, ['no_menu', 'menu_mobile_desktop', 'menu_mobile', 'menu_desktop'])) {
-                $properties['generate_button_menu'] = 'no_menu';
+        return $this->convertLegacyBooleanFlagsToResponsiveOptions($properties, ['generate_button_menu', 'closed']);
+    }
+
+    private function convertLegacyBooleanFlagsToResponsiveOptions(array $properties, array $legacyParameters): array
+    {
+        foreach ($legacyParameters as $param) {
+            if (array_key_exists($param, $properties)) {
+                $value = $properties[$param];
+                if ($value === true || $value === 1 || $value === '1') {
+                    $properties[$param] = 'yes';
+                } elseif (!in_array($value, ['no', 'yes', 'only_mobile', 'only_desktop'])) {
+                    $properties[$param] = 'no';
+                }
             }
         }
         return $properties;
+    }
+
+    public static function responsiveOptions(): array
+    {
+        return [
+            'mb.manager.responsive_options.no' => 'no',
+            'mb.manager.responsive_options.only_desktop' => 'only_desktop',
+            'mb.manager.responsive_options.only_mobile' => 'only_mobile',
+            'mb.manager.responsive_options.yes' => 'yes',
+        ];
     }
 }

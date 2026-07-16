@@ -1,12 +1,12 @@
 {% block region_wrapper %}
-    {%- set menu_mode = region_props['generate_button_menu'] | default('no_menu') -%}
+    {%- set menu_mode = region_props['generate_button_menu'] | default('no') -%}
     {%- set menu_mode_class = {
-        'menu_desktop': 'has-menu-desktop',
-        'menu_mobile': 'has-menu-mobile',
+        'only_desktop': 'has-menu-desktop',
+        'only_mobile': 'has-menu-mobile',
     }[menu_mode] | default('') -%}
     {%- set items_list_class = alignment_class | default('itemsRight') -%}
     <div class="{{ ('toolBar ' ~ region_class ~ ' ' ~ menu_mode_class) | trim }}" data-toolbar-menu-mode="{{ menu_mode }}">
-    {%- if menu_mode != 'no_menu' %}
+    {%- if menu_mode != 'no' %}
         {%- set inline_items = toolbar_inline_content(application, region_name) -%}
         {%- set menu_content = toolbar_menu_content(application, region_name, true) -%}
     {%- else -%}
@@ -34,7 +34,7 @@
         {% endblock %}
     </ul>
     {% endblock item_list %}
-    {%- if menu_mode != 'no_menu' and elements is defined and elements|length -%}
+    {%- if menu_mode != 'no' and elements is defined and elements|length -%}
         {%- set ordered_menu_item_ids = [] -%}
         {%- for element in elements -%}
             {%- set ordered_menu_item_ids = ordered_menu_item_ids | merge([element.id]) -%}
