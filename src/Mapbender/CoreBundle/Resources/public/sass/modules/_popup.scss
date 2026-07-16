@@ -176,8 +176,9 @@ body.popup-resizing {
   @include absolute(70px 0 $space*3 0);
 }
 
+/** Backend dialogs, e.g. for element edit **/
 .modal-dialog:not(.modal-lg):not(.modal-xl) {
-    max-width: 700px;
+    max-width: min(100vw, max(var(--backend-popup-max-width-override), var(--backend-popup-max-width)));
 }
 
 @media (max-width: $mobileBreakpoint) {

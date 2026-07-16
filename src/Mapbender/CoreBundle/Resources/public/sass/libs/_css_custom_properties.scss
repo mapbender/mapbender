@@ -38,6 +38,10 @@
     --content-element-padding-horizontal: 50px;
     --popup-modal-width: #{$popupModalWidth};
 
+    --backend-popup-max-width: 800px;
+    // allows popups to grow bigger than --backend-popup-max-width on large screens
+    --backend-max-width-override: 65vw;
+
     // ---- Backgrounds ----
     --background-color: #{$backgroundColor};
 
