@@ -1,4 +1,4 @@
-## v5.0.0-RC1
+## next major release
 Breaking changes (for details on migration process see [UPGRADING.md]):
 * PHP 8.2 is now the minimum supported PHP version
 * Symfony updated to version 7.4 LTS
@@ -24,6 +24,7 @@ Features:
 * [SearchRouter] Extend SQLSearchEngine to support multiple search values separated by configurable delimiters ([#PR1836](https://github.com/mapbender/mapbender/pull/1836))
 * [LayerTree] Also show metadata for YAML applications ([#PR1849](https://github.com/mapbender/mapbender/pull/1849))
 * Region properties "generate menu" (for toolbar and footer) and "start closed" (sidepane) can now be set differently for mobile and desktop ([#PR1874](https://github.com/mapbender/mapbender/pull/1874), [#PR1893](https://github.com/mapbender/mapbender/pull/1893))
+* [fom:user:resetroot command] Allow password to be transferred in more ways ([#PR1889](https://github.com/mapbender/mapbender/pull/1889))
 
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
@@ -32,6 +33,7 @@ Bugfixes:
 Other:
 * Added romanian translation ([#PR1878](https://github.com/mapbender/mapbender/pull/1878)) 
 * [Develop] New shared File utility module for geospatial file handling (KML, GeoJSON, GPX, GML) ([#PR1799](https://github.com/mapbender/mapbender/pull/1799)) 
+* [Develop] Extract downloadFile function to Mapbender.FileUtil ([PR#1890](https://github.com/mapbender/mapbender/pull/1890))
 * In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
 * Changed default login-backdrop image ([PR#1845](https://github.com/mapbender/mapbender/pull/1845))
 

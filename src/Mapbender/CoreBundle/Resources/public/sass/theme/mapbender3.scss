@@ -411,6 +411,10 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
       position: initial;
     }
   }
+
+    .-js-popup-content {
+        display: none;
+    }
 }
 
 .map-overlay, .map-overlay-column, .overlay-fill {
