@@ -183,7 +183,7 @@
             var geometry = this.map.model.featureToGeoJsonGeometry(feature);
             geometry.style = this.map.model.extractSvgFeatureStyle(layer, feature);
             if (geometry.style && geometry.style.externalGraphic) {
-                geometry.style.externalGraphic = this._fixAssetPath(geometry.style.externalGraphic);
+                geometry.style.externalGraphic = Mapbender.StyleUtil.fixAssetPath(geometry.style.externalGraphic);
             }
             return geometry;
         }
@@ -243,7 +243,7 @@
             for (var i = 0; i < layer.markers.length; ++i) {
                 var marker = layer.markers[i];
                 var originalUrl = marker.icon && marker.icon.url;
-                var internalUrl = this._fixAssetPath(originalUrl);
+                var internalUrl = Mapbender.StyleUtil.fixAssetPath(originalUrl);
                 if (!internalUrl) {
                     continue;
                 }
@@ -266,23 +266,6 @@
                 opacity: layer.opacity,
                 markers: markerData
             };
-        }
-
-        /**
-         * Convert potentially absolute URL to web-local url pointing somewhere into bundles/
-         * @param {String} url
-         * @returns {String|boolean}
-         * @private
-         */
-        _fixAssetPath(url) {
-            // @todo: fold copy&paste vs Mapbender.StyleUtil
-            var urlOut = url.replace(/^.*?(\/)(bundles\/.*)/, '$2');
-            if (urlOut === url && (urlOut || '').indexOf('bundles/') !== 0) {
-                console.warn("Asset path could not be resolved to local bundles reference", url);
-                return false;
-            } else {
-                return urlOut;
-            }
         }
     }
 

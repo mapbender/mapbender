@@ -1,4 +1,4 @@
-(function() {
+(function () {
     class MbSearchRouter extends MapbenderElement {
         constructor(configuration, $element) {
             super(configuration, $element);
@@ -34,11 +34,11 @@
             const routeSelect = $('select#search_routes_route', $element);
             routeSelect.closest('.dropdown').css('display', this.options.routes.length > 1 ? 'block' : 'none');
 
-            $element.on('submit', '.search-forms form', function(evt) {
+            $element.on('submit', '.search-forms form', function (evt) {
                 evt.preventDefault();
                 widget._search();
             });
-            $element.on('reset', '.search-forms form', function() {
+            $element.on('reset', '.search-forms form', function () {
                 widget.removeLastResults();
             });
             // Prepare autocompletes
@@ -49,7 +49,7 @@
 
             // Listen to changes of search select (switching and forms resetting)
             routeSelect.on('change', this._selectSearch.bind(this));
-            $element.on('click', '.search-action-buttons [data-action]', function() {
+            $element.on('click', '.search-action-buttons [data-action]', function () {
                 switch ($(this).attr('data-action')) {
                     case ('reset'):
                         widget._reset();
@@ -133,7 +133,7 @@
         _selectSearch(event) {
             const selected = this.selected = $(event.target).val();
 
-            $('form', this.$element).each(function() {
+            $('form', this.$element).each(function () {
                 const form = $(this);
                 if (form.attr('name') === selected) {
                     form.show();
@@ -176,10 +176,10 @@
                 classes: {
                     'ui-autocomplete': 'dropdownList'
                 },
-                source: function(request, response) {
-                    self._autocompleteSource($input).then(function(data) {
+                source: function (request, response) {
+                    self._autocompleteSource($input).then(function (data) {
                         response(data.results);
-                    }, function() {
+                    }, function () {
                         response([]);
                     });
                 }
@@ -403,17 +403,17 @@
         initTableEvents_() {
             const self = this;
             $('.search-results', this.$element)
-                .on('click', 'tbody tr', function() {
+                .on('click', 'tbody tr', function () {
                     const feature = $(this).data('feature');
                     self._highlightFeature(feature, 'select');
                     self._hideMobile();
                     self._highlightTableRow($(this));
                 })
-                .on('mouseenter', 'tbody tr', function() {
+                .on('mouseenter', 'tbody tr', function () {
                     const feature = $(this).data('feature');
                     self._highlightFeature(feature, 'temporary');
                 })
-                .on('mouseleave', 'tbody tr', function() {
+                .on('mouseleave', 'tbody tr', function () {
                     const feature = $(this).data('feature');
                     const styleName = feature === self.currentFeature ? 'select' : 'default';
                     self._highlightFeature(feature, styleName);
@@ -427,10 +427,7 @@
                 }
                 this.currentFeature = feature;
             }
-            let featureStyle = this.featureStyles[style].clone();
-            const label = this._getLabelValue(feature, style);
-            featureStyle.getText().setText(label);
-            feature.setStyle(featureStyle);
+            feature.setStyle(this.featureStyles[style]);
         }
 
         _showResultState(results) {
@@ -476,37 +473,10 @@
             this.csvExport.export(features, this.getCurrentRoute().results.headers);
         }
 
-        /**
-         * read the feature map label from feature properties
-         * @param feature
-         * @param style
-         * @returns {string}
-         * @private
-         */
-        _getLabelValue(feature, style) {
-            const currentRoute = this.getCurrentRoute();
-            const labelWithRegex = currentRoute?.results?.styleMap?.[style]?.label;
-            if (!labelWithRegex) return '';
-
-            return this._labelReplaceRegex(labelWithRegex, feature);
-        }
-
-        _labelReplaceRegex(labelWithRegex, feature) {
-            let regex = /\${([^}]+)}/g;
-            let match = [];
-            let label = labelWithRegex;
-
-            while ((match = regex.exec(labelWithRegex)) !== null) {
-                let featureValue = (feature.get(match[1])) ? feature.get(match[1]).toString() : '';
-                label = label.replace(match[0], featureValue);
-            }
-            return label;
-        }
-
         _createTextStyle(options) {
-            const fontweight = options.fontWeight  || 'normal';
-            const fontsize = options.fontSize  || '18px';
-            const fontfamily = options.fontFamily  || 'arial';
+            const fontweight = options.fontWeight || 'normal';
+            const fontsize = options.fontSize || '18px';
+            const fontfamily = options.fontFamily || 'arial';
 
             const textfill = new ol.style.Fill({
                 color: Mapbender.StyleUtil.svgToCssColorRule(options, 'fontColor', '1')
@@ -535,20 +505,56 @@
                 color: Mapbender.StyleUtil.svgToCssColorRule(options, 'strokeColor', 'strokeOpacity'),
                 width: options.strokeWidth || 2
             });
+            const textStyle = this._createTextStyle(options);
 
-            return new ol.style.Style({
-                image: new ol.style.Circle({
+            const placeholderProps = Mapbender.StyleUtil.detectDataPlaceholders(options, ['externalGraphic', 'label']);
+
+            const imageStyle = options.externalGraphic
+                ? Mapbender.Util.ExternalGraphicUtil.getIconStyle(options, true)
+                : new ol.style.Circle({
                     fill: fill,
                     stroke: stroke,
                     radius: options.pointRadius || 5
-                }),
-                fill: fill,
-                stroke: stroke,
-                text: this._createTextStyle(options),
+                });
+
+            // no dynamic contents => return fixed style
+            if (!placeholderProps.length > 0) {
+                return new ol.style.Style({
+                    image: imageStyle,
+                    fill: fill,
+                    stroke: stroke,
+                    text: textStyle,
+                });
+            }
+
+            const resolvePlaceholders = Mapbender.StyleUtil.getPlaceholderResolver(options, placeholderProps, function (feature) {
+                return feature.getProperties() || {};
             });
+
+            return (feature) => {
+                const resolvedStyle = resolvePlaceholders(options, feature);
+
+                let _textStyle = textStyle;
+                if (placeholderProps.includes("label")) {
+                    _textStyle = textStyle.clone();
+                    _textStyle.setText(resolvedStyle.label);
+                }
+
+                let _imageStyle = imageStyle;
+                if (placeholderProps.includes("externalGraphic")) {
+                    _imageStyle = Mapbender.Util.ExternalGraphicUtil.getIconStyle(resolvedStyle, true);
+                }
+
+                return new ol.style.Style({
+                    image: _imageStyle,
+                    fill: fill,
+                    stroke: stroke,
+                    text: _textStyle,
+                });
+            }
         }
 
-        _createStyleMap (styles) {
+        _createStyleMap(styles) {
             return {
                 default: this._createSingleStyle(styles.default),
                 select: this._createSingleStyle(styles.select),
@@ -620,7 +626,7 @@
 
         _getFormValues(form) {
             const values = {};
-            $(':input', form).each(function(index, input) {
+            $(':input', form).each(function (index, input) {
                 const $input = $(input);
                 const name = $input.attr('name').replace(/^[^[]*\[/, '').replace(/[\]].*$/, '');
                 values[name] = $input.val();
