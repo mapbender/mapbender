@@ -43,15 +43,15 @@
             $geomTable.on('click', '.geometry-edit', this._modifyFeature.bind(this));
             $geomTable.on('click', '.geometry-zoom', this._zoomToFeature.bind(this));
             var self = this;
-            $('[data-tool-name]', this.$element).on('click', function() {
+            $('[data-tool-name]', this.$element).on('click', function () {
                 return self._onToolButtonClick($(this));
             });
-            $('.-fn-tool-off', this.$element).on('click', function() {
+            $('.-fn-tool-off', this.$element).on('click', function () {
                 self._deactivateControl();
                 $(this).prop('disabled', true);
             });
             var $pallette = $('.-js-pallette-container', this.$element);
-            $pallette.on('click', '.color-select[data-color]', function() {
+            $pallette.on('click', '.color-select[data-color]', function () {
                 var $btn = $(this);
                 self.setColor_($btn.attr('data-color'), $btn);
             });
@@ -62,7 +62,7 @@
                 input: false,
                 component: false,
                 align: $('.color-select', $pallette).not('.custom-color-select').length >= 2 && 'right' || 'left'
-            }).on('changeColor', function(evt) {
+            }).on('changeColor', function (evt) {
                 var color = evt.color.toString(true, 'hex');
                 var $btn = $('.custom-color-select', self.$element);
                 $('.color-preview', $btn).css('background', color);
@@ -71,12 +71,12 @@
                     .prop('disabled', false)
                 ;
                 self.setColor_(color, $btn);
-            }).one('showPicker', function() {
+            }).one('showPicker', function () {
                 self.setPickerColor_(self.selectedColor_, true);
             });
 
             this.layer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
-            this.layer.customizeStyle({
+            this.layer.customizeStyle(this.customizeLayerStyle({
                 strokeWidth: 3,
                 fillColor: (feature) => {
                     return self._getFeatureAttribute(feature, 'color') || self.selectedColor_;
@@ -101,7 +101,7 @@
                         return 0;
                     }
                 }
-            });
+            }));
 
             this.editControl = null;
             this.setupMapEventListeners();
@@ -112,6 +112,17 @@
             this.trackRadiusInput_($('input[name="radius"]', this.$element));
             this._setupColorpickerAccessibility();
             Mapbender.elementRegistry.markReady(this);
+        }
+
+        /**
+         * When overriding the Sketch element in your application, your can adjust the
+         * default style here for rendering the sketched geometries.
+         * See StyleUtil::_svgStyleDefaults for available options, e.g. fontSize or fontFamily
+         * @param {object} style
+         * @return object
+         */
+        customizeLayerStyle(style) {
+            return style;
         }
 
         _setupColorpickerAccessibility() {

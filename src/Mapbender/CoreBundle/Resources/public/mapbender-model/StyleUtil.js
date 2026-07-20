@@ -254,6 +254,8 @@ window.Mapbender.StyleUtil = (function() {
         strokeDashstyle: 'solid',
         pointRadius: 6,
         fontColor: '#000000',
+        fontSize: 10,
+        fontFamily: 'sans-serif',
         labelAlign: 'cm',
         labelOutlineColor: 'white',
         labelOutlineWidth: 3,
