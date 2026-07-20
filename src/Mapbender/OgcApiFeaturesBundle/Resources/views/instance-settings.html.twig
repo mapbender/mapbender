@@ -1,0 +1,9 @@
+{{ form_start(form) }}
+<div class="tooltip-config-section">
+    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}</label>
+    <p class="text-muted small mb-1">{{ 'mb.ogcapifeatures.admin.tooltip.description' | trans }}</p>
+    {{ form_widget(form.tooltipPropertyMap) }}
+    <div class="tooltip-checkbox-list"
+         data-empty-text="{{ 'mb.ogcapifeatures.admin.tooltip.no_properties' | trans }}"></div>
+</div>
+{{ form_end(form) }}

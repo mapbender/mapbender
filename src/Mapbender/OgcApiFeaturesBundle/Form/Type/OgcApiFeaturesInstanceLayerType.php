@@ -98,11 +98,7 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
                 'choices' => $styleChoices,
                 'attr' => ['class' => 'form-select form-select-sm secondary-style-select', 'size' => 6],
             ])
-            ->add('tooltipPropertyMap', HiddenType::class, [
-                'required' => false,
-            ])
         ;
-        $builder->get('tooltipPropertyMap')->addModelTransformer(new JsonArrayTransformer());
     }
 
     private function getStyleChoices(): array

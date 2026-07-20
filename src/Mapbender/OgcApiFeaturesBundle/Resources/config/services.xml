@@ -43,5 +43,15 @@
             <tag name="form.type" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
+
+        <service id="Mapbender\OgcApiFeaturesBundle\Controller\OgcApiFeaturesController"
+                 class="Mapbender\OgcApiFeaturesBundle\Controller\OgcApiFeaturesController"
+                 public="true">
+            <tag name="container.service_subscriber" />
+            <call method="setContainer">
+                <argument type="service" id="Psr\Container\ContainerInterface" />
+            </call>
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+        </service>
     </services>
 </container>

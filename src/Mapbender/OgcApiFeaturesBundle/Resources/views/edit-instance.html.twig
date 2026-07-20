@@ -65,7 +65,7 @@
             <th>{{ 'mb.ogcapifeatures.admin.layer.allow_info' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.info' | trans }}</th>
             <th>{{ 'mb.manager.admin.style.title' | trans }}</th>
-            <th title="{{ 'mb.manager.admin.style.secondary_tooltip' | trans }}">{{ 'mb.manager.admin.style.secondary_short' | trans }}</th>
+            <th>Edit</th>
             <th></th>
         </tr>
         </thead>
@@ -107,9 +107,17 @@
                 <td>
                     <input type="checkbox" class="form-check-input style-indicator" disabled readonly
                            {% if layer.styleId.vars.value is not empty %}checked{% endif %}>
+                    <span class="badge bg-secondary sec-style-count"
+                          title="{{ 'mb.manager.admin.style.secondary_attached' | trans }}"
+                          {% if layer.vars.data.secondaryStyleIds|default([])|length == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleIds|default([])|length }}</span>
                 </td>
                 <td>
-                    <span class="badge bg-secondary sec-style-count" title="{{ 'mb.manager.admin.style.secondary_attached' | trans }}" {% if layer.vars.data.secondaryStyleIds|default([])|length == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleIds|default([])|length }}</span>
+                    <a href="#"
+                       data-url="{{ path('mapbender_ogcapifeatures_editsettings', {'instanceLayerId': layer.vars.data.id}) }}"
+                       class="editElement"
+                       aria-label="{{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}">
+                        <i class="fas fa-pencil"></i>
+                    </a>
                 </td>
                 <td>
                     <div class="static-popover-wrap">
@@ -181,12 +189,6 @@
                                         </div>
                                     </div>
                                     <hr class="my-2">
-                                    <div class="tooltip-config-section">
-                                        <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}</label>
-                                        <p class="text-muted small mb-1">{{ 'mb.ogcapifeatures.admin.tooltip.description' | trans }}</p>
-                                        {{ form_widget(layer.tooltipPropertyMap) }}
-                                        <div class="tooltip-checkbox-list" data-empty-text="{{ 'mb.ogcapifeatures.admin.tooltip.no_properties' | trans }}"></div>
-                                    </div>
                                     <div class="text-end mt-2">
                                         <button type="button" class="btn btn-sm btn-primary -fn-confirm-style" data-toggle-target="#{{ _popover_id }}">
                                             <i class="fas fa-check"></i> {{ 'mb.manager.admin.style.ok' | trans }}
@@ -205,6 +207,7 @@
 
 {% block js %}
     {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-edit.js') }}"></script>
     <script src="{{ asset('bundles/mapbendermanager/js/style-utils.js') }}"></script>
     <script src="{{ asset('bundles/mapbenderogcapifeatures/js/style-instance-editor.js') }}"></script>
     <script>
