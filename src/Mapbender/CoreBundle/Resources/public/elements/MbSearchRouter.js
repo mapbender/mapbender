@@ -536,12 +536,16 @@
                 width: options.strokeWidth || 2
             });
 
-            return new ol.style.Style({
-                image: new ol.style.Circle({
+            const imageStyle = options.externalGraphic
+                ? Mapbender.Util.ExternalGraphicUtil.getIconStyle(options, true)
+                : new ol.style.Circle({
                     fill: fill,
                     stroke: stroke,
                     radius: options.pointRadius || 5
-                }),
+                });
+
+            return new ol.style.Style({
+                image: imageStyle,
                 fill: fill,
                 stroke: stroke,
                 text: this._createTextStyle(options),
