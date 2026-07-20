@@ -519,7 +519,7 @@
 
             // no dynamic contents => return fixed style
             if (!placeholderProps.length > 0) {
-                new ol.style.Style({
+                return new ol.style.Style({
                     image: imageStyle,
                     fill: fill,
                     stroke: stroke,

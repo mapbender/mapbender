@@ -274,7 +274,7 @@ window.Mapbender.StyleUtil = (function() {
                     const valuesOut = Object.assign({}, styleConfig);
                     const data = dataCallback(feature);
                     propertyNames.forEach(function (prop) {
-                        valuesOut[prop] = styleConfig[prop].replace(placeholderRegex, function (match, dataProp) {
+                        valuesOut[prop] = styleConfig[prop]?.replace(placeholderRegex, function (match, dataProp) {
                             const dataValue = data[dataProp];
                             return dataValue || (prop === 'label' ? '' : dataValue);
                         });
@@ -282,8 +282,8 @@ window.Mapbender.StyleUtil = (function() {
                     return valuesOut;
                 }
             } else {
-                return function (original) {
-                    return original;
+                return function (styleConfig) {
+                    return styleConfig;
                 }
             }
         },
@@ -295,7 +295,7 @@ window.Mapbender.StyleUtil = (function() {
          */
         resolvePlaceholders: function(styleConfig, featureData) {
             const placeholderProps = Mapbender.StyleUtil.detectDataPlaceholders(styleConfig);
-            const resolver = Mapbender.StyleUtil.getPlaceholderResolver_(styleConfig, placeholderProps, function() {
+            const resolver = Mapbender.StyleUtil.getPlaceholderResolver(styleConfig, placeholderProps, function() {
                 return featureData;
             });
             return resolver(styleConfig);

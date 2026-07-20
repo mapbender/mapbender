@@ -183,7 +183,7 @@
             var geometry = this.map.model.featureToGeoJsonGeometry(feature);
             geometry.style = this.map.model.extractSvgFeatureStyle(layer, feature);
             if (geometry.style && geometry.style.externalGraphic) {
-                geometry.style.externalGraphic = Mapbender.Util.StyleUtil.fixAssetPath(geometry.style.externalGraphic);
+                geometry.style.externalGraphic = Mapbender.StyleUtil.fixAssetPath(geometry.style.externalGraphic);
             }
             return geometry;
         }
@@ -243,7 +243,7 @@
             for (var i = 0; i < layer.markers.length; ++i) {
                 var marker = layer.markers[i];
                 var originalUrl = marker.icon && marker.icon.url;
-                var internalUrl = Mapbender.Util.StyleUtil.fixAssetPath(originalUrl);
+                var internalUrl = Mapbender.StyleUtil.fixAssetPath(originalUrl);
                 if (!internalUrl) {
                     continue;
                 }

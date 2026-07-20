@@ -10,7 +10,7 @@ window.Mapbender.Util.ExternalGraphicUtil = class {
     /**
      * Creates an ol style (or iconStyle) that displays an external graphic
      * @param {{externalGraphic: string, graphicWidth: ?int, graphicHeight: ?int}} styleConfig
-     * @param {true|undefined} [iconStyleOnly] if set to false, only the IconStyle instead of the full ol style is returned
+     * @param {boolean} [iconStyleOnly=false] if true, only the IconStyle instead of the full ol style is returned
      * @return {ol.Style|ol.style.Icon}
      */
     static getIconStyle(styleConfig, iconStyleOnly) {
