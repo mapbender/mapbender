@@ -14,6 +14,8 @@ window.Mapbender.Util.ExternalGraphicUtil = class {
      * @return {ol.Style|ol.style.Icon}
      */
     static getIconStyle(styleConfig, iconStyleOnly) {
+        if (!styleConfig.externalGraphic) return null;
+
         const iconStyle = new ol.style.Icon({
             src: styleConfig.externalGraphic
         });
