@@ -55,10 +55,6 @@ class WelcomeController extends AbstractController
             }
         }
 
-        $dates = array_map(function ($application) {
-                return $application->getUpdated();
-        }, $allowedApplications);
-
         if ($this->sortOrder === 'date' || $this->sortOrder === 'title') {
             usort($allowedApplications, function (Application $a, Application $b) {
                 if ($this->sortOrder === 'date') {
