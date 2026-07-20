@@ -40,7 +40,7 @@
 
     --backend-popup-max-width: 800px;
     // allows popups to grow bigger than --backend-popup-max-width on large screens
-    --backend-max-width-override: 65vw;
+    --backend-popup-max-width-override: 65vw;
 
     // ---- Backgrounds ----
     --background-color: #{$backgroundColor};
