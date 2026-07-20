@@ -1,7 +1,8 @@
 window.Mapbender = Mapbender || {};
 window.Mapbender.StyleUtil = (function() {
-    var _svgStyleDefaults, cssKeywordColors, _svgCallbackDefaultProps;
-    var stripAssetUrlRxp = /^.*?(\/)(bundles\/.*)/;
+    let _svgStyleDefaults, cssKeywordColors, _svgCallbackDefaultProps;
+    let stripAssetUrlRxp = /^.*?(\/)(bundles\/.*)/;
+    let placeholderRegex = /\${([^}]+)}/g;
 
     var methods = {
         /**
@@ -71,10 +72,15 @@ window.Mapbender.StyleUtil = (function() {
         },
         fixSvgStyleAssetUrls: function(style) {
             if (style && style.externalGraphic) {
-                style.externalGraphic = this._fixAssetPath(style.externalGraphic);
+                style.externalGraphic = this.fixAssetPath(style.externalGraphic);
             }
         },
-        _fixAssetPath: function(url) {
+        /**
+         * Convert potentially absolute URL to web-local url pointing somewhere into bundles/
+         * @param {String} url
+         * @returns {String|boolean}
+         */
+        fixAssetPath: function(url) {
             var urlOut = url.replace(stripAssetUrlRxp, '$2');
             if (urlOut === url && (urlOut || '').indexOf('bundles/') !== 0) {
                 console.warn("Asset path could not be resolved to local bundles reference", url);
@@ -239,6 +245,62 @@ window.Mapbender.StyleUtil = (function() {
 
             return new ol.style.Style(options);
         },
+
+                /**
+         *
+         * @param {Object} data
+         * @param {string[]} [candidates] to limit scanning to specifically named properties (default: scan all properties)
+         * @return {string[]}
+         */
+        detectDataPlaceholders: function(data, candidates) {
+            return (candidates || Object.keys(data)).filter(function(prop) {
+                // Reset global-flagged RegExp state.
+                // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test#using_test_on_a_regex_with_the_global_flag
+                placeholderRegex.lastIndex = 0;
+                return placeholderRegex.test(data[prop] || '');
+            });
+        },
+
+        /**
+         * @param {Object} original
+         * @param {Array<String>} propertyNames
+         * @param {function} dataCallback
+         * @return {function}
+         * @private
+         */
+        getPlaceholderResolver: function(original, propertyNames, dataCallback) {
+            if (propertyNames.length) {
+                return function (styleConfig, feature) {
+                    const valuesOut = Object.assign({}, styleConfig);
+                    const data = dataCallback(feature);
+                    propertyNames.forEach(function (prop) {
+                        valuesOut[prop] = styleConfig[prop].replace(placeholderRegex, function (match, dataProp) {
+                            const dataValue = data[dataProp];
+                            return dataValue || (prop === 'label' ? '' : dataValue);
+                        });
+                    });
+                    return valuesOut;
+                }
+            } else {
+                return function (original) {
+                    return original;
+                }
+            }
+        },
+
+        /**
+         * @param {object} styleConfig
+         * @param {object} featureData
+         * @return {object}
+         */
+        resolvePlaceholders: function(styleConfig, featureData) {
+            const placeholderProps = Mapbender.StyleUtil.detectDataPlaceholders(styleConfig);
+            const resolver = Mapbender.StyleUtil.getPlaceholderResolver_(styleConfig, placeholderProps, function() {
+                return featureData;
+            });
+            return resolver(styleConfig);
+        },
+
     };
 
     _svgStyleDefaults = {
