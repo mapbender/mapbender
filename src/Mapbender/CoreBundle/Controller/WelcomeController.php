@@ -24,7 +24,11 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class WelcomeController extends AbstractController
 {
-    public function __construct(protected ApplicationYAMLMapper $yamlRepository, protected ManagerRegistry $doctrine)
+    public function __construct(
+        protected ApplicationYAMLMapper $yamlRepository,
+        protected ManagerRegistry $doctrine,
+        protected string $sortOrder,
+    )
     {
     }
 
@@ -39,13 +43,32 @@ class WelcomeController extends AbstractController
             'title' => 'ASC',
         ]);
         /** @var Application[] $allApplications */
-        $allApplications = array_merge($yamlApplications, $dbApplications);
+        $allApplications = match($this->sortOrder) {
+            'yaml-first' => array_merge($yamlApplications, $dbApplications),
+            default => array_merge($dbApplications, $yamlApplications),
+        };
+
         $allowedApplications = [];
         foreach ($allApplications as $application) {
             if ($this->isGranted(ResourceDomainApplication::ACTION_VIEW, $application)) {
                 $allowedApplications[] = $application;
             }
         }
+
+        $dates = array_map(function ($application) {
+                return $application->getUpdated();
+        }, $allowedApplications);
+
+        if ($this->sortOrder === 'date' || $this->sortOrder === 'title') {
+            usort($allowedApplications, function (Application $a, Application $b) {
+                if ($this->sortOrder === 'date') {
+                    return $b->getUpdated() <=> $a->getUpdated();
+                } else {
+                    return strcasecmp($a->getTitle(), $b->getTitle());
+                }
+            });
+        }
+
         return $this->render('@MapbenderCore/Welcome/list.html.twig', [
             'applications' => $allowedApplications,
             'create_permission' => $this->isGranted(ResourceDomainInstallation::ACTION_CREATE_APPLICATIONS),

@@ -14,6 +14,8 @@
              Caching machinery can only be safely enabled after these cases have been adressed properly -->
         <parameter key="cachable.mapbender.application.config">false</parameter>
         <parameter key="mapbender.application.yaml_entity_repository.class">Mapbender\CoreBundle\Component\ApplicationYAMLMapper</parameter>
+        <!-- available options: db-first, yaml-first, yaml-only, date, title -->
+        <parameter key="mapbender.application.sortorder">db-first</parameter>
         <parameter key="mapbender.source.typedirectory.service.class">Mapbender\CoreBundle\Component\Source\TypeDirectoryService</parameter>
         <parameter key="mapbender.uploads_manager.service.class">Mapbender\CoreBundle\Component\UploadsManager</parameter>
         <parameter key="mapbender.application_importer.service.class">Mapbender\ManagerBundle\Component\ImportHandler</parameter>

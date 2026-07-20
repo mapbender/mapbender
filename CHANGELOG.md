@@ -38,6 +38,7 @@ Other:
 * [Develop] Add ExternalGraphicUtil (previously part of the digitizer module) ([PR#1897](https://github.com/mapbender/mapbender/pull/1897))
 * In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
 * Changed default login-backdrop image ([PR#1845](https://github.com/mapbender/mapbender/pull/1845))
+* Default sort order of application list changed to db first, but made configurable ([PR#1898](https://github.com/mapbender/mapbender/pull/1898))
 
 ## v4.2.6
 Features:

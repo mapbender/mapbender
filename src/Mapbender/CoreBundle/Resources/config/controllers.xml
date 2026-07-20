@@ -37,6 +37,7 @@
                  public="true">
             <argument type="service" id="mapbender.application.yaml_entity_repository" />
             <argument type="service" id="doctrine" />
+            <argument>%mapbender.application.sortorder%</argument>
             <tag name="container.service_subscriber" />
             <call method="setContainer">
                 <argument type="service" id="Psr\Container\ContainerInterface" />
