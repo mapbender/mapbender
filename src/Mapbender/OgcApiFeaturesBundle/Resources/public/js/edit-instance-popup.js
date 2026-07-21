@@ -1,13 +1,13 @@
-class StyleInstanceEditor {
+class OgcApiFeaturesEditInstancePopup {
 
     // ── Initialization ──
 
-    constructor() {
-        this.$table = $('.collectionTable');
-        if (!this.$table.length) return;
-
-        this.styleUrl = this.$table.attr('data-style-url');
-        this.sourceId = this.$table.attr('data-source-id') || '';
+    constructor($modalContainer, styleUrl, sourceId, properties, propertyTitles) {
+        this.$container = $modalContainer;
+        this.styleUrl = styleUrl;
+        this.sourceId = sourceId;
+        this.properties = properties;
+        this.propertyTitles = propertyTitles;
         this.styleMap = {};
         this._filterState = { name: '', origin: '', source: this.sourceId };
         this._originalOptions = new Map();
@@ -18,6 +18,9 @@ class StyleInstanceEditor {
         this._bindEvents();
         this._loadStyles();
         this._initSortable();
+
+        this.updatePreview();
+        this._initTooltipCheckboxes($modalContainer);
     }
 
     _loadStyles() {
@@ -29,9 +32,6 @@ class StyleInstanceEditor {
             this._initFilters();
             this._applyFilters();
             this._initSecFilters();
-            document.querySelectorAll('.popover-body').forEach(body => {
-                this.updatePreview(body);
-            });
         });
     }
 
@@ -45,7 +45,7 @@ class StyleInstanceEditor {
         document.querySelectorAll(selector).forEach(select => {
             const opts = [];
             for (const opt of select.options) {
-                opts.push({ value: opt.value, text: opt.textContent });
+                opts.push({value: opt.value, text: opt.textContent});
             }
             targetMap.set(select, opts);
         });
@@ -55,34 +55,12 @@ class StyleInstanceEditor {
 
     _bindEvents() {
         $(document).on('change', 'select[id$="_styleId"]', (e) => {
-            const popoverBody = e.target.closest('.popover-body');
-            if (popoverBody) this.updatePreview(popoverBody);
+            this.updatePreview();
             this._updateNativeStyleIndicator(e.target);
             this._updateChangedIndicator(e.target);
         });
 
-        this.$table.on('click', '.-fn-toggle-layer-detail', (e) => {
-            const $trigger = $(e.currentTarget);
-            const target = $trigger.attr('data-toggle-target');
-            const $target = $(target);
-            $target.parent().toggleClass('display');
-            $target.toggleClass('show');
-            $(`.popover:not(${target})`).parent().removeClass('display');
-            $(`.popover:not(${target})`).removeClass('show');
-            if ($target.hasClass('show')) {
-                const body = $target.find('.popover-body')[0];
-                if (body) this.updatePreview(body);
-                const row = $trigger.closest('tr')[0];
-                if (body && row) this._initTooltipCheckboxes(body, row);
-            }
-        });
-
-        this.$table.on('click', '.-fn-close-popover', (e) => {
-            e.preventDefault();
-            this._dismissPopover($(e.currentTarget));
-        });
-
-        this.$table.on('click', '.-fn-confirm-style', (e) => {
+        this.$container.on('click', '.-fn-confirm-style', (e) => {
             e.preventDefault();
             const $btn = $(e.currentTarget);
             this._dismissPopover($btn);
@@ -98,7 +76,7 @@ class StyleInstanceEditor {
             }
         });
 
-        this.$table.on('click', '.-fn-apply-style-filter', (e) => {
+        this.$container.on('click', '.-fn-apply-style-filter', (e) => {
             e.preventDefault();
             const row = e.currentTarget.closest('.style-filter-row');
             if (!row) return;
@@ -110,16 +88,16 @@ class StyleInstanceEditor {
             this._updateFilterButtons();
         });
 
-        this.$table.on('click', '.-fn-reset-style-filter', (e) => {
+        this.$container.on('click', '.-fn-reset-style-filter', (e) => {
             e.preventDefault();
-            this._filterState = { name: '', origin: '', source: this.sourceId };
+            this._filterState = {name: '', origin: '', source: this.sourceId};
             this._syncFilters();
             this._applyFilters();
             this._updateFilterButtons();
         });
 
         // Secondary styles: toggle panel
-        this.$table.on('click', '.-fn-toggle-secondary-styles', (e) => {
+        this.$container.on('click', '.-fn-toggle-secondary-styles', (e) => {
             e.preventDefault();
             const section = e.currentTarget.closest('.secondary-styles-section');
             const panel = section.querySelector('.secondary-styles-panel');
@@ -131,7 +109,7 @@ class StyleInstanceEditor {
         });
 
         // Secondary styles: apply filter
-        this.$table.on('click', '.-fn-apply-sec-filter', (e) => {
+        this.$container.on('click', '.-fn-apply-sec-filter', (e) => {
             e.preventDefault();
             const row = e.currentTarget.closest('.secondary-filter-row');
             if (!row) return;
@@ -143,15 +121,16 @@ class StyleInstanceEditor {
         });
 
         // Secondary styles: reset filter
-        this.$table.on('click', '.-fn-reset-sec-filter', (e) => {
+        this.$container.on('click', '.-fn-reset-sec-filter', (e) => {
             e.preventDefault();
-            this._secFilterState = { name: '', origin: '', source: this.sourceId };
+            this._secFilterState = {name: '', origin: '', source: this.sourceId};
             this._syncSecFilters();
             this._applySecFilters();
         });
 
         // Secondary styles: update badge on selection change
-        this.$table.on('change', '.secondary-style-select', (e) => {
+        this.$container.on('change', '.secondary-style-select', (e) => {
+            // TODO: update secondary count on save
             this._updateSecondaryCount(e.target);
         });
     }
@@ -216,8 +195,7 @@ class StyleInstanceEditor {
         const source = String(entry.sourceId || '');
         if (nameFilter && !name.includes(nameFilter)) return false;
         if (originFilter && origin !== originFilter) return false;
-        if (sourceFilter && source && !source.toLowerCase().includes(sourceFilter)) return false;
-        return true;
+        return !(sourceFilter && source && !source.toLowerCase().includes(sourceFilter));
     }
 
     _applyFilters() {
@@ -253,9 +231,9 @@ class StyleInstanceEditor {
     }
 
     _syncFilterInputs(prefix, filterState) {
-        document.querySelectorAll(`.${prefix}-name`).forEach(el => el.value = filterState.name);
-        document.querySelectorAll(`.${prefix}-origin`).forEach(el => el.value = filterState.origin);
-        document.querySelectorAll(`.${prefix}-source`).forEach(el => el.value = filterState.source);
+        document.querySelectorAll(`.${ prefix }-name`).forEach(el => el.value = filterState.name);
+        document.querySelectorAll(`.${ prefix }-origin`).forEach(el => el.value = filterState.origin);
+        document.querySelectorAll(`.${ prefix }-source`).forEach(el => el.value = filterState.source);
     }
 
     _applySecFilters() {
@@ -405,7 +383,7 @@ class StyleInstanceEditor {
     // ── Sortable & Preview ──
 
     _initSortable() {
-        this.$table.each(function() {
+        this.$container.each(function () {
             $('tbody', this).sortable({
                 cursor: 'move',
                 axis: 'y',
@@ -421,8 +399,8 @@ class StyleInstanceEditor {
         });
     }
 
-    updatePreview(popoverBody) {
-        const select = popoverBody.querySelector('select[id$="_styleId"]');
+    updatePreview() {
+        const select = this.$container[0].querySelector('select[id$="_styleId"]');
         if (!select) return;
         const id = select.value;
         const entry = id ? this.styleMap[id] : null;
@@ -431,9 +409,12 @@ class StyleInstanceEditor {
         if (entry) {
             const raw = entry.style || entry;
             collectionId = entry.collectionId || null;
-            try { s = (typeof raw === 'string') ? JSON.parse(raw) : raw; } catch(e) {}
+            try {
+                s = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+            } catch (e) {
+            }
         }
-        const previewWrap = popoverBody.querySelector('.layer-preview');
+        const previewWrap = this.$container[0].querySelector('.layer-preview');
         if (!previewWrap) return;
         const isMultiLayer = Mapbender.StyleUtils.isMultiLayerStyle(s);
         let msg = previewWrap.querySelector('.preview-message');
@@ -457,44 +438,35 @@ class StyleInstanceEditor {
 
     // ── Tooltip Property Checkboxes ──
 
-    _initTooltipCheckboxes(popoverBody, row) {
-        const container = popoverBody.querySelector('.tooltip-checkbox-list');
+    _initTooltipCheckboxes() {
+        const container = this.$container[0].querySelector('.tooltip-checkbox-list');
         if (!container || container.dataset.loaded === 'true') return;
 
-        // Read stored properties from data attribute
-        let propNames = [];
-        try {
-            propNames = JSON.parse(row.dataset.properties || '[]');
-        } catch(e) {}
-        if (!Array.isArray(propNames)) propNames = [];
-
-        let propertyTitles = {};
-        try {
-            propertyTitles = JSON.parse(row.dataset.propertyTitles || '{}');
-        } catch(e) {}
-
         // Find the hidden input for tooltipPropertyMap
-        const hiddenInput = popoverBody.querySelector('input[id$="_tooltipPropertyMap"]');
+        const hiddenInput = this.$container[0].querySelector('input[id$="_tooltipPropertyMap"]');
         let selected = [];
         if (hiddenInput && hiddenInput.value) {
-            try { selected = JSON.parse(hiddenInput.value); } catch(e) {}
+            try {
+                selected = JSON.parse(hiddenInput.value);
+            } catch (e) {
+            }
             if (!Array.isArray(selected)) selected = [];
         }
 
-        this._renderCheckboxes(container, propNames, selected, hiddenInput, propertyTitles);
+        this._renderCheckboxes(container, selected, hiddenInput);
     }
 
-    _renderCheckboxes(container, propNames, selected, hiddenInput, propertyTitles) {
+    _renderCheckboxes(container, selected, hiddenInput) {
         container.dataset.loaded = 'true';
         container.innerHTML = '';
 
-        if (propNames.length === 0) {
+        if (this.properties.length === 0) {
             container.innerHTML = '<span class="text-muted small">' + (container.dataset.emptyText || 'No properties') + '</span>';
             return;
         }
 
-        propNames.forEach(prop => {
-            const id = 'tooltip_cb_' + Math.random().toString(36).substr(2, 6);
+        this.properties.forEach(prop => {
+            const id = 'tooltip_cb_' + Math.random().toString(36).substring(2, 8);
             const wrapper = document.createElement('div');
             wrapper.className = 'form-check tooltip-prop-check';
 
@@ -509,7 +481,7 @@ class StyleInstanceEditor {
             const label = document.createElement('label');
             label.className = 'form-check-label small';
             label.htmlFor = id;
-            const title = propertyTitles?.[prop];
+            const title = this.propertyTitles?.[prop];
             if (title) {
                 label.textContent = title + ' ';
                 const keySpan = document.createElement('span');
@@ -535,4 +507,3 @@ class StyleInstanceEditor {
         hiddenInput.value = checked.length > 0 ? JSON.stringify(checked) : '';
     }
 }
-$(function() { new StyleInstanceEditor(); });
