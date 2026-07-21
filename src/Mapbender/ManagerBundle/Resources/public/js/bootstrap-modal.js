@@ -19,32 +19,32 @@ window.Mapbender.bootstrapModal = (function ($) {
     function bootstrapModal(content, options) {
         $wrapper = $wrapper || $($.parseHTML(wrapperTemplate));
         $mContent = $mContent || $($.parseHTML(contentTemplate));
-        var $content;
+        let $content;
         try {
             $content = $(content);
         } catch (Error) {
             $content = $(document.createElement('p')).append(content);
         }
-        var $element = $wrapper.clone();
+        const $element = $wrapper.clone();
         $('.modal-dialog', $element).addClass(options.cssClass || '');
-        var $contentStructure = $mContent.clone();
+        const $contentStructure = $mContent.clone();
         if (!options.closeButton) {
             $('.btn-close', $contentStructure).remove();
         }
-        var $modalContent = $(document.createElement('div'))
+        const $modalContent = $(document.createElement('div'))
             .addClass('modal-content')
             .append($contentStructure)
         ;
         $('.modal-body', $modalContent).append($content);
         $('.modal-dialog', $element).append($modalContent);
-        var modalSubTitle = (options.subTitle) ? '<br><small class="fs-6">' + options.subTitle + '</small>' : '';
-        var modalTitle = options.title + modalSubTitle;
+        const modalSubTitle = (options.subTitle) ? '<br><small class="fs-6">' + options.subTitle + '</small>' : '';
+        const modalTitle = options.title + modalSubTitle;
         $('.modal-title', $element).html(modalTitle);
 
-        var buttons_ = options.buttons || [];
-        for (var b = 0; b < buttons_.length; ++b) {
-            var buttonOptions = buttons_[b];
-            var $b = $(document.createElement('button'))
+        const buttons_ = options.buttons || [];
+        for (let b = 0; b < buttons_.length; ++b) {
+            const buttonOptions = buttons_[b];
+            const $b = $(document.createElement('button'))
                 .attr({type: buttonOptions.type || 'button', 'class': buttonOptions.cssClass})
                 .text(buttonOptions.label)
             ;
@@ -54,7 +54,7 @@ window.Mapbender.bootstrapModal = (function ($) {
             if (/popupClose/.test(buttonOptions.cssClass)) {
                 $b.attr('data-bs-dismiss', 'modal');
             } else if (buttonOptions.callback) {
-                $b.on('click', buttonOptions.callback.bind($b.get(0)));
+                $b.on('click', (e) => buttonOptions.callback(e, $element));
             }
             $('.modal-footer', $element).append($b);
         }

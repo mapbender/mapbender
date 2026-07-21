@@ -144,8 +144,8 @@ $(function() {
                     label: Mapbender.trans(strings.save || 'mb.actions.save'),
                     cssClass: 'btn btn-primary btn-sm',
                     dataTest: 'mb-element-save',
-                    callback: function() {
-                        elementFormSubmit(this.$element, formUrl)
+                    callback: function(e, $element) {
+                        elementFormSubmit($element, formUrl)
                             .then(function(data) {
                                 // NOTE: data is undefined in a HTTP 204 response
                                 if (data && data.length > 0) {
