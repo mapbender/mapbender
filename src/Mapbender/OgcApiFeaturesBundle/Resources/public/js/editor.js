@@ -13,7 +13,7 @@ class OgcApiFeaturesEditor {
 
     _bindEvents() {
         // TODO: on safe refresh style/sec style checkbox
-        $(".editCollectionLayer").on("click", function (e) {
+        $(".editCollectionLayer").on("click", e => {
             e.preventDefault();
             Mapbender.startElementEdit($(e.target).closest('.editCollectionLayer').attr('data-url'), {
                 // TODO: translate

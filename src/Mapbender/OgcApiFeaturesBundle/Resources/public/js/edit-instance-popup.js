@@ -9,19 +9,19 @@ class OgcApiFeaturesEditInstancePopup {
         this.properties = properties;
         this.propertyTitles = propertyTitles;
         this.styleMap = {};
-        this._filterState = { name: '', origin: '', source: this.sourceId };
+        this._filterState = {name: '', origin: '', source: this.sourceId};
         this._originalOptions = new Map();
         this._savedValues = new Map();
         this._secOriginalOptions = new Map();
-        this._secFilterState = { name: '', origin: '', source: this.sourceId };
+        this._secFilterState = {name: '', origin: '', source: this.sourceId};
+        this.toolTipContainer = this.$container.find('.tooltip-checkbox-list')[0];
+        this.toolTipInput = this.$container[0].querySelector('input[id$="_tooltipPropertyMap"]');
 
         this._bindEvents();
         this._loadStyles();
-        this._initSortable();
         this._initTabs();
-
-        this.updatePreview();
-        this._initTooltipCheckboxes($modalContainer);
+        this._initTooltipCheckboxes();
+        this._initToolTipSortable();
     }
 
     _initTabs() {
@@ -37,6 +37,7 @@ class OgcApiFeaturesEditInstancePopup {
             this._initFilters();
             this._applyFilters();
             this._initSecFilters();
+            this.updatePreview();
         });
     }
 
@@ -228,7 +229,9 @@ class OgcApiFeaturesEditInstancePopup {
             input.value = this._secFilterState.source;
         });
         this._applySecFilters();
-        this._initSecondaryBadges();
+        document.querySelectorAll('.secondary-style-select').forEach(select => {
+            this._updateSecondaryCount(select);
+        });
     }
 
     _syncSecFilters() {
@@ -263,7 +266,7 @@ class OgcApiFeaturesEditInstancePopup {
 
     _updateSecondaryCount(select) {
         const count = select.selectedOptions.length;
-        // Update badge in the popover toggle button
+        // Update badge in the toggle button
         const section = select.closest('.secondary-styles-section');
         if (section) {
             const badge = section.querySelector('.secondary-count');
@@ -272,21 +275,6 @@ class OgcApiFeaturesEditInstancePopup {
                 badge.style.display = count > 0 ? '' : 'none';
             }
         }
-        // Update badge in the table row
-        const row = select.closest('tr');
-        if (row) {
-            const rowBadge = row.querySelector('.sec-style-count');
-            if (rowBadge) {
-                rowBadge.textContent = count;
-                rowBadge.style.display = count > 0 ? '' : 'none';
-            }
-        }
-    }
-
-    _initSecondaryBadges() {
-        document.querySelectorAll('.secondary-style-select').forEach(select => {
-            this._updateSecondaryCount(select);
-        });
     }
 
     // ── Custom Dropdown Sync ──
@@ -385,24 +373,7 @@ class OgcApiFeaturesEditInstancePopup {
         return match ? match.text : savedVal;
     }
 
-    // ── Sortable & Preview ──
-
-    _initSortable() {
-        this.$container.each(function () {
-            $('tbody', this).sortable({
-                cursor: 'move',
-                axis: 'y',
-                items: 'tr',
-                distance: 6,
-                containment: 'parent',
-                stop: () => {
-                    $('input[type="hidden"]', $('.collectionTable tbody tr')).each((idx, item) => {
-                        $(item).val(idx);
-                    });
-                }
-            });
-        });
-    }
+    // ── Preview ──
 
     updatePreview() {
         const select = this.$container[0].querySelector('select[id$="_styleId"]');
@@ -443,34 +414,47 @@ class OgcApiFeaturesEditInstancePopup {
 
     // ── Tooltip Property Checkboxes ──
 
+    _initToolTipSortable() {
+        $(this.toolTipContainer).sortable({
+            cursor: 'move',
+            axis: 'y',
+            items: '.form-check',
+            distance: 6,
+            cancel: 'input',
+            containment: 'parent',
+            stop: () => {
+                this._syncTooltipHidden();
+            }
+        });
+    }
+
     _initTooltipCheckboxes() {
-        const container = this.$container[0].querySelector('.tooltip-checkbox-list');
-        if (!container || container.dataset.loaded === 'true') return;
+        if (!this.toolTipContainer || this.toolTipContainer.dataset.loaded === 'true') return;
 
         // Find the hidden input for tooltipPropertyMap
-        const hiddenInput = this.$container[0].querySelector('input[id$="_tooltipPropertyMap"]');
         let selected = [];
-        if (hiddenInput && hiddenInput.value) {
+        if (this.toolTipInput && this.toolTipInput.value) {
             try {
-                selected = JSON.parse(hiddenInput.value);
+                selected = JSON.parse(this.toolTipInput.value);
             } catch (e) {
             }
             if (!Array.isArray(selected)) selected = [];
         }
 
-        this._renderCheckboxes(container, selected, hiddenInput);
+        this._renderCheckboxes(selected);
     }
 
-    _renderCheckboxes(container, selected, hiddenInput) {
-        container.dataset.loaded = 'true';
-        container.innerHTML = '';
+    _renderCheckboxes(selected) {
+        this.toolTipContainer.dataset.loaded = 'true';
+        this.toolTipContainer.innerHTML = '';
 
         if (this.properties.length === 0) {
-            container.innerHTML = '<span class="text-muted small">' + (container.dataset.emptyText || 'No properties') + '</span>';
+            this.toolTipContainer.innerHTML = '<span class="text-muted small">' + (this.toolTipContainer.dataset.emptyText || 'No properties') + '</span>';
             return;
         }
 
-        this.properties.forEach(prop => {
+        // show the already selected items first
+        [...selected, ...this.properties.filter((item) => !selected.includes(item))].forEach(prop => {
             const id = 'tooltip_cb_' + Math.random().toString(36).substring(2, 8);
             const wrapper = document.createElement('div');
             wrapper.className = 'form-check tooltip-prop-check';
@@ -481,7 +465,7 @@ class OgcApiFeaturesEditInstancePopup {
             cb.id = id;
             cb.value = prop;
             cb.checked = selected.includes(prop);
-            cb.addEventListener('change', () => this._syncTooltipHidden(container, hiddenInput));
+            cb.addEventListener('change', () => this._syncTooltipHidden());
 
             const label = document.createElement('label');
             label.className = 'form-check-label small';
@@ -499,16 +483,17 @@ class OgcApiFeaturesEditInstancePopup {
 
             wrapper.appendChild(cb);
             wrapper.appendChild(label);
-            container.appendChild(wrapper);
+            this.toolTipContainer.appendChild(wrapper);
         });
     }
 
-    _syncTooltipHidden(container, hiddenInput) {
-        if (!hiddenInput) return;
+    _syncTooltipHidden() {
+        if (!this.toolTipInput) return;
         const checked = [];
-        container.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+        this.toolTipContainer.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
             checked.push(cb.value);
         });
-        hiddenInput.value = checked.length > 0 ? JSON.stringify(checked) : '';
+        this.toolTipInput.value = checked.length > 0 ? JSON.stringify(checked) : '';
+        console.log(checked);
     }
 }
