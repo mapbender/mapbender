@@ -1,6 +1,17 @@
 // TODO: integrate this into sidepane.js, having this as separate file is makes no sense
 ((function($) {
     var lastFocusedListItem = null; // Global tracking of last focused list item
+    function updateResponsiveSidepaneVisibility($elements) {
+        var wholeSidePaneVisible = false;
+        for (var i = 0; i < $elements.length; ++i) {
+            if ($($elements[i]).css('display') !== 'none') {
+                wholeSidePaneVisible = true;
+                break;
+            }
+        }
+        $elements.first().closest('.sidePane').toggleClass('hidden', !wholeSidePaneVisible);
+    }
+
     function updateResponsive($buttons) {
         var $activeButton = $buttons.filter('.active').first();
         if ($activeButton.length && !$($activeButton).is(':visible')) {
@@ -11,14 +22,7 @@
                 $firstVisibleButton.trigger('click');
             }
         }
-        var wholeSidePaneVisible = false;
-        for (var i = 0; i < $buttons.length; ++i) {
-            if ($($buttons[i]).css('display') !== 'none') {
-                wholeSidePaneVisible = true;
-                break;
-            }
-        }
-        $buttons.first().closest('.sidePane').toggleClass('hidden', !wholeSidePaneVisible);
+        updateResponsiveSidepaneVisibility($buttons);
     }
 
     function notifyElements(scope, state) {
@@ -44,6 +48,16 @@
             });
         });
     }
+
+    function addUnstyledSidepaneEvents(node) {
+        //check if all items are invisible and hide/show sidepane accordingly
+        const $elements = $(node).find('.mb-element');
+        window.addEventListener('resize', function() {
+            updateResponsiveSidepaneVisibility($elements);
+        });
+        updateResponsiveSidepaneVisibility($elements);
+    }
+
     function addTabContainerElementEvents() {
         var $panels = $('>.container[id]', this)
         var $buttons = $('>.tabs >.tab', this);
@@ -449,6 +463,8 @@
             $accordions.each(addAccordionElementEvents);
         } else if ($listGroup.length) {
             $listGroup.each(addListGroupEvents);
+        } else {
+            addUnstyledSidepaneEvents(node);
         }
     }
 
