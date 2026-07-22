@@ -88,10 +88,10 @@
                 </td>
                 <td>
                     <input type="checkbox" class="form-check-input style-indicator" disabled readonly
-                           {% if layer.styleId.vars.value is not empty %}checked{% endif %}>
+                           {% if layer.vars.data.hasStyle %}checked{% endif %}>
                     <span class="badge bg-secondary sec-style-count"
                           title="{{ 'mb.manager.admin.style.secondary_attached' | trans }}"
-                          {% if layer.vars.data.secondaryStyleIds|default([])|length == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleIds|default([])|length }}</span>
+                          {% if layer.vars.data.secondaryStyleCount == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleCount }}</span>
                 </td>
                 <td>
                     <a href="#"

@@ -12,18 +12,30 @@ class OgcApiFeaturesEditor {
     }
 
     _bindEvents() {
-        // TODO: on safe refresh style/sec style checkbox
         $(".editCollectionLayer").on("click", e => {
+            const $row = $(e.target).closest('tr');
+
             e.preventDefault();
             Mapbender.startElementEdit($(e.target).closest('.editCollectionLayer').attr('data-url'), {
                 // TODO: translate
                 title: "Collection-Layer editieren",
             }, undefined, ($modal, data) => {
+                // TODO: translate
                 Mapbender.info(Mapbender.trans("mb.application.save.success"));
                 $modal.modal('hide');
+
+                const $hasStyleCheckbox = $row.find('.style-indicator');
+                if (data.hasStyle) {
+                    $hasStyleCheckbox.attr('checked', 'checked');
+                } else {
+                    $hasStyleCheckbox.removeAttr('checked');
+                }
+
+                const $secStyleBadge = $row.find('.sec-style-count');
+                $secStyleBadge.text(data.secondaryStyleCount);
+                $secStyleBadge.css('display', data.secondaryStyleCount > 0 ? 'inline-block' : 'none');
             }).then(response => {
-                const row = $(e.target).closest('tr');
-                new OgcApiFeaturesEditInstancePopup(response, this.styleUrl, this.sourceId, row.data('properties'), row.data('property-titles'));
+                new OgcApiFeaturesEditInstancePopup(response, this.styleUrl, this.sourceId, $row.data('properties'), $row.data('property-titles'));
             });
             return false;
         });

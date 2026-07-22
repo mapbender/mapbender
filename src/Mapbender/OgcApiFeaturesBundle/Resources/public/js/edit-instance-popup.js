@@ -136,7 +136,6 @@ class OgcApiFeaturesEditInstancePopup {
 
         // Secondary styles: update badge on selection change
         this.$container.on('change', '.secondary-style-select', (e) => {
-            // TODO: update secondary count on save
             this._updateSecondaryCount(e.target);
         });
     }

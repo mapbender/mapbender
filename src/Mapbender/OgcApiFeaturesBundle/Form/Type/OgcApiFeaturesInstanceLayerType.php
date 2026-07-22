@@ -69,18 +69,6 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
             ])
             ->add('priority', HiddenType::class, [
                 'required' => true,
-            ])
-            ->add('styleId', ChoiceType::class, [
-                'required' => false,
-                'label' => false,
-                'placeholder' => 'mb.manager.admin.style.none',
-                'attr' => ['class' => 'form-select form-select-sm style-select'],
-            ])
-            ->add('secondaryStyleIds', ChoiceType::class, [
-                'required' => false,
-                'multiple' => true,
-                'label' => false,
-                'attr' => ['class' => 'form-select form-select-sm secondary-style-select', 'size' => 6],
             ]);
     }
 }

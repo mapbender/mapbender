@@ -8,6 +8,7 @@ use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 use Mapbender\OgcApiFeaturesBundle\Form\Type\OgcApiFeaturesInstanceLayerSettingsType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -47,7 +48,10 @@ class OgcApiFeaturesController extends ApplicationControllerBase
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
-            return new Response(null, Response::HTTP_NO_CONTENT);
+            return new JsonResponse([
+                'hasStyle' => $instanceLayer->getHasStyle(),
+                'secondaryStyleCount' => $instanceLayer->getSecondaryStyleCount(),
+            ]);
         }
 
         return $this->render('@MapbenderOgcApiFeatures/instance-settings.html.twig', [
