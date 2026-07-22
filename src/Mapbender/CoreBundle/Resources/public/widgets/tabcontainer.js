@@ -7,7 +7,8 @@ var initTabContainer = function ($context) {
         .filter(function() {
             return (typeof ($(this).data('tabcontainer-initialized')) === 'undefined');
         })
-        .on('click', '.tab', function () {
+        .on('click keydown', '.tab', function (e) {
+            if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
             var $tabHeader = $(this);
             var $cnt = $(this).parent().parent();
             $('>.tabs >.tab, >.container', $cnt).removeClass('active');

@@ -13,20 +13,15 @@ class OgcApiFeaturesEditor {
 
     _bindEvents() {
         // TODO: on safe refresh style/sec style checkbox
-
-        console.log('eventies');
-
         $(".editCollectionLayer").on("click", function (e) {
             e.preventDefault();
             Mapbender.startElementEdit($(e.target).closest('.editCollectionLayer').attr('data-url'), {
                 // TODO: translate
                 title: "Collection-Layer editieren",
             }, undefined, ($modal, data) => {
-                console.log($modal, data);
                 Mapbender.info(Mapbender.trans("mb.application.save.success"));
                 $modal.modal('hide');
             }).then(response => {
-                console.log(response);
                 const row = $(e.target).closest('tr');
                 new OgcApiFeaturesEditInstancePopup(response, this.styleUrl, this.sourceId, row.data('properties'), row.data('property-titles'));
             });
@@ -40,7 +35,7 @@ class OgcApiFeaturesEditor {
                 cursor: 'move',
                 axis: 'y',
                 items: 'tr',
-                cancel: '.popover',
+                cancel: '.popover, input',
                 distance: 6,
                 containment: 'parent',
                 stop: () => {

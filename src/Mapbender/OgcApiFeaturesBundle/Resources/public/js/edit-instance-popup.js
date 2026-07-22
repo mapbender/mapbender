@@ -18,9 +18,14 @@ class OgcApiFeaturesEditInstancePopup {
         this._bindEvents();
         this._loadStyles();
         this._initSortable();
+        this._initTabs();
 
         this.updatePreview();
         this._initTooltipCheckboxes($modalContainer);
+    }
+
+    _initTabs() {
+        initTabContainer(this.$container);
     }
 
     _loadStyles() {
