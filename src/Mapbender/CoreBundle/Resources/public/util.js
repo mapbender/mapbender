@@ -104,6 +104,15 @@ Mapbender.restrictPopupPositioning = function ($dialogElement) {
         if (ui.position.left > window.innerWidth - 50) forcedX = window.innerWidth - 50;
         if (forcedX !== null) $target.css('left', forcedX);
         if (forcedY !== null) $target.css('top', forcedY);
+
+        const newX = forcedX ?? ui.position.left;
+        const newY = forcedY ?? ui.position.top;
+        if ((newX + $target.width()) > window.innerWidth) {
+            $target.css("width", window.innerWidth - newX);
+        }
+        if ((newY + $target.height()) > window.innerHeight) {
+            $target.css("height", window.innerHeight - newY);
+        }
     });
 };
 

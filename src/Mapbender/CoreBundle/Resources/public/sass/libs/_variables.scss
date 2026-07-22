@@ -6,6 +6,7 @@
 // Use CSS custom properties (--var-name) instead for runtime overrides.
 // SCSS variables remain as compile-time defaults that feed into CSS vars.
 // Client projects should override CSS variables in :root or component scope.
+// CSS Variables are set in _css_custom_properties.scss
 
 //------------------------------------------------------------------font
 $fontFamily: "Open Sans", "Calluna Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
