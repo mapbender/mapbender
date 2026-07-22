@@ -45,6 +45,8 @@ class WelcomeController extends AbstractController
         /** @var Application[] $allApplications */
         $allApplications = match($this->sortOrder) {
             'yaml-first' => array_merge($yamlApplications, $dbApplications),
+            'db-only' => $dbApplications,
+            'yaml-only' => $yamlApplications,
             default => array_merge($dbApplications, $yamlApplications),
         };
 
