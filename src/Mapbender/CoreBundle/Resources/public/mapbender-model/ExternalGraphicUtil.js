@@ -9,7 +9,7 @@ window.Mapbender.Util.ExternalGraphicUtil = class {
 
     /**
      * Creates an ol style (or iconStyle) that displays an external graphic
-     * @param {{externalGraphic: string, graphicWidth: ?int, graphicHeight: ?int}} styleConfig
+     * @param {{externalGraphic: string, graphicWidth: ?int, graphicHeight: ?int, graphicOffsetX: ?int, graphicOffsetY: ?int}} styleConfig
      * @param {boolean} [iconStyleOnly=false] if true, only the IconStyle instead of the full ol style is returned
      * @return {ol.Style|ol.style.Icon}
      */
@@ -17,7 +17,11 @@ window.Mapbender.Util.ExternalGraphicUtil = class {
         if (!styleConfig.externalGraphic) return null;
 
         const iconStyle = new ol.style.Icon({
-            src: styleConfig.externalGraphic
+            src: styleConfig.externalGraphic,
+            displacement: [
+                styleConfig.graphicOffsetX || 0,
+                styleConfig.graphicOffsetY || 0,
+            ]
         });
         if (styleConfig.graphicWidth || styleConfig.graphicHeight) {
             const onload = Mapbender.Util.ExternalGraphicUtil.getIconScaleHandler(iconStyle, styleConfig);
