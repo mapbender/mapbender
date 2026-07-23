@@ -123,15 +123,15 @@ $(function() {
         }
     });
 
-    function startEditElement(formUrl, strings, extraButtons) {
-        _formJax({url: formUrl}).then(function(nodes) {
+    function startEditElement(formUrl, strings, extraButtons, onSave) {
+        return _formJax({url: formUrl}).then(function(nodes) {
             if (!nodes || !nodes.length) {
-                return;
+                return false;
             }
-            openElementEditor($(nodes), formUrl, strings, extraButtons);
+            return openElementEditor($(nodes), formUrl, strings, extraButtons, onSave);
         });
     }
-    function openElementEditor($form, formUrl, strings, extraButtons) {
+    function openElementEditor($form, formUrl, strings, extraButtons, onSave) {
         // Support hack for Digitizer / DataManager using complex Yaml
         // configuration
         var useWideModal = !!$('.elementFormDataManager', $form).length;
@@ -144,8 +144,8 @@ $(function() {
                     label: Mapbender.trans(strings.save || 'mb.actions.save'),
                     cssClass: 'btn btn-primary btn-sm',
                     dataTest: 'mb-element-save',
-                    callback: function() {
-                        elementFormSubmit(this.$element, formUrl)
+                    callback: function(e, $element) {
+                        elementFormSubmit($element, formUrl)
                             .then(function(data) {
                                 // NOTE: data is undefined in a HTTP 204 response
                                 if (data && data.length > 0) {
@@ -159,7 +159,12 @@ $(function() {
                                     $newForm.data('dirty', wasDirty);
                                 } else {
                                     // Success
-                                    window.location.reload();
+                                    $form.data('dirty', false).data('discard', true);
+                                    if (onSave) {
+                                        onSave($modal, data);
+                                    } else {
+                                        window.location.reload();
+                                    }
                                 }
                             },
                             function (e, statusCode, message) {
@@ -211,6 +216,8 @@ $(function() {
             items: '>.collectionItem',
             handle: $sortableCollection.find('.card-header').length > 0 ? '.card-header' : false,
         });
+
+        return $modal;
     }
 
     function startElementChooser(regionName, listUrl) {
@@ -486,4 +493,7 @@ $(function() {
         $(target).parent().toggleClass('display');
         $(target).toggleClass('show');
     });
+
+    window.Mapbender = window.Mapbender || {};
+    window.Mapbender.startElementEdit = startEditElement;
 });

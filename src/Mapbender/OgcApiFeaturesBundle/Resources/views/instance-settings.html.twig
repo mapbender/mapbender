@@ -1,0 +1,21 @@
+{{ form_start(form) }}
+
+<div class="tabContainerAlt">
+    <ul class="tabs ui-helper-clearfix">
+        <li tabindex="0" role="tab" id="tab-ogcapifeatures-settings-style" class="tab nav-link active">
+            {{ 'mb.manager.admin.style.label' | trans }}
+        </li>
+        <li tabindex="0" role="tab" id="tab-ogcapifeatures-settings-tooltip" class="tab nav-link">
+            {{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}
+        </li>
+    </ul>
+
+    <div id="container-ogcapifeatures-settings-style" class="container active tab-pane pt-3" role="tabpanel">
+        {% include('@MapbenderOgcApiFeatures/instance-settings/style.html.twig') %}
+    </div>
+    <div id="container-ogcapifeatures-settings-tooltip" class="container tab-pane pt-3" role="tabpanel">
+        {% include('@MapbenderOgcApiFeatures/instance-settings/tooltip.html.twig') %}
+    </div>
+</div>
+
+{{ form_end(form) }}

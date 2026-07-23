@@ -125,7 +125,7 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
 
     public function setAllowInfo(?bool $allowInfo): static
     {
-        $this->allowInfo = (bool) $allowInfo;
+        $this->allowInfo = (bool)$allowInfo;
         return $this;
     }
 
@@ -136,7 +136,7 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
 
     public function setInfo(?bool $info): static
     {
-        $this->info = (bool) $info;
+        $this->info = (bool)$info;
         return $this;
     }
 
@@ -203,5 +203,15 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
     {
         $this->tooltipPropertyMap = $tooltipPropertyMap;
         return $this;
+    }
+
+    public function getHasStyle(): bool
+    {
+        return $this->styleId !== null;
+    }
+
+    public function getSecondaryStyleCount(): int
+    {
+        return count($this->getSecondaryStyleIds());
     }
 }

@@ -6,6 +6,11 @@ mb:
       layers: Collecties
       layer:
         title: Titel
+        popup_title: 'Eigenschappen voor collection "%name%" bewerken'
+        properties_saved: Eigenschappen succesvol opgeslagen.
+        style_help: Als dit is aangevinkt, is er een stijl gedefinieerd voor deze collection.
+        secondary_styles_help: Aantal secundaire stijlen waaruit de gebruiker in de frontend kan kiezen.
+        popup_help: Bewerk eigenschappen voor deze collection, zoals toegewezen stijlen, tooltip en feature-info-configuratie.
         active: Actief
         min_scale: Minimale schaal
         max_scale: Maximale schaal

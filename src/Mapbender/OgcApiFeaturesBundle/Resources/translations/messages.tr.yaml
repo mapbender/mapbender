@@ -6,6 +6,11 @@ mb:
       layers: Koleksiyonlar
       layer:
         title: Başlık
+        popup_title: 'collection "%name%" için özellikleri düzenle'
+        properties_saved: Özellikler başarıyla kaydedildi.
+        style_help: İşaretliyse bu collection için bir stil tanımlıdır.
+        secondary_styles_help: Kullanıcının ön yüzde seçebileceği ikincil stil sayısı.
+        popup_help: Bu collection için atanmış stiller, üzerine gelme ipucu ve obje bilgi yapılandırması gibi özellikleri düzenleyin.
         active: Aktif
         min_scale: Minimum ölçek
         max_scale: Maksimum ölçek

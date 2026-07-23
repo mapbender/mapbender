@@ -6,6 +6,11 @@ mb:
       layers: Collections
       layer:
         title: Title
+        popup_title: 'Edit properties for collection "%name%"'
+        properties_saved: Properties successfully saved.
+        style_help: If checked, there is a style defined for this collection.
+        secondary_styles_help: Number of secondary styles where the user can choose from in the frontend.
+        popup_help: Edit properties for this collection like assigned styles, tooltip and feature info configuration.
         active: Active
         min_scale: Minimum scale
         max_scale: Maximum scale

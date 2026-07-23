@@ -2,28 +2,19 @@
 
 namespace Mapbender\OgcApiFeaturesBundle\Form\Type;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Mapbender\CoreBundle\Entity\Style;
-use Mapbender\OgcApiFeaturesBundle\Form\Transformer\JsonArrayTransformer;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 
 class OgcApiFeaturesInstanceLayerType extends AbstractType
 {
-    public function __construct(
-        private readonly EntityManagerInterface $em,
-    )
-    {
-    }
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -33,8 +24,6 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $styleChoices = $this->getStyleChoices();
-
         $builder
             ->add('title', TextType::class, [
                 'required' => false,
@@ -80,39 +69,6 @@ class OgcApiFeaturesInstanceLayerType extends AbstractType
             ])
             ->add('priority', HiddenType::class, [
                 'required' => true,
-            ])
-            ->add('styleId', ChoiceType::class, [
-                'required' => false,
-                'label' => false,
-                'placeholder' => 'mb.manager.admin.style.none',
-                'choices' => $styleChoices,
-                'attr' => ['class' => 'form-select form-select-sm style-select'],
-            ])
-            ->add('nativeStyleId', HiddenType::class, [
-                'required' => false,
-            ])
-            ->add('secondaryStyleIds', ChoiceType::class, [
-                'required' => false,
-                'multiple' => true,
-                'label' => false,
-                'choices' => $styleChoices,
-                'attr' => ['class' => 'form-select form-select-sm secondary-style-select', 'size' => 6],
-            ])
-            ->add('tooltipPropertyMap', HiddenType::class, [
-                'required' => false,
-            ])
-        ;
-        $builder->get('tooltipPropertyMap')->addModelTransformer(new JsonArrayTransformer());
-    }
-
-    private function getStyleChoices(): array
-    {
-        $styles = $this->em->getRepository(Style::class)->findAll();
-        $choices = [];
-        foreach ($styles as $style) {
-            $label = $style->getName() ?: 'Style #' . $style->getId();
-            $choices[$label] = $style->getId();
-        }
-        return $choices;
+            ]);
     }
 }
