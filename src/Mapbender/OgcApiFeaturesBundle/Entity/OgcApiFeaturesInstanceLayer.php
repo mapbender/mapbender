@@ -57,6 +57,9 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
     #[ORM\Column(name: 'tooltip_property_map', type: 'json', nullable: true)]
     protected ?array $tooltipPropertyMap = null;
 
+    #[ORM\Column(name: 'tooltip_template', type: 'string', nullable: true)]
+    protected ?string $tooltipTemplate = null;
+
     public function setMinScale(?float $value): static
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
@@ -203,6 +206,16 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
     {
         $this->tooltipPropertyMap = $tooltipPropertyMap;
         return $this;
+    }
+
+    public function getTooltipTemplate(): ?string
+    {
+        return $this->tooltipTemplate;
+    }
+
+    public function setTooltipTemplate(?string $tooltipTemplate): void
+    {
+        $this->tooltipTemplate = $tooltipTemplate;
     }
 
     public function getHasStyle(): bool

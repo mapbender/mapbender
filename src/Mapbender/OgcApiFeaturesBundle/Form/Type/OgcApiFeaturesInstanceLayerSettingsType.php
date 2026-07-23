@@ -9,6 +9,7 @@ use Mapbender\OgcApiFeaturesBundle\Form\Transformer\JsonArrayTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,9 +32,15 @@ class OgcApiFeaturesInstanceLayerSettingsType extends AbstractType
     {
         $styleChoices = $this->getStyleChoices();
 
-        $builder->add('tooltipPropertyMap', HiddenType::class, [
-            'required' => false,
-        ])
+        $builder
+            ->add('tooltipPropertyMap', HiddenType::class, [
+                'required' => false,
+            ])
+            ->add('tooltipTemplate', TextareaType::class, [
+                'required' => false,
+                'label' => 'mb.ogcapifeatures.admin.tooltip.template',
+                'help' => 'mb.ogcapifeatures.admin.tooltip.template_help',
+            ])
             ->add('styleId', ChoiceType::class, [
                 'required' => false,
                 'label' => false,
