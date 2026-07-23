@@ -28,6 +28,7 @@ class OgcApiSource extends Mapbender.Source {
             this._applyStyle(vectorLayer, styleDef, collectionId);
             vectorLayer.set('_activeStyle', child.options.style || null);
             vectorLayer.set('geojson-mb-layer', true);
+            vectorLayer.set('ogcapi-feature-sourcelayer', child);
             this.nativeLayers.push(vectorLayer);
         });
         this.setOpacity(this.options.opacity);
@@ -41,160 +42,21 @@ class OgcApiSource extends Mapbender.Source {
         return Mapbender.Model.dumpVectorLayerGeometriesForExport(layers);
     }
 
-    _hexToRgba(hex, opacity) {
-        hex = (hex || '#000000').replace('#', '');
-        if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-        const r = parseInt(hex.substring(0,2), 16);
-        const g = parseInt(hex.substring(2,4), 16);
-        const b = parseInt(hex.substring(4,6), 16);
-        const alpha = isNaN(parseFloat(opacity)) ? 1 : parseFloat(opacity);
-        return [r, g, b, alpha];
-    }
-
-    _getDashArray(dashStyle) {
-        const map = {
-            'dash': [10, 5],
-            'dot': [2, 5],
-            'dashdot': [10, 5, 2, 5],
-            'longdash': [20, 5],
-            'longdashdot': [20, 5, 2, 5],
-        };
-        return map[dashStyle] || undefined;
-    }
-
     _applyStyle(vectorLayer, styleDef, collectionId) {
         if (!styleDef) {
             return;
         }
         // Simple/manual style format
         if (styleDef.fillColor !== undefined || styleDef.strokeColor !== undefined) {
-            vectorLayer.setStyle(this._createSimpleOlStyle(styleDef));
+            vectorLayer.setStyle(Mapbender.OgcApiFeature.StyleHelper.createSimpleOlStyle(styleDef));
             return;
         }
         // Mapbox style format — use ol-mapbox-style library (now bundled in ol.mapboxStyle)
         if (styleDef.version && styleDef.layers && typeof ol !== 'undefined' && ol.mapboxStyle && ol.mapboxStyle.stylefunction) {
-            this._applyMapboxStyle(vectorLayer, styleDef, collectionId);
-            return;
+            Mapbender.OgcApiFeature.StyleHelper.applyMapboxStyle(vectorLayer, styleDef, collectionId);
         }
     }
 
-    _createSimpleOlStyle(s) {
-        const fillColor = this._hexToRgba(s.fillColor || '#3399CC', s.fillOpacity ?? 1);
-        const strokeColor = this._hexToRgba(s.strokeColor || '#ffffff', s.strokeOpacity ?? 1);
-        const strokeWidth = parseFloat(s.strokeWidth) || 1;
-        const pointRadius = parseFloat(s.pointRadius) || 5;
-        const lineDash = this._getDashArray(s.strokeDashstyle);
-
-        const fill = new ol.style.Fill({ color: fillColor });
-        const stroke = new ol.style.Stroke({
-            color: strokeColor,
-            width: strokeWidth,
-            lineCap: s.strokeLinecap || 'round',
-            lineJoin: 'round',
-        });
-        if (lineDash) {
-            stroke.setLineDash(lineDash);
-        }
-
-        const styles = {
-            Point: new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: pointRadius,
-                    fill: fill,
-                    stroke: stroke,
-                }),
-            }),
-            LineString: new ol.style.Style({
-                stroke: stroke,
-            }),
-            Polygon: new ol.style.Style({
-                fill: fill,
-                stroke: stroke,
-            }),
-        };
-        styles.MultiPoint = styles.Point;
-        styles.MultiLineString = styles.LineString;
-        styles.MultiPolygon = styles.Polygon;
-        styles.GeometryCollection = styles.Polygon;
-
-        if (!s.label) {
-            return (feature) => styles[feature.getGeometry()?.getType()] || styles.Polygon;
-        }
-
-        const labelTemplate = s.label;
-        // Normalize font values - fallback to 'normal' if invalid CSS values
-        const isValidFontWeight = (val) => val === 'normal' || val === 'bold' || !isNaN(parseInt(val));
-        const isValidFontStyle = (val) => val === 'normal' || val === 'italic' || val === 'oblique';
-        const fontWeight = isValidFontWeight(s.fontWeight) ? (s.fontWeight || 'normal') : 'normal';
-        const fontStyle = isValidFontStyle(s.fontStyle) ? (s.fontStyle ?? 'normal') : 'normal';
-        const fontSize = (s.fontSize || 12) + 'px';
-        const fontFamily = s.fontFamily || 'Arial, Helvetica, sans-serif';
-        const fontColor = s.fontColor || '#000000';
-        const textBaseOptions = {
-            font: fontStyle + ' ' + fontWeight + ' ' + fontSize + ' ' + fontFamily,
-            fill: new ol.style.Fill({ color: fontColor }),
-        };
-
-        if (!/\$\{[^}]+\}/.test(labelTemplate)) {
-            // Static label — attach once to each base style
-            const text = new ol.style.Text({ ...textBaseOptions, text: labelTemplate });
-            Object.values(styles).forEach(st => st.setText(text));
-            return (feature) => styles[feature.getGeometry()?.getType()] || styles.Polygon;
-        }
-
-        // Dynamic label — resolve ${property} placeholders per feature at render time
-        const styleCache = new Map();
-        return (feature) => {
-            const geomType = feature.getGeometry()?.getType() || 'Polygon';
-            const base = styles[geomType] || styles.Polygon;
-            const props = feature.getProperties();
-            const resolved = labelTemplate.replace(/\$\{([^}]+)\}/g, (_, key) => {
-                const val = props[key];
-                return val != null ? String(val) : '';
-            });
-            const cacheKey = geomType + '\x00' + resolved;
-            let style = styleCache.get(cacheKey);
-            if (!style) {
-                style = new ol.style.Style({
-                    image: base.getImage(),
-                    fill: base.getFill(),
-                    stroke: base.getStroke(),
-                    text: new ol.style.Text({ ...textBaseOptions, text: resolved }),
-                });
-                styleCache.set(cacheKey, style);
-            }
-            return style;
-        };
-    }
-
-    _applyMapboxStyle(vectorLayer, mbStyle, collectionId) {
-        // Find the source name that uses our collectionId as source-layer
-        let sourceName = null;
-        for (const layer of (mbStyle.layers || [])) {
-            if (layer['source-layer'] === collectionId && layer.source) {
-                sourceName = layer.source;
-                break;
-            }
-        }
-        // Fallback: use first vector/geojson source
-        if (!sourceName) {
-            for (const [name, src] of Object.entries(mbStyle.sources || {})) {
-                if (src.type === 'vector' || src.type === 'geojson') {
-                    sourceName = name;
-                    break;
-                }
-            }
-        }
-        if (!sourceName) {
-            return;
-        }
-        vectorLayer.set('_collectionId', collectionId);
-        try {
-            ol.mapboxStyle.stylefunction(vectorLayer, mbStyle, sourceName);
-        } catch (e) {
-            console.error('[OgcApiStyle] ol.mapboxStyle.stylefunction failed for "' + collectionId + '":', e);
-        }
-    }
 
     _loadCollection(collectionId, extent, resolution, projection, source) {
         const requestId = ++this._currentRequestIds[collectionId];
@@ -251,6 +113,7 @@ class OgcApiSource extends Mapbender.Source {
     }
 
     updateEngine() {
+        /** @var {OgcApiSourceLayer[]} children  **/
         const children = this.getRootLayer().children;
         const rootVisible = this.getRootLayer().state.visibility;
         this.nativeLayers.forEach((layer, index) => {
@@ -264,13 +127,12 @@ class OgcApiSource extends Mapbender.Source {
                     layer.set('_activeStyle', child.options.style);
                 }
             }
-        });
-        if (!this._tooltipInitialized && Mapbender.Model?.olMap) {
-            const hasTooltip = children.some(c => c.options.tooltip?.propertyMap);
-            if (hasTooltip) {
-                this._initTooltip(Mapbender.Model.olMap);
+
+            if (child.hasTooltip()) {
+                Mapbender.OgcApiFeature.TooltipManager.initialize(layer, child);
             }
-        }
+        });
+
         if (!this._resolutionListenerInitialized && Mapbender.Model?.olMap) {
             this._initResolutionListener(Mapbender.Model.olMap);
         }
@@ -288,124 +150,6 @@ class OgcApiSource extends Mapbender.Source {
                 });
             }
         });
-    }
-
-    _initTooltip(olMap) {
-        this._tooltipInitialized = true;
-        const container = document.createElement('div');
-        container.className = 'ogc-api-tooltip';
-        container.style.display = 'none';
-        document.body.appendChild(container);
-        this._tooltipElement = container;
-        this._tooltipOverlay = new ol.Overlay({
-            element: container,
-            offset: [12, 0],
-            positioning: 'center-left',
-            stopEvent: false,
-        });
-        olMap.addOverlay(this._tooltipOverlay);
-        this._tooltipDebounce = null;
-        olMap.on('pointermove', (evt) => {
-            if (evt.dragging) {
-                this._hideTooltip();
-                return;
-            }
-            clearTimeout(this._tooltipDebounce);
-            this._tooltipDebounce = setTimeout(() => {
-                this._handlePointerMove(olMap, evt.pixel, evt.coordinate);
-            }, 60);
-        });
-        olMap.getViewport().addEventListener('mouseout', () => {
-            this._hideTooltip();
-        });
-    }
-
-    _handlePointerMove(olMap, pixel, coordinate) {
-        let hit = null;
-        let hitChild = null;
-        const children = this.getRootLayer().children;
-        for (let i = 0; i < this.nativeLayers.length; i++) {
-            const layer = this.nativeLayers[i];
-            const features = olMap.getFeaturesAtPixel(pixel, {
-                layerFilter: (l) => l === layer,
-                hitTolerance: 5,
-            });
-            if (features.length) {
-                hit = features[0];
-                hitChild = children[i];
-                break;
-            }
-        }
-        if (!hit || !hitChild?.options?.tooltip?.propertyMap) {
-            this._hideTooltip();
-            olMap.getTargetElement().style.cursor = '';
-            return;
-        }
-        olMap.getTargetElement().style.cursor = 'pointer';
-        const content = this._buildTooltipContent(hit, hitChild);
-        if (!content) {
-            this._hideTooltip();
-            return;
-        }
-        this._tooltipElement.innerHTML = '';
-        this._tooltipElement.appendChild(content);
-        this._tooltipElement.style.display = '';
-        this._tooltipOverlay.setPosition(coordinate);
-    }
-
-    _buildTooltipContent(feature, child) {
-        const properties = feature.getProperties();
-        const propertyMap = this._getChildTooltipMap(child);
-        const propertyTitles = child.options.propertyTitles || {};
-        const skipKeys = new Set(['geometry', 'layer', 'featureTitle']);
-        const fragment = document.createDocumentFragment();
-        let count = 0;
-        for (const [key, value] of Object.entries(properties)) {
-            if (skipKeys.has(key)) continue;
-            if (value == null || value === '') continue;
-            if (typeof value === 'object') continue;
-            if (propertyMap && !propertyMap[key]) continue;
-            const row = document.createElement('div');
-            row.className = 'ogc-api-tooltip-row';
-            const label = document.createElement('span');
-            label.className = 'ogc-api-tooltip-key';
-            const mapLabel = propertyMap?.[key];
-            // Prefer propertyTitles when the propertyMap just echoes the raw key
-            label.textContent = (mapLabel && mapLabel !== key ? mapLabel : null) || propertyTitles[key] || key;
-            const val = document.createElement('span');
-            val.className = 'ogc-api-tooltip-val';
-            val.textContent = value;
-            row.appendChild(label);
-            row.appendChild(val);
-            fragment.appendChild(row);
-            count++;
-        }
-        return count > 0 ? fragment : null;
-    }
-
-    _hideTooltip() {
-        if (this._tooltipElement) {
-            this._tooltipElement.style.display = 'none';
-        }
-    }
-
-    _getChildTooltipMap(child) {
-        const mapArray = child.options.tooltip?.propertyMap;
-        if (!mapArray) return null;
-        const cid = child.options.collectionId;
-        if (!this._tooltipMaps) this._tooltipMaps = {};
-        if (!this._tooltipMaps[cid]) {
-            this._tooltipMaps[cid] = {};
-            for (const entry of mapArray) {
-                if (typeof entry === 'string') {
-                    this._tooltipMaps[cid][entry] = Mapbender.trans(entry);
-                } else {
-                    const [key, value] = Object.entries(entry)[0];
-                    this._tooltipMaps[cid][key] = Mapbender.trans(value);
-                }
-            }
-        }
-        return this._tooltipMaps[cid];
     }
 
     featureInfoEnabled() {
