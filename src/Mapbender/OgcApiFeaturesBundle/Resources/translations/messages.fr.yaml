@@ -6,6 +6,11 @@ mb:
       layers: Collections
       layer:
         title: Titre
+        popup_title: 'Modifier les propriétés pour collection "%name%"'
+        properties_saved: Propriétés enregistrées avec succès.
+        style_help: Si coché, un style est défini pour cette collection.
+        secondary_styles_help: Nombre de styles secondaires parmi lesquels l'utilisateur peut choisir dans le frontend.
+        popup_help: Modifiez les propriétés de cette collection, comme les styles assignés, l'infobulle et la configuration des infos des entités.
         active: Actif
         min_scale: Échelle minimale
         max_scale: Échelle maximale

@@ -6,6 +6,11 @@ mb:
       layers: Kolekcje
       layer:
         title: Tytuł
+        popup_title: 'Edytuj właściwości dla collection "%name%"'
+        properties_saved: Właściwości zostały pomyślnie zapisane.
+        style_help: Jeśli zaznaczone, dla tej collection zdefiniowano styl.
+        secondary_styles_help: Liczba stylów pomocniczych, spośród których użytkownik może wybierać w interfejsie frontend.
+        popup_help: Edytuj właściwości tej collection, takie jak przypisane style, podpowiedź i konfiguracja informacji o obiektach.
         active: Aktywny
         min_scale: Minimalna skala
         max_scale: Maksymalna skala

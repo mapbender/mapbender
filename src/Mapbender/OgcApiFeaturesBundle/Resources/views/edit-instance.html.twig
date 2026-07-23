@@ -46,7 +46,7 @@
             <th>{{ 'mb.ogcapifeatures.admin.layer.selected' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.allow_info' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.info' | trans }}</th>
-            <th>{{ 'mb.manager.admin.style.title' | trans }}</th>
+            <th title="{{ 'mb.ogcapifeatures.admin.layer.style_help' | trans }}">{{ 'mb.manager.admin.style.title' | trans }}</th>
             <th>Edit</th>
             <th></th>
         </tr>
@@ -88,16 +88,18 @@
                 </td>
                 <td>
                     <input type="checkbox" class="form-check-input style-indicator" disabled readonly
+                           title="{{ 'mb.ogcapifeatures.admin.layer.style_help' | trans }}"
                            {% if layer.vars.data.hasStyle %}checked{% endif %}>
                     <span class="badge bg-secondary sec-style-count"
-                          title="{{ 'mb.manager.admin.style.secondary_attached' | trans }}"
+                          title="{{ 'mb.ogcapifeatures.admin.layer.secondary_styles_help' | trans }}"
                           {% if layer.vars.data.secondaryStyleCount == 0 %}style="display:none"{% endif %}>{{ layer.vars.data.secondaryStyleCount }}</span>
                 </td>
                 <td>
                     <a href="#"
                        data-url="{{ path('mapbender_ogcapifeatures_editsettings', {'instanceLayerId': layer.vars.data.id}) }}"
                        class="editCollectionLayer"
-                       aria-label="{{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}">
+                       role="button"
+                       title="{{ 'mb.ogcapifeatures.admin.layer.popup_help' | trans }}">
                         <i class="fas fa-pencil"></i>
                     </a>
                 </td>

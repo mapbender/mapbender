@@ -13,15 +13,14 @@ class OgcApiFeaturesEditor {
 
     _bindEvents() {
         $(".editCollectionLayer").on("click", e => {
+            e.preventDefault();
             const $row = $(e.target).closest('tr');
 
-            e.preventDefault();
+            const name = $row.find('.titleColumn > input').val();
             Mapbender.startElementEdit($(e.target).closest('.editCollectionLayer').attr('data-url'), {
-                // TODO: translate
-                title: "Collection-Layer editieren",
+                title: Mapbender.trans('mb.ogcapifeatures.admin.layer.popup_title', {'name': name})
             }, undefined, ($modal, data) => {
-                // TODO: translate
-                Mapbender.info(Mapbender.trans("mb.application.save.success"));
+                Mapbender.info(Mapbender.trans('mb.ogcapifeatures.admin.layer.properties_saved'));
                 $modal.modal('hide');
 
                 const $hasStyleCheckbox = $row.find('.style-indicator');

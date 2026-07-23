@@ -6,6 +6,11 @@ mb:
       layers: Collections
       layer:
         title: Titel
+        popup_title: 'Eigenschaften für collection "%name%" bearbeiten'
+        properties_saved: Eigenschaften erfolgreich gespeichert.
+        style_help: Falls aktiviert, ist dieser collection ein Stil zugewiesen.
+        secondary_styles_help: Anzahl sekundärer Stile, aus denen der Benutzer im Frontend wählen kann.
+        popup_help: Eigenschaften für diese collection bearbeiten, bspw. zugewiesene Stile, Tooltip und Feature-Info-Konfiguration.
         active: Aktiv
         min_scale: Minimaler Maßstab
         max_scale: Maximaler Maßstab
