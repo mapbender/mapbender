@@ -1443,7 +1443,6 @@ window.Mapbender.MapModelBase = (function() {
                 Math.abs(extent.top - extent.bottom) / viewportHeight
             );
         },
-        _comma_dangle_dummy: null
     });
 
     return MapModelBase;
