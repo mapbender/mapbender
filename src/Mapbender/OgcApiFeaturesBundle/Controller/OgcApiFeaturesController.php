@@ -11,7 +11,6 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
-use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesLayerSource;
 use Mapbender\OgcApiFeaturesBundle\Form\Type\OgcApiFeaturesInstanceLayerSettingsType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

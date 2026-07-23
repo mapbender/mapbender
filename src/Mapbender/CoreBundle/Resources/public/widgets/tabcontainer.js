@@ -4,11 +4,14 @@
  */
 var initTabContainer = function ($context) {
     $('.tabContainer, .tabContainerAlt', $context)
-        .filter(function() {
+        .filter(function () {
             return (typeof ($(this).data('tabcontainer-initialized')) === 'undefined');
         })
         .on('click keydown', '.tab', function (e) {
-            if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+            if (e.type === 'keydown') {
+                if (e.key === 'Enter' || e.key === ' ') e.preventDefault();
+                else return;
+            }
             var $tabHeader = $(this);
             var $cnt = $(this).parent().parent();
             $('>.tabs >.tab, >.container', $cnt).removeClass('active');
@@ -16,15 +19,15 @@ var initTabContainer = function ($context) {
             $tabHeader.addClass("active");
             $tabHeader.trigger('mb.shown.tab');
         })
-        .each(function() {
+        .each(function () {
             $(this).data('tabcontainer-initialized', true)
         })
     ;
     $(".accordionContainer", $context)
-        .filter(function() {
+        .filter(function () {
             return (typeof ($(this).data('accordion-initialized')) === 'undefined');
         })
-        .on('click', '.accordion', function() {
+        .on('click', '.accordion', function () {
             var $header = $(this);
             if ($header.hasClass('active')) {
                 return;
@@ -43,20 +46,20 @@ var initTabContainer = function ($context) {
                 //   'currentTab' is the entire parent accordion container (neither header nor content pane)
                 // figure out which event consumer uses what, and if it's safe to fix the
                 // inconsistencies
-                current:    $header,
+                current: $header,
                 currentTab: $group,
                 previous: previous
             });
         })
-        .each(function() {
+        .each(function () {
             $(this).data('accordion-initialized', true);
         })
     ;
     $(".listContainer", $context)
-        .filter(function() {
+        .filter(function () {
             return (typeof ($(this).data('list-initialized')) === 'undefined');
         })
-        .on('click', '.list-group-item', function() {
+        .on('click', '.list-group-item', function () {
             var $header = $(this);
             if ($header.hasClass('active')) {
                 return;
@@ -81,13 +84,13 @@ var initTabContainer = function ($context) {
             // Slide the listContainer to the left and container to the right
             $group.addClass('list-shifted');
         })
-        .each(function() {
+        .each(function () {
             $(this).data('list-initialized', true);
         })
     ;
 
     // Handle back button clicks
-    $context.on('click', '.list-back-btn', function(e) {
+    $context.on('click', '.list-back-btn', function (e) {
         var $sideContent = $(this).closest('.sideContent');
         var $group = $('.listContainer', $sideContent);
         var $activeContainer = $('.container-list-group-item.active', $sideContent);

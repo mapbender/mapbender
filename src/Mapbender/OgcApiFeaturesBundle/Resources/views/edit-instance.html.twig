@@ -47,7 +47,7 @@
             <th>{{ 'mb.ogcapifeatures.admin.layer.allow_info' | trans }}</th>
             <th>{{ 'mb.ogcapifeatures.admin.layer.info' | trans }}</th>
             <th title="{{ 'mb.ogcapifeatures.admin.layer.style_help' | trans }}">{{ 'mb.manager.admin.style.title' | trans }}</th>
-            <th>Edit</th>
+            <th>{{ 'mb.actions.edit' | trans }}</th>
             <th></th>
         </tr>
         </thead>
@@ -121,7 +121,7 @@
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-sm-3"><label class="form-label">{{ 'mb.manager.source.instancelayer.name' | trans }}</label></div>
-                                        <div class="col-sm-9"><input type="text" class="form-control form-control-sm" readonly value="{{ _layer_data.sourceItem.title }}" title="value="{{ _layer_data.sourceItem.title }}"></div>
+                                        <div class="col-sm-9"><input type="text" class="form-control form-control-sm" readonly value="{{ _layer_data.sourceItem.title }}" title="{{ _layer_data.sourceItem.title }}"></div>
                                     </div>
                                 </div>
                             </div>
