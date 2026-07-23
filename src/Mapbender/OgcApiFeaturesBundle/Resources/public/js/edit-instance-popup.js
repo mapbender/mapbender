@@ -16,6 +16,7 @@ class OgcApiFeaturesEditInstancePopup {
         this._secFilterState = {name: '', origin: '', source: this.sourceId};
         this.toolTipContainer = this.$container.find('.tooltip-checkbox-list')[0];
         this.toolTipInput = this.$container[0].querySelector('input[id$="_tooltipPropertyMap"]');
+        this.CURRENT_TAB_STORAGE_KEY = 'mb-ogcapifeatures-edit-instance-popup-tab';
 
         this._bindEvents();
         this._loadStyles();
@@ -26,6 +27,13 @@ class OgcApiFeaturesEditInstancePopup {
 
     _initTabs() {
         initTabContainer(this.$container);
+        this.$container.on('mb.shown.tab', (e) => {
+            localStorage.setItem(this.CURRENT_TAB_STORAGE_KEY, e.target.id);
+        });
+
+        if (localStorage.getItem(this.CURRENT_TAB_STORAGE_KEY)) {
+            this.$container.find('#' + localStorage.getItem(this.CURRENT_TAB_STORAGE_KEY)).trigger('click');
+        }
     }
 
     _loadStyles() {
