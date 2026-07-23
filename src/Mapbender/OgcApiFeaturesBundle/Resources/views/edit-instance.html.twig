@@ -31,7 +31,7 @@
 {% block form_layers %}
     <hr>
     <h4 class="mt-4">{{ 'mb.ogcapifeatures.admin.layers' | trans }}</h4>
-    <table class="table collectionTable" data-style-url="{{ path('mapbender_manager_style_json') }}" data-source-id="{{ instance.source.id|default('') }}">
+    <table class="table collectionTable instanceTable" data-style-url="{{ path('mapbender_manager_style_json') }}" data-source-id="{{ instance.source.id|default('') }}">
         <thead>
         <tr class="text-center">
             <th></th>
@@ -103,7 +103,7 @@
                 </td>
                 <td>
                     <div class="static-popover-wrap">
-                        <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}"
+                        <span class="-fn-toggle-layer-detail clickable" data-toggle-target="#{{ _popover_id }}" data-bs-toggle="popover"
                               title="{{ 'mb.manager.admin.style.settings' | trans }}">
                             <i class="fas fa-ellipsis"></i>
                         </span>
@@ -139,28 +139,4 @@
     <script src="{{ asset('bundles/mapbenderogcapifeatures/js/editor.js') }}"></script>
     <script src="{{ asset('bundles/mapbenderogcapifeatures/js/edit-instance-popup.js') }}"></script>
     <script src="{{ asset('bundles/mapbendercore/widgets/tabcontainer.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-            [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
-                html: true,
-                placement: 'left',
-                trigger: 'click focus'
-            }));
-        });
-        $('.collectionTable').each(function() {
-            $('tbody', this).sortable({
-                cursor: 'move',
-                axis: 'y',
-                items: 'tr',
-                distance: 6,
-                containment: 'parent',
-                stop: (event, ui) => {
-                    $('input[id$="priority"]', $('.collectionTable tbody tr')).each(function(idx, item) {
-                        $(item).val(idx);
-                    });
-                }
-            });
-        });
-    </script>
 {% endblock %}

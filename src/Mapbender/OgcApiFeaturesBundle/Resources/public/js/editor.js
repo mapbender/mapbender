@@ -47,7 +47,7 @@ class OgcApiFeaturesEditor {
                 cursor: 'move',
                 axis: 'y',
                 items: 'tr',
-                cancel: '.popover, input',
+                cancel: '.popover, .static-popover-wrap, input',
                 distance: 6,
                 containment: 'parent',
                 stop: () => {
