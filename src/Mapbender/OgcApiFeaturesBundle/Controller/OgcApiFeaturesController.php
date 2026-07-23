@@ -5,8 +5,13 @@ namespace Mapbender\OgcApiFeaturesBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
+use FOM\UserBundle\Security\Permission\ResourceDomainInstallation;
+use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\ManagerBundle\Controller\ApplicationControllerBase;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesLayerSource;
 use Mapbender\OgcApiFeaturesBundle\Form\Type\OgcApiFeaturesInstanceLayerSettingsType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,23 +29,27 @@ class OgcApiFeaturesController extends ApplicationControllerBase
     #[ManagerRoute('/ogcapifeatures/{instanceLayerId}/settings', name: 'mapbender_ogcapifeatures_editsettings', requirements: ['instanceLayerId' => '\d+'], methods: ['GET', 'POST'])]
     public function editSettings(Request $request, int $instanceLayerId): Response
     {
-        // TODO: Free instances, Permission checks
-
+        $repo = $this->em->getRepository(OgcApiFeaturesInstanceLayer::class);
         /** @var OgcApiFeaturesInstanceLayer $instanceLayer */
-        $instanceLayer = $this->em->getRepository(OgcApiFeaturesInstanceLayer::class)->find($instanceLayerId);
+        $instanceLayer = $repo->find($instanceLayerId);
         if (!$instanceLayer) {
             throw $this->createNotFoundException('Instance layer not found');
         }
 
-        if (false) {
-            $application = $this->requireDbApplication($slug);
-            $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
+        $application = $repo->createQueryBuilder('il')
+            ->where('il.id = :id')
+            ->setParameter('id', $instanceLayerId)
+            ->leftJoin(OgcApiFeaturesInstance::class, 'fi', 'WITH', 'il.sourceInstance = fi.id')
+            ->leftJoin(Layerset::class, 'l', 'WITH', 'fi.layerset = l.id')
+            ->leftJoin(Application::class, 'a', 'WITH', 'l.application = a.id')
+            ->select('a')
+            ->getQuery()
+            ->getOneOrNullResult();
 
-            $layerSource = $instanceLayer->getSourceItem()->getSource();
-            $sourceInstances = $application->getInstancesOfSource($layerSource);
-            if (count($sourceInstances) < 1) {
-                throw $this->createNotFoundException('Layer not found in application');
-            }
+        if ($application) {
+            $this->denyAccessUnlessGranted(ResourceDomainApplication::ACTION_EDIT, $application);
+        } else {
+            $this->denyAccessUnlessGranted(ResourceDomainInstallation::ACTION_EDIT_FREE_INSTANCES);
         }
 
         $form = $this->createForm(OgcApiFeaturesInstanceLayerSettingsType::class, $instanceLayer);
