@@ -129,6 +129,18 @@
     --sidepane-closer-security-padding: 40px;
     --sidepane-padding-y: 1rem;
 
+    // ---- Tabs ----
+    --tab-font-color: var(--sidepane-button-text);
+    --tab-active-font-color: var(--sidepane-button-text);
+    --tab-hover-font-color: var(--sidepane-button-text);
+    --tab-background-color: var(--sidepane-button-background);
+    --tab-active-background-color: var(--sidepane-button-background);
+    --tab-hover-background-color: var(--sidepane-button-hover);
+    --tab-border-color: transparent;
+    --tab-active-border-color: var(--primary);
+    --tab-hover-border-color: transparent;
+    --tab-font-size: var(--sidepane-button-font-size);
+
     // ---- Inputs ----
     --input-background: #{$inputBackgroundColor};
     --input-foreground: #{$inputForegroundColor};
