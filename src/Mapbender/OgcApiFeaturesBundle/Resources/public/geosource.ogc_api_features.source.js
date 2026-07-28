@@ -78,6 +78,7 @@ class OgcApiSource extends Mapbender.Source {
             })
             .then((data) => {
                 if (requestId !== this._currentRequestIds[collectionId]) {
+                    source.dispatchEvent('imageloadend');
                     return;
                 }
                 const parsed = geojsonReader.readFeatures(data, {
