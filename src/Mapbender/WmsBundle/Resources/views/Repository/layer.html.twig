@@ -121,7 +121,7 @@
       {%- if layer.metadataUrl is defined and layer.metadataUrl -%}
         {{- macros.start_subsection("mb.wms.wmsloader.repo.layer.label.metadataurl" | trans) -}}
         {%- for metadataUrl in layer.metadataUrl -%}
-          <tr><td colspan="2">{{ metadataUrl.type }} {{ metadataUrl.onlineresource.format }} {{ metadataUrl.onlineresource.href }}</td></tr>
+          <tr><td colspan="2">{{ metadataUrl.type }} {{ metadataUrl.onlineResource.format }} {{ metadataUrl.onlineResource.href }}</td></tr>
         {%- endfor -%}
         {{- macros.end_subsection() -}}
       {%- endif -%}
