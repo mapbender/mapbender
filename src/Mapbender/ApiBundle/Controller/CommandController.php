@@ -22,7 +22,7 @@ class CommandController extends AbstractController
 {
     public function __construct(
         protected ApplicationResolver $applicationResolver,
-        #[Autowire('%kernel.debug%')] private readonly bool $debug = false,
+        private readonly bool $debug = false,
         private readonly ?KernelInterface $kernel = null,
     ) {
     }
