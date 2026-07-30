@@ -7,13 +7,17 @@ use Mapbender\CoreBundle\Component\Source\SourceInstanceConfigGenerator;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\Style;
+use Mapbender\ManagerBundle\Form\DataTransformer\YAMLDataTransformer;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
+use Twig\Environment;
 
 class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
 {
     public function __construct(
         protected EntityManagerInterface $em,
+        protected Environment $twig,
     ) {
     }
 
@@ -67,6 +71,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         ];
 
         foreach (array_reverse($sourceInstance->getLayers()->toArray()) as $layer) {
+            /** @var $layer OgcApiFeaturesInstanceLayer */
             if ($layer->getActive()) {
                 $childConfig = [
                     'options' => [
@@ -96,12 +101,13 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                     $childConfig['options']['style'] = $availableStyles[0]['name'];
                     $childConfig['options']['availableStyles'] = $availableStyles;
                 }
-                $tooltipMap = $layer->getTooltipPropertyMap();
-                if ($tooltipMap) {
+                $tooltipTemplate = $this->getTooltipTemplate($layer);
+                if ($tooltipTemplate) {
                     $childConfig['options']['tooltip'] = [
-                        'propertyMap' => $tooltipMap,
+                        'template' => $tooltipTemplate,
                     ];
                 }
+
                 $propertyTitles = $layer->getSourceItem()->getPropertyTitles();
                 if ($propertyTitles) {
                     $childConfig['options']['propertyTitles'] = $propertyTitles;
@@ -165,5 +171,27 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         }
         $layerId = $layer !== null ? $layer->getId() : 0;
         return '/application/metadata/' . $instance->getId() . '/' . $layerId . '/';
+    }
+
+    private function getTooltipTemplate(OgcApiFeaturesInstanceLayer $layer): ?string
+    {
+        $template = $layer->getTooltipTemplate();
+        $propertyMap = $layer->getTooltipPropertyMap();
+
+        // if the template is valid yaml, treat it as a property map
+        if ($template && str_starts_with($template, '-')) {
+            $transformer = new YAMLDataTransformer();
+            $json = $transformer->reverseTransform($template);
+            if ($json) {
+                $propertyMap = $json;
+                $template = null;
+            }
+        }
+
+        if ($template) return $template;
+        if (!$propertyMap) return null;
+
+        // convert property maps into html
+        return $this->twig->render('@MapbenderOgcApiFeatures/tooltip-propertymap.html.twig', ['properties' => $propertyMap]);
     }
 }
