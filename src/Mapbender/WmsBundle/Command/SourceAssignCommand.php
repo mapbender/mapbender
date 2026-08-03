@@ -60,7 +60,7 @@ class SourceAssignCommand extends AbstractSourceCommand
 
         $sourceId = $input->getArgument(self::ARGUMENT_SOURCE);
 
-        $this->sourceInstanceController->createNewSourceInstance($application, $sourceId, $layerset->getId(), $this->getEntityManager());
+        $this->sourceInstanceController->createNewSourceInstance($application, $sourceId, $layerset->getId(), $input->getOptions());
         $io->success("New source instance added.");
         return Command::SUCCESS;
     }
