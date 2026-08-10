@@ -89,13 +89,11 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
 
         if (!tooltips.length) {
             this._hideTooltip();
-            // TODO: make this via classes, other elements may also influence cursor behaviour
-            olMap.getTargetElement().style.cursor = '';
+            olMap.getTargetElement().classList.remove('tooltip-active');
             return;
         }
 
-        // TODO: make this via classes, other elements may also influence cursor behaviour
-        olMap.getTargetElement().style.cursor = 'pointer';
+        olMap.getTargetElement().classList.add('tooltip-active');
         this.element.innerHTML = '';
         for (const fragment of tooltips) {
             this.element.appendChild(fragment);
