@@ -57,6 +57,9 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
     #[ORM\Column(name: 'tooltip_property_map', type: 'json', nullable: true)]
     protected ?array $tooltipPropertyMap = null;
 
+    #[ORM\Column(name: 'tooltip_style', type: 'json', nullable: true)]
+    protected ?array $tooltipStyle = null;
+
     #[ORM\Column(name: 'tooltip_template', type: 'text', nullable: true)]
     protected ?string $tooltipTemplate = null;
 
@@ -226,5 +229,15 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
     public function getSecondaryStyleCount(): int
     {
         return count($this->getSecondaryStyleIds());
+    }
+
+    public function getTooltipStyle(): ?array
+    {
+        return $this->tooltipStyle;
+    }
+
+    public function setTooltipStyle(?array $tooltipStyle): void
+    {
+        $this->tooltipStyle = $tooltipStyle;
     }
 }

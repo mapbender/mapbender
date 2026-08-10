@@ -94,6 +94,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                                 'info' => $layer->getAllowInfo(),
                             ],
                         ],
+                        'tooltipStyle' => $layer->getTooltipStyle(),
                     ],
                 ];
                 $availableStyles = $this->buildAvailableStyles($layer);

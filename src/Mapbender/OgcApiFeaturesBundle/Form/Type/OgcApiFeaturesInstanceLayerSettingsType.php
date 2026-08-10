@@ -3,6 +3,7 @@
 namespace Mapbender\OgcApiFeaturesBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\CoreBundle\Element\Type\PaintType;
 use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 use Mapbender\OgcApiFeaturesBundle\Form\Transformer\JsonArrayTransformer;
@@ -40,6 +41,9 @@ class OgcApiFeaturesInstanceLayerSettingsType extends AbstractType
                 'required' => false,
                 'label' => 'mb.ogcapifeatures.admin.tooltip.template',
                 'help' => 'mb.ogcapifeatures.admin.tooltip.template_help',
+            ])
+            ->add('tooltipStyle',PaintType::class, [
+               'label' => 'mb.ogcapifeatures.admin.tooltip.style',
             ])
             ->add('styleId', ChoiceType::class, [
                 'required' => false,

@@ -40,6 +40,7 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
         this.element = document.createElement('div');
         this.element.className = 'ogc-api-tooltip';
         this.element.style.display = 'none';
+        this.hoverLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0).getNativeLayer();
         document.body.appendChild(this.element);
 
         this.overlay = new ol.Overlay({
@@ -53,14 +54,14 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
         this._tooltipDebounce = null;
         olMap.on('pointermove', (evt) => {
             if (evt.dragging) {
-                this._hideTooltip();
+                this._hideTooltip(true);
                 return;
             }
 
             if (this._tooltipDebounce) {
                 clearTimeout(this._tooltipDebounce);
             } else {
-                this._hideTooltip();
+                this._hideTooltip(true);
             }
 
             this._tooltipDebounce = setTimeout(() => {
@@ -70,15 +71,14 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
         });
 
         olMap.getViewport().addEventListener('mouseout', () => {
-            this._hideTooltip();
+            this._hideTooltip(true);
         });
     }
 
     _handlePointerMove(olMap, pixel, coordinate) {
-        let hit = null;
-        let hitChild = null;
-
         let tooltips = [];
+        let hoverFeatures = [];
+
         for (const layerDict of this.layers) {
             if (!layerDict.native.getVisible()) continue;
 
@@ -90,11 +90,20 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
             for (const feature of features) {
                 const tooltip = layerDict.mb.tooltipForFeature(feature);
                 if (tooltip) tooltips.push(tooltip);
+
+                if (layerDict.mb.hasHoverStyle()) {
+                    const hoverFeature = new ol.Feature(feature.getGeometry());
+                    hoverFeature.setStyle(layerDict.mb.getHoverStyle());
+                    hoverFeatures.push(hoverFeature);
+                }
             }
         }
 
+        this.hoverLayer.getSource().clear();
+        this.hoverLayer.getSource().addFeatures(hoverFeatures);
+
         if (!tooltips.length) {
-            this._hideTooltip();
+            this._hideTooltip(false);
             olMap.getTargetElement().classList.remove('tooltip-active');
             return;
         }
@@ -119,7 +128,10 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
         return hrElement;
     }
 
-    _hideTooltip() {
+    _hideTooltip(clearHoverLayer) {
+        if (clearHoverLayer) {
+            this.hoverLayer.getSource().clear();
+        }
         if (this.element) {
             this.element.style.display = 'none';
         }

@@ -50,6 +50,26 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
         return fragment;
     }
 
+    hasHoverStyle() {
+        return !!(this.options.tooltipStyle && (this.options.tooltipStyle.strokeColor || this.options.tooltipStyle.fillColor));
+    }
+
+    getHoverStyle() {
+        if (!this._hoverStyle) {
+            const styleSpec = this.options.tooltipStyle;
+            this._hoverStyle = new ol.style.Style({
+                stroke: styleSpec.strokeColor ? new ol.style.Stroke({
+                    color: styleSpec.strokeColor,
+                    width: styleSpec.strokeWidth || 1,
+                }) : undefined,
+                fill: styleSpec.fillColor ? new ol.style.Fill({
+                    color: styleSpec.fillColor,
+                }) : undefined,
+            });
+        }
+        return this._hoverStyle;
+    }
+
 }
 
 window.Mapbender = Mapbender || {};
