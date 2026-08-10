@@ -19,7 +19,7 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
     constructor() {
         // Mapbender.Model is not set until map element is ready
         Mapbender.elementRegistry.waitReady('.mb-element-map').then(() => this.initialize());
-        this.hitTolerance = 10;
+        this.hitTolerance = 7;
         this.debounceTime = 100;
         /** @type {{native: ol.layer.Vector, mb: OgcApiSourceLayer}[]} **/
         this.layers = [];
@@ -95,11 +95,22 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
 
         olMap.getTargetElement().classList.add('tooltip-active');
         this.element.innerHTML = '';
+        let first = true;
         for (const fragment of tooltips) {
+            if (!first) {
+                this.element.appendChild(this.createDivider());
+            }
+            first = false;
             this.element.appendChild(fragment);
         }
         this.element.style.display = '';
         this.overlay.setPosition(coordinate);
+    }
+
+    createDivider() {
+        const hrElement = document.createElement('hr');
+        hrElement.className = 'ogc-api-tooltip-divider';
+        return hrElement;
     }
 
     _hideTooltip() {

@@ -43,7 +43,6 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
         }
 
         const tooltip = this.tooltipPlaceholderResolver(this.tooltipWrapper, feature).tooltip;
-        console.log(tooltip);
         if (!tooltip) return null;
 
         const fragment = document.createElement('div');
