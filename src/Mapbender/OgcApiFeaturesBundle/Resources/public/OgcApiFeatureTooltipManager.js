@@ -57,8 +57,14 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
                 return;
             }
 
-            clearTimeout(this._tooltipDebounce);
+            if (this._tooltipDebounce) {
+                clearTimeout(this._tooltipDebounce);
+            } else {
+                this._hideTooltip();
+            }
+
             this._tooltipDebounce = setTimeout(() => {
+                this._tooltipDebounce = null;
                 this._handlePointerMove(olMap, evt.pixel, evt.coordinate);
             }, this.debounceTime);
         });
