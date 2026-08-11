@@ -201,6 +201,8 @@ class DatabaseUpgradeCommand extends Command
         // Columns to migrate from Doctrine 'array'/'object' type to JSON
         // format: tableName => [columnName, ...]
         $jsonMigrations = [
+            'fom_user_log'                    => ['context'],
+            'mb_print_queue'                  => ['payload'],
             'mb_core_application'             => ['extra_assets'],
             'mb_core_element'                 => ['configuration'],
             'mb_core_regionproperties'        => ['properties'],
