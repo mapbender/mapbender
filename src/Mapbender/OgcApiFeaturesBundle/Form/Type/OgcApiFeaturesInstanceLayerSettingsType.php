@@ -42,7 +42,7 @@ class OgcApiFeaturesInstanceLayerSettingsType extends AbstractType
                 'label' => 'mb.ogcapifeatures.admin.tooltip.template',
                 'help' => 'mb.ogcapifeatures.admin.tooltip.template_help',
             ])
-            ->add('tooltipStyle',PaintType::class, [
+            ->add('hoverStyle',PaintType::class, [
                'label' => 'mb.ogcapifeatures.admin.tooltip.style',
             ])
             ->add('styleId', ChoiceType::class, [

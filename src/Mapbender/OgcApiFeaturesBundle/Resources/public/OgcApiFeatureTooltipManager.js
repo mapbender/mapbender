@@ -93,7 +93,7 @@ window.Mapbender.OgcApiFeature.TooltipManager = class {
 
                 if (layerDict.mb.hasHoverStyle()) {
                     const hoverFeature = new ol.Feature(feature.getGeometry());
-                    hoverFeature.setStyle(layerDict.mb.getHoverStyle());
+                    hoverFeature.setStyle(layerDict.mb.getHoverStyle(feature.getGeometry()?.getType()));
                     hoverFeatures.push(hoverFeature);
                 }
             }

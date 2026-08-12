@@ -4,6 +4,7 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
         super(definition, source, parent);
 
         this.tooltipWrapper = {tooltip: this.options.tooltip?.template};
+        this.pointRadius = 5;
     }
 
     hasBounds() {
@@ -51,23 +52,41 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
     }
 
     hasHoverStyle() {
-        return !!(this.options.tooltipStyle && (this.options.tooltipStyle.strokeColor || this.options.tooltipStyle.fillColor));
+        return !!(this.options.hoverStyle && (this.options.hoverStyle.strokeColor || this.options.hoverStyle.fillColor));
     }
 
-    getHoverStyle() {
-        if (!this._hoverStyle) {
-            const styleSpec = this.options.tooltipStyle;
-            this._hoverStyle = new ol.style.Style({
-                stroke: styleSpec.strokeColor ? new ol.style.Stroke({
-                    color: styleSpec.strokeColor,
-                    width: styleSpec.strokeWidth || 1,
-                }) : undefined,
-                fill: styleSpec.fillColor ? new ol.style.Fill({
-                    color: styleSpec.fillColor,
-                }) : undefined,
-            });
+    getHoverStyle(geomType) {
+        const isPoint = geomType === 'Point';
+        const isCached = (isPoint && this._hoverStylePoint) || (!isPoint && this._hoverStyle);
+
+        console.log(isPoint, isCached);
+        if (!isCached) {
+            const styleSpec = this.options.hoverStyle;
+            const stroke = styleSpec.strokeColor ? new ol.style.Stroke({
+                color: styleSpec.strokeColor,
+                width: styleSpec.strokeWidth || 1,
+            }) : undefined;
+            const fill = styleSpec.fillColor ? new ol.style.Fill({
+                color: styleSpec.fillColor,
+            }) : undefined;
+
+            if (isPoint) {
+                this._hoverStylePoint = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: this.pointRadius,
+                        fill: fill,
+                        stroke: stroke,
+                    }),
+                });
+            } else {
+                this._hoverStyle = new ol.style.Style({
+                    stroke: stroke,
+                    fill: fill,
+                });
+            }
         }
-        return this._hoverStyle;
+
+        return isPoint ? this._hoverStylePoint : this._hoverStyle;
     }
 
 }
