@@ -49,8 +49,21 @@ mb:
         property_title: Título
       tooltip:
         heading: Dica de ferramenta ao passar
-        description: "Selecione quais propriedades são mostradas em uma dica de ferramenta ao passar sobre feições no mapa."
         no_properties: "Nenhuma propriedade disponível. Tente recarregar a fonte."
+        multiplechoice: Tabela de atributos simples
+        multiplechoice_help: "Selecione quais propriedades são mostradas em uma dica de ferramenta ao passar sobre feições no mapa. Será substituído se o Modelo avançado estiver definido. Pode ser reordenado usando arrastar e soltar."
+        template: Modelo avançado (HTML/YAML)
+        template_help: |-
+          Substitui a tabela de atributos simples, se definido. Introduza HTML (use a sintaxe <code>${attribute}</code> para marcadores de posição) ou um array YAML para uma tabela de atributos onde os nomes podem ser substituídos.
+
+          Exemplos:
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Nome do local
+          - add: Morada</code>
+        style: Estilo ao passar o rato
+        style_help: Se definido, uma geometria será realçada com o estilo definido ao passar o rato sobre ela
     metadata:
       title: Título
       version: Versão

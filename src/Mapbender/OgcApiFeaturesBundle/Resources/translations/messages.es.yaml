@@ -49,8 +49,21 @@ mb:
         property_title: Título
       tooltip:
         heading: Tooltip al pasar el ratón
-        description: "Seleccione qué propiedades se muestran en un tooltip al pasar el ratón sobre las características del mapa."
         no_properties: "No hay propiedades disponibles. Intente recargar la fuente."
+        multiplechoice: Tabla de atributos simple
+        multiplechoice_help: "Seleccione qué propiedades se muestran en un tooltip al pasar el ratón sobre las características del mapa. Se sobrescribirá si se define la Plantilla avanzada. Se puede reordenar mediante arrastrar y soltar."
+        template: Plantilla avanzada (HTML/YAML)
+        template_help: |-
+          Sobrescribe la tabla de atributos simple si se define. Introduzca HTML (use la sintaxis <code>${attribute}</code> para los marcadores de posición) o un array YAML para una tabla de atributos donde se puedan sobrescribir los nombres.
+
+          Ejemplos:
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Nombre de la ubicación
+          - add: Dirección</code>
+        style: Estilo al pasar el ratón
+        style_help: Si se define, una geometría se resaltará con el estilo definido al pasar el ratón sobre ella
     metadata:
       title: Título
       version: Versión

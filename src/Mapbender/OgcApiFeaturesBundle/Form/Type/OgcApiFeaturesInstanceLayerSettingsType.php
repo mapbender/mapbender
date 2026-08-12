@@ -3,6 +3,7 @@
 namespace Mapbender\OgcApiFeaturesBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Mapbender\CoreBundle\Element\Type\MapbenderTypeTrait;
 use Mapbender\CoreBundle\Element\Type\PaintType;
 use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
@@ -13,11 +14,15 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OgcApiFeaturesInstanceLayerSettingsType extends AbstractType
 {
+    use MapbenderTypeTrait;
+
     public function __construct(
         private readonly EntityManagerInterface $em,
+        private readonly TranslatorInterface $translator
     )
     {
     }
@@ -37,14 +42,15 @@ class OgcApiFeaturesInstanceLayerSettingsType extends AbstractType
             ->add('tooltipPropertyMap', HiddenType::class, [
                 'required' => false,
             ])
-            ->add('tooltipTemplate', TextareaType::class, [
+            ->add('tooltipTemplate', TextareaType::class, $this->createInlineHelpText([
                 'required' => false,
                 'label' => 'mb.ogcapifeatures.admin.tooltip.template',
                 'help' => 'mb.ogcapifeatures.admin.tooltip.template_help',
-            ])
-            ->add('hoverStyle',PaintType::class, [
+            ], $this->translator))
+            ->add('hoverStyle',PaintType::class, $this->createInlineHelpText([
                'label' => 'mb.ogcapifeatures.admin.tooltip.style',
-            ])
+               'help' => 'mb.ogcapifeatures.admin.tooltip.style_help',
+            ], $this->translator))
             ->add('styleId', ChoiceType::class, [
                 'required' => false,
                 'label' => false,

@@ -49,8 +49,21 @@ mb:
         property_title: Title
       tooltip:
         heading: Hover Tooltip
-        description: "Select which properties are shown in a tooltip when hovering over features on the map."
         no_properties: "No properties available. Try reloading the source."
+        multiplechoice: Simple Attribute Table
+        multiplechoice_help: "Select which properties are shown in a tooltip when hovering over features on the map. Will be overwritten by Advanced Template if set. Can be reordered using drag and drop."
+        template: Advanced Template (HTML/YAML)
+        template_help: |-
+          Overrides the simple attribute table if set. Enter either HTML (use the syntax <code>${attribute}</code> for placeholders) or a YAML array for an attribute table where the names can be overwritten.
+
+          Examples:
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Location name
+          - add: Address</code>
+        style: Hover style
+        style_help: If set, a geometry will be highlighted using the defined style while hovering over it
     metadata:
       title: Title
       version: Version

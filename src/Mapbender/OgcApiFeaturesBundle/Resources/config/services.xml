@@ -48,6 +48,7 @@
                  class="Mapbender\OgcApiFeaturesBundle\Form\Type\OgcApiFeaturesInstanceLayerSettingsType">
             <tag name="form.type" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="translator" />
         </service>
 
         <service id="Mapbender\OgcApiFeaturesBundle\Controller\OgcApiFeaturesController"

@@ -49,8 +49,21 @@ mb:
         property_title: Titolo
       tooltip:
         heading: Tooltip al passaggio
-        description: "Seleziona quali proprietà vengono mostrate in un tooltip quando si passa sopra le feature sulla mappa."
         no_properties: "Nessuna proprietà disponibile. Prova a ricaricare la sorgente."
+        multiplechoice: Tabella attributi semplice
+        multiplechoice_help: "Seleziona quali proprietà vengono mostrate in un tooltip quando si passa sopra le feature sulla mappa. Verrà sovrascritto se impostato il Modello avanzato. Può essere riordinato trascinando e rilasciando."
+        template: Modello avanzato (HTML/YAML)
+        template_help: |-
+          Sostituisce la tabella attributi semplice se impostato. Inserisci HTML (usa la sintassi <code>${attribute}</code> per i segnaposto) oppure un array YAML per una tabella attributi in cui i nomi possono essere sovrascritti.
+
+          Esempi:
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Nome del luogo
+          - add: Indirizzo</code>
+        style: Stile al passaggio del mouse
+        style_help: Se impostato, una geometria verrà evidenziata usando lo stile definito durante il passaggio del mouse
     metadata:
       title: Titolo
       version: Versione
