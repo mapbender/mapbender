@@ -216,9 +216,10 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
         return $this->tooltipTemplate;
     }
 
-    public function setTooltipTemplate(?string $tooltipTemplate): void
+    public function setTooltipTemplate(?string $tooltipTemplate): static
     {
         $this->tooltipTemplate = $tooltipTemplate;
+        return $this;
     }
 
     public function getHasStyle(): bool
@@ -236,8 +237,9 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
         return $this->hoverStyle;
     }
 
-    public function setHoverStyle(?array $hoverStyle): void
+    public function setHoverStyle(?array $hoverStyle): static
     {
         $this->hoverStyle = $hoverStyle;
+        return $this;
     }
 }

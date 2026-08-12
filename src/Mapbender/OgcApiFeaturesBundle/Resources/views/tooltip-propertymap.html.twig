@@ -6,9 +6,7 @@
     {% endif %}
 
     {% set isNumericKey = key is same as(loop.index0) %}
-    {% set label = value %}
     {% set name = isNumericKey ? value : key %}
-
 
     <div class="ogc-api-tooltip-row">
         <span class="ogc-api-tooltip-key">{{ value | trans }}</span>

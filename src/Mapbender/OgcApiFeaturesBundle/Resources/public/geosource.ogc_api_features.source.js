@@ -129,7 +129,7 @@ class OgcApiSource extends Mapbender.Source {
                 }
             }
 
-            if (child.hasTooltip()) {
+            if (child.hasTooltip() || child.hasHoverStyle()) {
                 Mapbender.OgcApiFeature.TooltipManager.initialize(layer, child);
             }
         });

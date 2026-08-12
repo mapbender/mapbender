@@ -113,7 +113,7 @@ $hoverEffects: true !default;
         &.active {
             cursor: default;
             color: var(--tab-active-font-color);
-            background-color: var(--tab-active-color);
+            background-color: var(--tab-active-background-color);
             border-bottom: 3px solid var(--tab-active-border-color);
             margin-bottom: -2px;
         }

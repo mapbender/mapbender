@@ -5,6 +5,8 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
 
         this.tooltipWrapper = {tooltip: this.options.tooltip?.template};
         this.pointRadius = 5;
+        // to avoid XSS, HTML in resolved tooltip data is escaoed by default. If you want to allow HTML, set this to false.
+        this.escapeTooltipHtml = true;
     }
 
     hasBounds() {
@@ -39,7 +41,8 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
                 this.tooltipWrapper,
                 ['tooltip'], function (feature) {
                     return feature.getProperties() || {};
-                }
+                },
+                this.escapeTooltipHtml
             );
         }
 
@@ -59,12 +62,11 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
         const isPoint = geomType === 'Point';
         const isCached = (isPoint && this._hoverStylePoint) || (!isPoint && this._hoverStyle);
 
-        console.log(isPoint, isCached);
         if (!isCached) {
             const styleSpec = this.options.hoverStyle;
             const stroke = styleSpec.strokeColor ? new ol.style.Stroke({
                 color: styleSpec.strokeColor,
-                width: styleSpec.strokeWidth || 1,
+                width: isNaN(parseFloat(styleSpec.strokeWidth)) ? 1 : parseFloat(styleSpec.strokeWidth),
             }) : undefined;
             const fill = styleSpec.fillColor ? new ol.style.Fill({
                 color: styleSpec.fillColor,

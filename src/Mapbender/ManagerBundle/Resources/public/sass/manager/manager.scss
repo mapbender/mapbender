@@ -404,3 +404,7 @@ footer {
 .popover code {
     white-space: pre;
 }
+
+.accordion, .accordion:hover:not(.active) {
+    background: transparent;
+}
