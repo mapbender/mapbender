@@ -126,6 +126,8 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
             $instanceLayer->setAllowInfo($layer['allowInfo'] ?? true);
             $instanceLayer->setTooltipPropertyMap($layer['tooltipPropertyMap'] ?? null);
             $instanceLayer->setTooltipTemplate($layer['tooltipTemplate'] ?? null);
+            $instanceLayer->setFeatureInfoPropertyMap($layer['featureInfoPropertyMap'] ?? null);
+            $instanceLayer->setFeatureInfoTemplate($layer['featureInfoTemplate'] ?? null);
             $instanceLayer->setHoverStyle($layer['hoverStyle'] ?? null);
             $layerFeatureLimit = $layer['featureLimit'] ?? $instanceFeatureLimit;
             if ($layerFeatureLimit !== null) {

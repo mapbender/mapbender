@@ -63,6 +63,13 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
     #[ORM\Column(name: 'tooltip_template', type: 'text', nullable: true)]
     protected ?string $tooltipTemplate = null;
 
+    #[ORM\Column(name: 'featureinfo_property_map', type: 'json', nullable: true)]
+    protected ?array $featureInfoPropertyMap = null;
+
+    #[ORM\Column(name: 'featureinfo_template', type: 'text', nullable: true)]
+    protected ?string $featureInfoTemplate = null;
+
+
     public function setMinScale(?float $value): static
     {
         $this->minScale = ($value === null || $value == INF) ? null : floatval($value);
@@ -219,6 +226,28 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
     public function setTooltipTemplate(?string $tooltipTemplate): static
     {
         $this->tooltipTemplate = $tooltipTemplate;
+        return $this;
+    }
+
+    public function getFeatureInfoPropertyMap(): ?array
+    {
+        return $this->featureInfoPropertyMap;
+    }
+
+    public function setFeatureInfoPropertyMap(?array $featureInfoPropertyMap): static
+    {
+        $this->featureInfoPropertyMap = $featureInfoPropertyMap;
+        return $this;
+    }
+
+    public function getFeatureInfoTemplate(): ?string
+    {
+        return $this->featureInfoTemplate;
+    }
+
+    public function setFeatureInfoTemplate(?string $featureInfoTemplate): static
+    {
+        $this->featureInfoTemplate = $featureInfoTemplate;
         return $this;
     }
 

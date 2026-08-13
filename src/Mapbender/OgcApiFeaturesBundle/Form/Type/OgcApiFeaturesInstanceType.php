@@ -61,12 +61,6 @@ class OgcApiFeaturesInstanceType extends AbstractType
                 'required' => false,
                 'label' => 'mb.ogcapifeatures.admin.layer.toggle',
             ])
-            ->add('featureInfoPropertyMap', YAMLConfigurationType::class, $this->createInlineHelpText([
-                'required' => false,
-                'label' => 'mb.vectortiles.admin.featureinfo.property_map',
-                'help' => 'mb.vectortiles.admin.featureinfo.property_map_help',
-                'json_encode' => true,
-            ], $this->translator))
             ->add('layers', CollectionType::class, [
                 'entry_type' => OgcApiFeaturesInstanceLayerType::class,
                 'entry_options' => [

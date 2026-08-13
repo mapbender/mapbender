@@ -47,6 +47,14 @@ class OgcApiFeaturesInstanceLayerSettingsType extends AbstractType
                 'label' => 'mb.ogcapifeatures.admin.tooltip.template',
                 'help' => 'mb.ogcapifeatures.admin.tooltip.template_help',
             ], $this->translator))
+            ->add('featureInfoPropertyMap', HiddenType::class, [
+                'required' => false,
+            ])
+            ->add('featureInfoTemplate', TextareaType::class, $this->createInlineHelpText([
+                'required' => false,
+                'label' => 'mb.ogcapifeatures.admin.featureinfo.template',
+                'help' => 'mb.ogcapifeatures.admin.featureinfo.template_help',
+            ], $this->translator))
             ->add('hoverStyle',PaintType::class, $this->createInlineHelpText([
                'label' => 'mb.ogcapifeatures.admin.tooltip.style',
                'help' => 'mb.ogcapifeatures.admin.tooltip.style_help',
