@@ -192,7 +192,25 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         if ($template) return $template;
         if (!$propertyMap) return null;
 
-        // convert property maps into html
-        return $this->twig->render('@MapbenderOgcApiFeatures/tooltip-propertymap.html.twig', ['properties' => $propertyMap]);
+        $properties = [];
+        $titleMap = $layer->getSourceItem()->getPropertyTitles();
+
+        foreach ($propertyMap as $name => $label) {
+            // the YAML transformer creates a one-element associative array in a numeric array, unwrap
+            if (is_iterable($label)) {
+                $name = array_key_first($label);
+                $label = $label[$name];
+            }
+
+            // in a numeric array, use property title map to resolve name, in an associative array, use the label from the property map
+            if (is_int($name)) {
+                $name = $label;
+                $label = $titleMap[$name] ?? $name;
+            }
+
+            $properties[$name] = $label;
+        }
+
+        return $this->twig->render('@MapbenderOgcApiFeatures/tooltip-propertymap.html.twig', ['properties' => $properties]);
     }
 }

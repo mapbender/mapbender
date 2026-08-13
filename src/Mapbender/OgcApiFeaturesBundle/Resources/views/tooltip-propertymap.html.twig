@@ -1,15 +1,6 @@
 {% for key, value in properties %}
-    {# the YAML transformer creates an one-element associative array in a numeric array, unwrap #}
-    {% if value is iterable %}
-        {% set key = value|keys|first %}
-        {% set value = value|first %}
-    {% endif %}
-
-    {% set isNumericKey = key is same as(loop.index0) %}
-    {% set name = isNumericKey ? value : key %}
-
     <div class="ogc-api-tooltip-row">
         <span class="ogc-api-tooltip-key">{{ value | trans }}</span>
-        <span class="ogc-api-tooltip-val">{{ '${' }}{{ name }}{{ '}' }}</span>
+        <span class="ogc-api-tooltip-val">{{ '${' }}{{ key }}{{ '}' }}</span>
     </div>
 {% endfor %}

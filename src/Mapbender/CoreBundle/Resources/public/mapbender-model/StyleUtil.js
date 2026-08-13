@@ -272,7 +272,7 @@ window.Mapbender.StyleUtil = (function () {
         getPlaceholderResolver: function (original, propertyNames, dataCallback, escapeHtml) {
             const fnEscapeHtml = (input) => {
                 if (input === undefined || input === null) return '';
-                return input
+                return (input + '')
                     .replace(/&/g, "&amp;")
                     .replace(/</g, "&lt;")
                     .replace(/>/g, "&gt;")
