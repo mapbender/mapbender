@@ -5,6 +5,7 @@ class SimpleAttributeTable {
         this.input = input;
         this.propertyTitles = propertyTitles;
         this.properties = properties;
+        this._invertOnChange = false;
         this._initCheckboxes();
         this._initSortable();
     }
@@ -61,7 +62,16 @@ class SimpleAttributeTable {
             cb.id = id;
             cb.value = prop;
             cb.checked = selected.includes(prop);
-            cb.addEventListener('change', () => this._syncHiddenField());
+            cb.addEventListener('click', (event) => {
+                this._invertOnChange = event.shiftKey;
+            });
+            cb.addEventListener('change', () => {
+                if (this._invertOnChange) {
+                    this._invertCheckboxes(cb);
+                }
+                this._invertOnChange = false;
+                this._syncHiddenField();
+            });
 
             const label = document.createElement('label');
             label.className = 'form-check-label small';
@@ -83,6 +93,14 @@ class SimpleAttributeTable {
         });
     }
 
+    _invertCheckboxes(except) {
+        this.container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            if (cb !== except) {
+                cb.checked = !cb.checked;
+            }
+        });
+    }
+
     _syncHiddenField() {
         if (!this.input) return;
         const checked = [];
@@ -90,6 +108,5 @@ class SimpleAttributeTable {
             checked.push(cb.value);
         });
         this.input.value = checked.length > 0 ? JSON.stringify(checked) : '';
-        console.log(checked);
     }
 }
