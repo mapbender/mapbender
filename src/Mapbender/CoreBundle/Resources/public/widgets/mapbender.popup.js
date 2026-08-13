@@ -11,7 +11,6 @@
         this.mobileAutoSize = true;       // Auto-size popup based on screen size
         this.mobileMaxHeightRatio = 0.8;  // Maximum height as ratio of viewport (0.8 = 80%)
         this.options = Object.assign({}, this.defaults, options);
-        delete this.options['__dummy__'];
 
         // Create DOM element
         this.$element = $(document.createElement(this.options.tagName));
@@ -137,7 +136,6 @@
                 '   </div>'
             ].join("\n"),
             buttons: [],
-            __dummy__: null
         },
         staticOptions_: [
             'tagName',

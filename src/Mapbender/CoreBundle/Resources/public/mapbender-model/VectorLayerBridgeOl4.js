@@ -314,7 +314,6 @@ window.Mapbender.VectorLayerBridgeOl4 = (function() {
                 return resolved;
             }
         },
-        dummy_: null
     });
     return VectorLayerBridgeOl4;
 }());

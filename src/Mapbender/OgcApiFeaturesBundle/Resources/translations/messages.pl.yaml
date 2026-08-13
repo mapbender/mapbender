@@ -49,8 +49,21 @@ mb:
         property_title: Tytuł
       tooltip:
         heading: Podpowiedź przy najechaniu
-        description: "Wybierz, które właściwości są wyświetlane w podpowiedzi po najechaniu na obiekty na mapie."
         no_properties: "Brak dostępnych właściwości. Spróbuj ponownie załadować źródło."
+        multiplechoice: Prosta tabela atrybutów
+        multiplechoice_help: "Wybierz, które właściwości są wyświetlane w podpowiedzi po najechaniu na obiekty na mapie. Zostanie nadpisane, jeśli ustawiono Zaawansowany szablon. Można je zmieniać metodą przeciągnij i upuść."
+        template: Zaawansowany szablon (HTML/YAML)
+        template_help: |-
+          Zastępuje prostą tabelę atrybutów, jeśli jest ustawione. Wprowadź HTML (użyj składni <code>${attribute}</code> dla placeholderów) albo tablicę YAML dla tabeli atrybutów, w której nazwy mogą zostać nadpisane.
+
+          Przykłady:
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Nazwa lokalizacji
+          - add: Adres</code>
+        style: Styl po najechaniu
+        style_help: Jeśli ustawione, geometria zostanie wyróżniona zdefiniowanym stylem podczas najechania na nią
     metadata:
       title: Tytuł
       version: Wersja

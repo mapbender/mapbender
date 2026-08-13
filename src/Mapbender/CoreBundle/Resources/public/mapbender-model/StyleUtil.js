@@ -1,5 +1,5 @@
 window.Mapbender = Mapbender || {};
-window.Mapbender.StyleUtil = (function() {
+window.Mapbender.StyleUtil = (function () {
     let _svgStyleDefaults, cssKeywordColors, _svgCallbackDefaultProps;
     let stripAssetUrlRxp = /^.*?(\/)(bundles\/.*)/;
     let placeholderRegex = /\${([^}]+)}/g;
@@ -11,7 +11,7 @@ window.Mapbender.StyleUtil = (function() {
          * @param {String} opacityProp
          * @return {Array<Number>} four entries: r,g,b (integer in [0..255]), then alpha (float in [0...1])
          */
-        parseSvgColor: function(style, colorProp, opacityProp) {
+        parseSvgColor: function (style, colorProp, opacityProp) {
             var colorRule = this._resolveSvgDefault(style, colorProp);
             var alphaRule = this._resolveSvgDefault(style, opacityProp);
             var components = this._parseCssColor(colorRule);
@@ -29,7 +29,7 @@ window.Mapbender.StyleUtil = (function() {
          * @param {String} cssColor
          * @return {Array<Number>} four entries: r,g,b (integer in [0..255]), then alpha (float in [0...1])
          */
-        parseCssColor: function(cssColor) {
+        parseCssColor: function (cssColor) {
             var components = this._parseCssColor(cssColor);
             if (components.length < 4) {
                 components.push(1.0);
@@ -42,7 +42,7 @@ window.Mapbender.StyleUtil = (function() {
          * @param {String} [opacityProp]
          * @return {Object}
          */
-        cssColorToSvgRules: function(cssColor, colorProp, opacityProp) {
+        cssColorToSvgRules: function (cssColor, colorProp, opacityProp) {
             var components = this.parseCssColor(cssColor);
             return this._componentsToSvgRules(components, colorProp, opacityProp);
         },
@@ -52,7 +52,7 @@ window.Mapbender.StyleUtil = (function() {
          * @param {String} opacityProp
          * @return {String}
          */
-        svgToCssColorRule: function(style, colorProp, opacityProp) {
+        svgToCssColorRule: function (style, colorProp, opacityProp) {
             var components = this.parseSvgColor(style, colorProp, opacityProp);
             return this._componentsToRgbaRule(components);
         },
@@ -60,9 +60,9 @@ window.Mapbender.StyleUtil = (function() {
          * @param {Object} style
          * @return {Object}
          */
-        addSvgDefaults: function(style) {
+        addSvgDefaults: function (style) {
             var withDefaults = Object.assign({}, _svgStyleDefaults, style);
-            _svgCallbackDefaultProps.forEach(function(prop) {
+            _svgCallbackDefaultProps.forEach(function (prop) {
                 var value = withDefaults[prop];
                 if (typeof value === 'function') {
                     withDefaults['prop'] = (value)(withDefaults);
@@ -70,7 +70,7 @@ window.Mapbender.StyleUtil = (function() {
             });
             return withDefaults;
         },
-        fixSvgStyleAssetUrls: function(style) {
+        fixSvgStyleAssetUrls: function (style) {
             if (style && style.externalGraphic) {
                 style.externalGraphic = this.fixAssetPath(style.externalGraphic);
             }
@@ -80,7 +80,7 @@ window.Mapbender.StyleUtil = (function() {
          * @param {String} url
          * @returns {String|boolean}
          */
-        fixAssetPath: function(url) {
+        fixAssetPath: function (url) {
             var urlOut = url.replace(stripAssetUrlRxp, '$2');
             if (urlOut === url && (urlOut || '').indexOf('bundles/') !== 0) {
                 console.warn("Asset path could not be resolved to local bundles reference", url);
@@ -95,7 +95,7 @@ window.Mapbender.StyleUtil = (function() {
          * @param {String} [opacityProp]
          * @return {Object}
          */
-        _componentsToSvgRules: function(components, colorProp, opacityProp) {
+        _componentsToSvgRules: function (components, colorProp, opacityProp) {
             var ruleObject = {};
             ruleObject[colorProp] = this._componentsToHexRgbRule(components);
             if (opacityProp) {
@@ -111,8 +111,8 @@ window.Mapbender.StyleUtil = (function() {
          * @param {Array<Number>} components
          * @return {String}
          */
-        _componentsToHexRgbRule: function(components) {
-            var digitPairs = components.slice(0, 3).map(function(component) {
+        _componentsToHexRgbRule: function (components) {
+            var digitPairs = components.slice(0, 3).map(function (component) {
                 return ('0' + component.toString(16)).slice(-2);
             });
             return ['#', digitPairs.join('')].join('');
@@ -122,7 +122,7 @@ window.Mapbender.StyleUtil = (function() {
          * @return {string}
          * @private
          */
-        _componentsToRgbaRule: function(components) {
+        _componentsToRgbaRule: function (components) {
             var alpha;
             if (typeof (components[3]) !== undefined) {
                 alpha = components[3];
@@ -139,7 +139,7 @@ window.Mapbender.StyleUtil = (function() {
             ];
             return parts.join('')
         },
-        _parseCssColor: function(rule) {
+        _parseCssColor: function (rule) {
             var hexPairs;
             var keywordRule = cssKeywordColors[rule];
             if (typeof keywordRule !== 'undefined') {
@@ -160,7 +160,7 @@ window.Mapbender.StyleUtil = (function() {
                 }
             }
             if (hexPairs) {
-                const mapped = hexPairs.map(function(hexPair) {
+                const mapped = hexPairs.map(function (hexPair) {
                     return parseInt(hexPair, 16);
                 });
                 if (mapped.length === 4) mapped[3] /= 255;
@@ -171,7 +171,7 @@ window.Mapbender.StyleUtil = (function() {
                     matches = (rule || '').match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
                 }
                 if (matches) {
-                    var components = [matches[1], matches[2], matches[3]].map(function(component) {
+                    var components = [matches[1], matches[2], matches[3]].map(function (component) {
                         return parseInt(component);
                     });
                     if (typeof (matches[4]) !== 'undefined') {
@@ -182,7 +182,7 @@ window.Mapbender.StyleUtil = (function() {
             }
             throw new Error("Could not parse css color input " + rule);
         },
-        _resolveSvgDefault: function(styleObject, propName) {
+        _resolveSvgDefault: function (styleObject, propName) {
             var styleValue = styleObject[propName];
             if (typeof styleValue !== 'undefined') {
                 return styleValue;
@@ -246,14 +246,14 @@ window.Mapbender.StyleUtil = (function() {
             return new ol.style.Style(options);
         },
 
-                /**
+        /**
          *
          * @param {Object} data
          * @param {string[]} [candidates] to limit scanning to specifically named properties (default: scan all properties)
          * @return {string[]}
          */
-        detectDataPlaceholders: function(data, candidates) {
-            return (candidates || Object.keys(data)).filter(function(prop) {
+        detectDataPlaceholders: function (data, candidates) {
+            return (candidates || Object.keys(data)).filter(function (prop) {
                 // Reset global-flagged RegExp state.
                 // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test#using_test_on_a_regex_with_the_global_flag
                 placeholderRegex.lastIndex = 0;
@@ -265,17 +265,31 @@ window.Mapbender.StyleUtil = (function() {
          * @param {Object} original
          * @param {Array<String>} propertyNames
          * @param {function} dataCallback
+         * @param {boolean|undefined} escapeHtml if true, the resolved placeholder values will be escaped for HTML output (default: false)
          * @return {function}
          * @private
          */
-        getPlaceholderResolver: function(original, propertyNames, dataCallback) {
+        getPlaceholderResolver: function (original, propertyNames, dataCallback, escapeHtml) {
+            const fnEscapeHtml = (input) => {
+                if (input === undefined || input === null) return '';
+                return (input + '')
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            };
+
             if (propertyNames.length) {
                 return function (styleConfig, feature) {
                     const valuesOut = Object.assign({}, styleConfig);
                     const data = dataCallback(feature);
                     propertyNames.forEach(function (prop) {
                         valuesOut[prop] = styleConfig[prop]?.replace(placeholderRegex, function (match, dataProp) {
-                            const dataValue = data[dataProp];
+                            let dataValue = data[dataProp];
+                            if (escapeHtml) {
+                                dataValue = fnEscapeHtml(dataValue);
+                            }
                             return dataValue || (prop === 'label' ? '' : dataValue);
                         });
                     });
@@ -293,9 +307,9 @@ window.Mapbender.StyleUtil = (function() {
          * @param {object} featureData
          * @return {object}
          */
-        resolvePlaceholders: function(styleConfig, featureData) {
+        resolvePlaceholders: function (styleConfig, featureData) {
             const placeholderProps = Mapbender.StyleUtil.detectDataPlaceholders(styleConfig);
-            const resolver = Mapbender.StyleUtil.getPlaceholderResolver(styleConfig, placeholderProps, function() {
+            const resolver = Mapbender.StyleUtil.getPlaceholderResolver(styleConfig, placeholderProps, function () {
                 return featureData;
             });
             return resolver(styleConfig);
@@ -324,7 +338,7 @@ window.Mapbender.StyleUtil = (function() {
         fontOpacity: 1.0,
         labelXOffset: 0,
         labelYOffset: 0,
-        labelOutlineOpacity: function(styleObject) {
+        labelOutlineOpacity: function (styleObject) {
             var fallback = styleObject['fontOpacity'];
             if (typeof fallback !== 'undefined') {
                 return fallback;

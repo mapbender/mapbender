@@ -1,7 +1,12 @@
 <div class="tooltip-config-section">
-    <label class="form-label fw-bold">{{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}</label>
-    <p class="text-muted small mb-1">{{ 'mb.ogcapifeatures.admin.tooltip.description' | trans }}</p>
+    <label class="form-label">{{ 'mb.ogcapifeatures.admin.tooltip.multiplechoice' | trans }}</label>
+    <div class="help-text">
+        <i class="fas fa-question-circle" data-bs-toggle="popover" data-bs-content="{{ 'mb.ogcapifeatures.admin.tooltip.multiplechoice_help' | trans }}" data-bs-placement="left" data-bs-html="true" tabindex="0"></i>
+    </div>
     {{ form_widget(form.tooltipPropertyMap) }}
     <div class="tooltip-checkbox-list"
          data-empty-text="{{ 'mb.ogcapifeatures.admin.tooltip.no_properties' | trans }}"></div>
+
+    {{ form_row(form.tooltipTemplate) }}
+    {{ form_row(form.hoverStyle) }}
 </div>

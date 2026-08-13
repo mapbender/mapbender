@@ -1,3 +1,7 @@
+.mb-element-map.tooltip-active {
+    cursor: pointer;
+}
+
 .ogc-api-tooltip {
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid #ccc;

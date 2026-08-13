@@ -397,6 +397,14 @@ footer {
     margin-bottom: 10px;
 }
 
-.instanceContainer .help-text {
+.instanceContainer .help-text, .container .help-text {
     float: right;
+}
+
+.popover code {
+    white-space: pre;
+}
+
+.accordion, .accordion:hover:not(.active) {
+    background: transparent;
 }

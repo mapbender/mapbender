@@ -49,8 +49,21 @@ mb:
         property_title: Titel
       tooltip:
         heading: Hover-tooltip
-        description: "Selecteer welke eigenschappen worden getoond in een tooltip bij het hoveren over objecten op de kaart."
         no_properties: "Geen eigenschappen beschikbaar. Probeer de bron opnieuw te laden."
+        multiplechoice: Simpele attributentabel
+        multiplechoice_help: "Selecteer welke eigenschappen worden getoond in een tooltip bij het hoveren over objecten op de kaart. Wordt overschreven als Geavanceerd sjabloon is ingesteld. Kan worden herschikt door slepen en neerzetten."
+        template: Geavanceerd sjabloon (HTML/YAML)
+        template_help: |-
+          Vervangt de simpele attributentabel indien ingesteld. Voer HTML in (gebruik de syntax <code>${attribute}</code> voor placeholders) of een YAML-array voor een attributentabel waarbij de namen kunnen worden overschreven.
+
+          Voorbeelden:
+
+          <br><br><br><br><code><b>${name}</b> (id: ${id})</code><br><br><br><br>
+
+          <code>- name: Locatienaam
+          - add: Adres</code>
+        style: Hoverstijl
+        style_help: Indien ingesteld wordt een geometrie gemarkeerd met de gedefinieerde stijl tijdens het hoveren
     metadata:
       title: Titel
       version: Versie
