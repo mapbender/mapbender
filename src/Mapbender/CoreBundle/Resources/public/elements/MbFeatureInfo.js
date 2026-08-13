@@ -185,6 +185,7 @@
             if (!this.isPopup) return; // sidepane mode
 
             super.activateByButton();
+            this.popup.$element.on('close', () => this.highlightLayer.getSource().clear());
         }
 
         activateByButton(callback) {
