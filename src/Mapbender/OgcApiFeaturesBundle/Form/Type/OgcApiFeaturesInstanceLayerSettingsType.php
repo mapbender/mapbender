@@ -78,6 +78,7 @@ class OgcApiFeaturesInstanceLayerSettingsType extends AbstractType
             ]);
 
         $builder->get('tooltipPropertyMap')->addModelTransformer(new JsonArrayTransformer());
+        $builder->get('featureInfoPropertyMap')->addModelTransformer(new JsonArrayTransformer());
     }
 
     private function getStyleChoices(): array

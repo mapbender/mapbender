@@ -229,8 +229,12 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
         return $this;
     }
 
+    // per default, use all properties in the feature info table
     public function getFeatureInfoPropertyMap(): ?array
     {
+        if (!$this->featureInfoPropertyMap || empty($this->featureInfoPropertyMap)) {
+            return $this->getSourceItem()->getPropertyKeys();
+        }
         return $this->featureInfoPropertyMap;
     }
 

@@ -7,22 +7,30 @@ class OgcApiFeaturesEditInstancePopup {
         this.styleUrl = styleUrl;
         this.sourceId = sourceId;
         this.properties = properties;
-        this.propertyTitles = propertyTitles;
         this.styleMap = {};
         this._filterState = {name: '', origin: '', source: this.sourceId};
         this._originalOptions = new Map();
         this._savedValues = new Map();
         this._secOriginalOptions = new Map();
         this._secFilterState = {name: '', origin: '', source: this.sourceId};
-        this.toolTipContainer = this.$container.find('.tooltip-checkbox-list')[0];
-        this.toolTipInput = this.$container[0].querySelector('input[id$="_tooltipPropertyMap"]');
         this.CURRENT_TAB_STORAGE_KEY = 'mb-ogcapifeatures-edit-instance-popup-tab';
 
         this._bindEvents();
         this._loadStyles();
         this._initTabs();
-        this._initTooltipCheckboxes();
-        this._initToolTipSortable();
+
+        new SimpleAttributeTable(
+            this.$container.find('.tooltip-checkbox-list')[0],
+            this.$container[0].querySelector('input[id$="_tooltipPropertyMap"]'),
+            properties,
+            propertyTitles,
+        );
+        new SimpleAttributeTable(
+            this.$container.find('.featureinfo-checkbox-list')[0],
+            this.$container[0].querySelector('input[id$="_featureInfoPropertyMap"]'),
+            properties,
+            propertyTitles,
+        )
     }
 
     _initTabs() {
@@ -419,90 +427,5 @@ class OgcApiFeaturesEditInstancePopup {
                 Mapbender.StyleUtils.drawStyleCanvas(c, s, {collectionId});
             });
         }
-    }
-
-    // ── Tooltip Property Checkboxes ──
-
-    _initToolTipSortable() {
-        $(this.toolTipContainer).sortable({
-            cursor: 'move',
-            axis: 'y',
-            items: '.form-check',
-            distance: 6,
-            cancel: 'input',
-            containment: 'parent',
-            stop: () => {
-                this._syncTooltipHidden();
-            }
-        });
-    }
-
-    _initTooltipCheckboxes() {
-        if (!this.toolTipContainer || this.toolTipContainer.dataset.loaded === 'true') return;
-
-        // Find the hidden input for tooltipPropertyMap
-        let selected = [];
-        if (this.toolTipInput && this.toolTipInput.value) {
-            try {
-                selected = JSON.parse(this.toolTipInput.value);
-            } catch (e) {
-            }
-            if (!Array.isArray(selected)) selected = [];
-        }
-
-        this._renderCheckboxes(selected);
-    }
-
-    _renderCheckboxes(selected) {
-        this.toolTipContainer.dataset.loaded = 'true';
-        this.toolTipContainer.innerHTML = '';
-
-        if (this.properties.length === 0) {
-            this.toolTipContainer.innerHTML = '<span class="text-muted small">' + (this.toolTipContainer.dataset.emptyText || 'No properties') + '</span>';
-            return;
-        }
-
-        // show the already selected items first
-        [...selected, ...this.properties.filter((item) => !selected.includes(item))].forEach(prop => {
-            const id = 'tooltip_cb_' + Math.random().toString(36).substring(2, 8);
-            const wrapper = document.createElement('div');
-            wrapper.className = 'form-check tooltip-prop-check';
-
-            const cb = document.createElement('input');
-            cb.type = 'checkbox';
-            cb.className = 'form-check-input';
-            cb.id = id;
-            cb.value = prop;
-            cb.checked = selected.includes(prop);
-            cb.addEventListener('change', () => this._syncTooltipHidden());
-
-            const label = document.createElement('label');
-            label.className = 'form-check-label small';
-            label.htmlFor = id;
-            const title = this.propertyTitles?.[prop];
-            if (title) {
-                label.textContent = title + ' ';
-                const keySpan = document.createElement('span');
-                keySpan.className = 'prop-key';
-                keySpan.textContent = '(' + prop + ')';
-                label.appendChild(keySpan);
-            } else {
-                label.textContent = prop;
-            }
-
-            wrapper.appendChild(cb);
-            wrapper.appendChild(label);
-            this.toolTipContainer.appendChild(wrapper);
-        });
-    }
-
-    _syncTooltipHidden() {
-        if (!this.toolTipInput) return;
-        const checked = [];
-        this.toolTipContainer.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
-            checked.push(cb.value);
-        });
-        this.toolTipInput.value = checked.length > 0 ? JSON.stringify(checked) : '';
-        console.log(checked);
     }
 }
