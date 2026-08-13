@@ -64,6 +64,20 @@ mb:
           - add: Adres</code>
         style: Üzerine gelme stili
         style_help: Tanımlanırsa, bir geometri üzerine gelindiğinde tanımlanan stille vurgulanır
+      featureinfo:
+        heading: 'Özellik Bilgisi'
+        multiplechoice: Basit öznitelik tablosu
+        multiplechoice_help: "Bu koleksiyon için özellik bilgisi istenirken hangi özniteliklerin gösterileceğini seçin. Gelişmiş Şablon ayarlanırsa üzerine yazılır. Sürükle bırak ile yeniden sıralanabilir. Seçimi tersine çevirmek için bir onay kutusunda Shift tuşuyla tıklayın."
+        template: Gelişmiş şablon (HTML/YAML)
+        template_help: |-
+          Tanımlanırsa basit öznitelik tablosunu geçersiz kılar. HTML girin (yer tutucular için <code>${attribute}</code> söz dizimini kullanın) ya da adların üzerine yazılabildiği bir öznitelik tablosu için YAML dizisi girin.
+
+          Örnekler:
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Konum adı
+          - add: Adres</code>
     metadata:
       title: Başlık
       version: Sürüm

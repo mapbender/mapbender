@@ -64,6 +64,20 @@ mb:
           - add: Indirizzo</code>
         style: Stile al passaggio del mouse
         style_help: Se impostato, una geometria verrà evidenziata usando lo stile definito durante il passaggio del mouse
+      featureinfo:
+        heading: 'Informazioni sulle caratteristiche'
+        multiplechoice: Tabella attributi semplice
+        multiplechoice_help: "Seleziona quali proprietà vengono mostrate quando si richiedono le informazioni sulle feature per questa collection. Verrà sovrascritto se impostato il Modello avanzato. Può essere riordinato trascinando e rilasciando. Maiusc-clic su una casella di controllo per invertire la selezione."
+        template: Modello avanzato (HTML/YAML)
+        template_help: |-
+          Sostituisce la tabella attributi semplice se impostato. Inserisci HTML (usa la sintassi <code>${attribute}</code> per i segnaposto) oppure un array YAML per una tabella attributi in cui i nomi possono essere sovrascritti.
+
+          Esempi:
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Nome del luogo
+          - add: Indirizzo</code>
     metadata:
       title: Titolo
       version: Versione

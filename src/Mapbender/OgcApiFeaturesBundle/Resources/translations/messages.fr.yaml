@@ -64,6 +64,20 @@ mb:
           - add: Adresse</code>
         style: Style au survol
         style_help: Si défini, une géométrie sera mise en surbrillance avec le style défini lors du survol
+      featureinfo:
+        heading: 'Informations sur les entités'
+        multiplechoice: Tableau d'attributs simple
+        multiplechoice_help: "Sélectionnez les propriétés affichées lors de la demande des informations sur les entités pour cette collection. Sera remplacé si le Modèle avancé est défini. Peut être réordonné par glisser-déposer. Maj-clic sur une case à cocher pour inverser la sélection."
+        template: Modèle avancé (HTML/YAML)
+        template_help: |-
+          Remplace le tableau d'attributs simple s'il est défini. Saisissez soit du HTML (utilisez la syntaxe <code>${attribute}</code> pour les espaces réservés), soit un tableau YAML pour un tableau d'attributs où les noms peuvent être remplacés.
+
+          Exemples :
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Nom du lieu
+          - add: Adresse</code>
     metadata:
       title: Titre
       version: Version

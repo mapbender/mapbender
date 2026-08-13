@@ -64,6 +64,20 @@ mb:
           - add: Morada</code>
         style: Estilo ao passar o rato
         style_help: Se definido, uma geometria será realçada com o estilo definido ao passar o rato sobre ela
+      featureinfo:
+        heading: 'Informações das características'
+        multiplechoice: Tabela de atributos simples
+        multiplechoice_help: "Selecione quais propriedades são mostradas ao solicitar as informações das características desta coleção. Será substituído se o Modelo avançado estiver definido. Pode ser reordenado usando arrastar e soltar. Shift-clique numa caixa de seleção para inverter a seleção."
+        template: Modelo avançado (HTML/YAML)
+        template_help: |-
+          Substitui a tabela de atributos simples, se definido. Introduza HTML (use a sintaxe <code>${attribute}</code> para marcadores de posição) ou um array YAML para uma tabela de atributos onde os nomes podem ser substituídos.
+
+          Exemplos:
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Nome do local
+          - add: Morada</code>
     metadata:
       title: Título
       version: Versão
