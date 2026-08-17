@@ -70,6 +70,7 @@
     --toolbar-background: #{$toolBarBackgroundColor};
     --toolbar-opacity: #{$toolBarOpacity};
     --toolbar-text-color: var(--text-color);
+    --toolbar-menu-text-color: var(--toolbar-text-color);
     --toolbar-button-hover-opacity: #{$toolBarButtonHoverOpacity};
     --toolbar-button-active-opacity: #{$toolBarButtonActiveOpacity};
     --toolbar-button-active-background-color: #{$toolBarButtonActiveBackgroundColor};
