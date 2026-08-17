@@ -65,7 +65,7 @@ class WmsInstanceLayer extends SourceInstanceItem implements \Stringable
     protected $maxScale;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected string $style;
+    protected ?string $style = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     protected $priority;
@@ -436,24 +436,13 @@ class WmsInstanceLayer extends SourceInstanceItem implements \Stringable
         return $parent ? $parent->getMaxScale(true) : null;
     }
 
-    /**
-     * Set style
-     *
-     * @param string $style
-     * @return WmsInstanceLayer
-     */
-    public function setStyle($style): static
+    public function setStyle(?string $style): static
     {
         $this->style = $style;
         return $this;
     }
 
-    /**
-     * Get style
-     *
-     * @return string
-     */
-    public function getStyle()
+    public function getStyle(): ?string
     {
         return $this->style;
     }
