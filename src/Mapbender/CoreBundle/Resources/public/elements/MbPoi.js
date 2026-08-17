@@ -60,9 +60,9 @@
                     label: Mapbender.trans('mb.core.poi.popup.btn.position'),
                     cssClass: 'btn btn-sm btn-primary',
                     callback: () => {
-                        self.gpsElement.mbGpsPosition('getGPSPosition', (lonLat) => {
-                            self._updatePoi(lonLat.lon, lonLat.lat);
-                            self._setPoiMarker(lonLat.lon, lonLat.lat);
+                        self.gpsElement.data('MbGpsPosition').getGPSPosition((p) => {
+                            self._updatePoi(p.x, p.y);
+                            self._setPoiMarker(p.x, p.y);
                         });
                     }
                 });
@@ -78,7 +78,7 @@
         closeByButton() {
             this._reset();
             if (this.gpsElement) {
-                this.gpsElement.mbGpsPosition('deactivate');
+                this.gpsElement.data('MbGpsPosition').deactivate();
             }
             if (this.poiMarkerLayer) {
                 this.poiMarkerLayer.hide();
