@@ -13,10 +13,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class HTMLElementAdminType extends AbstractType implements EventSubscriberInterface
 {
@@ -38,10 +38,6 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
             ->add('content', TextareaType::class, [
                 'required' => true,
                 'label' => 'mb.core.htmlelement.admin.content',
-                'constraints' => [
-                    new NotBlank(),
-                    new HtmlTwigConstraint(),
-                ],
             ])
             ->add('classes', TextType::class, [
                 'required' => false,
@@ -103,14 +99,16 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
         /** @var Element $element */
         $element = $event->getForm()->getParent()->getData();
         $event->getForm()->add('content', TextareaType::class, [
-            'required' => false,
+            'required' => true,
             'label' => 'mb.core.htmlelement.admin.content',
-            'constraints' => new HtmlTwigConstraint([
-                // Same twig variable scope as frontend
-                /** @see HTMLElement::getView */
-                'entity' => $element,
-                'application' => $element->getApplication(),
-            ])
+            'constraints' => [
+                new NotBlank(),
+                new HtmlTwigConstraint([
+                    // Same twig variable scope as frontend
+                    /** @see HTMLElement::getView */
+                    'entity' => $element,
+                    'application' => $element->getApplication(),
+                ])]
         ]);
     }
 }
