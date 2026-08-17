@@ -351,18 +351,6 @@ mb:
         display: Mostrar
         mouse: Ratón
         position: Posición
-    copyright:
-      class:
-        title: 'Derechos de Autor'
-        description: 'Muestra los términos de uso'
-      tag:
-        copyright: 'Derechos de Autor'
-        dialog: Diálogo
-      admin:
-        content: Contenido
-        dontShowAgain: 'Opción "No mostrar más"'
-        dontShowAgainLabel: 'Texto "No mostrar más"'
-        dontShowAgainDefaultLabel: 'No mostrar más'
     map:
       class:
         title: Mapa
@@ -550,6 +538,11 @@ mb:
       admin:
         content: Contenido
         classes: Clases
+        dontShowAgain: 'Opción "No mostrar más"'
+        dontShowAgainLabel: 'Texto "No mostrar más"'
+        dontShowAgainDefaultLabel: 'No mostrar más'
+        modal: "Abrir como ventana emergente modal"
+        modal_help: '(solo en modo emergente): oscurece el fondo y desactiva la posibilidad de cerrar la ventana haciendo clic fuera del popup'
     entity:
       app:
         screenshotfile:

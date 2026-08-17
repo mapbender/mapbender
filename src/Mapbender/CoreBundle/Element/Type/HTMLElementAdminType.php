@@ -51,10 +51,11 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
                 'required' => false,
                 'label' => 'mb.manager.autoOpen',
             ])
-            ->add('modal', CheckboxType::class, [
+            ->add('modal', CheckboxType::class, $this->createInlineHelpText([
                 'required' => false,
                 'label' => 'mb.core.htmlelement.admin.modal',
-            ])
+                'help' => 'mb.core.htmlelement.admin.modal_help',
+            ], $this->trans))
             ->add('popupWidth', TextType::class, [
                 'required' => false,
                 'label' => 'mb.manager.popup_width',
@@ -79,12 +80,12 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
             ])
             ->add('dontShowAgain', CheckboxType::class, [
                 'required' => false,
-                'label' => 'mb.core.copyright.admin.dontShowAgain',
+                'label' => 'mb.core.htmlelement.admin.dontShowAgain',
             ])
             ->add('dontShowAgainLabel', TextType::class, [
                 'required' => false,
-                'label' => 'mb.core.copyright.admin.dontShowAgainLabel',
-                'data' => 'mb.core.copyright.admin.dontShowAgainDefaultLabel',
+                'label' => 'mb.core.htmlelement.admin.dontShowAgainLabel',
+                'data' => 'mb.core.htmlelement.admin.dontShowAgainDefaultLabel',
             ])
         ;
         $builder->addEventSubscriber($this);

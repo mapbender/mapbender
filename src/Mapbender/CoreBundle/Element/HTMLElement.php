@@ -56,7 +56,7 @@ class HTMLElement extends AbstractElementService implements FloatableElement
             'autoOpen' => false,
             'content' => null,
             'dontShowAgain' => false,
-            'dontShowAgainLabel' => 'mb.core.copyright.admin.dontShowAgainDefaultLabel',
+            'dontShowAgainLabel' => 'mb.core.htmlelement.admin.dontShowAgainDefaultLabel',
             'popupWidth'    => 300,
             'popupHeight' => null,
             'element_icon' => self::getDefaultIcon(),

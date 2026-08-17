@@ -354,18 +354,6 @@ mb:
         display: afișare
         mouse: mouse
         position: poziție
-    copyright:
-      class:
-        title: 'Drepturi de autor'
-        description: 'Afișează condițiile de utilizare.'
-      tag:
-        copyright: 'Drepturi de autor'
-        dialog: dialog
-      admin:
-        content: Conținut
-        dontShowAgain: 'Opțiunea „Nu mai afișa”'
-        dontShowAgainLabel: 'Textul opțiunii „Nu mai afișa”'
-        dontShowAgainDefaultLabel: 'Nu mai afișa'
     map:
       class:
         title: Hartă
@@ -555,6 +543,11 @@ mb:
       admin:
         content: Conținut
         classes: Clase
+        dontShowAgain: 'Opțiunea „Nu mai afișa”'
+        dontShowAgainLabel: 'Textul opțiunii „Nu mai afișa”'
+        dontShowAgainDefaultLabel: 'Nu mai afișa'
+        modal: "Deschide ca fereastră popup modală"
+        modal_help: '(doar în modul popup): întunecă fundalul și dezactivează posibilitatea de a închide fereastra făcând clic în afara popup-ului'
     entity:
       app:
         screenshotfile:
