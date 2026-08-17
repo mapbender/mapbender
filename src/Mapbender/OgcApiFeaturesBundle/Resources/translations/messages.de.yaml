@@ -64,6 +64,20 @@ mb:
           - add: Adresse</code>
         style: Hover-Stil
         style_help: Wenn gesetzt, wird eine Geometrie beim Überfahren mit dem definierten Stil hervorgehoben
+      featureinfo:
+        heading: Feature-Information
+        multiplechoice: Einfache Attributtabelle
+        multiplechoice_help: "Wählen Sie, welche Eigenschaften beim Abrufen der Feature-Informationen für diese Collection angezeigt werden sollen. Wird bei gesetzter Erweiterter Vorlage überschrieben. Kann per Drag & Drop umsortiert werden. Mit Umschalt-Klick auf ein Kontrollkästchen wird die Auswahl invertiert."
+        template: Erweiterte Vorlage (HTML/YAML)
+        template_help: |-
+          Wenn gesetzt, wird die einfache Attributtabelle überschrieben. Geben Sie entweder HTML ein (verwenden Sie die Syntax <code>${attribute}</code> für Platzhalter) oder ein YAML-Array für eine Attributtabelle, in der die Namen überschrieben werden können.
+
+          Beispiele:
+
+          <br><br><code><b>${name}</b> (id: ${id})</code><br><br>
+
+          <code>- name: Ortsname
+          - add: Adresse</code>
     metadata:
       title: Titel
       version: Version

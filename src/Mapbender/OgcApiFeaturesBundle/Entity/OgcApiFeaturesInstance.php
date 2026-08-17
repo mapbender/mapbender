@@ -44,9 +44,6 @@ class OgcApiFeaturesInstance extends SourceInstance
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $toggle = null;
 
-    #[ORM\Column(name: 'feature_info_property_map', type: 'text', nullable: true)]
-    protected ?string $featureInfoPropertyMap = "";
-
     public function __construct()
     {
         $this->layers = new ArrayCollection();
@@ -180,17 +177,6 @@ class OgcApiFeaturesInstance extends SourceInstance
     public function getToggle(): ?bool
     {
         return $this->toggle;
-    }
-
-    public function getFeatureInfoPropertyMap(): ?string
-    {
-        return $this->featureInfoPropertyMap;
-    }
-
-    public function setFeatureInfoPropertyMap(?string $featureInfoPropertyMap): static
-    {
-        $this->featureInfoPropertyMap = $featureInfoPropertyMap;
-        return $this;
     }
 
     public function getDisplayTitle(): string

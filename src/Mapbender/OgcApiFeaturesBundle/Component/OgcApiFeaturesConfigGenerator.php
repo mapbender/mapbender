@@ -44,8 +44,6 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         /** @var OgcApiFeaturesSource $source */
         $source = $sourceInstance->getSource();
         $config = parent::getConfiguration($application, $sourceInstance, $idPrefix);
-        $featureInfoPropertyMap = json_decode($sourceInstance->getFeatureInfoPropertyMap(), true);
-        $featureInfoPropertyMapExists = $sourceInstance->getFeatureInfoPropertyMap() && json_last_error() === JSON_ERROR_NONE;
         $config['options'] = [
             'id' => $sourceInstance->getId(),
             'jsonUrl' => $source->getJsonUrl(),
@@ -61,9 +59,6 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                     'selected' => $sourceInstance->getAllowSelected(),
                     'toggle' => $sourceInstance->getAllowToggle(),
                 ],
-            ],
-            'featureInfo' => [
-                'propertyMap' => $featureInfoPropertyMapExists ? $featureInfoPropertyMap : null,
             ],
         ];
         $config['state'] = [
@@ -102,10 +97,29 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                     $childConfig['options']['style'] = $availableStyles[0]['name'];
                     $childConfig['options']['availableStyles'] = $availableStyles;
                 }
-                $tooltipTemplate = $this->getTooltipTemplate($layer);
+                $tooltipTemplate = $this->getTooltipOrFiTemplate(
+                    $layer,
+                    $layer->getTooltipTemplate(),
+                    $layer->getTooltipPropertyMap(),
+                    '@MapbenderOgcApiFeatures/tooltip-propertymap.html.twig',
+                );
+
                 if ($tooltipTemplate) {
                     $childConfig['options']['tooltip'] = [
                         'template' => $tooltipTemplate,
+                    ];
+                }
+
+                $fiTemplate = $this->getTooltipOrFiTemplate(
+                    $layer,
+                    $layer->getFeatureInfoTemplate(),
+                    $layer->getFeatureInfoPropertyMap(),
+                    '@MapbenderOgcApiFeatures/featureinfo-propertymap.html.twig',
+                );
+
+                if ($fiTemplate) {
+                    $childConfig['options']['featureInfo'] = [
+                        'template' => $fiTemplate,
                     ];
                 }
 
@@ -174,11 +188,13 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         return '/application/metadata/' . $instance->getId() . '/' . $layerId . '/';
     }
 
-    private function getTooltipTemplate(OgcApiFeaturesInstanceLayer $layer): ?string
+    private function getTooltipOrFiTemplate(
+        OgcApiFeaturesInstanceLayer $layer,
+        ?string                     $template,
+        ?array                      $propertyMap,
+        string                      $propertyMapTwigTemplate,
+    ): ?string
     {
-        $template = $layer->getTooltipTemplate();
-        $propertyMap = $layer->getTooltipPropertyMap();
-
         // if the template is valid yaml, treat it as a property map
         if ($template && str_starts_with($template, '-')) {
             $transformer = new YAMLDataTransformer();
@@ -211,6 +227,6 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
             $properties[$name] = $label;
         }
 
-        return $this->twig->render('@MapbenderOgcApiFeatures/tooltip-propertymap.html.twig', ['properties' => $properties]);
+        return $this->twig->render($propertyMapTwigTemplate, ['properties' => $properties]);
     }
 }

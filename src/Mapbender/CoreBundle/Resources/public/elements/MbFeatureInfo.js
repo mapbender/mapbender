@@ -185,6 +185,12 @@
             if (!this.isPopup) return; // sidepane mode
 
             super.activateByButton();
+            if (this.highlightLayer) {
+                this.popup.$element
+                    .off('close.mbFeatureInfoHighlight')
+                    .on('close.mbFeatureInfoHighlight', () => this.highlightLayer.getSource().clear());
+            }
+
         }
 
         activateByButton(callback) {

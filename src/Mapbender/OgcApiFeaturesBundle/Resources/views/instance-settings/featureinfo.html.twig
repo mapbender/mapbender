@@ -1,0 +1,11 @@
+<div class="featureinfo-config-section">
+    <label class="form-label">{{ 'mb.ogcapifeatures.admin.featureinfo.multiplechoice' | trans }}</label>
+    <div class="help-text">
+        <i class="fas fa-question-circle" data-bs-toggle="popover" data-bs-content="{{ 'mb.ogcapifeatures.admin.featureinfo.multiplechoice_help' | trans }}" data-bs-placement="left" data-bs-html="true" tabindex="0"></i>
+    </div>
+    {{ form_widget(form.featureInfoPropertyMap) }}
+    <div class="featureinfo-checkbox-list checkbox-list"
+         data-empty-text="{{ 'mb.ogcapifeatures.admin.tooltip.no_properties' | trans }}"></div>
+
+    {{ form_row(form.featureInfoTemplate) }}
+</div>

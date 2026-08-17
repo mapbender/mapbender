@@ -8,6 +8,9 @@
         <li tabindex="0" role="tab" id="tab-ogcapifeatures-settings-tooltip" class="tab nav-link">
             {{ 'mb.ogcapifeatures.admin.tooltip.heading' | trans }}
         </li>
+        <li tabindex="0" role="tab" id="tab-ogcapifeatures-settings-featureinfo" class="tab nav-link">
+            {{ 'mb.ogcapifeatures.admin.featureinfo.heading' | trans }}
+        </li>
     </ul>
 
     <div id="container-ogcapifeatures-settings-style" class="container active tab-pane pt-3" role="tabpanel">
@@ -16,6 +19,10 @@
     <div id="container-ogcapifeatures-settings-tooltip" class="container tab-pane pt-3" role="tabpanel">
         {% include('@MapbenderOgcApiFeatures/instance-settings/tooltip.html.twig') %}
     </div>
+    <div id="container-ogcapifeatures-settings-featureinfo" class="container tab-pane pt-3" role="tabpanel">
+        {% include('@MapbenderOgcApiFeatures/instance-settings/featureinfo.html.twig') %}
+    </div>
+
 </div>
 
 {{ form_end(form) }}

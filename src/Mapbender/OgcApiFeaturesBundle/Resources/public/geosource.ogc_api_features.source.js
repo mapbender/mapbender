@@ -164,97 +164,33 @@ class OgcApiSource extends Mapbender.Source {
     async createFeatureInfoPromise(mapModel, x, y, options, sourceId, elementId) {
         const olMap = mapModel.olMap;
         const children = this.getRootLayer().children;
-        let features = [];
-        this.nativeLayers.forEach((layer, index) => {
-            let results = olMap.getFeaturesAtPixel([x, y], {
-                layerFilter: (l) => l === layer,
+        let hasFeatures = false;
+        const content = document.createElement('div');
+
+        this.nativeLayers.forEach((olLayer, index) => {
+            /** @var {OgcApiSourceLayer} mbLayer **/
+            const mbLayer = children[index];
+            if (!mbLayer.state.info) return;
+
+            const features = olMap.getFeaturesAtPixel([x, y], {
+                layerFilter: (l) => l === olLayer,
                 hitTolerance: options.hitTolerance || 5,
             });
-            if (results.length > 0) {
-                const childTitle = children[index]?.options?.title || children[index]?.options?.collectionId || '';
-                results.forEach((feature) => {
-                    feature.set('featureTitle', childTitle, true);
-                    features.push(feature);
-                });
+
+            for (const feature of features) {
+                const featureContent = mbLayer.createFeatureInfoForFeature(feature);
+                if (featureContent) {
+                    hasFeatures = true;
+                    content.appendChild(featureContent);
+                }
             }
         });
-        if (!features.length) {
-            return null;
-        }
-        const content = document.createElement('div');
-        let hasFeatures = false;
-        for (const feature of features) {
-            const featureContent = this.createFeatureInfoForFeature(feature);
-            if (featureContent) {
-                hasFeatures = true;
-                content.appendChild(featureContent);
-            }
-        }
+
         if (!hasFeatures) {
             return null;
         }
         Mapbender?.FeatureInfo?.setupHighlight(content, sourceId, elementId);
         return content;
-    }
-
-    createFeatureInfoForFeature(feature) {
-        const properties = feature.getProperties();
-        let label = properties.featureTitle;
-        // Find propertyTitles for this feature's collection
-        const collectionId = feature.get('layer');
-        const child = this.getRootLayer().children.find(c => c.options.collectionId === collectionId);
-        const propertyTitles = child?.options?.propertyTitles || {};
-        const geometryDiv = document.createElement('div');
-        geometryDiv.className = 'geometryElement';
-        geometryDiv.id = this.options.id + '/' + feature.ol_uid;
-        const wkt = new ol.format.WKT();
-        geometryDiv.setAttribute('data-geometry', wkt.writeFeature(feature));
-        geometryDiv.setAttribute('data-srid', 'EPSG:3857');
-        geometryDiv.setAttribute('data-label', label);
-        if (label) {
-            const h5 = document.createElement('h5');
-            h5.className = 'featureinfo__title mt-3';
-            h5.textContent = label;
-            geometryDiv.appendChild(h5);
-        }
-        const table = document.createElement('table');
-        table.className = 'table table-striped table-bordered table-condensed featureinfo__table';
-        const tbody = document.createElement('tbody');
-        table.appendChild(tbody);
-        const propertyMap = this._getPropertyMap('featureInfo');
-        Object.entries(properties).forEach(([key, value]) => {
-            if (propertyMap && !propertyMap[key]) {
-                return;
-            }
-            const row = document.createElement('tr');
-            const headerCell = document.createElement('th');
-            headerCell.textContent = propertyMap?.[key] || propertyTitles[key] || key;
-            const dataCell = document.createElement('td');
-            dataCell.textContent = value;
-            row.appendChild(headerCell);
-            row.appendChild(dataCell);
-            tbody.appendChild(row);
-        });
-        geometryDiv.appendChild(table);
-        return geometryDiv;
-    }
-
-    _getPropertyMap(subtype) {
-        if (!this.options[subtype].propertyMap) {
-            return null;
-        }
-        if (!this.propertyMaps[subtype]) {
-            this.propertyMaps[subtype] = {};
-            for (const entry of this.options[subtype].propertyMap) {
-                if (typeof entry === 'string') {
-                    this.propertyMaps[subtype][entry] = Mapbender.trans(entry);
-                } else {
-                    const [key, value] = Object.entries(entry)[0];
-                    this.propertyMaps[subtype][key] = Mapbender.trans(value);
-                }
-            }
-        }
-        return this.propertyMaps[subtype];
     }
 
     setLayerOrder(layerIdOrder) {

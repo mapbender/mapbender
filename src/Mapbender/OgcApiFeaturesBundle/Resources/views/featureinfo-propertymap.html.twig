@@ -1,0 +1,10 @@
+<table class="table table-striped table-bordered table-condensed featureinfo__table ogc-api-featureinfo-table -js-filter-empty-rows">
+    <tbody>
+        {% for key, value in properties %}
+            <tr class="ogc-api-featureinfo-row">
+                <th class="ogc-api-featureinfo-key">{{ value | trans }}</th>
+                <td class="ogc-api-featureinfo-val">{{ '${' }}{{ key }}{{ '}' }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -4,9 +4,11 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
         super(definition, source, parent);
 
         this.tooltipWrapper = {tooltip: this.options.tooltip?.template};
+        this.featureInfoWrapper = {featureInfo: this.options.featureInfo?.template};
         this.pointRadius = 5;
-        // to avoid XSS, HTML in resolved tooltip data is escaoed by default. If you want to allow HTML, set this to false.
+        // to avoid XSS, HTML in resolved tooltip/featureInfo data is escaped by default. If you want to allow HTML, set this to false.
         this.escapeTooltipHtml = true;
+        this.escapeFeatureInfoHtml = true;
     }
 
     hasBounds() {
@@ -51,6 +53,44 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
 
         const fragment = document.createElement('div');
         fragment.innerHTML = tooltip;
+        this.removeEmptyRows(fragment, '.-js-filter-empty-vals', '.ogc-api-tooltip-val');
+        return fragment.childElementCount > 0 ? fragment : null;
+    }
+
+    createFeatureInfoForFeature(feature) {
+        if (!this.featureInfoPlaceholderResolver) {
+            this.featureInfoPlaceholderResolver = Mapbender.StyleUtil.getPlaceholderResolver(
+                this.featureInfoWrapper,
+                ['featureInfo'], function (feature) {
+                    return feature.getProperties() || {};
+                },
+                this.escapeFeatureInfoHtml
+            );
+        }
+
+        const featureInfo = this.featureInfoPlaceholderResolver(this.featureInfoWrapper, feature).featureInfo;
+        if (!featureInfo) return null;
+
+        const fragment = document.createElement('div');
+        fragment.innerHTML = featureInfo;
+        this.removeEmptyRows(fragment, '.-js-filter-empty-rows tr', '.ogc-api-featureinfo-val');
+        if (!fragment.childElementCount) return null;
+
+        const label = this?.options?.title || this?.options?.collectionId || '';
+
+        fragment.className = 'geometryElement';
+        fragment.id = this.options.id + '/' + feature.ol_uid;
+        const wkt = new ol.format.WKT();
+        fragment.setAttribute('data-geometry', wkt.writeFeature(feature));
+        fragment.setAttribute('data-srid', Mapbender.Model.getCurrentProjectionCode());
+        fragment.setAttribute('data-label', label);
+
+        if (label) {
+            const h5 = document.createElement('h5');
+            h5.className = 'featureinfo__title mt-3';
+            h5.textContent = label;
+            fragment.prepend(h5);
+        }
         return fragment;
     }
 
@@ -89,6 +129,19 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
         }
 
         return isPoint ? this._hoverStylePoint : this._hoverStyle;
+    }
+
+    removeEmptyRows(container, rowSelector, valueSelector) {
+        const rows = container.querySelectorAll(rowSelector);
+
+        rows.forEach((row) => {
+            const tooltipValue = row.querySelector(valueSelector);
+
+            if (tooltipValue && tooltipValue.textContent.trim() === '') {
+                row.remove();
+            }
+        });
+        return container;
     }
 
 }
