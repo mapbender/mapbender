@@ -14,6 +14,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
+use Symfony\Component\Validator\Constraints\Type;
 
 class HTMLElementAdminType extends AbstractType implements EventSubscriberInterface
 {
@@ -33,12 +36,55 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
             ], $this->trans))
             // Temporary. Replaced in preSetData
             ->add('content', TextareaType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => 'mb.core.htmlelement.admin.content',
+                'constraints' => [
+                    new NotBlank(),
+                    new HtmlTwigConstraint(),
+                ],
             ])
             ->add('classes', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.htmlelement.admin.classes',
+            ])
+            ->add('autoOpen', CheckboxType::class, [
+                'required' => false,
+                'label' => 'mb.manager.autoOpen',
+            ])
+            ->add('modal', CheckboxType::class, [
+                'required' => false,
+                'label' => 'mb.core.htmlelement.admin.modal',
+            ])
+            ->add('popupWidth', TextType::class, [
+                'required' => false,
+                'label' => 'mb.manager.popup_width',
+                'attr' => [
+                    'placeholder' => '300px',
+                ],
+                'constraints' => [
+                    new Type('numeric'),
+                    new PositiveOrZero(),
+                ]
+            ])
+            ->add('popupHeight', TextType::class, [
+                'required' => false,
+                'label' => 'mb.manager.popup_height',
+                'attr' => [
+                    'placeholder' => 'mb.manager.automatic',
+                ],
+                'constraints' => [
+                    new Type('numeric'),
+                    new PositiveOrZero(),
+                ],
+            ])
+            ->add('dontShowAgain', CheckboxType::class, [
+                'required' => false,
+                'label' => 'mb.core.copyright.admin.dontShowAgain',
+            ])
+            ->add('dontShowAgainLabel', TextType::class, [
+                'required' => false,
+                'label' => 'mb.core.copyright.admin.dontShowAgainLabel',
+                'data' => 'mb.core.copyright.admin.dontShowAgainDefaultLabel',
             ])
         ;
         $builder->addEventSubscriber($this);

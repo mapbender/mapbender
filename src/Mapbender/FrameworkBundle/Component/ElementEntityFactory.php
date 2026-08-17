@@ -29,6 +29,7 @@ class ElementEntityFactory
         $canonicalClass = $this->elementFilter->getInventory()->getCanonicalClassName($className);
         $entity = new Element();
         $entity
+            ->setClass($className) // side effect of setting class twice: stores originallyDefinedClass if applicable
             ->setClass($canonicalClass)
             ->setRegion($region)
             ->setWeight(0)
