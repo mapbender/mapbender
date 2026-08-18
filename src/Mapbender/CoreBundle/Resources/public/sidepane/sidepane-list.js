@@ -30,6 +30,11 @@ window.Mapbender.SidePaneList = class SidepaneList extends Mapbender.SidePaneHan
         const sidePane = this.sidePane;
         const self = this;
 
+        // make all panels inert to prevent tabbing into them when they are not active
+        this.$panels.each((index, panel) => {
+            panel.inert = true;
+        });
+
         this.$headers.on('click', function () {
             self.onHeaderClick($(this));
         });
@@ -59,6 +64,7 @@ window.Mapbender.SidePaneList = class SidepaneList extends Mapbender.SidePaneHan
 
         const containerId = $header.attr("id").replace("list_group_item", "list_group_item_container");
         this.$activePanel = $("#" + containerId, this.sidePane.sideContent);
+        this.$activePanel[0].inert = false;
 
         this.$activePanel.addClass('active');
         this.$container.addClass('list-shifted');
@@ -83,6 +89,7 @@ window.Mapbender.SidePaneList = class SidepaneList extends Mapbender.SidePaneHan
         if (this.$activePanel) {
             this.sidePane.notifyElements(this.$activePanel, false);
             this.$activePanel.removeClass('active');
+            this.$activePanel[0].inert = true;
             this.$activePanel = null;
         }
         if (this.$activeHeader) {
