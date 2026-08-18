@@ -14,7 +14,7 @@ class Mobile extends Template
 {
     public static function getTitle(): string
     {
-        return 'mb.actions.back';
+        return 'mb.mobile.template.title';
     }
 
     public static function getRegions(): array
