@@ -1,3 +1,4 @@
+/* global $, jQuery */
 window.Mapbender = Mapbender || {};
 
 /**
@@ -40,7 +41,7 @@ window.Mapbender.SidePane = class SidePane {
     constructor(element) {
         /** @type {jQuery} **/
         this.$element = $(element);
-        /** @type {jQuery} **/
+        /** @type {jQuery} the button to toggle the sidepane and also the container for the element icons **/
         this.$switchButton = this.$element.find(".toggleSideBar");
         /** @type {jQuery} **/
         this.$switchIcon = this.$switchButton.children('i').first();
@@ -55,18 +56,19 @@ window.Mapbender.SidePane = class SidePane {
         this.pendingResolves = [];
 
         this.BORDER_SIZE = 'ontouchstart' in document ? 12 : 6;
-        // if you want to customize the max/min size use custom css (min-width/max-width on .sidePane.resizable),
+        // if you want to customize the max/min size use custom CSS (min-width/max-width on .sidePane.resizable),
         this.MAX_SIZE_WINDOW_PERCENTAGE = 0.95;
         this.MIN_SIZE_PX = 120;
 
         this.lastFocusedListItem = null; // Global tracking of last focused list item
 
+        /** @type {Mapbender.SidePaneHandler} */
+        this.handler = this._initSidePaneHandler();
+
         this.boundResizeSidepane = this._resizeSidepane.bind(this);
         this._setupInitialState();
         this._setupEvents();
         this._setupKeyEvents();
-        /** @type {Mapbender.SidePaneHandler} */
-        this.handler = this._initSidePaneHandler();
     }
 
     /**
@@ -89,7 +91,7 @@ window.Mapbender.SidePane = class SidePane {
             return Promise.resolve();
         }
         if (open === this.isOpen && this.isAnimating) {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 this.pendingResolves.push(resolve);
             });
         }
@@ -103,8 +105,8 @@ window.Mapbender.SidePane = class SidePane {
             this.isAnimating = true;
             this.pendingResolves.push(resolve);
 
-            var animation = {};
-            var align = this.isLeft ? 'left' : 'right';
+            const animation = {};
+            const align = this.isLeft ? 'left' : 'right';
             if (wasOpen) {
                 animation[align] = "-" + this.$element.outerWidth(true) + "px";
             } else {
@@ -148,9 +150,11 @@ window.Mapbender.SidePane = class SidePane {
         const $container = this.$element.find('.sideContent > :first-child');
         if ($container.hasClass('tabContainerAlt')) {
             return new Mapbender.SidePaneTabs(this, $container);
-        } else if ($container.hasClass('accordionContainer')) {
+        }
+        if ($container.hasClass('accordionContainer')) {
             return new Mapbender.SidePaneAccordion(this, $container);
-        } else if ($container.hasClass('listContainer')) {
+        }
+        if ($container.hasClass('listContainer')) {
             return new Mapbender.SidePaneList(this, $container);
         }
         return new Mapbender.SidePaneUnformatted(this, this.$element);
@@ -210,6 +214,7 @@ window.Mapbender.SidePane = class SidePane {
     _setupEvents() {
         this.$switchButton.on('click', (e) => {
             e.stopPropagation();
+            // noinspection JSIgnoredPromiseFromCall
             this.toggle();
         });
 
@@ -231,7 +236,7 @@ window.Mapbender.SidePane = class SidePane {
 
         // Add click and enter keydown handlers to element icons to activate corresponding elements
         const self = this;
-        this.$switchButton.on('click keydown', '.element-icon', function (e) {
+        this.$switchButton.on('click keydown', '.element-icon', async function (e) {
             if (e.type === 'keydown' && e.key !== 'Enter') return;
 
             e.preventDefault();
@@ -243,7 +248,8 @@ window.Mapbender.SidePane = class SidePane {
             if ($button && $button.length) {
                 // Trigger the corresponding button click first (this will activate the panel)
                 $button.trigger('click');
-                self.setOpen(true);
+                await self.setOpen(true);
+                $button.focus();
             }
         });
 
@@ -265,17 +271,17 @@ window.Mapbender.SidePane = class SidePane {
                 event.preventDefault();
             }
 
-            var $backBtn = $(this);
-            var $container = $backBtn.closest('.container-list-group-item');
-            var containerId = $container.attr('id');
+            const $backBtn = $(this);
+            const $container = $backBtn.closest('.container-list-group-item');
+            const containerId = $container.attr('id');
 
             if (containerId) {
                 // Find the corresponding list-group-item by parsing the ID
-                var correspondingItemId = containerId.replace('list_group_item_container', 'list_group_item');
-                var $correspondingItem = $('body').find('#' + correspondingItemId);
+                const correspondingItemId = containerId.replace('list_group_item_container', 'list_group_item');
+                const $correspondingItem = $('body').find('#' + correspondingItemId);
 
                 // Find the listContainer and remove the list-shifted class
-                var $listContainer = $container.closest('.sideContent').find('.listContainer');
+                const $listContainer = $container.closest('.sideContent').find('.listContainer');
                 $listContainer.removeClass('list-shifted');
 
                 // Remove active class from container to trigger animation back
@@ -285,11 +291,11 @@ window.Mapbender.SidePane = class SidePane {
                 self.notifyElements($container.get(0), false);
 
                 // Remove focus trap from the closing container
-                var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+                const focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
                 $container.find(focusableSelectors).off('keydown.focustrap');
 
                 // Focus management after transition completes
-                var focusAfterTransition = function () {
+                const focusAfterTransition = function () {
                     $container.get(0).removeEventListener('transitionend', focusAfterTransition);
 
                     // Try to restore lastFocusedListItem, otherwise focus the corresponding item
@@ -315,10 +321,10 @@ window.Mapbender.SidePane = class SidePane {
         $(document).on('keydown', '.sidePane .toggleSideBar i', function (e) {
             if (e.key !== 'Tab') return;
 
-            var $toggleButton = $(this).closest('.toggleSideBar');
-            var $sidePane = $toggleButton.closest('.sidePane');
-            var $elementIcons = $toggleButton.find('.element-icons');
-            var $icons = $elementIcons.find('[class*="element-icon"]');
+            const $toggleButton = $(this).closest('.toggleSideBar');
+            const $sidePane = $toggleButton.closest('.sidePane');
+            const $elementIcons = $toggleButton.find('.element-icons');
+            const $icons = $elementIcons.find('[class*="element-icon"]');
 
             if ($toggleButton.hasClass('closed')) {
                 // Sidepane is closed - navigate through icons
@@ -338,10 +344,10 @@ window.Mapbender.SidePane = class SidePane {
                 if (e.shiftKey) {
                     e.preventDefault();
                     // Find the active panel and get its last focusable element
-                    var $activeContainer = $sidePane.find('.container-accordion.active, .container-list-group-item.active, .container.active').first();
+                    const $activeContainer = $sidePane.find('.container-accordion.active, .container-list-group-item.active, .container.active').first();
                     if ($activeContainer.length) {
-                        var focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
-                        var $focusable = $activeContainer.find(focusableSelectors).filter(':visible').not('[disabled]').not('[tabindex="-1"]').last();
+                        const focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+                        const $focusable = $activeContainer.find(focusableSelectors).filter(':visible').not('[disabled]').not('[tabindex="-1"]').last();
                         if ($focusable.length) {
                             $focusable.trigger('focus');
                         }
@@ -353,12 +359,12 @@ window.Mapbender.SidePane = class SidePane {
         $(document).on('keydown', '.sidePane .toggleSideBar .element-icon', function (e) {
             if (e.key !== 'Tab') return;
 
-            var $elementIcons = $(this).closest('.element-icons');
-            var $icons = $elementIcons.find('[class*="element-icon"]');
-            var $toggleButton = $elementIcons.closest('.toggleSideBar');
-            var $toggleIcon = $toggleButton.children('i').first();
-            var $currentIcon = $(this);
-            var currentIndex = $icons.index($currentIcon);
+            const $elementIcons = $(this).closest('.element-icons');
+            const $icons = $elementIcons.find('[class*="element-icon"]');
+            const $toggleButton = $elementIcons.closest('.toggleSideBar');
+            const $toggleIcon = $toggleButton.children('i').first();
+            const $currentIcon = $(this);
+            const currentIndex = $icons.index($currentIcon);
 
             if (e.shiftKey) {
                 // Shift+Tab: go to previous icon or to toggle button (fa-bars/fa-xmark)
@@ -402,9 +408,9 @@ window.Mapbender.SidePane = class SidePane {
     }
 
     updateResponsive($buttons) {
-        var $activeButton = $buttons.filter('.active').first();
+        const $activeButton = $buttons.filter('.active').first();
         if ($activeButton.length && !$($activeButton).is(':visible')) {
-            var $firstVisibleButton = $buttons.filter(':visible').first();
+            const $firstVisibleButton = $buttons.filter(':visible').first();
             if ($firstVisibleButton.length) {
                 // NOTE: toggles active classes and implicitly ends up calling notifyElements
                 // @see initTabContainer
@@ -416,16 +422,14 @@ window.Mapbender.SidePane = class SidePane {
 
     notifyElements(scope, state) {
         $('.mb-element[id]', scope).each(function () {
-            var promise;
-            if (state) {
+            const promise = state
                 // Before we call 'reveal' an element, we want it to be done initializing
-                promise = Mapbender.elementRegistry.waitReady(this.id);
-            } else {
+                ? Mapbender.elementRegistry.waitReady(this.id)
                 // We do not wait for an element to become ready before we call 'hide'
-                promise = Mapbender.elementRegistry.waitCreated(this.id);
-            }
+                : Mapbender.elementRegistry.waitCreated(this.id)
+            ;
             promise.then(function (elementWidget) {
-                var method = state ? elementWidget.reveal : elementWidget.hide;
+                const method = state ? elementWidget.reveal : elementWidget.hide;
                 if (typeof method === 'function') {
                     method.call(elementWidget);
                 }
@@ -529,9 +533,9 @@ window.Mapbender.SidePane = class SidePane {
 
     /**
      * opens the mapbender element by the supplied element id (for modes list, tabs and accordion).
-     * Also openes the sidepane if it's closed
+     * Also opens the sidepane if it's closed
      * @param {number | string} id the element id to open
-     * @return {Promise<void>} resolves after animations finished
+     * @return {Promise<any>} resolves after animations finished
      */
     openElementById(id) {
         const sidePaneType = this.sidePaneType();
