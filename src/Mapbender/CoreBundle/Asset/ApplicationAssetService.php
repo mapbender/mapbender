@@ -177,7 +177,6 @@ class ApplicationAssetService
                     '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
                     '@MapbenderCoreBundle/Resources/public/mb-action.js',
                     '@MapbenderCoreBundle/Resources/public/mapbender.responsive-menu.js',
-                    '@MapbenderCoreBundle/Resources/public/init/element-sidepane.js',
                     '@MapbenderCoreBundle/Resources/public/widgets/toolbar-menu.js',
                     '/components/datatables/core/js/dataTables.min.js',
                     '/components/datatables/bootstrap5/js/dataTables.bootstrap5.min.js',
