@@ -66,6 +66,10 @@ window.Mapbender.SidePaneList = class SidepaneList extends Mapbender.SidePaneHan
         this.$activePanel = $("#" + containerId, this.sidePane.sideContent);
         this.$activePanel[0].inert = false;
 
+        this.$headers.each((index, header) => {
+            header.inert = true;
+        });
+
         this.$activePanel.addClass('active');
         this.$container.addClass('list-shifted');
         this.sidePane.notifyElements(this.$activePanel, true);
@@ -74,14 +78,28 @@ window.Mapbender.SidePaneList = class SidepaneList extends Mapbender.SidePaneHan
         const $nonInlineHeaders = this.$headers.not('.inline');
         const activeIndex = $nonInlineHeaders.index(this.$activeHeader);
         this.sidePane.updateActiveIcon(activeIndex);
+
+        this._waitForRunningTransitions(this.$container[0]).then(() => {
+            this.$activePanel.find('.list-back-btn')[0]?.focus({ preventScroll: true });
+        });
     }
 
     onBackButtonClick() {
+        let previouslyActiveHeader = this.$activeHeader;
+
         this._disableActiveElement();
         this.sidePane.updateActiveIcon(-1);
 
         // Slide back to original position
         this.$container.removeClass('list-shifted');
+
+        this.$headers.each((index, header) => {
+            header.inert = false;
+        });
+
+        this._waitForRunningTransitions(this.$container[0]).then(() => {
+            previouslyActiveHeader?.[0]?.focus({ preventScroll: true });
+        });
     }
 
 
