@@ -35,8 +35,17 @@
 
     // ---- Layout ----
     --space: #{$space};
-    --content-element-padding-horizontal: 50px;
     --popup-modal-width: #{$popupModalWidth};
+    --content-element-padding-horizontal: 20px;
+    --content-element-padding-top: var(--space);
+    --content-element-padding-bottom: var(--space);
+    @media(min-width: $desktopBreakpointWidth) {
+        --content-element-padding-horizontal: 30px;
+        --content-element-padding-top: calc(var(--space) * 1.5);
+    }
+    // overridden when the sidepane is present (see _sidepane.scss)
+    --content-spacing-right: 0px;
+    --content-spacing-left: 0px;
 
     --backend-popup-max-width: 800px;
     // allows popups to grow bigger than --backend-popup-max-width on large screens
