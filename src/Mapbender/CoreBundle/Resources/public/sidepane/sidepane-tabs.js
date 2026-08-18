@@ -31,7 +31,7 @@ window.Mapbender.SidePaneTabs = class SidepaneTabs extends Mapbender.SidePaneHan
         }
 
         // set initial active tab from .active class
-        $buttons.find('.active').first().each(setCurrentTab);
+        $buttons.filter('.active').first().each(setCurrentTab);
         $buttons.on('click', setCurrentTab);
 
         window.addEventListener('resize', function() {
