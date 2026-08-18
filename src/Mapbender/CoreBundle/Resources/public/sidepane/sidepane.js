@@ -218,9 +218,8 @@ window.Mapbender.SidePane = class SidePane {
     /**
      *
      * @param {jQuery} $elements
-     * @private
      */
-    _updateResponsiveSidepaneVisibility($elements) {
+    updateResponsiveSidepaneVisibility($elements) {
         let wholeSidePaneVisible = false;
         for (let i = 0; i < $elements.length; ++i) {
             if ($($elements[i]).css('display') !== 'none') {
@@ -295,7 +294,7 @@ window.Mapbender.SidePane = class SidePane {
                 $firstVisibleButton.trigger('click');
             }
         }
-        this._updateResponsiveSidepaneVisibility($buttons);
+        this.updateResponsiveSidepaneVisibility($buttons);
     }
 
     notifyElements(scope, state) {
@@ -330,8 +329,8 @@ window.Mapbender.SidePane = class SidePane {
 
     _buildElementIcons() {
         // Get all visible elements in the sidepane
-        const $elementIcons = this.$element.find('.toggleSideBar .element-icons');
-        $elementIcons.empty(); // Clear existing icons first
+        const $elementIconWrapper = this.$switchButton.find('.element-icons');
+        $elementIconWrapper.empty(); // Clear existing icons first
 
         const $titles = this.handler.getElementTitleContainers();
         $titles.each(function () {
@@ -345,10 +344,10 @@ window.Mapbender.SidePane = class SidePane {
                 .attr('role', 'button')
                 .attr('title', $title.text().trim());
             if ($icon.length) $iconWrapper.append($icon);
-            $elementIcons.append($iconWrapper);
+            $elementIconWrapper.append($iconWrapper);
         });
 
-        this.$elementIcons = $elementIcons.find('.element-icon');
+        this.$elementIcons = $elementIconWrapper.find('.element-icon');
     }
 
     /**
