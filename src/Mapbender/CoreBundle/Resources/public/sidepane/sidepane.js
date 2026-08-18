@@ -342,6 +342,13 @@ window.Mapbender.SidePane = class SidePane {
                 .attr('tabindex', '0')
                 .attr('role', 'button')
                 .attr('title', $title.text().trim());
+            if ($title.hasClass('hide-screentype-mobile')) {
+                $iconWrapper.addClass('hide-screentype-mobile');
+            }
+            if ($title.hasClass('hide-screentype-desktop')) {
+                $iconWrapper.addClass('hide-screentype-desktop');
+            }
+
             if ($icon.length) $iconWrapper.append($icon);
             $elementIconWrapper.append($iconWrapper);
         });
