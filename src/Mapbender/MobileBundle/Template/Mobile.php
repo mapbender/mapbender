@@ -6,14 +6,15 @@ use Mapbender\CoreBundle\Component\Template;
 use Mapbender\CoreBundle\Entity\Application;
 
 /**
- * Template Mobile Template
- *
+ * @deprecated since 5.0.0, will be removed in 6.0.0.
+ * The fullscreen template now fully supports responsive design and mobile devices, so this template is no longer needed
+ * and is no longer maintained.
  */
 class Mobile extends Template
 {
     public static function getTitle(): string
     {
-        return 'Mapbender Mobile template';
+        return 'mb.actions.back';
     }
 
     public static function getRegions(): array
