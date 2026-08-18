@@ -4,6 +4,21 @@ window.Mapbender.SidePaneList = class SidepaneList extends Mapbender.SidePaneHan
         return 'list';
     }
 
+
+    getElementTitleContainers() {
+        return this.$container.find('.list-group-item:not(.inline)');
+    }
+
+    openElementById(id) {
+        const $groupItem = this.sidePane.$element.find('#' + id).closest('.container-list-group-item');
+        const listId = $groupItem.attr('id').replace('list_group_item_container', '');
+        $('.sidePane #list_group_item' + listId).trigger('click');
+        return Promise.allSettled([
+            this._waitForRunningTransitions($groupItem[0]),
+            super.openElementById(id),
+        ]);
+    }
+
     setup() {
         const sidePane = this.sidePane;
         var $headers = $('.list-group-item', this.$container);
@@ -245,9 +260,113 @@ window.Mapbender.SidePaneList = class SidepaneList extends Mapbender.SidePaneHan
         });
         // Also select a different active panel if default active panel is already invisible on initialization
         sidePane.updateResponsive($headers);
+
+        this.setupKeyListener();
     }
 
-    getElementTitleContainers() {
-        return this.$container.find('.list-group-item:not(.inline)');
+    setupKeyListener() {
+        const self = this.sidePane;
+
+        $(document).on('click keydown', '.list-back-btn', function (event) {
+            // Only handle clicks and Enter key
+            if (event.type === 'keydown' && event.key !== 'Enter') {
+                return;
+            }
+            if (event.type === 'keydown') {
+                event.preventDefault();
+            }
+
+            const $backBtn = $(this);
+            const $container = $backBtn.closest('.container-list-group-item');
+            const containerId = $container.attr('id');
+
+            if (containerId) {
+                // Find the corresponding list-group-item by parsing the ID
+                const correspondingItemId = containerId.replace('list_group_item_container', 'list_group_item');
+                const $correspondingItem = $('body').find('#' + correspondingItemId);
+
+                // Find the listContainer and remove the list-shifted class
+                const $listContainer = $container.closest('.sideContent').find('.listContainer');
+                $listContainer.removeClass('list-shifted');
+
+                // Remove active class from container to trigger animation back
+                $container.removeClass('active');
+
+                // Notify elements that the container is being deactivated
+                self.notifyElements($container.get(0), false);
+
+                // Remove focus trap from the closing container
+                const focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
+                $container.find(focusableSelectors).off('keydown.focustrap');
+
+                // Focus management after transition completes
+                const focusAfterTransition = function () {
+                    $container.get(0).removeEventListener('transitionend', focusAfterTransition);
+
+                    // Try to restore lastFocusedListItem, otherwise focus the corresponding item
+                    if (self.lastFocusedListItem && $(self.lastFocusedListItem).closest('.list-group').length) {
+                        $(self.lastFocusedListItem).trigger('focus');
+                        self.lastFocusedListItem = null;
+                    } else if ($correspondingItem.length) {
+                        $correspondingItem.trigger('focus');
+                    }
+                };
+
+                // Set up transition listener
+                if ($container.length) {
+                    $container.get(0).addEventListener('transitionend', focusAfterTransition);
+
+                    // Fallback timeout
+                    setTimeout(focusAfterTransition, 350);
+                }
+                self.updateActiveIcon(-1);
+            }
+        });
+
+
+        // Listen for back button event to deactivate elements
+        $(document).on('listgroup:back', '.sideContent', function (e, $container) {
+            if ($container && $container.length) {
+                self.notifyElements($container.get(0), false);
+                self.updateActiveIcon($container.closest('.sidePane'), -1);
+            }
+        });
+    }
+
+    async _waitForRunningTransitions(targetElement) {
+        // check for API support
+        if (typeof targetElement.getAnimations !== 'function') return;
+
+        const elementsToCheck = [];
+        let current = targetElement;
+        // Parent transitions can move children, so include the ancestor chain.
+        while (current && current !== document.body) {
+            elementsToCheck.push(current);
+            current = current.parentElement;
+        }
+
+        const runningAnimations = elementsToCheck.flatMap((element) => {
+            return element.getAnimations().filter((animation) => {
+                if (animation.playState !== 'running' && animation.playState !== 'pending') {
+                    return false;
+                }
+                // Ignore infinite / non-terminating animations (e.g. spinners) which would block forever.
+                const effect = animation.effect;
+                if (!effect || typeof effect.getComputedTiming !== 'function') {
+                    return false;
+                }
+                const {endTime} = effect.getComputedTiming();
+                return Number.isFinite(endTime);
+            });
+        });
+
+        if (!runningAnimations.length) {
+            return;
+        }
+
+        await Promise.race([
+            Promise.allSettled(runningAnimations.map((animation) => animation.finished)),
+            new Promise((resolve) => setTimeout(resolve, 1000))
+        ]);
     }
 }

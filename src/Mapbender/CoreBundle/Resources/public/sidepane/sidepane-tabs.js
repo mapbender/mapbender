@@ -41,4 +41,11 @@ window.Mapbender.SidePaneTabs = class SidepaneTabs extends Mapbender.SidePaneHan
         return this.$container.find('.tab:not(.inline)');
     }
 
+    openElementById(id) {
+        const tabId = this.sidePane.$element.find('#' + id).closest('.container').attr('id').replace('container', '');
+        $('.sidePane #tab' + tabId).trigger('click');
+        this.sidePane.$element.find('#tab' + tabId).trigger('click');
+        return super.openElementById(id);
+    }
+
 }

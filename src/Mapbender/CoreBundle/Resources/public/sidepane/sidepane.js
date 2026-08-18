@@ -30,6 +30,16 @@ window.Mapbender.SidePaneHandler = class SidePaneHandler {
         return $([]);
     }
 
+    /**
+     * opens the mapbender element by the supplied element id (for modes list, tabs and accordion).
+     * Also opens the sidepane if it's closed
+     * @param {number | string} id the element id to open
+     * @return {Promise<any>} resolves after animations finished
+     */
+    openElementById(id) {
+        return this.sidePane.setOpen(true);
+    }
+
 
 }
 
@@ -41,6 +51,8 @@ window.Mapbender.SidePane = class SidePane {
     constructor(element) {
         /** @type {jQuery} **/
         this.$element = $(element);
+        /** @type {HTMLDivElement} **/
+        this.sideContent = this.$element.find('.sideContent')[0];
         /** @type {jQuery} the button to toggle the sidepane and also the container for the element icons **/
         this.$switchButton = this.$element.find(".toggleSideBar");
         /** @type {jQuery} **/
@@ -104,6 +116,8 @@ window.Mapbender.SidePane = class SidePane {
             this.isOpen = open;
             this.isAnimating = true;
             this.pendingResolves.push(resolve);
+            // disables tab interaction when the sidepane is closed
+            this.sideContent.inert = !open;
 
             const animation = {};
             const align = this.isLeft ? 'left' : 'right';
@@ -185,6 +199,7 @@ window.Mapbender.SidePane = class SidePane {
             } else {
                 this.$element.css({right: (this.$element.outerWidth(true) * -1) + "px"});
             }
+            this.sideContent.inert = true;
         }
         this._setToggleButtonState(this.isOpen);
     }
@@ -200,6 +215,11 @@ window.Mapbender.SidePane = class SidePane {
         );
     }
 
+    /**
+     *
+     * @param {jQuery} $elements
+     * @private
+     */
     _updateResponsiveSidepaneVisibility($elements) {
         let wholeSidePaneVisible = false;
         for (let i = 0; i < $elements.length; ++i) {
@@ -259,148 +279,6 @@ window.Mapbender.SidePane = class SidePane {
         window.addEventListener("resize", this.constrainSize.bind(this), false);
     }
 
-    _setupKeyEvents() {
-        const self = this;
-        // Handle back button clicks and keyboard events
-        $(document).on('click keydown', '.list-back-btn', function (event) {
-            // Only handle clicks and Enter key
-            if (event.type === 'keydown' && event.key !== 'Enter') {
-                return;
-            }
-            if (event.type === 'keydown') {
-                event.preventDefault();
-            }
-
-            const $backBtn = $(this);
-            const $container = $backBtn.closest('.container-list-group-item');
-            const containerId = $container.attr('id');
-
-            if (containerId) {
-                // Find the corresponding list-group-item by parsing the ID
-                const correspondingItemId = containerId.replace('list_group_item_container', 'list_group_item');
-                const $correspondingItem = $('body').find('#' + correspondingItemId);
-
-                // Find the listContainer and remove the list-shifted class
-                const $listContainer = $container.closest('.sideContent').find('.listContainer');
-                $listContainer.removeClass('list-shifted');
-
-                // Remove active class from container to trigger animation back
-                $container.removeClass('active');
-
-                // Notify elements that the container is being deactivated
-                self.notifyElements($container.get(0), false);
-
-                // Remove focus trap from the closing container
-                const focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
-                $container.find(focusableSelectors).off('keydown.focustrap');
-
-                // Focus management after transition completes
-                const focusAfterTransition = function () {
-                    $container.get(0).removeEventListener('transitionend', focusAfterTransition);
-
-                    // Try to restore lastFocusedListItem, otherwise focus the corresponding item
-                    if (self.lastFocusedListItem && $(self.lastFocusedListItem).closest('.list-group').length) {
-                        $(self.lastFocusedListItem).trigger('focus');
-                        self.lastFocusedListItem = null;
-                    } else if ($correspondingItem.length) {
-                        $correspondingItem.trigger('focus');
-                    }
-                };
-
-                // Set up transition listener
-                if ($container.length) {
-                    $container.get(0).addEventListener('transitionend', focusAfterTransition);
-
-                    // Fallback timeout
-                    setTimeout(focusAfterTransition, 350);
-                }
-                self.updateActiveIcon(-1);
-            }
-        });
-
-        $(document).on('keydown', '.sidePane .toggleSideBar i', function (e) {
-            if (e.key !== 'Tab') return;
-
-            const $toggleButton = $(this).closest('.toggleSideBar');
-            const $sidePane = $toggleButton.closest('.sidePane');
-            const $elementIcons = $toggleButton.find('.element-icons');
-            const $icons = $elementIcons.find('[class*="element-icon"]');
-
-            if ($toggleButton.hasClass('closed')) {
-                // Sidepane is closed - navigate through icons
-                if ($icons.length > 0) {
-                    if (e.shiftKey) {
-                        // Shift+Tab on toggle button: go to last icon
-                        e.preventDefault();
-                        $icons.last().trigger('focus');
-                    } else {
-                        // Tab on toggle button: go to first icon
-                        e.preventDefault();
-                        $icons.first().trigger('focus');
-                    }
-                }
-            } else {
-                // Sidepane is open - Shift+Tab should go to last element in panel
-                if (e.shiftKey) {
-                    e.preventDefault();
-                    // Find the active panel and get its last focusable element
-                    const $activeContainer = $sidePane.find('.container-accordion.active, .container-list-group-item.active, .container.active').first();
-                    if ($activeContainer.length) {
-                        const focusableSelectors = 'a, button, input, select, textarea, .clickable, [tabindex]:not([tabindex="-1"])';
-                        const $focusable = $activeContainer.find(focusableSelectors).filter(':visible').not('[disabled]').not('[tabindex="-1"]').last();
-                        if ($focusable.length) {
-                            $focusable.trigger('focus');
-                        }
-                    }
-                }
-            }
-        });
-
-        $(document).on('keydown', '.sidePane .toggleSideBar .element-icon', function (e) {
-            if (e.key !== 'Tab') return;
-
-            const $elementIcons = $(this).closest('.element-icons');
-            const $icons = $elementIcons.find('[class*="element-icon"]');
-            const $toggleButton = $elementIcons.closest('.toggleSideBar');
-            const $toggleIcon = $toggleButton.children('i').first();
-            const $currentIcon = $(this);
-            const currentIndex = $icons.index($currentIcon);
-
-            if (e.shiftKey) {
-                // Shift+Tab: go to previous icon or to toggle button (fa-bars/fa-xmark)
-                e.preventDefault();
-                if (currentIndex > 0) {
-                    $icons.eq(currentIndex - 1).trigger('focus');
-                } else {
-                    // On first icon, go to toggle button
-                    $toggleIcon.trigger('focus');
-                }
-            } else {
-                // Tab: go to next icon or to next element outside sidepane
-                if (currentIndex < $icons.length - 1) {
-                    e.preventDefault();
-                    $icons.eq(currentIndex + 1).trigger('focus');
-                }
-            }
-        });
-
-        $(document).on('keydown', '.sidePane .toggleSideBar', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                e.stopPropagation();
-                $(this).trigger('click');
-            }
-        });
-
-        // Listen for back button event to deactivate elements
-        $(document).on('listgroup:back', '.sideContent', function (e, $container) {
-            if ($container && $container.length) {
-                self.notifyElements($container.get(0), false);
-                self.updateActiveIcon($container.closest('.sidePane'), -1);
-            }
-        });
-    }
-
     _onMapbenderSetupFinished() {
         this._buildElementIcons();
         this.handler.setup();
@@ -413,7 +291,7 @@ window.Mapbender.SidePane = class SidePane {
             const $firstVisibleButton = $buttons.filter(':visible').first();
             if ($firstVisibleButton.length) {
                 // NOTE: toggles active classes and implicitly ends up calling notifyElements
-                // @see initTabContainer
+                // @see SidePaneTabs.setup()
                 $firstVisibleButton.trigger('click');
             }
         }
@@ -538,66 +416,6 @@ window.Mapbender.SidePane = class SidePane {
      * @return {Promise<any>} resolves after animations finished
      */
     openElementById(id) {
-        const sidePaneType = this.sidePaneType();
-        switch (sidePaneType) {
-            case 'list':
-                const $groupItem = this.$element.find('#' + id).closest('.container-list-group-item');
-                const listId = $groupItem.attr('id').replace('list_group_item_container', '');
-                $('.sidePane #list_group_item' + listId).trigger('click');
-                return Promise.allSettled([
-                    this._waitForRunningTransitions($groupItem[0]),
-                    this.setOpen(true),
-                ]);
-            case 'tabs':
-                const tabId = this.$element.find('#' + id).closest('.container').attr('id').replace('container', '');
-                $('.sidePane #tab' + tabId).trigger('click');
-                this.$element.find('#tab' + tabId).trigger('click');
-                // no animation, so we're good to just break through to awaiting setOpen
-                break;
-            case 'accordion':
-                this.$element.find('#' + id).closest('.container-accordion').prev().trigger('click');
-                // no animation, so we're good to just break through to awaiting setOpen
-                break;
-            // for unformatted, nothing needs to be highlighted
-        }
-
-        return this.setOpen(true);
-    }
-
-    async _waitForRunningTransitions(targetElement) {
-        // check for API support
-        if (typeof targetElement.getAnimations !== 'function') return;
-
-        const elementsToCheck = [];
-        let current = targetElement;
-        // Parent transitions can move children, so include the ancestor chain.
-        while (current && current !== document.body) {
-            elementsToCheck.push(current);
-            current = current.parentElement;
-        }
-
-        const runningAnimations = elementsToCheck.flatMap((element) => {
-            return element.getAnimations().filter((animation) => {
-                if (animation.playState !== 'running' && animation.playState !== 'pending') {
-                    return false;
-                }
-                // Ignore infinite / non-terminating animations (e.g. spinners) which would block forever.
-                const effect = animation.effect;
-                if (!effect || typeof effect.getComputedTiming !== 'function') {
-                    return false;
-                }
-                const {endTime} = effect.getComputedTiming();
-                return Number.isFinite(endTime);
-            });
-        });
-
-        if (!runningAnimations.length) {
-            return;
-        }
-
-        await Promise.race([
-            Promise.allSettled(runningAnimations.map((animation) => animation.finished)),
-            new Promise((resolve) => setTimeout(resolve, 1000))
-        ]);
+        return this.handler.openElementById(id);
     }
 }

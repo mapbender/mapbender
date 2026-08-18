@@ -57,4 +57,9 @@ window.Mapbender.SidePaneAccordion = class SidepaneAccordion extends Mapbender.S
         return this.$container.find('.accordion:not(.inline)');
     }
 
+    openElementById(id) {
+        this.sidePane.$element.find('#' + id).closest('.container-accordion').prev().trigger('click');
+        return super.openElementById(id);
+    }
+
 }
