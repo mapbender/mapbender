@@ -80,7 +80,6 @@ window.Mapbender.SidePane = class SidePane {
         this.boundResizeSidepane = this._resizeSidepane.bind(this);
         this._setupInitialState();
         this._setupEvents();
-        this._setupKeyEvents();
     }
 
     /**
