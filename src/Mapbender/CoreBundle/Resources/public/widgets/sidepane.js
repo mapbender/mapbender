@@ -130,14 +130,14 @@ $(function () {
             this.isOpen = this._getResponsiveDefaultOpen();
 
             if (this.isOpen) {
-                this.$element.css('left', 'initial').css('right', 'initial');
+                this.$element.css('left', 'initial').css('right', this.isLeft ? 'initial' : '0px');
                 this.$element.removeClass('closed');
             } else {
                 this.$element.addClass('closed');
-                if (this.$element.hasClass("right")) {
-                    this.$element.css({right: (this.$element.outerWidth(true) * -1) + "px"});
-                } else {
+                if (this.isLeft) {
                     this.$element.css({left: (this.$element.outerWidth(true) * -1) + "px"});
+                } else {
+                    this.$element.css({right: (this.$element.outerWidth(true) * -1) + "px"});
                 }
             }
         }
@@ -230,8 +230,9 @@ $(function () {
             const allowedWidth = Math.floor(window.innerWidth * this.MAX_SIZE_WINDOW_PERCENTAGE);
             if (this.sidePaneWidth() > allowedWidth) {
                 this.element.style.width = allowedWidth + "px";
-                if (!this.isOpen && this.element.style.left && this.element.style.left !== "0px") {
-                    this.element.style.left = "-" + allowedWidth + "px";
+                const orientationString = this.isLeft ? 'left' : 'right';
+                if (!this.isOpen && this.element.style[orientationString] && this.element.style[orientationString] !== "0px") {
+                    this.element.style[orientationString] = "-" + allowedWidth + "px";
                 }
             }
         }

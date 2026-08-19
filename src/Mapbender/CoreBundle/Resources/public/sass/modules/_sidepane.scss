@@ -1,5 +1,13 @@
 // CSS custom properties for sidepane are emitted by libs/_css_custom_properties.scss (:root block)
 
+:root:has(.sidePane.left:not(.hidden)) {
+    --content-spacing-left: 40px;
+}
+
+:root:has(.sidePane.right:not(.hidden)) {
+    --content-spacing-right: 40px;
+}
+
 .sidePane {
     color: var(--sidepane-text-color);
     background: var(--sidepane-background-color);
@@ -228,4 +236,3 @@
         }
     }
 }
-
