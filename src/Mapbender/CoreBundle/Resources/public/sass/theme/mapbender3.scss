@@ -50,6 +50,10 @@ $hoverEffects: true !default;
 .toolBarColors, .toolBar {
   background-color: var(--toolbar-background);
   color: var(--toolbar-text-color);
+
+  .dropdown-menu {
+    --bs-dropdown-color: var(--toolbar-menu-text-color);
+  }
 }
 
 .toolbar-button-hover-effect {
@@ -183,7 +187,7 @@ ul.toolBar, .toolBar > ul {
   }
   .menu-wrapper {
     .btn {
-        color: var(--bs-secondary-color);
+        color: var(--toolbar-text-color);
         border: none;
         .iconBig {
           width: 1.25em;
@@ -445,18 +449,18 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     margin-top: 0.5rem;
   }
   &.anchored-element-wrap-lt, &.anchored-element-wrap-lb {
-    left: var(--content-element-padding-horizontal);
+    left: calc(var(--content-element-padding-horizontal) + var(--content-spacing-left));
     text-align: left;
   }
   &.anchored-element-wrap-rt, &.anchored-element-wrap-rb {
-    right: var(--content-element-padding-horizontal);
+    right: calc(var(--content-element-padding-horizontal) + var(--content-spacing-right));
     text-align: right;
   }
   &.anchored-element-wrap-lt, &.anchored-element-wrap-rt {
-    top: calc(var(--space) * 2);
+    top: var(--content-element-padding-top);
   }
   &.anchored-element-wrap-lb, &.anchored-element-wrap-rb {
-    bottom: var(--space);
+    bottom: var(--content-element-padding-bottom);
   }
 }
 

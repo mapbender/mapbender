@@ -7,12 +7,25 @@
     width: $labelWidth;
   }
   textarea {
+    resize: vertical;
+  }
+  textarea[rows] {
     resize: none;
   }
   .left .checkbox {
     display: inline-block;
     margin-right: 20px;
   }
+  .CodeMirror {
+    border: 1px solid #e0e0e0;
+    border-radius: var(--radius-lg);
+  }
+}
+
+.row > .CodeMirror {
+    padding-left: 0;
+    margin-left: calc(var(--bs-gutter-x) * .5);
+    width: calc(100% - var(--bs-gutter-x));
 }
 
 .help-text-inline {

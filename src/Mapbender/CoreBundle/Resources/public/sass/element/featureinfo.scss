@@ -7,6 +7,16 @@
 }
 
 .featureinfoDialog {
+    .accordion {
+        padding: 5px 0 5px 0;
+        &:hover:not(.active) {
+            background: var(--featureinfo-hover-color);
+        }
+    }
+    .container-accordion {
+        margin-bottom: 10px;
+    }
+
     .accordionContainer > .container-accordion > .accordion-cell {
         padding: 0;
 
@@ -16,7 +26,7 @@
     }
 
     .popupContent {
-        height: calc(100% - 70px); // for accordion growth minus padding and print button
+        height: calc(100% - 10px);
         margin-bottom: 0 !important;
 
         .mb-element-featureinfo {

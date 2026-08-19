@@ -107,6 +107,7 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
                 continue;
             }
             $layerSource = new OgcApiFeaturesLayerSource();
+            $layerSource->setId($layer['collectionId']);
             $layerSource->setSource($source);
             $layerSource->setTitle($layer['title'] ?? '');
             $layerSource->setCollectionId($layer['collectionId']);

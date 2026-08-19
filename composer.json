@@ -73,7 +73,8 @@
 
         "npm-asset/jquery": "^4.0",
         "jquery/jquery-ui": "^1.14.1",
-        "datatables.net/datatables.net-bs5": "^2.3",
+        "datatables.net/datatables.net-bs5": "^2.3.8",
+        "datatables.net/datatables.net": "^2.3.8",
         "twbs/bootstrap": "^5.0",
 
         "mapbender/openlayers6-es5": "^10"
