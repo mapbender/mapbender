@@ -252,7 +252,6 @@
             this.$element.css('top', (null === top ? '' : top));
         },
         height: function(height) {
-            console.log("its", height);
             if (typeof height === 'undefined') {
                 return this.options.height;
             }
