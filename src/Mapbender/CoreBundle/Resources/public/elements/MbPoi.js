@@ -61,8 +61,8 @@
                     cssClass: 'btn btn-sm btn-primary',
                     callback: () => {
                         self.gpsElement.data('MbGpsPosition').getGPSPosition((p) => {
-                            self._updatePoi(p.x, p.y);
-                            self._setPoiMarker(p.x, p.y);
+                            self._updatePoi(p.lon, p.lat);
+                            self._setPoiMarker(p.lon, p.lat);
                         });
                     }
                 });
