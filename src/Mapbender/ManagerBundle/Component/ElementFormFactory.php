@@ -37,7 +37,7 @@ class ElementFormFactory
     public function __construct(protected ElementFilter         $elementFilter,
                                 protected FormFactoryInterface  $formFactory,
                                 protected FormRegistryInterface $formRegistry,
-                                                      $strict = false)
+                                                                $strict = false)
     {
         $this->setStrict($strict);
     }
@@ -115,7 +115,9 @@ class ElementFormFactory
     {
         if (is_a($elementClass, FloatableElement::class, true)) {
             if (!$regionName || str_contains($regionName, 'content')) {
-                $form->get('configuration')->add('anchor', FloatingAnchorType::class);
+                $form->get('configuration')->add('anchor', FloatingAnchorType::class, [
+                    'attr' => ['data-inline-only' => true],
+                ]);
             } else {
                 $form->get('configuration')->add('anchor', HiddenType::class);
             }

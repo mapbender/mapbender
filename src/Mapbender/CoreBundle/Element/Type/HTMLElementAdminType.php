@@ -29,11 +29,6 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('openInline', CheckboxType::class, $this->createInlineHelpText([
-                'required' => false,
-                'label' => 'mb.manager.element.openInline',
-                'help' => 'mb.manager.element.openInlineHelp',
-            ], $this->trans))
             // Temporary. Replaced in preSetData
             ->add('content', TextareaType::class, [
                 'required' => true,
@@ -43,20 +38,32 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
                 'required' => false,
                 'label' => 'mb.core.htmlelement.admin.classes',
             ])
+            ->add('openInline', CheckboxType::class, $this->createInlineHelpText([
+                'required' => false,
+                'label' => 'mb.manager.element.openInline',
+                'help' => 'mb.manager.element.openInlineHelp',
+            ], $this->trans))
             ->add('autoOpen', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.manager.autoOpen',
+                'attr' => [
+                    'data-popup-only' => true,
+                ],
             ])
             ->add('modal', CheckboxType::class, $this->createInlineHelpText([
                 'required' => false,
                 'label' => 'mb.core.htmlelement.admin.modal',
                 'help' => 'mb.core.htmlelement.admin.modal_help',
+                'attr' => [
+                    'data-popup-only' => true,
+                ],
             ], $this->trans))
             ->add('popupWidth', TextType::class, [
                 'required' => false,
                 'label' => 'mb.manager.popup_width',
                 'attr' => [
                     'placeholder' => '300px',
+                    'data-popup-only' => true,
                 ],
                 'constraints' => [
                     new Type('numeric'),
@@ -68,6 +75,7 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
                 'label' => 'mb.manager.popup_height',
                 'attr' => [
                     'placeholder' => 'mb.manager.automatic',
+                    'data-popup-only' => true,
                 ],
                 'constraints' => [
                     new Type('numeric'),
@@ -77,11 +85,17 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
             ->add('dontShowAgain', CheckboxType::class, [
                 'required' => false,
                 'label' => 'mb.core.htmlelement.admin.dontShowAgain',
+                'attr' => [
+                    'data-popup-only' => true,
+                ],
             ])
             ->add('dontShowAgainLabel', TextType::class, [
                 'required' => false,
                 'label' => 'mb.core.htmlelement.admin.dontShowAgainLabel',
                 'data' => 'mb.core.htmlelement.admin.dontShowAgainDefaultLabel',
+                'attr' => [
+                    'data-popup-only' => true,
+                ],
             ])
         ;
         $builder->addEventSubscriber($this);
