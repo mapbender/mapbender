@@ -8,6 +8,10 @@ Update your entities to the latest version.
 Important: Execute the following commands in the specified order to upgrade. First, make a backup of your database!
 
 ```bash
+# after updating your code to the latest version by merging the mapbender/mapbender-starter repository into your project
+php bin/composer install
+php bin/console assets:install --symlink --relative
+# be patient, this might take a while depending on your database size
 bin/console mapbender:database:upgrade
 bin/console doctrine:schema:update --force
 ```
