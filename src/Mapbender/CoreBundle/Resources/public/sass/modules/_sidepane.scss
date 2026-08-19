@@ -126,24 +126,24 @@
     .mb-icon {
         transition: background-color 0.2s ease;
     }
+}
 
-    .active-element-icon {
-        color: var(--primary);
+.element-icon {
+    width: 1.8em;
+    height: 1.8em;
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    border-radius: var(--bs-border-radius-sm);
+
+    &:hover {
+        background: var(--menu-hover-color);
     }
 
-    .sidePane--collapsed__element-icon {
-        width: 1.8em;
-        height: 1.8em;
-        font-size: 18px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        text-align: center;
-        border-radius: var(--bs-border-radius-sm);
-
-        &:hover {
-            background: var(--menu-hover-color);
-        }
+    &.active {
+        color: var(--primary);
     }
 }
 

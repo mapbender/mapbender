@@ -36,7 +36,22 @@ class JsCompiler extends AssetFactoryBase
             '@MapbenderCoreBundle/Resources/public/widgets/fom-popup.js' => '@MapbenderCoreBundle/Resources/public/widgets/mapbender.popup.js',
             '@FOMCoreBundle/Resources/public/js/widgets/collection.js' => '@MapbenderManagerBundle/Resources/public/form/collection.js',
             '@FOMCoreBundle/Resources/public/js/components.js' => '@MapbenderManagerBundle/Resources/public/components.js',
-            '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js' => '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
+            '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js' => [
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-accordion.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-list.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-tabs.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-unformatted.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-init.js',
+            ],
+            '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js' => [
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-accordion.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-list.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-tabs.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-unformatted.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-init.js',
+            ],
             '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js' => '@MapbenderCoreBundle/Resources/public/widgets/tabcontainer.js',
             // Select2: sourcing from vendor makes i18n sub-path inaccessible; this is ok, because the legacy robloach build does not contain i18n either
             '/components/select2/select2-built.js' => '/../vendor/select2/select2/dist/js/select2.js',

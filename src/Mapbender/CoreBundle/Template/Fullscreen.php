@@ -85,7 +85,12 @@ class Fullscreen extends Template
                 '@MapbenderCoreBundle/Resources/public/sass/modules/_tab_navigator.scss',
             ],
             'js' => [
-                '@MapbenderCoreBundle/Resources/public/widgets/sidepane.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-accordion.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-list.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-tabs.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-unformatted.js',
+                '@MapbenderCoreBundle/Resources/public/sidepane/sidepane-init.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.container.info.js',
             ],
             default => parent::getAssets($type),
