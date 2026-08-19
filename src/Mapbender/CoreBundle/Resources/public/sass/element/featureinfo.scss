@@ -9,7 +9,7 @@
 .featureinfoDialog {
     .accordion {
         padding: 5px 0 5px 0;
-        &:hover {
+        &:hover:not(.active) {
             background: var(--featureinfo-hover-color);
         }
     }
