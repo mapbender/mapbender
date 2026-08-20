@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     class MbFeatureInfo extends MapbenderElement {
         constructor(configuration, $element) {
@@ -23,7 +23,7 @@
 
             Mapbender.elementRegistry.waitReady('.mb-element-map').then((mbMap) => {
                 this._setup(mbMap);
-            }, function() {
+            }, function () {
                 Mapbender.checkTarget('mbFeatureInfo');
             });
         }
@@ -113,7 +113,7 @@
                 if (!source.featureInfoEnabled()) continue;
                 validSources.push(source);
 
-                const options = { ...this.options, injectionScript: this._getInjectionScript(source.id) };
+                const options = {...this.options, injectionScript: this._getInjectionScript(source.id)};
                 const [url, fiPromise] = source.loadFeatureInfo(this.mbMap.getModel(), x, y, options, this.$element.attr('id'));
                 fiPromise.then((result) => {
                     if (result) {
@@ -178,7 +178,7 @@
             }
 
             if (this.mobilePane.length) {
-                $(document).trigger('mobilepane.switch-to-element', { element: this.$element });
+                $(document).trigger('mobilepane.switch-to-element', {element: this.$element});
                 return;
             }
 
@@ -301,7 +301,9 @@
             if (!$('>.active', $header.closest('.tabContainerAlt,.accordionContainer')).not('.hidden').length) {
                 $header.addClass('active');
                 if (this.options.printResult) {
-                    setTimeout(() => { this._checkPrintVisibility(); });
+                    setTimeout(() => {
+                        this._checkPrintVisibility();
+                    });
                 }
             }
             const contentId = this._getContentId(source);
@@ -317,18 +319,52 @@
 
         _checkPrintVisibility() {
             const activeTab = this.$element.find('.tab.active, .accordion.active');
-            const activeTabHasLink = activeTab.children('a').length > 0;
             const printButton = this.popup?.$element?.find('.js-btn-print') ?? this.$element.find('.js-btn-print');
-            activeTabHasLink ? printButton.removeAttr('disabled') : printButton.attr('disabled', 'readonly');
+            activeTab.length ? printButton.removeAttr('disabled') : printButton.attr('disabled', 'readonly');
         }
 
         _printContent() {
             const $documentNode = $('.js-content.active', this.$element);
             const url = $documentNode.attr('data-url');
-            if (!url) return;
-            const proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + new URLSearchParams({ url: url });
+            if (!url) return this._printNonLinkContent();
+            const proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + new URLSearchParams({url: url});
             const w = window.open(proxifiedUrl);
             w.print();
+        }
+
+        _printNonLinkContent() {
+            const w = window.open('', '_blank');
+            if (!w) {
+                Mapbender.error('Unable to open print preview window.');
+                return;
+            }
+
+            w.document.open();
+            // document.write seems to be the only way to reliably add all CSS contents
+            w.document.write(this._getNonLinkPrintPreviewHtml());
+            w.document.close();
+
+            w.addEventListener('load', () => {
+                w.focus();
+                w.print();
+            }, {once: true});
+        }
+
+        _getNonLinkPrintPreviewHtml() {
+            const $documentNode = $('.js-content.active', this.$element);
+            return `<!DOCTYPE html>
+<html lang="${document.documentElement.lang || 'en'}">
+    <head>
+        <meta charset="utf-8">
+        <title>${document.title || Mapbender.trans('mb.actions.print')}</title>
+        ${Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+                .map((node) => node.outerHTML)
+                .join('')}
+    </head>
+    <body>
+        ${$documentNode.html()}
+    </body>
+</html>`
         }
 
         _setupMapClickHandler() {
@@ -372,11 +408,11 @@
             let strokeWidth = parseInt(settings.strokeWidth);
 
             strokeWidth = (isNaN(strokeWidth) && (hover && 3 || 1)) || strokeWidth;
-            const fill = new ol.style.Fill({ color: fillRgba });
-            const stroke = strokeWidth && new ol.style.Stroke({ color: strokeRgba, width: strokeWidth });
+            const fill = new ol.style.Fill({color: fillRgba});
+            const stroke = strokeWidth && new ol.style.Stroke({color: strokeRgba, width: strokeWidth});
             const text = strokeWidth && new ol.style.Text({
                 font: parseInt(settings.fontSize) + 'px sans-serif',
-                fill: new ol.style.Fill({ color: settings.fontColor }),
+                fill: new ol.style.Fill({color: settings.fontColor}),
                 text: feature.get('label'),
             });
 
@@ -446,15 +482,17 @@
             });
             let featureStack = [];
 
-            highlightControl.on('select', function(e) {
-                featureStack = featureStack.filter(function(feature) {
+            highlightControl.on('select', function (e) {
+                featureStack = featureStack.filter(function (feature) {
                     return e.deselected.indexOf(feature) === -1;
                 });
-                e.deselected.forEach(function(feature) {
+                e.deselected.forEach(function (feature) {
                     feature.set('hover', false);
                 });
-                e.selected.forEach(function(feature) {
-                    featureStack.forEach(function(feature) { feature.set('hover', false); });
+                e.selected.forEach(function (feature) {
+                    featureStack.forEach(function (feature) {
+                        feature.set('hover', false);
+                    });
                     featureStack.push(feature);
                 });
                 if (featureStack.length) {
@@ -489,7 +527,7 @@
 
             const $container = $('.tabContainerAlt > .tabs, .accordionContainer', this.$element);
             const $tabs = $container.children();
-            const $sortedTabs = Array.from($tabs).sort(function(a, b) {
+            const $sortedTabs = Array.from($tabs).sort(function (a, b) {
                 const orderA = sourcesOrderMap[$(a).data('source-id')] ?? Number.MAX_SAFE_INTEGER;
                 const orderB = sourcesOrderMap[$(b).data('source-id')] ?? Number.MAX_SAFE_INTEGER;
                 return orderB - orderA;

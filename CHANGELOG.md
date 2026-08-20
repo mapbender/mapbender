@@ -19,6 +19,7 @@ Features:
 * [SearchRouter] Extend SQLSearchEngine with support for dates, numbers and greater/lower than operators ([#PR1796](https://github.com/mapbender/mapbender/pull/1796))
 * [InteractiveHelp] Add new Interactive Help element ([#PR1808](https://github.com/mapbender/mapbender/pull/1808))
 * [Print] Support custom fonts and improve configuration options ([#PR1887](https://github.com/mapbender/mapbender/pull/1887))
+* [FeatureInfo] Support printing for all source types (including vector tiles and the new OGC API Features)  ([#PR1918](https://github.com/mapbender/mapbender/pull/1918))
 * [HTMLElement/Copyright] Merged the two elements into one ([#PR1908](https://github.com/mapbender/mapbender/pull/1908))
 * [HTMLElement] Add 'openInline' flag to provide more flexibility in sidebar and content area ([#PR1814](https://github.com/mapbender/mapbender/pull/1814))
 * [Copyright] Add "Don't show again" option ([#PR1800](https://github.com/mapbender/mapbender/pull/1800))
