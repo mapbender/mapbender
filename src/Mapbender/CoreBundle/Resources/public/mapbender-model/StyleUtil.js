@@ -296,7 +296,7 @@ window.Mapbender.StyleUtil = (function () {
                                 dataValue = fnEscapeHtml(dataValue);
                             }
                             self.recentReplacementVariables++;
-                            self.recentReplacementCount += dataValue ? 1 : 0;
+                            self.recentReplacementCount += (dataValue !== null && dataValue !== undefined && dataValue !== '') ? 1 : 0;
                             return dataValue || (prop === 'label' ? '' : dataValue);
                         });
                     });
