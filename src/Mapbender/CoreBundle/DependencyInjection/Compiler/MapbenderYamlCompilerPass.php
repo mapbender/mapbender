@@ -234,7 +234,11 @@ class MapbenderYamlCompilerPass extends ElementConfigFilter implements CompilerP
     protected function checkElementConfig($className, $config)
     {
         $defaults = $className::getDefaultConfiguration();
-        $keysWithoutDefaults = array_diff(array_keys($config), array_keys($defaults));
+        $allowedKeys = array_keys($defaults);
+        $allowedKeys[] = 'anchor';
+        $allowedKeys[] = 'element_icon';
+        $allowedKeys[] = 'title';
+        $keysWithoutDefaults = array_diff(array_keys($config), $allowedKeys);
         if ($keysWithoutDefaults) {
             $this->handleException("Yaml application contains configuration for {$className} with invalid keys " . implode(',', $keysWithoutDefaults));
         }
