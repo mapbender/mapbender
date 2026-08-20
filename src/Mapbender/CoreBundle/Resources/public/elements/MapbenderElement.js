@@ -81,7 +81,7 @@ class MapbenderElement {
      * initialization.
      *
      * Returns true only if all of the following:
-     * 1) Widget configuration option "autoOpen" is set to true
+     * 1) Widget configuration option "autoOpen", "autoStart" or "autoActivate" is set to true
      * 2) Containing region is appropriate (see checkDialogMode)
      * 3) Responsive element controls allow the element to be shown
      *
