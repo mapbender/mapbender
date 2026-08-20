@@ -6,7 +6,7 @@
     {%- endif -%}
     <input type="submit" value="{{ (submit_text | default('mb.actions.save')) | trans }}" class="btn btn-sm btn-primary"/>
     {% if _return_url %}
-        <a href="{{ _return_url }}" class="btn btn-sm btn-light">{{ (return_text | default('mb.actions.cancel')) | trans}}</a>
+        <a href="{{ _return_url }}" class="btn btn-sm btn-light" data-test="mb-back">{{ (return_text | default('mb.actions.cancel')) | trans}}</a>
     {%- endif -%}
 {% endblock %}
 

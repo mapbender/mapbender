@@ -12,7 +12,7 @@ $(function() {
         $tabContainer.find('#' + activeTab).tab('show');
     }
 
-    $('.listFilter').on("click", '.-fn-delete[data-url]', function() {
+    $('.listFilter').on("click", '.-fn-delete[data-url]:not(.-fn-delete-ajax)', function() {
         var $el = $(this);
         Mapbender.Manager.confirmDelete($el, $el.attr('data-url'), {
             title: "mb.manager.components.popup.delete_element.title",
