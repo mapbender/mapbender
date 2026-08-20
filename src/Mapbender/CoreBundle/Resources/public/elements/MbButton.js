@@ -181,8 +181,13 @@
             if (this.active) {
                 return;
             }
+
             if (this._initializeTarget() && this.targetWidget.options) {
-                this._setActive(!!this.targetWidget.checkAutoOpen());
+                const isActive = !!this.targetWidget.checkAutoOpen();
+                this._setActive(isActive);
+                if (isActive) {
+                    this.targetWidget.attachButton(this.reset.bind(this), this.$element);
+                }
             }
         }
 

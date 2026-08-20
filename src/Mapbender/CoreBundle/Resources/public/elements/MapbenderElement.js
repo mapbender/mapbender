@@ -38,6 +38,10 @@ class MapbenderElement {
         this.popup.focus();
     }
 
+    attachButton(callback, mbButton) {
+        this.callback = callback ? callback : null;
+    }
+
     closeByButton() {
         if (this.popup && this.popup.$element) {
             this.popup.$element.hide();

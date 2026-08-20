@@ -23,7 +23,7 @@
             this.prepareTourChapterConfiguration();
             this.initEventHandlers();
             if (this.checkAutoOpen()) {
-                this.activateByButton();
+                this.activateByButton(this.callback);
             }
         }
 
