@@ -78,23 +78,26 @@ class ElementFormFactory
         $this->addCommonTypes($formType, $handlingClass);
         $configurationType = $this->getConfigurationFormType($element);
 
-        $options = [];
+        $options = [
+            'label' => false,
+        ];
 
         $twigTemplate = $handlingClass::getFormTemplate();
-        $options['label'] = false;
 
         $resolvedType = $this->formRegistry->getType($configurationType);
         if ($resolvedType->getOptionsResolver()->isDefined('application')) {
             // Only pass the "application" option if the form type requires / declares it.
             $options['application'] = $element->getApplication();
         }
+        if ($resolvedType->getOptionsResolver()->isDefined('regionName')) {
+            $options['regionName'] = $element->getRegion();
+        }
 
         $options = $handlingClass::getFormOptions($element, $options);
 
         $formType->add('configuration', $configurationType, $options);
 
-        $regionName = $element->getRegion();
-        $this->addRegionDependantConfiguration($handlingClass, $regionName, $formType);
+        $this->addRegionDependantConfiguration($handlingClass, $element->getRegion(), $formType);
 
         return [
             'form' => $formType->getForm(),
