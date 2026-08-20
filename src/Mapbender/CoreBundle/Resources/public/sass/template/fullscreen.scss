@@ -96,14 +96,20 @@ body {
 
 .logoContainer {
   float: left;
+  padding: 0;
+
+  .logo {
+    height: 38px;
+  }
+
   .project-name {
+    padding: 5px;
     font-size: 1.3rem;
     display: inline-block;
     vertical-align: middle;
     margin-left: 0.5em;
   }
 }
-
 
 .toolBar {
   &.top {
@@ -112,9 +118,6 @@ body {
   &.bottom {
     box-shadow: 0 -0.5rem 1rem rgba(0, 0, 0, 0.15);
   }
-}
-.logo {
-  max-height: 29px; //HACK; =line-height + toolBarItem vertical padding
 }
 
 .accordionContainer .accordion {
