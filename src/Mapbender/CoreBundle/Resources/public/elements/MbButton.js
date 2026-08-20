@@ -181,20 +181,13 @@
             if (this.active) {
                 return;
             }
+
             if (this._initializeTarget() && this.targetWidget.options) {
-                const targetOptions = this.targetWidget.options;
-                let state = targetOptions.autoActivate   // FeatureInfo style
-                    || targetOptions.autoStart     // GpsPosition style
-                    || targetOptions.autoOpen      // Copyright / Legend / Layertree / WmsLoader style
-                    || targetOptions.auto_activate // Sketch / Redlining style
-                ;
-                if (state) {
-                    const isDialog = this.targetWidget.$element.closest('.contentPane').length
-                        || this.targetWidget.$element.closest('.popup').length
-                        || this.targetWidget.$element.closest('.mobilePane').length;
-                    state = state && isDialog;
+                const isActive = !!this.targetWidget.checkAutoOpen();
+                this._setActive(isActive);
+                if (isActive) {
+                    this.targetWidget.attachButton(this.reset.bind(this), this.$element);
                 }
-                this._setActive(!!state);
             }
         }
 

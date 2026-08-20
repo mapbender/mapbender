@@ -22,16 +22,19 @@
         _setup() {
             this.prepareTourChapterConfiguration();
             this.initEventHandlers();
-            const dismissPermanently = !!localStorage.getItem(this.localStorageId);
-            if (this.options.autoOpen && dismissPermanently !== true) {
-                this.activateByButton();
+            if (this.checkAutoOpen()) {
+                this.activateByButton(this.callback);
             }
+        }
+
+        checkAutoOpen(element, options) {
+            return !localStorage.getItem(this.localStorageId) && super.checkAutoOpen(element, options);
         }
 
         activateByButton(callback, mbButton) {
             let dissmissCheckbox = this.$element.find('.dismiss-permanently');
             dissmissCheckbox.addClass('d-none');
-            if (!callback && !mbButton) {
+            if (!mbButton) {
                 dissmissCheckbox.removeClass('d-none');
             }
             super.activateByButton(callback, mbButton);
@@ -123,6 +126,7 @@
             let chapters = this.options.tour.chapters;
             // filter out all elements that are not configured in the application or hidden for mobile/desktop:
             chapters = chapters.filter(chapter => {
+                if (!chapter.selector) return false;
                 const $el = $('.' + chapter.selector);
                 if ($el.length > 0 && Object.prototype.hasOwnProperty.call($el.data(), chapter.class)) {
                     const hideOnMobile = ($el.hasClass('hide-screentype-mobile') || $el.closest('.element-wrapper').hasClass('hide-screentype-mobile')) && this.isMobile();

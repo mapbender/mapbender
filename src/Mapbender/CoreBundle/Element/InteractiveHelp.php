@@ -196,10 +196,9 @@ class InteractiveHelp extends AbstractElementService
                         case str_contains($classAttr, 'mb-aboutButton'):
                             $config['tour']['chapters'][$key]['selector'] = 'mb-aboutButton';
                             break;
-                        default:
-                            $config['tour']['chapters'][$key]['selector'] = '';
                     }
                     $config['tour']['chapters'][$key]['region'] = $e->getRegion();
+                    break;
                 }
             }
         }
