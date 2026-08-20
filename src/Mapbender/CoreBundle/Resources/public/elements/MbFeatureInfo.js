@@ -317,17 +317,22 @@
 
         _checkPrintVisibility() {
             const activeTab = this.$element.find('.tab.active, .accordion.active');
-            const activeTabHasLink = activeTab.children('a').length > 0;
             const printButton = this.popup?.$element?.find('.js-btn-print') ?? this.$element.find('.js-btn-print');
-            activeTabHasLink ? printButton.removeAttr('disabled') : printButton.attr('disabled', 'readonly');
+            activeTab.length ? printButton.removeAttr('disabled') : printButton.attr('disabled', 'readonly');
         }
 
         _printContent() {
             const $documentNode = $('.js-content.active', this.$element);
             const url = $documentNode.attr('data-url');
-            if (!url) return;
+            if (!url) return this._printNonLinkContent();
             const proxifiedUrl = Mapbender.configuration.application.urls.proxy + '?' + new URLSearchParams({ url: url });
             const w = window.open(proxifiedUrl);
+            w.print();
+        }
+
+        _printNonLinkContent() {
+            const $documentNode = $('.js-content.active', this.$element);
+            const w = window.open();
             w.print();
         }
 
