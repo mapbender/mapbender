@@ -214,7 +214,7 @@ _setup: function() {
 - `hide(): void`: element in sidepane became hidden (user switched to another element)
 - `activate(?function callback): void`, alias: `open(?function callback): void`: element is triggered via the toolbar or a button. Call the callback function if the user closes the element (is used to update button state)
 - `deactivate(): void`, alias: `close(): void`: element is closed via the toolbar or a button 
-- `options.autoActivate`, `options.autoStart`, `options.autoOpen`, `options.auto_activate`: If any of these options exist and are set to true, a connected button will be shown as active on application load 
+- `options.autoOpen`, `options.autoStart`, `options.autoActivate`: If any of these options exist and are set to true, a connected button will be shown as active on application load 
 
 ### Element to Element communication
 

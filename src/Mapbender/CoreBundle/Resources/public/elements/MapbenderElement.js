@@ -28,7 +28,7 @@ class MapbenderElement {
         let $mbButton = mbButton;
         if (!this.popup || !this.popup.$element) {
             const options = this.getPopupOptions();
-            if($mbButton) {
+            if ($mbButton) {
                 options.icon = $mbButton.find('i').attr('class') || $mbButton.find('span.mb-glyphicon').attr('class') || '';
             }
             this.popup = new Mapbender.Popup(options);
@@ -91,7 +91,8 @@ class MapbenderElement {
      */
     checkAutoOpen(element, options) {
         const options_ = options || this.options;
-        return options_.autoOpen && this.checkDialogMode(element) && this.checkResponsiveVisibility(element);
+        const _element = element || this.$element;
+        return (options_.autoOpen || options_.autoStart || options_.autoActivate) && this.checkDialogMode(_element) && this.checkResponsiveVisibility(_element);
     }
 
     /**
@@ -116,7 +117,7 @@ class MapbenderElement {
         return Mapbender.ElementUtil.checkResponsiveVisibility(element || this.$element);
     }
 
-    notifyWidgetDeactivated(){
+    notifyWidgetDeactivated() {
         this.$element.trigger('mapbender.elementdeactivated', {
             widget: this,
             sender: this,
@@ -124,7 +125,7 @@ class MapbenderElement {
         });
     }
 
-    notifyWidgetActivated(){
+    notifyWidgetActivated() {
         this.$element.trigger('mapbender.elementactivated', {
             widget: this,
             sender: this,

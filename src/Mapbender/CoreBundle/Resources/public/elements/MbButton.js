@@ -182,19 +182,7 @@
                 return;
             }
             if (this._initializeTarget() && this.targetWidget.options) {
-                const targetOptions = this.targetWidget.options;
-                let state = targetOptions.autoActivate   // FeatureInfo style
-                    || targetOptions.autoStart     // GpsPosition style
-                    || targetOptions.autoOpen      // Copyright / Legend / Layertree / WmsLoader style
-                    || targetOptions.auto_activate // Sketch / Redlining style
-                ;
-                if (state) {
-                    const isDialog = this.targetWidget.$element.closest('.contentPane').length
-                        || this.targetWidget.$element.closest('.popup').length
-                        || this.targetWidget.$element.closest('.mobilePane').length;
-                    state = state && isDialog;
-                }
-                this._setActive(!!state);
+                this._setActive(!!this.targetWidget.checkAutoOpen());
             }
         }
 

@@ -28,6 +28,10 @@
             }
         }
 
+        checkAutoOpen(element, options) {
+            return !localStorage.getItem(this.localStorageId) && super.checkAutoOpen(element, options);
+        }
+
         activateByButton(callback, mbButton) {
             let dissmissCheckbox = this.$element.find('.dismiss-permanently');
             dissmissCheckbox.addClass('d-none');
