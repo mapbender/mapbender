@@ -34,7 +34,7 @@
         activateByButton(callback, mbButton) {
             let dissmissCheckbox = this.$element.find('.dismiss-permanently');
             dissmissCheckbox.addClass('d-none');
-            if (!callback && !mbButton) {
+            if (!mbButton) {
                 dissmissCheckbox.removeClass('d-none');
             }
             super.activateByButton(callback, mbButton);
