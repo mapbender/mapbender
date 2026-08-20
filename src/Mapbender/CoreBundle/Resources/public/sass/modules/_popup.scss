@@ -7,6 +7,7 @@ $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be
 
     @media(min-width: $mobileBreakpoint) {
         padding-left: 0 !important;
+        padding-right: 0 !important;
     }
   }
 
@@ -24,6 +25,8 @@ $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be
 }
 .popup .popupButtons {
   text-align: right;
+  padding-right: 0;
+
   .button, .btn {
     margin-left: 0.25em;
   }
@@ -90,6 +93,10 @@ $mobileBreakpoint: 599px !default;  // If this value is changed, it must also be
     cursor: pointer;
     color: var(--bs-secondary-color);
     font-size: 1.5rem;
+
+    &:hover {
+      opacity: 0.75;
+    }
   }
   &.ui-draggable {
     // Overrule ui draggable's relative breaking layout on first movement
