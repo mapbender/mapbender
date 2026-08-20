@@ -56,6 +56,9 @@ https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_cla
 ### YAML Definitions
 - Source definitions must now use the key "type" instead of "class" to define its type. See [the documentation](sources/sources.md) for details.
 
+### HTML & Copyright elements merged
+Configuration in general will still work unchanged for existing HTML and copyright elements. Only backwards-incompatible change: When no title was set for a copyright element, the title will change from "Copyright" to "HTML", as the default fallback is the element name. Modify the title for these instances. 
+
 ## 4.2.5
 When using `MapbenderModel.getSourceById` or `Source.getLayerById`, be aware that both the source id and layer id now may contain
 a prefix, separated by an underscore. This change was introduced to fix issues with multiple instances of 

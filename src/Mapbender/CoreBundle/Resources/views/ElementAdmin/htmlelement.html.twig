@@ -1,3 +1,20 @@
-
 {{ form_row(form.title) }}
 {{ form_rest(form.configuration) }}
+
+<script type="text/javascript">
+    function updatePopupInlineVisibility() {
+        var checked = $('[name="form[configuration][openInline]"]').is(':checked');
+        if (checked) {
+            $('[data-popup-only]').closest('.row').hide();
+            $('[data-inline-only]').closest('.row').show();
+        } else {
+            $('[data-inline-only]').closest('.row').hide();
+            $('[data-popup-only]').closest('.row').show();
+        }
+    }
+
+    $(function () {
+        updatePopupInlineVisibility();
+        $('[name="form[configuration][openInline]"]').on('change', updatePopupInlineVisibility);
+    });
+</script>

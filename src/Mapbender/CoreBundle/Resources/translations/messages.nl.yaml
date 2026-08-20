@@ -220,18 +220,6 @@ mb:
         display: Scherm
         mouse: Muis
         position: positie
-    copyright:
-      class:
-        title: Copyright
-        description: Toon de gebruikscondities
-      tag:
-        copyright: Copyright
-        dialog: dialoog
-      admin:
-        content: Inhoud
-        dontShowAgain: 'Optie "Niet meer tonen"'
-        dontShowAgainLabel: 'Tekst "Niet meer tonen"'
-        dontShowAgainDefaultLabel: 'Niet meer tonen'
     map:
       class:
         title: Kaart
@@ -328,6 +316,12 @@ mb:
       class:
         title: null
         description: null
+      admin:
+        dontShowAgain: 'Optie "Niet meer tonen"'
+        dontShowAgainLabel: 'Tekst "Niet meer tonen"'
+        dontShowAgainDefaultLabel: 'Niet meer tonen'
+        modal: "Openen als modale pop-up"
+        modal_help: '(alleen in pop-upmodus): verduistert de achtergrond en schakelt de mogelijkheid uit om het venster te sluiten door buiten de pop-up te klikken'
     entity:
       app:
         screenshotfile:

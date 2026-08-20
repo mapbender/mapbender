@@ -31,6 +31,7 @@ class ApplicationRepository extends EntityRepository
      */
     public function findWithInstancesOf(Source $source, ?array $criteria=null, ?array $orderBy = null, $limit = null, $offset = null)
     {
+        // TODO: this is super slow when the db is large.
         /** @var LayersetRepository $layersetRepository */
         $layersetRepository = $this->getEntityManager()->getRepository(Layerset::class);
         $applications = [];

@@ -352,18 +352,6 @@ mb:
         display: Отображение
         mouse: мышь
         position: положение
-    copyright:
-      class:
-        title: Copyright
-        description: 'Показать Условия использования'
-      tag:
-        copyright: Copyright
-        dialog: Раздел
-      admin:
-        content: 'Контент'
-        dontShowAgain: 'Опция "Больше не показывать"'
-        dontShowAgainLabel: 'Текст "Больше не показывать"'
-        dontShowAgainDefaultLabel: 'Больше не показывать'
     map:
       class:
         title: Карта
@@ -544,6 +532,11 @@ mb:
       admin:
         content: 'Контент'
         classes: 'Классы'
+        dontShowAgain: 'Опция "Больше не показывать"'
+        dontShowAgainLabel: 'Текст "Больше не показывать"'
+        dontShowAgainDefaultLabel: 'Больше не показывать'
+        modal: "Открыть как модальное всплывающее окно"
+        modal_help: '(только в режиме всплывающего окна): затемняет фон и отключает возможность закрыть окно, щёлкнув вне всплывающего окна'
     entity:
       app:
         screenshotfile:

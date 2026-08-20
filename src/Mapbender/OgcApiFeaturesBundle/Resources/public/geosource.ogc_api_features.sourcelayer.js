@@ -68,13 +68,14 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
             );
         }
 
+
         const featureInfo = this.featureInfoPlaceholderResolver(this.featureInfoWrapper, feature).featureInfo;
-        if (!featureInfo) return null;
+        // if no replacements were made, we don't want to show the feature info, unless the feature info is static (no placeholders at all).
+        if (!featureInfo || (Mapbender.StyleUtil.recentReplacementCount === 0 && Mapbender.StyleUtil.recentReplacementVariables !== 0)) return null;
 
         const fragment = document.createElement('div');
         fragment.innerHTML = featureInfo;
         this.removeEmptyRows(fragment, '.-js-filter-empty-rows tr', '.ogc-api-featureinfo-val');
-        if (!fragment.childElementCount) return null;
 
         const label = this?.options?.title || this?.options?.collectionId || '';
 
@@ -84,13 +85,6 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
         fragment.setAttribute('data-geometry', wkt.writeFeature(feature));
         fragment.setAttribute('data-srid', Mapbender.Model.getCurrentProjectionCode());
         fragment.setAttribute('data-label', label);
-
-        if (label) {
-            const h5 = document.createElement('h5');
-            h5.className = 'featureinfo__title mt-3';
-            h5.textContent = label;
-            fragment.prepend(h5);
-        }
         return fragment;
     }
 

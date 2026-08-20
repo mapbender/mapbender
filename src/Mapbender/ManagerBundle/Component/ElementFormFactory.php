@@ -37,7 +37,7 @@ class ElementFormFactory
     public function __construct(protected ElementFilter         $elementFilter,
                                 protected FormFactoryInterface  $formFactory,
                                 protected FormRegistryInterface $formRegistry,
-                                                      $strict = false)
+                                                                $strict = false)
     {
         $this->setStrict($strict);
     }
@@ -78,23 +78,26 @@ class ElementFormFactory
         $this->addCommonTypes($formType, $handlingClass);
         $configurationType = $this->getConfigurationFormType($element);
 
-        $options = [];
+        $options = [
+            'label' => false,
+        ];
 
         $twigTemplate = $handlingClass::getFormTemplate();
-        $options['label'] = false;
 
         $resolvedType = $this->formRegistry->getType($configurationType);
         if ($resolvedType->getOptionsResolver()->isDefined('application')) {
             // Only pass the "application" option if the form type requires / declares it.
             $options['application'] = $element->getApplication();
         }
+        if ($resolvedType->getOptionsResolver()->isDefined('regionName')) {
+            $options['regionName'] = $element->getRegion();
+        }
 
         $options = $handlingClass::getFormOptions($element, $options);
 
         $formType->add('configuration', $configurationType, $options);
 
-        $regionName = $element->getRegion();
-        $this->addRegionDependantConfiguration($handlingClass, $regionName, $formType);
+        $this->addRegionDependantConfiguration($handlingClass, $element->getRegion(), $formType);
 
         return [
             'form' => $formType->getForm(),
@@ -115,7 +118,9 @@ class ElementFormFactory
     {
         if (is_a($elementClass, FloatableElement::class, true)) {
             if (!$regionName || str_contains($regionName, 'content')) {
-                $form->get('configuration')->add('anchor', FloatingAnchorType::class);
+                $form->get('configuration')->add('anchor', FloatingAnchorType::class, [
+                    'attr' => ['data-inline-only' => true],
+                ]);
             } else {
                 $form->get('configuration')->add('anchor', HiddenType::class);
             }

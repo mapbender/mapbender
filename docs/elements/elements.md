@@ -108,6 +108,28 @@ class RulerAdminType extends AbstractType
 }
 ```
 
+There are two options that are automatically filled: `application` (the application entity) and `regionName` (the string identifier of the region the element is currently placed in). To use them, they need to be defined in the `configureOptions` method of the form type, e.g.
+
+```php
+class RulerAdminType extends AbstractType
+{
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'regionName' => null,
+        ]);
+    }
+    
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        if ($options['regionName'] === 'content') {
+            $builder->add( ... );
+        }
+    }
+}
+```
+
+
 ## Twig Admin Template
 The admin template defines how the form configured [above](#php-form-type) should be rendered. It is a twig template and usually saved in `YourBundle/Resources/views/ElementAdmin`. In the easiest form it just renders the form:
 

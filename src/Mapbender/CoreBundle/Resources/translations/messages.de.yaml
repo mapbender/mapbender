@@ -354,18 +354,6 @@ mb:
         display: Anzeige
         mouse: Maus
         position: Position
-    copyright:
-      class:
-        title: Copy­right
-        description: 'Zeigt Nutzungsbedingungen an.'
-      tag:
-        copyright: Copyright
-        dialog: Dialog
-      admin:
-        content: Inhalt
-        dontShowAgain: '"Nicht mehr anzeigen"-Option'
-        dontShowAgainLabel: '"Nicht mehr anzeigen"-Text'
-        dontShowAgainDefaultLabel: 'Nicht mehr anzeigen'
     map:
       class:
         title: Karte
@@ -555,6 +543,11 @@ mb:
       admin:
         content: Inhalt
         classes: Klassen
+        dontShowAgain: '"Nicht mehr anzeigen"-Option'
+        dontShowAgainLabel: '"Nicht mehr anzeigen"-Text'
+        dontShowAgainDefaultLabel: 'Nicht mehr anzeigen'
+        modal: 'Als modales Popup öffnen'
+        modal_help: '(nur im Popup-Modus): Dunkelt den Hintergrund ab, und deaktiviert die Möglichkeit, das Fenster durch Klick außerhalb des Popups zu schließen'
     entity:
       app:
         screenshotfile:

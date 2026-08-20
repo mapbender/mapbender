@@ -354,18 +354,6 @@ mb:
         display: display
         mouse: mouse
         position: position
-    copyright:
-      class:
-        title: Copyright
-        description: 'Shows terms of use'
-      tag:
-        copyright: Copyright
-        dialog: dialog
-      admin:
-        content: Content
-        dontShowAgain: "\"Don't show again\"-Option"
-        dontShowAgainLabel: "\"Don't show again\"-Label"
-        dontShowAgainDefaultLabel: "Don't show again"
     map:
       class:
         title: Map
@@ -555,6 +543,11 @@ mb:
       admin:
         content: Content
         classes: Classes
+        dontShowAgain: "\"Don't show again\"-Option"
+        dontShowAgainLabel: "\"Don't show again\"-Label"
+        dontShowAgainDefaultLabel: "Don't show again"
+        modal: "Open as a modal popup"
+        modal_help: '(only in popup mode): Darkens the background and disables the ability to close the window by clicking outside the popup'
     entity:
       app:
         screenshotfile:

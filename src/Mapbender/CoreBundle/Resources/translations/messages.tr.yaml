@@ -220,18 +220,6 @@ mb:
         display: Gösterge
         mouse: Fare
         position: Konum
-    copyright:
-      class:
-        title: Telif hakkı
-        description: Kullanım koşullarını gösterir
-      tag:
-        copyright: Telif hakkı
-        dialog: İletişim
-      admin:
-        content: İçerik
-        dontShowAgain: '"Bir daha gösterme" seçeneği'
-        dontShowAgainLabel: '"Bir daha gösterme" metni'
-        dontShowAgainDefaultLabel: 'Bir daha gösterme'
     map:
       class:
         title: Harita
@@ -319,6 +307,12 @@ mb:
       class:
         title: HTML
         description: HTML kodu ekle
+      admin:
+        dontShowAgain: '"Bir daha gösterme" seçeneği'
+        dontShowAgainLabel: '"Bir daha gösterme" metni'
+        dontShowAgainDefaultLabel: 'Bir daha gösterme'
+        modal: "Modalken aç"
+        modal_help: '(yalnızca açılır pencere modunda): arka planı karartır ve açılır pencerenin dışına tıklayarak pencerenin kapatılmasını devre dışı bırakır'
     entity:
       app:
         screenshotfile:

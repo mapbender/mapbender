@@ -77,6 +77,8 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
     #[ORM\Column(type: 'string', length: 7, options: ['default' => 'all'])]
     protected $screenType = 'all';  // = ScreenTypes::ALL
 
+    protected ?string $originallyDefinedClass = null;
+
     /**
      * @param mixed $id (integer, might be a string in Yaml-defined applications)
      * @return $this
@@ -121,6 +123,9 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
      */
     public function setClass($class): static
     {
+        if ($this->class && !$this->originallyDefinedClass) {
+            $this->originallyDefinedClass = $this->class;
+        }
         $this->class = $class;
         return $this;
     }
@@ -131,6 +136,11 @@ class Element implements WeightSortedCollectionMember, YamlDefinedPermissionEnti
     public function getClass()
     {
         return $this->class;
+    }
+
+    public function getOriginallyDefinedClass(): ?string
+    {
+        return $this->originallyDefinedClass ?? $this->class;
     }
 
     /**

@@ -10,6 +10,7 @@
         this.mobileResizeMaxHeight = window.innerHeight;
         this.mobileAutoSize = true;       // Auto-size popup based on screen size
         this.mobileMaxHeightRatio = 0.8;  // Maximum height as ratio of viewport (0.8 = 80%)
+        this.desktopMaxHeightRatio = 0.9;  // Maximum height as ratio of viewport (0.8 = 80%)
         this.options = Object.assign({}, this.defaults, options);
 
         // Create DOM element
@@ -438,13 +439,7 @@
             }
         },
         adjustPopupSizeForScreen_: function() {
-
-            var isMobile = window.innerWidth <= this.mobileBreakpoint;
-
-            if (!this.mobileAutoSize || !isMobile) {
-                return;
-            }
-
+            var isMobile = this.mobileAutoSize && (window.innerWidth <= this.mobileBreakpoint);
             var viewportHeight = window.innerHeight;
 
             // Calculate available space considering toolbars
@@ -452,7 +447,9 @@
             var $bottomBar = $('.toolBar.bottom');
             var toolbarHeight = ($topBar.length ? $topBar[0].getBoundingClientRect().height : 0)
                 + ($bottomBar.length ? $bottomBar[0].getBoundingClientRect().height : 0);
-            var maxAvailableHeight = (viewportHeight * this.mobileMaxHeightRatio) - toolbarHeight;
+
+            const maxRatio = isMobile ? this.mobileMaxHeightRatio : this.desktopMaxHeightRatio;
+            var maxAvailableHeight = (viewportHeight * maxRatio) - (isMobile ? toolbarHeight : this.$element.offset().top);
 
             // Check if popup is currently larger than available space and adjust height if necessary
             var currentHeight = this.$element.height();

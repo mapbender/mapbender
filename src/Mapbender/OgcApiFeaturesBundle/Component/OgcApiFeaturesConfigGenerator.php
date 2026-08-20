@@ -227,6 +227,6 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
             $properties[$name] = $label;
         }
 
-        return $this->twig->render($propertyMapTwigTemplate, ['properties' => $properties]);
+        return $this->twig->render($propertyMapTwigTemplate, ['properties' => $properties, 'layer' => $layer]);
     }
 }
