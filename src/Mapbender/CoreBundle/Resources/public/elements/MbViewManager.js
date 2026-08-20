@@ -374,6 +374,16 @@
             return diff;
         }
 
+        _unwrapSavedSource(s) {
+            if (s.type === 'ogc_api_features'
+                && Array.isArray(s.children)
+                && s.children.length === 1
+                && Array.isArray(s.children[0].children)) {
+                return Object.assign({}, s, {children: s.children[0].children});
+            }
+            return s;
+        }
+
         _apply(settings) {
             const layertreeElement = $('.mb-element-layertree');
             if (layertreeElement.length > 0) {
@@ -388,6 +398,7 @@
             let sources = [];
 
             settings.sources.forEach(s => {
+                s = this._unwrapSavedSource(s);
                 let source = Mapbender.Source.factory(s);
                 if (s.isDynamicSource) {
                     wmsloaderSources.push(source);
