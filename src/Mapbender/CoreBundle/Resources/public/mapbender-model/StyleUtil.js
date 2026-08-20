@@ -5,6 +5,8 @@ window.Mapbender.StyleUtil = (function () {
     let placeholderRegex = /\${([^}]+)}/g;
 
     var methods = {
+            recentReplacementCount: 0,
+            recentReplacementVariables: 0,
         /**
          * @param {Object} style
          * @param {String} colorProp
@@ -270,6 +272,7 @@ window.Mapbender.StyleUtil = (function () {
          * @private
          */
         getPlaceholderResolver: function (original, propertyNames, dataCallback, escapeHtml) {
+            const self = this;
             const fnEscapeHtml = (input) => {
                 if (input === undefined || input === null) return '';
                 return (input + '')
@@ -282,6 +285,8 @@ window.Mapbender.StyleUtil = (function () {
 
             if (propertyNames.length) {
                 return function (styleConfig, feature) {
+                    self.recentReplacementCount = 0;
+                    self.recentReplacementVariables = 0;
                     const valuesOut = Object.assign({}, styleConfig);
                     const data = dataCallback(feature);
                     propertyNames.forEach(function (prop) {
@@ -290,6 +295,8 @@ window.Mapbender.StyleUtil = (function () {
                             if (escapeHtml) {
                                 dataValue = fnEscapeHtml(dataValue);
                             }
+                            self.recentReplacementVariables++;
+                            self.recentReplacementCount += dataValue ? 1 : 0;
                             return dataValue || (prop === 'label' ? '' : dataValue);
                         });
                     });
