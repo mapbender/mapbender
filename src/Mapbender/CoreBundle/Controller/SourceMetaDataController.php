@@ -52,9 +52,6 @@ class SourceMetaDataController
             return new Response('Invalid instance id', Response::HTTP_NOT_FOUND);
         }
         $startLayerInstance = $instance->getLayerById($layerId);
-        if (!$startLayerInstance) {
-            return new Response('Invalid instance layer id', Response::HTTP_NOT_FOUND);
-        }
 
         $source = $instance->getSource();
         $dataSource = $this->typeDirectoryService->getSource($source->getType());
@@ -72,7 +69,7 @@ class SourceMetaDataController
         return new Response($content);
     }
 
-    public function resolveSource(Application $application, Source $source, Request $request, DataSource $dataSource, SourceInstanceItem $startLayerInstance): Source
+    public function resolveSource(Application $application, Source $source, Request $request, DataSource $dataSource, ?SourceInstanceItem $startLayerInstance): Source
     {
         $loader = $dataSource->getLoader();
         // metadata persisted, no need to load it from server
@@ -83,7 +80,9 @@ class SourceMetaDataController
         $source = $loader->loadSource($source);
         $layerName = $request->get('layerName');
 
-        $this->resolveLayerRecursive($source, $layerName, $startLayerInstance);
+        if ($startLayerInstance) {
+            $this->resolveLayerRecursive($source, $layerName, $startLayerInstance);
+        }
         return $source;
     }
 
