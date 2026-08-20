@@ -13,7 +13,7 @@
             <argument type="service" id="doctrine" />
         </service>
         <service id="mapbender.element.HTMLElement" class="Mapbender\CoreBundle\Element\HTMLElement">
-            <tag name="mapbender.element" />
+            <tag name="mapbender.element" replaces="Mapbender\CoreBundle\Element\Copyright" />
         </service>
         <service id="mapbender.element.ControlButton" class="Mapbender\CoreBundle\Element\ControlButton">
             <tag name="mapbender.element" />
@@ -35,10 +35,6 @@
         </service>
         <service id="mapbender.element.CoordinatesDisplay" class="Mapbender\CoreBundle\Element\CoordinatesDisplay">
             <tag name="mapbender.element" />
-        </service>
-        <service id="mapbender.element.Copyright" class="Mapbender\CoreBundle\Element\Copyright">
-            <tag name="mapbender.element" />
-            <argument type="service" id="twig" />
         </service>
         <service id="mapbender.element.Layertree" class="Mapbender\CoreBundle\Element\Layertree">
             <tag name="mapbender.element" />

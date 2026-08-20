@@ -250,18 +250,6 @@ mb:
         display: відображення
         mouse: миша
         position: положення
-    copyright:
-      class:
-        title: Авторське право
-        description: Показати Умови використання
-      tag:
-        copyright: Авторське право
-        dialog: діалогове вікно
-      admin:
-        content: Зміст
-        dontShowAgain: 'Опція "Більше не показувати"'
-        dontShowAgainLabel: 'Текст "Більше не показувати"'
-        dontShowAgainDefaultLabel: 'Більше не показувати'
     map:
       class:
         title: Мапа
@@ -397,6 +385,12 @@ mb:
       class:
         title: HTML
         description: Додати HTML-теги
+      admin:
+        dontShowAgain: 'Опція "Більше не показувати"'
+        dontShowAgainLabel: 'Текст "Більше не показувати"'
+        dontShowAgainDefaultLabel: 'Більше не показувати'
+        modal: "Відкрити як модальне спливаюче вікно"
+        modal_help: '(лише в режимі спливаючого вікна): затемнює тло та вимикає можливість закрити вікно, клацнувши поза спливаючим вікном'
     entity:
       app:
         screenshotfile:

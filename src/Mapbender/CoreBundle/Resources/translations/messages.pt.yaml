@@ -351,18 +351,6 @@ mb:
         display: Exibição
         mouse: Mouse
         position: Posição
-    copyright:
-      class:
-        title: Direitos autorais
-        description: 'Mostra os termos de uso.'
-      tag:
-        copyright: Direitos autorais
-        dialog: Diálogo
-      admin:
-        content: Conteúdo
-        dontShowAgain: 'Opção "Não mostrar novamente"'
-        dontShowAgainLabel: 'Texto "Não mostrar novamente"'
-        dontShowAgainDefaultLabel: 'Não mostrar novamente'
     map:
       class:
         title: Mapa
@@ -550,6 +538,11 @@ mb:
       admin:
         content: Conteúdo
         classes: Classes
+        dontShowAgain: 'Opção "Não mostrar novamente"'
+        dontShowAgainLabel: 'Texto "Não mostrar novamente"'
+        dontShowAgainDefaultLabel: 'Não mostrar novamente'
+        modal: "Abrir como janela pop-up modal"
+        modal_help: '(apenas no modo pop-up): escurece o fundo e desativa a possibilidade de fechar a janela clicando fora do pop-up'
     entity:
       app:
         screenshotfile:

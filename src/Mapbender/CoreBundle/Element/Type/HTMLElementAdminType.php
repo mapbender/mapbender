@@ -13,6 +13,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
+use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class HTMLElementAdminType extends AbstractType implements EventSubscriberInterface
@@ -23,17 +27,20 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
     {
     }
 
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'regionName' => null,
+        ]);
+    }
+
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('openInline', CheckboxType::class, $this->createInlineHelpText([
-                'required' => false,
-                'label' => 'mb.manager.element.openInline',
-                'help' => 'mb.manager.element.openInlineHelp',
-            ], $this->trans))
             // Temporary. Replaced in preSetData
             ->add('content', TextareaType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => 'mb.core.htmlelement.admin.content',
             ])
             ->add('classes', TextType::class, [
@@ -41,6 +48,75 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
                 'label' => 'mb.core.htmlelement.admin.classes',
             ])
         ;
+
+        // HTML elements in toolbar and footer are automatically inline, so no need to show the openInline option in those cases.
+        if ($options['regionName'] !== 'toolbar' && $options['regionName'] !== 'footer') {
+            $builder->add('openInline', CheckboxType::class, $this->createInlineHelpText([
+                'required' => false,
+                'label' => 'mb.manager.element.openInline',
+                'help' => 'mb.manager.element.openInlineHelp',
+            ], $this->trans));
+        }
+
+        // Popup options are only relevant if the element is in the content region
+        if ($options['regionName'] === 'content') {
+            $builder
+                ->add('autoOpen', CheckboxType::class, [
+                    'required' => false,
+                    'label' => 'mb.manager.autoOpen',
+                    'attr' => [
+                        'data-popup-only' => true,
+                    ],
+                ])
+                ->add('modal', CheckboxType::class, $this->createInlineHelpText([
+                    'required' => false,
+                    'label' => 'mb.core.htmlelement.admin.modal',
+                    'help' => 'mb.core.htmlelement.admin.modal_help',
+                    'attr' => [
+                        'data-popup-only' => true,
+                    ],
+                ], $this->trans))
+                ->add('popupWidth', TextType::class, [
+                    'required' => false,
+                    'label' => 'mb.manager.popup_width',
+                    'attr' => [
+                        'placeholder' => '300px',
+                        'data-popup-only' => true,
+                    ],
+                    'constraints' => [
+                        new Type('numeric'),
+                        new PositiveOrZero(),
+                    ]
+                ])
+                ->add('popupHeight', TextType::class, [
+                    'required' => false,
+                    'label' => 'mb.manager.popup_height',
+                    'attr' => [
+                        'placeholder' => 'mb.manager.automatic',
+                        'data-popup-only' => true,
+                    ],
+                    'constraints' => [
+                        new Type('numeric'),
+                        new PositiveOrZero(),
+                    ],
+                ])
+                ->add('dontShowAgain', CheckboxType::class, [
+                    'required' => false,
+                    'label' => 'mb.core.htmlelement.admin.dontShowAgain',
+                    'attr' => [
+                        'data-popup-only' => true,
+                    ],
+                ])
+                ->add('dontShowAgainLabel', TextType::class, [
+                    'required' => false,
+                    'label' => 'mb.core.htmlelement.admin.dontShowAgainLabel',
+                    'data' => 'mb.core.htmlelement.admin.dontShowAgainDefaultLabel',
+                    'attr' => [
+                        'data-popup-only' => true,
+                    ],
+                ])
+            ;
+        }
         $builder->addEventSubscriber($this);
     }
 
@@ -56,14 +132,16 @@ class HTMLElementAdminType extends AbstractType implements EventSubscriberInterf
         /** @var Element $element */
         $element = $event->getForm()->getParent()->getData();
         $event->getForm()->add('content', TextareaType::class, [
-            'required' => false,
+            'required' => true,
             'label' => 'mb.core.htmlelement.admin.content',
-            'constraints' => new HtmlTwigConstraint([
-                // Same twig variable scope as frontend
-                /** @see HTMLElement::getView */
-                'entity' => $element,
-                'application' => $element->getApplication(),
-            ])
+            'constraints' => [
+                new NotBlank(),
+                new HtmlTwigConstraint([
+                    // Same twig variable scope as frontend
+                    /** @see HTMLElement::getView */
+                    'entity' => $element,
+                    'application' => $element->getApplication(),
+                ])]
         ]);
     }
 }

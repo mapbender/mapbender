@@ -351,18 +351,6 @@ mb:
         display: display
         mouse: mouse
         position: Posizione
-    copyright:
-      class:
-        title: Copyright
-        description: 'Mostra le condizione d''uso'
-      tag:
-        copyright: Copyright
-        dialog: 'finestra di dialogo'
-      admin:
-        content: Contenuto
-        dontShowAgain: 'Opzione "Non mostrare più"'
-        dontShowAgainLabel: 'Testo "Non mostrare più"'
-        dontShowAgainDefaultLabel: 'Non mostrare più'
     map:
       class:
         title: Mappa
@@ -550,6 +538,11 @@ mb:
       admin:
         content: 'Contenuto'
         classes: 'Classi'
+        dontShowAgain: 'Opzione "Non mostrare più"'
+        dontShowAgainLabel: 'Testo "Non mostrare più"'
+        dontShowAgainDefaultLabel: 'Non mostrare più'
+        modal: "Apri come popup modale"
+        modal_help: '(solo in modalità popup): oscura lo sfondo e disattiva la possibilità di chiudere la finestra facendo clic al di fuori del popup'
     entity:
       app:
         screenshotfile:
