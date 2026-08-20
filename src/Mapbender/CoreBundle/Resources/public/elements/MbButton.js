@@ -203,7 +203,7 @@
          */
         activate() {
             // defensive activation to prevent redundant state transitions
-            if (this.active) {
+            if (this.active || !this.targetWidget) {
                 return;
             }
             this.targetWidget.activateByButton(this.reset.bind(this), this.$element);
