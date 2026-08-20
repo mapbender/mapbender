@@ -11,6 +11,7 @@ use Mapbender\ManagerBundle\Form\DataTransformer\YAMLDataTransformer;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
+use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
 class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
@@ -18,6 +19,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
     public function __construct(
         protected EntityManagerInterface $em,
         protected Environment $twig,
+        protected RouterInterface $router,
     ) {
     }
 
@@ -185,7 +187,13 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
             return null;
         }
         $layerId = $layer !== null ? $layer->getId() : 0;
-        return '/application/metadata/' . $instance->getId() . '/' . $layerId . '/';
+
+
+        return $this->router->generate('mapbender_core_application_metadata', [
+            'slug' => $layerset->getApplication()->getSlug(),
+            'instanceId' => $instance->getId(),
+            'layerId' => $layerId,
+        ]);
     }
 
     private function getTooltipOrFiTemplate(
