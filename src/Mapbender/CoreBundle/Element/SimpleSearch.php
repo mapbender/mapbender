@@ -223,11 +223,10 @@ class SimpleSearch extends AbstractElementService
             $oldConfig = $config;
             $config = ['configurations' => [$oldConfig]];
 
-            if (array_key_exists('anchor', $oldConfig)) {
-                $config['anchor'] = $oldConfig['anchor'];
-            }
-            if (array_key_exists('target', $oldConfig)) {
-                $config['target'] = $oldConfig['target'];
+            foreach(['anchor', 'target', 'openInline', 'screenType'] as $key) {
+                if (array_key_exists($key, $oldConfig)) {
+                    $config[$key] = $oldConfig[$key];
+                }
             }
         }
 
