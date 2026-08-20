@@ -58,6 +58,7 @@ class SimpleSearch extends AbstractElementService
             'configurations' => [
                 self::getDefaultChildConfiguration()
             ],
+            'openInline' => false,
             'element_icon' => self::getDefaultIcon(),
         ];
     }
