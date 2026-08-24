@@ -67,6 +67,7 @@ class LegendEntry {
     }
 
     _addHeading() {
+        if (!this.legendDefinition.title) return;
         const heading = document.createElement("h3");
         heading.innerText = this.legendDefinition.title;
         heading.className = "legend-custom__heading";
