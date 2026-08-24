@@ -10,7 +10,10 @@
             }, () => {
                 Mapbender.checkTarget('mbLegend');
             });
+            this.legendEntryWidth = 35;
+            this.legendEntryHeight = 15;
         }
+
         _setup(mbMap) {
             this.mbMap = mbMap;
             this.onMapLoaded();
@@ -107,7 +110,7 @@
 
         async createLegendForStyle(layer) {
             layer.legend.layers = await Promise.resolve(layer.legend.layers);
-            return (new LegendEntry(layer.legend)).getContainer();
+            return (new LegendEntry(layer.legend, this.legendEntryWidth, this.legendEntryHeight)).getContainer();
         }
 
         createLegendContainer(layer) {

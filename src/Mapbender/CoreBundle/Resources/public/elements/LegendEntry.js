@@ -39,8 +39,10 @@
 class LegendEntry {
     /**
      * @param {LegendDefinition} legendDefinition
+     * @param {number} [width=35] - Width of the legend entry canvas.
+     * @param {number} [height=15] - Height of the legend entry canvas.
      */
-    constructor(legendDefinition) {
+    constructor(legendDefinition, width = 35, height = 15) {
         this.legendDefinition = legendDefinition;
         this.container = this._createContainer();
         this.canvas = legendDefinition.type === "canvas";
@@ -49,7 +51,7 @@ class LegendEntry {
         legendDefinition.layers.forEach((layer) => {
             const subContainer = document.createElement("div");
             subContainer.append(
-                this.canvas ? layer.canvas : this._createCanvasForLayer(layer.style.label ? "Label" : null, 35, 15, layer.style)
+                this.canvas ? layer.canvas : this._createCanvasForLayer(layer.style.label ? "Label" : null, width, height, layer.style)
             );
             subContainer.append(this._createLayerHeading(layer.title));
             this.container.append(subContainer);
@@ -132,7 +134,7 @@ class LegendEntry {
 
         // Draw the label
         if (label) {
-            ctx.font = `${style.fontWeight} 9px ${style.fontFamily}`;
+            ctx.font = `${ style.fontWeight } 9px ${ style.fontFamily }`;
             ctx.fillStyle = style.fontColor;
 
             // Measure the text to find the center position
@@ -172,7 +174,7 @@ class LegendEntry {
 
     colorToRgba(hex, opacity = 1) {
         if (typeof hex !== 'string') {
-            return `rgba(0, 0, 0, ${opacity || 0})`; // Default to black if input is not a string
+            return `rgba(0, 0, 0, ${ opacity || 0 })`; // Default to black if input is not a string
         }
 
         if (hex.startsWith("rgba(")) {
@@ -180,7 +182,7 @@ class LegendEntry {
         }
         if (hex.startsWith("rgb(")) {
             const rgb = hex.slice(4, -1).split(',').map(Number);
-            return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`;
+            return `rgba(${ rgb[0] },${ rgb[1] },${ rgb[2] },${ opacity })`;
         }
         let r = 0, g = 0, b = 0;
 
@@ -198,7 +200,7 @@ class LegendEntry {
             g = parseInt(hex[3] + hex[4], 16);
             b = parseInt(hex[5] + hex[6], 16);
         }
-        return `rgba(${r},${g},${b},${opacity})`;
+        return `rgba(${ r },${ g },${ b },${ opacity })`;
     }
 
     hslToRgb(h, s, l) {
