@@ -72,8 +72,6 @@ window.Mapbender.SidePane = class SidePane {
         this.MAX_SIZE_WINDOW_PERCENTAGE = 0.95;
         this.MIN_SIZE_PX = 120;
 
-        this.lastFocusedListItem = null; // Global tracking of last focused list item
-
         /** @type {Mapbender.SidePaneHandler} */
         this.handler = this._initSidePaneHandler();
 

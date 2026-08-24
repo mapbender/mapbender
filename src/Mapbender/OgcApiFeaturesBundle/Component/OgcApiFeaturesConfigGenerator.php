@@ -53,7 +53,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
             'opacity' => ($sourceInstance->getOpacity() ?? 100) / 100.0,
             'minScale' => $sourceInstance->getMinScale(),
             'maxScale' => $sourceInstance->getMaxScale(),
-            'metadataUrl' => $this->getMetaDataUrl($sourceInstance),
+            'metadataUrl' => $this->getMetaDataUrl($application, $sourceInstance),
             'treeOptions' => [
                 'selected' => $sourceInstance->getSelected(),
                 'toggle' => $sourceInstance->getToggle(),
@@ -81,7 +81,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
                         'minScale' => ($layer->getMinScale() ?? $sourceInstance->getMinScale()),
                         'maxScale' => ($layer->getMaxScale() ?? $sourceInstance->getMaxScale()),
                         'featureLimit' => (!empty($layer->getFeatureLimit()) ? $layer->getFeatureLimit() : $sourceInstance->getFeatureLimit()),
-                        'metadataUrl' => $this->getMetaDataUrl($sourceInstance, $layer),
+                        'metadataUrl' => $this->getMetaDataUrl($application, $sourceInstance, $layer),
                         'bbox' => $layer->getSourceItem()->getBbox(),
                         'treeOptions' => [
                             'selected' => $layer->getSelected(),
@@ -180,7 +180,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
         return $styles;
     }
 
-    protected function getMetaDataUrl($instance, $layer = null): ?string
+    protected function getMetaDataUrl(Application $application, $instance, $layer = null): ?string
     {
         $layerset = $instance->getLayerset();
         if ($layerset && $layerset->getApplication() && !$layerset->getApplication()->isDbBased()) {
@@ -190,7 +190,7 @@ class OgcApiFeaturesConfigGenerator extends SourceInstanceConfigGenerator
 
 
         return $this->router->generate('mapbender_core_application_metadata', [
-            'slug' => $layerset->getApplication()->getSlug(),
+            'slug' => $application->getSlug(),
             'instanceId' => $instance->getId(),
             'layerId' => $layerId,
         ]);
