@@ -49,12 +49,13 @@ class OgcApiSourceLayer extends Mapbender.SourceLayer {
         }
 
         const tooltip = this.tooltipPlaceholderResolver(this.tooltipWrapper, feature).tooltip;
-        if (!tooltip) return null;
+        // if no replacements were made, we don't want to show the tooltip, unless it's static (no placeholders at all).
+        if (!tooltip || (Mapbender.StyleUtil.recentReplacementCount === 0 && Mapbender.StyleUtil.recentReplacementVariables !== 0)) return null;
 
         const fragment = document.createElement('div');
         fragment.innerHTML = tooltip;
         this.removeEmptyRows(fragment, '.-js-filter-empty-vals', '.ogc-api-tooltip-val');
-        return fragment.childElementCount > 0 ? fragment : null;
+        return fragment;
     }
 
     createFeatureInfoForFeature(feature) {
