@@ -87,7 +87,7 @@ class HTMLElement extends AbstractElementService implements FloatableElement
         $view->attributes['class'] = 'mb-element-htmlelement';
         $view->attributes['data-title'] = $element->getTitle();
         $view->variables['content'] = $config['content'];
-        $view->variables['dontShowAgain'] = $config['dontShowAgain'];
+        $view->variables['dontShowAgain'] = $config['dontShowAgain'] && $config['autoOpen'];
         $view->variables['dontShowAgainLabel'] = $config['dontShowAgainLabel'];
         $view->variables['application'] = $element->getApplication();
         $view->variables['entity'] = $element;
