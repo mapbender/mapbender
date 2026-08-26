@@ -6,14 +6,27 @@
     <p>{{ 'mb.vectortiles.admin.layer_hint' | trans }}</p>
 {% endblock %}
 
-
-{% block details_content %}
+{% macro renderTable(items) %}
     <table>
-        {% for key, value in source.metadataArray %}
+        {% for key, value in items %}
             <tr>
                 <th>{{ key }}:</th>
-                <td>{{ value }}</td>
+                <td>
+                    {% if value is iterable %}
+                        {{ _self.renderTable(value) }}
+                    {% elseif value is same as(true) %}
+                        true
+                    {% elseif value is same as(false) %}
+                        false
+                    {% else %}
+                        {{ value }}
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </table>
+{% endmacro %}
+
+{% block details_content %}
+    {{ _self.renderTable(source.metadataArray) }}
 {% endblock %}
