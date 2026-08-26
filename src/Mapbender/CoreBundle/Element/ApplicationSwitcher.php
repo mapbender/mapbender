@@ -127,8 +127,9 @@ class ApplicationSwitcher extends AbstractElementService implements ConfigMigrat
                 }
                 $preparedAppConfig[$group][$slug] = $appConfig;
             } catch (AccessDeniedException | NotFoundHttpException $e) {
-                // external app (neither yaml nor database app)
-                if ($e::class === NotFoundHttpException::class) {
+                // external app (neither yaml nor database app).
+                // If it's neither an internal app nor a url is found, ignore the entry
+                if ($e::class === NotFoundHttpException::class && (!empty($appConfig['url']) || !empty($appConfig['add_wms']))) {
                     $preparedAppConfig[$group][$slug] = $appConfig;
                 }
             }
