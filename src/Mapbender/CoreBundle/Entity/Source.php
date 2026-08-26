@@ -71,7 +71,7 @@ abstract class Source implements \Stringable
         return $this;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
