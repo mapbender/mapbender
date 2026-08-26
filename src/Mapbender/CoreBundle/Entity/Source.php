@@ -70,7 +70,7 @@ abstract class Source
         return $this;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
