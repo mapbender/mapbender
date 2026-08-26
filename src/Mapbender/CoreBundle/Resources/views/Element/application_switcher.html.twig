@@ -44,7 +44,7 @@
                         {% endif %}
                     >
                 {% else %}
-                    <a href="#" data-href-template="{{ app.url }}"{% if app.description is defined and app.description %} title="{{ app.description }}"{% endif %}>
+                    <a href="#" data-href-template="{{ app.url | default('#') }}"{% if app.description is defined and app.description %} title="{{ app.description }}"{% endif %}>
                 {% endif %}
                         <div class="list-content">
                             {% if app.img_url is defined and app.img_url != false %}
