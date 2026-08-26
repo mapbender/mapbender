@@ -44,11 +44,11 @@
                         {% endif %}
                     >
                 {% else %}
-                    <a href="{{ app.url }}"{% if app.description is defined and app.description %} title="{{ app.description }}"{% endif %}>
+                    <a href="#" data-href-template="{{ app.url }}"{% if app.description is defined and app.description %} title="{{ app.description }}"{% endif %}>
                 {% endif %}
                         <div class="list-content">
                             {% if app.img_url is defined and app.img_url != false %}
-                            <img src="{{ app.img_url }}" alt="{{ app.title }}">
+                            <img src="{{ app.img_url }}" alt="{{ app.title | default(slug) }}">
                             {% else %}
                                 <img class="bg-light" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAA
                                     ACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABfElEQVR4
@@ -61,7 +61,7 @@
                                     bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdv2bdu2f2kEDuH7
                                     CTaTAAAAAElFTkSuQmCC" alt="">
                             {% endif %}
-                            <p class="text-center text-break my-2">{{ app.title }}</p>
+                            <p class="text-center text-break my-2">{{ app.title | default(slug) }}</p>
                         </div>
                     </a>
                 </li>
