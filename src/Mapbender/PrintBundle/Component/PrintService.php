@@ -238,7 +238,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function buildPdf($mapImageName, $templateData, array $jobData)
     {
-        // @todo: eliminate instance variable $this->pdf
         $this->pdf = $pdf = $this->makeBlankPdf($templateData, $jobData['template']);
         // PDF_Extensions extends Fpdi, which provides importPage() and useTemplate()
         /** @var Fpdi $pdf */
@@ -279,9 +278,13 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected function addMapImage(PDF_Extensions|\FPDF $pdf, $mapImageName, $templateData)
     {
         $region = $templateData['map'];
+        $pdf->AddLayer('map', 'The map');
+        $pdf->BeginLayer('map');
+
         $this->addImageToPdfRegion($pdf, $mapImageName, $region);
         // add map border (default is black)
         $pdf->Rect($region['x'], $region['y'], $region['width'], $region['height']);
+        $pdf->EndLayer();
     }
 
     /**
@@ -321,12 +324,17 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function afterMainMap($pdf, $template, $jobData)
     {
+        $pdf->AddLayer('stuff', 'Other stuff');
+        $pdf->BeginLayer('stuff');
+
         $this->processTemplateRegionsAndFields($pdf, $template, $jobData);
 
         $legends = $this->legendHandler->collectLegends($jobData);
         $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
         $this->finishMainPage($pdf, $template, $jobData);
         $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+        $pdf->EndLayer();
+
     }
 
     /**

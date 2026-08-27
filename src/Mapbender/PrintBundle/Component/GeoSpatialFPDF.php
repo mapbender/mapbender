@@ -14,6 +14,11 @@ class GeoSpatialFPDF extends PDF_Extensions
     /** @var array<int, list<string>> */
     private array $geoViewports = [];
 
+    /** @var array<string, array{name: string, resource: string, visible: bool, objectId?: int}> */
+    private array $layers = [];
+
+    private ?string $activeLayer = null;
+
     public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4', ?string $resourceDir = null, ?array $customFonts = null)
     {
         parent::__construct($orientation, $unit, $size, $resourceDir, $customFonts);
@@ -21,12 +26,12 @@ class GeoSpatialFPDF extends PDF_Extensions
     }
 
     public function SetGeoViewport(
-        float   $x,
-        float   $y,
-        float   $width,
-        float   $height,
-        array $extent,
-        int|string  $epsg,
+        float      $x,
+        float      $y,
+        float      $width,
+        float      $height,
+        array      $extent,
+        int|string $epsg,
     ): void
     {
         if ($this->page === 0) {
@@ -186,4 +191,149 @@ class GeoSpatialFPDF extends PDF_Extensions
         ));
     }
 
+    public function AddLayer(string $id, string $name, bool $visible = true): void
+    {
+        if (!preg_match('/^[A-Za-z][A-Za-z0-9_-]*$/', $id)) {
+            throw new InvalidArgumentException(
+                'Layer ID must begin with a letter and contain only letters, numbers, _ or -.'
+            );
+        }
+
+        if ($name === '') {
+            throw new InvalidArgumentException('Layer name cannot be empty.');
+        }
+
+        if (isset($this->layers[$id])) {
+            throw new InvalidArgumentException("Layer '{$id}' already exists.");
+        }
+
+        $this->layers[$id] = [
+            'name' => $name,
+            'resource' => 'OC' . (count($this->layers) + 1),
+            'visible' => $visible,
+        ];
+    }
+
+
+    public function BeginLayer(string $id): void
+    {
+        if ($this->page === 0) {
+            throw new LogicException('AddPage() must be called first.');
+        }
+
+        if (!isset($this->layers[$id])) {
+            throw new InvalidArgumentException("Layer '{$id}' is not registered.");
+        }
+
+        if ($this->activeLayer !== null) {
+            throw new LogicException(
+                "Layer '{$this->activeLayer}' must be ended first."
+            );
+        }
+
+        $this->activeLayer = $id;
+        $resource = $this->layers[$id]['resource'];
+
+        $this->_out("/OC /{$resource} BDC");
+    }
+
+    public function EndLayer(): void
+    {
+        if ($this->activeLayer === null) {
+            throw new LogicException('No layer is currently active.');
+        }
+
+        $this->_out('EMC');
+        $this->activeLayer = null;
+    }
+
+    protected function _putresources()
+    {
+        $this->_putfonts();
+        $this->_putimages();
+
+        foreach ($this->layers as $id => $layer) {
+            $this->_newobj();
+            $this->layers[$id]['objectId'] = $this->n;
+
+            $this->_put('<<');
+            $this->_put('/Type /OCG');
+            $this->_put('/Name ' . $this->_textstring($layer['name']));
+            $this->_put('>>');
+            $this->_put('endobj');
+        }
+
+        $this->_newobj(2);
+        $this->_put('<<');
+        $this->_putresourcedict();
+        $this->_put('>>');
+        $this->_put('endobj');
+    }
+
+    protected function _putresourcedict()
+    {
+        parent::_putresourcedict();
+
+        if ($this->layers === []) {
+            return;
+        }
+
+        $this->_put('/Properties <<');
+
+        foreach ($this->layers as $layer) {
+            $this->_put(sprintf(
+                '/%s %d 0 R',
+                $layer['resource'],
+                $layer['objectId']
+            ));
+        }
+
+        $this->_put('>>');
+    }
+
+    protected function _putcatalog()
+    {
+        parent::_putcatalog();
+
+        if ($this->layers === []) {
+            return;
+        }
+
+        $allLayers = [];
+        $hiddenLayers = [];
+
+        foreach ($this->layers as $layer) {
+            $reference = $layer['objectId'] . ' 0 R';
+            $allLayers[] = $reference;
+
+            if (!$layer['visible']) {
+                $hiddenLayers[] = $reference;
+            }
+        }
+
+        $references = implode(' ', $allLayers);
+        $hiddenReferences = implode(' ', $hiddenLayers);
+
+        $this->_put(
+            '/OCProperties <<'
+            . " /OCGs [{$references}]"
+            . ' /D <<'
+            . ' /BaseState /ON'
+            . " /Order [{$references}]"
+            . " /OFF [{$hiddenReferences}]"
+            . ' >>'
+            . ' >>'
+        );
+    }
+
+    protected function _enddoc()
+    {
+        if ($this->activeLayer !== null) {
+            throw new LogicException(
+                "Layer '{$this->activeLayer}' was not ended."
+            );
+        }
+
+        parent::_enddoc();
+    }
 }
