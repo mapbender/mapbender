@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     class MbApplicationSwitcher extends MapbenderElement {
         constructor(configuration, $element) {
@@ -17,14 +17,16 @@
         }
 
         _initEvents() {
-            $('a', this.$element).on('click', (e) => {
-                e.preventDefault();
+            $('a[data-href-template]', this.$element).on('click pointerenter focus contextmenu', (e) => {
                 const $a = $(e.currentTarget);
-                // no need to switch application, when Application Switcher is used to add a WMS
-                if (typeof $a.attr('data-mb-url') !== 'undefined') {
+                const urlTemplate = $a.attr('data-href-template');
+                if (e.type !== 'click') {
+                    $a.attr('href', this.replacePlaceholders(urlTemplate));
                     return;
                 }
-                this._switchApplication($a.attr('href'));
+
+                e.preventDefault();
+                this._switchApplication(urlTemplate, e.shiftKey || e.ctrlKey);
             });
             $('select', this.$element).on('change', (e) => {
                 const slug = $(e.target).val();
@@ -33,10 +35,14 @@
             });
         }
 
-        _switchApplication(url) {
+        _switchApplication(url, forceNewTab) {
             url = this.replacePlaceholders(url);
-            if (this.options.open_in_new_tab) {
-                window.open(url);
+            if (this.options.open_in_new_tab || forceNewTab) {
+                const w = window.open(url);
+                if (w) {
+                    w.opener = null;
+                    w.focus();
+                }
             } else {
                 window.location.href = url;
             }
