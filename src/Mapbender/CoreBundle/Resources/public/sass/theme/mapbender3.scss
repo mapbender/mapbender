@@ -13,13 +13,6 @@ $hoverEffects: true !default;
 // Emit CSS custom properties — MUST come after all SCSS variable overrides
 @import "libs/css_custom_properties";
 
-// Theme-specific CSS custom properties (toolbar composites)
-:root {
-    --toolbar-top-background: #{$toolBarTopBackground};
-    --toolbar-bottom-background: #{$toolBarBottomBackground};
-    --toolbar-border-color: #{$toolBarBorderColor};
-}
-
 @import "modules/base";
 @import "modules/layout";
 @import "modules/popup";

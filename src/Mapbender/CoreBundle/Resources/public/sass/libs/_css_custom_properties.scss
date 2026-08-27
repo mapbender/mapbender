@@ -26,6 +26,7 @@
     // ---- Brand ----
     --primary: #{$ciColor};
     --primary-dark: color-mix(in srgb, var(--primary), black 20%);
+    --primary-light: color-mix(in srgb, var(--primary), white 20%);
 
     // ---- Text ----
     --text-color: #{$textColor};
@@ -76,7 +77,7 @@
     --menu-background-opacity: #{$menuBackgroundOpacity};
 
     // ---- Toolbar ----
-    --toolbar-background: #{$toolBarBackgroundColor};
+    --toolbar-background: var(--background-color);
     --toolbar-opacity: #{$toolBarOpacity};
     --toolbar-text-color: var(--text-color);
     --toolbar-menu-text-color: var(--toolbar-text-color);
@@ -84,22 +85,34 @@
     --toolbar-button-active-opacity: #{$toolBarButtonActiveOpacity};
     --toolbar-button-active-background-color: #{$toolBarButtonActiveBackgroundColor};
     --toolbar-button-active-background-hover-color: var(--primary-dark);
+    --toolbar-top-background: var(--toolbar-background);
+    --toolbar-bottom-background: var(--toolbar-background);
+    --toolbar-border-color: #{$toolBarBorderColor};
 
     // ---- Buttons (primary) ----
     --button-font-size: #{$buttonFontSize};
-    --button-background: #{$buttonFirstColor};
-    --button-text: #{$buttonTextColor};
-    --button-border: #{$buttonBorderColor};
-    --button-hover-background: #{$buttonHoverColor};
-    --button-hover-text: #{$buttonHoverTextColor};
-    --button-active-background: #{$buttonFirstActiveColor};
-    --button-active-text: #{$buttonActiveTextColor};
-    --button-focus-shadow: #{$buttonFirstActiveColor};
+    --button-background: var(--primary);
+    --button-text: var(--light-text-color);
+    --button-border: var(--primary);
+    --button-hover-background: color-mix(in srgb, var(--button-background), black 20%);
+    --button-hover-border: color-mix(in srgb, var(--button-background), black 40%);
+    --button-hover-text: var(--light-text-color);
+    --button-active-background: color-mix(in srgb, var(--button-background), black 30%);
+    --button-active-border: color-mix(in srgb, var(--button-background), black 50%);
+    --button-active-text: var(--light-text-color);
+    --button-focus-shadow: var(--button-hover-background);
 
     // ---- Buttons (white / outlined) ----
-    --button-white-foreground: var(--text-color);
     --button-white-background: var(--background-color);
-    --button-white-background-hover: #f7f7fa;
+    --button-white-text: var(--text-color);
+    --button-white-border: var(--background-color);
+    --button-white-hover-background: color-mix(in srgb, var(--button-white-background), black 10%);
+    --button-white-hover-border: color-mix(in srgb, var(--button-white-background), black 20%);
+    --button-white-hover-text: var(--text-color);
+    --button-white-active-background: color-mix(in srgb, var(--button-white-background), black 15%);
+    --button-white-active-border: color-mix(in srgb, var(--button-white-background), black 25%);
+    --button-white-active-text: var(--text-color);
+    --button-white-focus-shadow: var(--button-white-hover-background);
 
     // ---- Buttons (critical / danger) ----
     --button-critical-background: #{$buttonCriticalFirstColor};
@@ -188,4 +201,39 @@
 
     // ---- Feature Info ----
     --featureinfo-hover-color: var(--sidepane-hover-color);
+
+    // ---- BaseSourceSwitcher ----
+    --basesourceswitcher-border-color: var(--panel-border-color);
+    --basesourceswitcher-background-color: var(--background-color);
+    --basesourceswitcher-background-color-active: color-mix(in srgb, var(--basesourceswitcher-background-color), var(--text-color) 20%);
+    --basesourceswitcher-text-color: var(--text-color);
+    --basesourceswitcher-text-color-active: var(--text-color);
+
+    // ---- Library default ----
+    --dropdown-text-color: var(--text-color);
+    --bs-body-color: var(--text-color);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--button-background);
+    --bs-btn-border-color: var(--button-border);
+    --bs-btn-hover-bg: var(--button-hover-background);
+    --bs-btn-hover-border-color: var(--button-hover-border);
+    --bs-btn-active-bg: var(--button-active-background);
+    --bs-btn-active-border-color: var(--button-active-border);
+    --bs-btn-color: var(--button-text);
+    --bs-btn-active-color: var(--button-active-text);
+    --bs-btn-hover-color: var(--button-hover-text);
+}
+
+.btn-light {
+    --bs-btn-bg: var(--button-white-background);
+    --bs-btn-border-color: var(--button-white-border);
+    --bs-btn-hover-bg: var(--button-white-hover-background);
+    --bs-btn-hover-border-color: var(--button-white-hover-border);
+    --bs-btn-active-bg: var(--button-white-active-background);
+    --bs-btn-active-border-color: var(--button-white-active-border);
+    --bs-btn-color: var(--button-white-text);
+    --bs-btn-active-color: var(--button-white-active-text);
+    --bs-btn-hover-color: var(--button-white-hover-text);
 }

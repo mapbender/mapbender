@@ -24,12 +24,15 @@
       padding: 5px;
     }
     .basesourcegroup, .basesourcesetswitch {
-      background-color: color-mix(in srgb, var(--background-color), var(--text-color) 20%);
+      background-color: var(--basesourceswitcher-background-color);
+      color: var(--basesourceswitcher-text-color);
+        
       &:hover, &[data-state="active"]{
-        background-color: var(--background-color);
+        background-color: var(--basesourceswitcher-background-color-active);
+        color: var(--basesourceswitcher-text-color-active);
       }
       transition: all .2s ease-in-out;
-      border:solid 1px var(--panel-border-color);
+      border: solid 1px var(--basesourceswitcher-border-color);
     }
     .basesourcegroup, > .basesourcesetswitch {
       display: inline-block;
@@ -80,7 +83,7 @@
     }
   }
   .anchored-element-wrap & {
-    background-color: var(--background-color);
+    background-color: var(--basesourceswitcher-background-color);
     font-size: 1.6rem;
     border-radius: 3px;
     padding: 5px;
