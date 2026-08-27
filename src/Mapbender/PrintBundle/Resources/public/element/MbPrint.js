@@ -540,6 +540,7 @@
             Object.assign(jobData, {
                 overview: overview,
                 mapDpi: mapDpi,
+                mapSrs: Mapbender.Model.getCurrentProjectionCode(),
                 'extent_feature': extentFeature
             });
             if ($('input[name="printLegend"]', this.$form).prop('checked')) {

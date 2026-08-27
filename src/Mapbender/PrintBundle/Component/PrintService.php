@@ -2,7 +2,6 @@
 
 namespace Mapbender\PrintBundle\Component;
 
-use setasign\Fpdi\Fpdi;
 use Mapbender\CoreBundle\Component\Application\ApplicationResolver;
 use Mapbender\CoreBundle\Component\Source\TypeDirectoryService;
 use Mapbender\CoreBundle\Entity\Application;
@@ -17,6 +16,7 @@ use Mapbender\PrintBundle\Component\Service\PrintServiceInterface;
 use Mapbender\PrintBundle\Component\Transport\ImageTransport;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use setasign\Fpdi\Fpdi;
 
 /**
  * Merges map image exports and various other regions, steered by a template,
@@ -88,6 +88,24 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $mapImageName = $this->createMapImage($templateData, $jobData);
 
         $pdf = $this->buildPdf($mapImageName, $templateData, $jobData);
+
+
+        /** @var TemplateRegion $mapRegion */
+        try {
+            $mapRegion = $templateData['map'];
+            if ($this->pdf instanceof GeoSpatialFPDF) {
+                $this->pdf->SetGeoViewport(
+                    x: $mapRegion->getOffsetX(),
+                    y: $mapRegion->getOffsetY(),
+                    width: $mapRegion->getWidth(),
+                    height: $mapRegion->getHeight(),
+                    extent: $jobData['extent_feature'],
+                    epsg: $jobData['mapSrs'],
+                );
+            }
+        } catch (\Exception $e) {
+            $this->logger->warning("Could not set GeoViewport: " . $e->getMessage());
+        }
 
         return $this->dumpPdf($pdf);
     }
@@ -196,7 +214,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected function makeBlankPdf($templateData, $templateName)
     {
         /** @var PDF_Extensions|\FPDF $pdf */
-        $pdf = new PDF_Extensions(resourceDir: $this->resourceDir, customFonts: $this->customFonts);
+        $pdf = new GeoSpatialFPDF(resourceDir: $this->resourceDir, customFonts: $this->customFonts);
         $pdfPath = $this->templateParser->getTemplateFilePath($templateName, 'pdf');
         $pdf->setSourceFile($pdfPath);
         $pdf->SetAutoPageBreak(false);
@@ -420,7 +438,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         foreach ($template->getTextFields() as $region) {
             $fieldName = $region->getName();
             // skip extent fields, see special handling in addCoordinates method
-            if (preg_match("/^extent/", (string) $fieldName)) {
+            if (preg_match("/^extent/", (string)$fieldName)) {
                 continue;
             }
             $text = $this->getTextFieldContent($fieldName, $jobData);
