@@ -26,7 +26,7 @@
     .basesourcegroup, .basesourcesetswitch {
       background-color: var(--basesourceswitcher-background-color);
       color: var(--basesourceswitcher-text-color);
-        
+
       &:hover, &[data-state="active"]{
         background-color: var(--basesourceswitcher-background-color-active);
         color: var(--basesourceswitcher-text-color-active);

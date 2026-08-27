@@ -360,10 +360,10 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
 
 .toggleOverview.collapse-toggle {
   background: var(--button-white-background);
-  color: var(--button-white-foreground);
+  color: var(--button-white-text);
   cursor: pointer;
   &:hover {
-    background: var(--button-white-background-hover);
+    background: var(--button-white-hover-background);
   }
 }
 

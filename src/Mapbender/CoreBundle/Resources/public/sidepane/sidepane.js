@@ -421,6 +421,6 @@ window.Mapbender.SidePane = class SidePane {
      * @return {Promise<any>} resolves after animations finished
      */
     openElementById(id) {
-        return this.handler.openElementById(id);
+        return this.handler?.openElementById(id) ?? Promise.resolve(false);
     }
 }

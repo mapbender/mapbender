@@ -242,11 +242,11 @@ overridden at runtime via `:root {}`.
 
 ### Buttons (white / outlined)
 
-| CSS custom property | SCSS variable |
-|---|---|
-| `--button-white-foreground` | *(derived: `var(--text-color)`)* |
-| `--button-white-background` | *(derived: `var(--background-color)`)* |
-| `--button-white-background-hover` | *(hardcoded)* |
+| CSS custom property               | SCSS variable |
+|-----------------------------------|---|
+| `--button-white-text`             | *(derived: `var(--text-color)`)* |
+| `--button-white-background`       | *(derived: `var(--background-color)`)* |
+| `--button-white-hover-background` | *(hardcoded)* |
 
 ### Buttons (critical / danger)
 
