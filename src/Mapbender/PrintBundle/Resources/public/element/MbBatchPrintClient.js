@@ -881,7 +881,7 @@
             this.tableController.updateTable();
 
             // Show success message only after frames were actually deleted
-            $('.-fn-geofile-status', this.$element)
+            $('.-fn-geofile-place-status', this.$element)
                 .text(Mapbender.trans('mb.print.printclient.batchprint.alldeleted'))
                 .removeClass('text-danger')
                 .addClass('text-success');
