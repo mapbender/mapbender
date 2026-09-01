@@ -132,7 +132,7 @@
     // ---- Sidepane buttons ----
     --sidepane-button-font-size: #{$sidepaneButtonFontSize};
     --sidepane-button-background: #{$sidepaneButtonBackgroundColor};
-    --sidepane-button-text: #{$sidepaneButtonTextColor};
+    --sidepane-button-text: var(--text-color);
     --sidepane-button-border: #{$sidepaneButtonBorderColor};
     --sidepane-button-hover: #{$sidepaneButtonHoverColor};
     --sidepane-button-active-text: #{$sidepaneButtonActiveTextColor};
@@ -212,6 +212,11 @@
     // ---- Library default ----
     --dropdown-text-color: var(--text-color);
     --bs-body-color: var(--text-color);
+}
+
+.table {
+    --bs-table-bg: var(--background-color);
+    --bs-table-color: var(--text-color);
 }
 
 .btn-primary {
