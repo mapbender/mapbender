@@ -53,6 +53,8 @@ window.Mapbender.SidePane = class SidePane {
         this.$element = $(element);
         /** @type {HTMLDivElement} **/
         this.sideContent = this.$element.find('.sideContent')[0];
+        if (!this.sideContent) return;
+
         /** @type {jQuery} the button to toggle the sidepane and also the container for the element icons **/
         this.$switchButton = this.$element.find(".toggleSideBar");
         /** @type {jQuery} **/
@@ -96,7 +98,7 @@ window.Mapbender.SidePane = class SidePane {
      * @return {Promise<void>}
      */
     setOpen(open) {
-        if (open === this.isOpen && !this.isAnimating) {
+        if (!this.sideContent || (open === this.isOpen && !this.isAnimating)) {
             return Promise.resolve();
         }
         if (open === this.isOpen && this.isAnimating) {
@@ -154,7 +156,7 @@ window.Mapbender.SidePane = class SidePane {
      * @return {"tabs" | "accordion" | "list" | "unformatted" }
      */
     sidePaneType() {
-        return this.handler.getType();
+        return this.handler?.getType();
     }
 
     _initSidePaneHandler() {
@@ -419,6 +421,6 @@ window.Mapbender.SidePane = class SidePane {
      * @return {Promise<any>} resolves after animations finished
      */
     openElementById(id) {
-        return this.handler.openElementById(id);
+        return this.handler?.openElementById(id) ?? Promise.resolve(false);
     }
 }

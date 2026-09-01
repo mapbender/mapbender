@@ -56,7 +56,7 @@ select.numeric {
   cursor: pointer;
   display: block;
   font-weight: 400;
-  color: var(--bs-body-color);
+  color: var(--dropdown-text-color);
   &:not(.nested-group):hover {
     background-color: color-mix(in srgb, var(--input-background), var(--input-foreground) 10%);
   }
@@ -81,7 +81,7 @@ select.numeric {
     text-overflow: ellipsis;
     cursor: pointer;
     font-weight: 400;
-    color: var(--bs-body-color);
+    color: var(--dropdown-text-color);
     &.iconDown {
       padding-right: 2em;
     }

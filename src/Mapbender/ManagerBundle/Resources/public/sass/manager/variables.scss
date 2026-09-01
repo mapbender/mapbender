@@ -9,3 +9,15 @@ $fontSize: 14px;
 $fontFamily: "Ubuntu", $fontFamily;
 $inputBorderColor: transparent;
 $inputFocusBorderColor: #8dce55;
+
+$backgroundColor: #fff !default;
+$sidepaneBorderColor: #ccc !default;
+
+$toolBarBackgroundColor: #eee !default;
+$toolBarOpacity: 1.0 !default;
+$toolBarBackground: rgba($toolBarBackgroundColor, $toolBarOpacity) !default;
+$toolBarTopBackground: $toolBarBackground !default;
+$toolBarBottomBackground: $toolBarBackground !default;
+$toolBarBorderColor: $sidepaneBorderColor !default;
+$desktopBreakpointWidth: 1200px !default;
+$hoverEffects: true !default;

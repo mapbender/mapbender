@@ -4,14 +4,17 @@
         padding: 0;
         list-style: none;
     }
+
     img {
         width: 100%;
     }
+
     .list {
         container-type: inline-size;
         display: flex;
         flex-wrap: wrap;
     }
+
     .list-item {
         display: flex;
         flex-direction: column;
@@ -22,7 +25,13 @@
         border: 1px solid #ccc;
         border-radius: 8px;
         min-height: 150px;
+
+        > a {
+            height: 100%;
+            display: flex;
+        }
     }
+
     @container (max-width: 275px) {
         .list-item {
             width: calc(50% - 1em);
@@ -38,15 +47,18 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        flex: 1 1 auto;
+        justify-content: center;
     }
+
     .list-content p {
-        margin-top: auto;
+        padding-top: 5px;
         font-size: 10px;
     }
+
     .dropdown {
         min-width: 9em;
     }
+
     .toolBar & {
         .dropdownList {
             width: auto;
