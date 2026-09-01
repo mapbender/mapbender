@@ -242,3 +242,8 @@
     --bs-btn-active-color: var(--button-white-active-text);
     --bs-btn-hover-color: var(--button-white-hover-text);
 }
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color:  var(--primary);
+}
