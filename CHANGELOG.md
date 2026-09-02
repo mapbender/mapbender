@@ -28,6 +28,7 @@ Features:
 * [LayerTree] Also show metadata for YAML applications ([#PR1849](https://github.com/mapbender/mapbender/pull/1849))
 * Region properties "generate menu" (for toolbar and footer) and "start closed" (sidepane) can now be set differently for mobile and desktop ([#PR1874](https://github.com/mapbender/mapbender/pull/1874), [#PR1893](https://github.com/mapbender/mapbender/pull/1893))
 * [fom:user:resetroot command] Allow password to be transferred in more ways ([#PR1889](https://github.com/mapbender/mapbender/pull/1889))
+* Add additional icons ([#PR1931](https://github.com/mapbender/mapbender/pull/1931))
 
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))

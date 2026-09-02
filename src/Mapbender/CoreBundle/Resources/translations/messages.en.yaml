@@ -674,6 +674,18 @@ mb:
         help: Help
         dataupload: Upload
         bookmark: Bookmark
+        folderTree: 'Directory Tree'
+        list: 'List'
+        shareSquare: 'Share (Alternative)'
+        login: 'Login'
+        mapWithPin: 'Map with Pin'
+        settings: 'Settings'
+        lightbulb: 'Lightbulb'
+        barsStaggered: 'Menu'
+        circleCheck: 'Checkmark'
+        cube: 'Cube'
+        cubes: 'Cubes'
+        envelope: 'Envelope'
         chartcolumn: Diagram
         bookopen: Book
   template:

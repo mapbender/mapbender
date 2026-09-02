@@ -674,6 +674,18 @@ mb:
         help: Hilfe
         dataupload: Hochladen
         bookmark: Lesezeichen
+        folderTree: 'Verzeichnisbaum'
+        list: 'Liste'
+        shareSquare: 'Teilen (Alternative)'
+        login: 'Anmelden'
+        mapWithPin: 'Karte mit Marker'
+        settings: 'Einstellungen'
+        lightbulb: 'Glühbirne'
+        barsStaggered: 'Menü'
+        circleCheck: 'Häkchen'
+        cube: 'Würfel (1)'
+        cubes: 'Würfel (3)'
+        envelope: 'Umschlag'
         chartcolumn: Diagramm
         bookopen: Buch
   template:
