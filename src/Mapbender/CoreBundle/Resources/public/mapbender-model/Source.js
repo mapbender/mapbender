@@ -150,7 +150,7 @@
             }
             let sourceId = this.id;
             // if source id matches pattern "<assignmentId>_<sourceId>", extract sourceId part
-            const match = sourceId.match(/^[0-9]+_([0-9]+)$/);
+            const match = (sourceId ?? '').match(/^[0-9]+_([0-9]+)$/);
             if (match) {
                 sourceId = match[1];
             }
