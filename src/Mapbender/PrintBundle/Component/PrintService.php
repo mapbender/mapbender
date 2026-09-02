@@ -38,7 +38,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
     /**
      * Collected legends from all frames for multiframe printing
-     * @var LegendBlockGroup[]
+     * @var LegendBlockContainer[]
      */
     protected array $collectedLegends = [];
 
@@ -799,7 +799,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $mapImageNames = [];
 
         // Create all map images and store filesystem paths
-        foreach ($jobData as $index => $data) {
+        foreach ($jobData as $data) {
             if ($application) {
                 $data['application'] = $application;
             }
@@ -815,6 +815,9 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         $pdf = null;
         // Build PDFs for each item
         foreach ($jobData as $index => $data) {
+            if ($application) {
+                $data['application'] = $application;
+            }
             $templateData = $this->getTemplateData($data);
             $this->setup($templateData, $data);
             $pdf = $this->buildMultiFramePdf($mapImageNames[$index], $templateData, $data, $pdf);
@@ -835,7 +838,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      * @return PDF_Extensions|\FPDF PDF object with added page
      * @throws \Exception
      */
-    protected function buildMultiFramePdf(string $mapImageName, Template|array $template, array $jobData, PDF_Extensions|\FPDF|null $pdf = null, ?Application $application = null): PDF_Extensions|\FPDF
+    protected function buildMultiFramePdf(string $mapImageName, Template|array $template, array $jobData, PDF_Extensions|\FPDF|null $pdf = null): PDF_Extensions|\FPDF
     {
         if (!$pdf) {
             $pdf = $this->makeBlankPdf($template, $jobData['template']);
@@ -866,7 +869,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         $legends = $this->legendHandler->collectLegends($jobData);
         $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
-        $this->collectedLegends[] = $legends;
+        array_push($this->collectedLegends, ...$legends);
 
         return $pdf;
     }
@@ -898,14 +901,12 @@ class PrintService extends ImageExportService implements PrintServiceInterface
         // Collect all unique legend blocks by title
         $uniqueBlocks = [];
 
-        foreach ($this->collectedLegends as $legendGroup) {
-            foreach ($legendGroup as $legendBlock) {
-                foreach ($legendBlock->iterateBlocks() as $block) {
-                    if ($block->isRendered()) {
-                        continue; // Skip already rendered blocks
-                    }
-                    $uniqueBlocks[$block->getTitle()] = $block;
+        foreach ($this->collectedLegends as $legendBlockContainer) {
+            foreach ($legendBlockContainer->getBlocks() as $block) {
+                if ($block->isRendered()) {
+                    continue; // Skip already rendered blocks
                 }
+                $uniqueBlocks[$block->getTitle()] = $block;
             }
         }
 
