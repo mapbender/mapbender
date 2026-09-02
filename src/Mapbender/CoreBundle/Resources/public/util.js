@@ -706,7 +706,7 @@ Mapbender.ElementUtil = {
      * on the server for independent sessions which results in (randomly) only one of the tokens being valid.
      */
     getCsrfToken: async function (element, url, forceRefresh = false) {
-        const elementType = Object.getPrototypeOf(element).widgetFullName;
+        const elementType = element.constructor.name;
         if (forceRefresh && this._csrfTokenCache[elementType]) {
             delete this._csrfTokenCache[elementType];
         }
