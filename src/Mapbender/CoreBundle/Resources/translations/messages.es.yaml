@@ -646,6 +646,18 @@ mb:
         pin_alt: 'Pin (Alternativo)'
         help: Ayuda
         bookmark: 'marcador de página'
+        folderTree: 'Árbol de directorios'
+        list: 'Lista'
+        shareSquare: 'Compartir (alternativo)'
+        login: 'Iniciar sesión'
+        mapWithPin: 'Mapa con marcador'
+        settings: 'Configuración'
+        lightbulb: 'Bombilla'
+        barsStaggered: 'Menú'
+        circleCheck: 'Marca de verificación'
+        cube: 'Cubo'
+        cubes: 'Cubos'
+        envelope: 'Sobre'
   template:
     toolbar_menu_tooltip: 'Abrir menú'
     region:

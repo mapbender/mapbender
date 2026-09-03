@@ -647,6 +647,18 @@ mb:
         help: Ajuda
         dataupload: 'Carregar'
         bookmark: 'Marcador de página'
+        folderTree: 'Árvore de diretórios'
+        list: 'Lista'
+        shareSquare: 'Partilhar (alternativo)'
+        login: 'Iniciar sessão'
+        mapWithPin: 'Mapa com marcador'
+        settings: 'Configurações'
+        lightbulb: 'Lâmpada'
+        barsStaggered: 'Menu'
+        circleCheck: 'Marca de verificação'
+        cube: 'Cubo'
+        cubes: 'Cubos'
+        envelope: 'Envelope'
   template:
     toolbar_menu_tooltip: 'Abrir menu'
     region:

@@ -662,6 +662,18 @@ mb:
         help: 'Помощь'
         dataupload: 'загрузка'
         bookmark: 'закладка'
+        folderTree: 'Дерево каталогов'
+        list: 'Список'
+        shareSquare: 'Поделиться (альтернатива)'
+        login: 'Вход'
+        mapWithPin: 'Карта с маркером'
+        settings: 'Настройки'
+        lightbulb: 'Лампочка'
+        barsStaggered: 'Меню'
+        circleCheck: 'Галочка'
+        cube: 'Куб'
+        cubes: 'Кубы'
+        envelope: 'Конверт'
   template:
     toolbar_menu_tooltip: 'Открыть меню'
     region:

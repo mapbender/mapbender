@@ -668,6 +668,18 @@ mb:
         help: Aiuto
         dataupload: 'Caricamento'
         bookmark: 'Segnalibro'
+        folderTree: 'Albero directory'
+        list: 'Elenco'
+        shareSquare: 'Condividi (alternativa)'
+        login: 'Accesso'
+        mapWithPin: 'Mappa con segnaposto'
+        settings: 'Impostazioni'
+        lightbulb: 'Lampadina'
+        barsStaggered: 'Menu'
+        circleCheck: 'Segno di spunta'
+        cube: 'Cubo'
+        cubes: 'Cubi'
+        envelope: 'Busta'
   template:
     toolbar_menu_tooltip: 'Menu a tendina'
     region:

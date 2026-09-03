@@ -674,6 +674,18 @@ mb:
         help: Ajutor
         dataupload: Încărcare
         bookmark: Marcaj
+        folderTree: 'Arbore de directoare'
+        list: 'Listă'
+        shareSquare: 'Partajare (alternativă)'
+        login: 'Autentificare'
+        mapWithPin: 'Hartă cu marcator'
+        settings: 'Setări'
+        lightbulb: 'Bec'
+        barsStaggered: 'Meniu'
+        circleCheck: 'Bifă'
+        cube: 'Cub'
+        cubes: 'Cuburi'
+        envelope: 'Plic'
         chartcolumn: Diagramă
         bookopen: Carte
   template:

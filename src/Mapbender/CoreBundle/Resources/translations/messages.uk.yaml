@@ -476,6 +476,18 @@ mb:
         help: 'Допомога'
         dataupload: 'Завантажити'
         bookmark: 'Завантажити'
+        folderTree: 'Дерево каталогів'
+        list: 'Список'
+        shareSquare: 'Поділитися (альтернатива)'
+        login: 'Вхід'
+        mapWithPin: 'Карта з міткою'
+        settings: 'Налаштування'
+        lightbulb: 'Лампочка'
+        barsStaggered: 'Меню'
+        circleCheck: 'Позначка'
+        cube: 'Куб'
+        cubes: 'Куби'
+        envelope: 'Конверт'
   template:
     toolbar_menu_tooltip: Перемкнути меню
     region:
