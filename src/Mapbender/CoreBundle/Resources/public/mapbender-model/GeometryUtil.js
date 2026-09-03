@@ -210,6 +210,7 @@ window.Mapbender.GeometryUtil = class {
         bounds.minY = Math.min(bounds.minY, y);
         bounds.maxX = Math.max(bounds.maxX, x);
         bounds.maxY = Math.max(bounds.maxY, y);
+        return bounds;
     }
 
     /**

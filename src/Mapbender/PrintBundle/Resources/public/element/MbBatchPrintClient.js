@@ -334,7 +334,6 @@
                 this.mapHoverHandler = null;
             }
 
-            this.frameManager.frameCounter = 0;
             if (this.tableController) {
                 this.tableController.updateTable();
             }

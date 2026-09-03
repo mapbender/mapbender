@@ -218,7 +218,8 @@
             if (!lineString || lineString.getType() !== 'LineString') {
                 Mapbender.error(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.invalidgeometry'));
                 return;
-            }            // Show spinner during frame placement
+            }
+            // Show spinner during frame placement
             this._showSpinner();
             this._disablePlaceButton();
 
@@ -240,7 +241,7 @@
 
                     // Calculate frame size in map units (use smaller dimension)
                     const frameWidthMapUnits = templateWidth * scale * unitsPerMeterAtFirstCoordinate.h;
-                    const frameHeightMapUnits = templateHeight * scale * unitsPerMeterAtFirstCoordinate.v;
+                    const frameHeightMapUnits = templateHeight * scale * unitsPerMeterAtFirstCoordinate.h;
 
                     let numFrames = 0;
                     let remainingLineString = lineString;
@@ -250,7 +251,7 @@
                             remainingLineString,
                             frameWidthMapUnits,
                             frameHeightMapUnits,
-                            Math.min(overlapPercent, this.defaultPadding),
+                            Math.min(overlapRatio, this.defaultPadding),
                             overlapRatio,
                         );
 
