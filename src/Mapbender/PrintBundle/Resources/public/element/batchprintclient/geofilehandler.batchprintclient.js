@@ -226,7 +226,6 @@
             setTimeout(() => {
                 try {
                     // Get settings
-                    const adjustFrames = $('.-fn-adjust-frames-checkbox', this.$element).is(':checked');
                     const overlapPercent = this._getOverlapPercentage();
 
                     if (overlapPercent === null) {
