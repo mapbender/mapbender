@@ -47,6 +47,7 @@
             this.trackFitMaxZoom = options.trackFitMaxZoom || 16;
             this.onFramePlaced = typeof options.onFramePlaced === 'function' ? options.onFramePlaced : () => {
             };
+            this.defaultPadding = options.framePadding || 0.03;
 
             // Track layer and features
             this.geofileLayer = null;
@@ -231,6 +232,7 @@
                     if (overlapPercent === null) {
                         return; // Validation failed
                     }
+                    const overlapRatio = overlapPercent / 100;
 
                     const templateWidth = this.widget.width;
                     const templateHeight = this.widget.height;
@@ -241,11 +243,7 @@
                     const frameWidthMapUnits = templateWidth * scale * unitsPerMeterAtFirstCoordinate.h;
                     const frameHeightMapUnits = templateHeight * scale * unitsPerMeterAtFirstCoordinate.v;
 
-                    const totalLength = lineString.getLength();
-                    let currentDistance = 0;
                     let numFrames = 0;
-
-                    // const bearing = adjustFrames ? Mapbender.GeometryUtil.getBearingAtDistance(lineString, distance) : null;
                     let remainingLineString = lineString;
 
                     while (remainingLineString) {
@@ -253,6 +251,8 @@
                             remainingLineString,
                             frameWidthMapUnits,
                             frameHeightMapUnits,
+                            Math.min(overlapPercent, this.defaultPadding),
+                            overlapRatio,
                         );
 
                         this.onFramePlaced(frame.extent);

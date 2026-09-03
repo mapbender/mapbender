@@ -42,11 +42,31 @@ window.Mapbender.GeometryUtil = class {
     }
 
     /**
-     * @return {{extent: {minX: number, minY: number, maxX: number, maxY: number}}, remainingLineString: null|ol.geom.LineString}
+     * @return {{extent: {minX: number, minY: number, maxX: number, maxY: number}, remainingLineString: null|ol.geom.LineString}}
      **/
-    static getMaximumExtent(lineString, width, height) {
+    static getMaximumExtent(
+        lineString,
+        width,
+        height,
+        paddingRatio,
+        overlapRatio,
+    ) {
+        const usableWidth = width * (1 - 2 * (paddingRatio ?? 0));
+        const usableHeight = height * (1 - 2 * (paddingRatio ?? 0));
+        const additionalOverlapRatio = Math.max(overlapRatio - paddingRatio, 0);
+        const advanceWidth = usableWidth - width * additionalOverlapRatio;
+        const advanceHeight = usableHeight - height * additionalOverlapRatio;
+
         if (width <= 0 || height <= 0) {
             throw new RangeError("Width and height must be positive.");
+        }
+
+        if (usableWidth <= 0 || usableHeight <= 0) {
+            throw new RangeError("Padding leaves no usable frame area.");
+        }
+
+        if (advanceWidth <= 0 || advanceHeight <= 0) {
+            throw new RangeError("Padding and overlap leave no frame advancement.");
         }
 
         const coordinates = lineString.getCoordinates();
@@ -55,48 +75,93 @@ window.Mapbender.GeometryUtil = class {
             throw new RangeError("The LineString must contain at least two coordinates.");
         }
 
-        const bounds = this.expandBounds(null, coordinates[0]);
-        let exitCoordinate;
-        let exitSegmentIndex;
+        const frameBounds = this.expandBounds(null, coordinates[0]);
+        const advanceBounds = this.expandBounds(null, coordinates[0]);
+        let remainingStart = null;
 
         for (let index = 0; index < coordinates.length - 1; index += 1) {
             const segmentStart = coordinates[index];
             const segmentEnd = coordinates[index + 1];
+
+            if (!remainingStart) {
+                const advanceFraction = this.getIncludedFraction(
+                    segmentStart,
+                    segmentEnd,
+                    advanceBounds,
+                    advanceWidth,
+                    advanceHeight,
+                );
+
+                const advanceCoordinate = this.interpolateCoordinate(
+                    segmentStart,
+                    segmentEnd,
+                    advanceFraction,
+                );
+
+                this.expandBounds(advanceBounds, advanceCoordinate);
+
+                if (advanceFraction < 1) {
+                    remainingStart = {
+                        coordinate: advanceCoordinate,
+                        segmentIndex: index,
+                    };
+                }
+            }
+
             const includedFraction = this.getIncludedFraction(
                 segmentStart,
                 segmentEnd,
-                bounds,
-                width,
-                height,
+                frameBounds,
+                usableWidth,
+                usableHeight,
             );
 
-            exitCoordinate = [
-                segmentStart[0] + (segmentEnd[0] - segmentStart[0]) * includedFraction,
-                segmentStart[1] + (segmentEnd[1] - segmentStart[1]) * includedFraction,
-            ];
+            const includedCoordinate = this.interpolateCoordinate(
+                segmentStart,
+                segmentEnd,
+                includedFraction,
+            );
 
-            this.expandBounds(bounds, exitCoordinate);
+            this.expandBounds(frameBounds, includedCoordinate);
 
             if (includedFraction < 1) {
-                exitSegmentIndex = index;
-                break;
+                return {
+                    extent: this.centerBounds(frameBounds, width, height),
+                    remainingLineString: this.createRemainingLineString(
+                        lineString,
+                        coordinates,
+                        remainingStart,
+                    ),
+                };
             }
         }
 
-        let remainingLineString = null;
+        return {
+            extent: this.centerBounds(frameBounds, width, height),
+            remainingLineString: null,
+        };
+    }
 
-        if (exitSegmentIndex !== undefined) {
-            remainingLineString = lineString.clone();
-            remainingLineString.setCoordinates([
-                exitCoordinate,
-                ...coordinates.slice(exitSegmentIndex + 1),
-            ]);
+    static interpolateCoordinate(start, end, fraction) {
+        return [
+            start[0] + (end[0] - start[0]) * fraction,
+            start[1] + (end[1] - start[1]) * fraction,
+        ];
+    }
+
+    static createRemainingLineString(lineString, coordinates, remainingStart) {
+        if (!remainingStart) {
+            throw new Error("The frame cannot advance to the next LineString section.");
         }
 
-        return {
-            extent: this.centerBounds(bounds, width, height),
-            remainingLineString,
-        };
+        const remainingLineString = lineString.clone();
+
+        remainingLineString.setCoordinates([
+            remainingStart.coordinate,
+            ...coordinates.slice(remainingStart.segmentIndex + 1),
+        ]);
+
+        return remainingLineString;
     }
 
     static getIncludedFraction(start, end, bounds, width, height) {
