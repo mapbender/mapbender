@@ -1,88 +1,269 @@
 window.Mapbender = Mapbender || {};
-window.Mapbender.GeometryUtil = (function() {
-    'use strict';
+window.Mapbender.GeometryUtil = class {
+    /**
+     * Get coordinate at a specific distance along a LineString
+     *
+     * @param {ol.geom.LineString} lineString - OpenLayers LineString geometry
+     * @param {number} distance - Distance along the line in map units
+     * @returns {{x: number, y: number, segment: number}} Coordinate at the specified distance, or last coordinate if distance exceeds line length
+     */
+    static getCoordinateAtDistance(lineString, distance, startSegmentIndex = 0) {
+        var coordinates = lineString.getCoordinates();
+        var currentDistance = 0;
 
-    var methods = {
-        /**
-         * Get coordinate at a specific distance along a LineString
-         * 
-         * @param {ol.geom.LineString} lineString - OpenLayers LineString geometry
-         * @param {number} distance - Distance along the line in map units
-         * @returns {Array<number>|null} Coordinate [x, y] at the specified distance, or last coordinate if distance exceeds line length
-         */
-        getCoordinateAtDistance: function(lineString, distance) {
-            var coordinates = lineString.getCoordinates();
-            var currentDistance = 0;
-            
-            for (var i = 0; i < coordinates.length - 1; i++) {
-                var segmentStart = coordinates[i];
-                var segmentEnd = coordinates[i + 1];
-                var segmentLength = Math.sqrt(
-                    Math.pow(segmentEnd[0] - segmentStart[0], 2) +
-                    Math.pow(segmentEnd[1] - segmentStart[1], 2)
-                );
-                
-                if (currentDistance + segmentLength >= distance) {
-                    // The target distance is within this segment
-                    var ratio = (distance - currentDistance) / segmentLength;
-                    return [
-                        segmentStart[0] + ratio * (segmentEnd[0] - segmentStart[0]),
-                        segmentStart[1] + ratio * (segmentEnd[1] - segmentStart[1])
-                    ];
-                }
-                
-                currentDistance += segmentLength;
-            }
-            
-            // Return last coordinate if distance exceeds line length
-            return coordinates[coordinates.length - 1];
-        },
+        for (var i = startSegmentIndex; i < coordinates.length - 1; i++) {
+            var segmentStart = coordinates[i];
+            var segmentEnd = coordinates[i + 1];
+            var segmentLength = Math.sqrt(
+                Math.pow(segmentEnd[0] - segmentStart[0], 2) +
+                Math.pow(segmentEnd[1] - segmentStart[1], 2)
+            );
 
-        /**
-         * Get bearing (direction in degrees) at a specific distance along a LineString
-         * 
-         * @param {ol.geom.LineString} lineString - OpenLayers LineString geometry
-         * @param {number} distance - Distance along the line in map units
-         * @returns {number} Bearing in degrees from East (0° = East, 90° = North, -90° = South)
-         */
-        getBearingAtDistance: function(lineString, distance) {
-            var coordinates = lineString.getCoordinates();
-            var currentDistance = 0;
-            
-            for (var i = 0; i < coordinates.length - 1; i++) {
-                var segmentStart = coordinates[i];
-                var segmentEnd = coordinates[i + 1];
-                var segmentLength = Math.sqrt(
-                    Math.pow(segmentEnd[0] - segmentStart[0], 2) +
-                    Math.pow(segmentEnd[1] - segmentStart[1], 2)
-                );
-                
-                if (currentDistance + segmentLength >= distance) {
-                    // Calculate bearing for this segment
-                    // atan2(dy, dx) gives angle from East (positive X-axis) in radians
-                    var dx = segmentEnd[0] - segmentStart[0];
-                    var dy = segmentEnd[1] - segmentStart[1];
-                    var angleRadians = Math.atan2(dy, dx);
-                    var angleDegrees = angleRadians * (180 / Math.PI);
-                    return angleDegrees;
-                }
-                
-                currentDistance += segmentLength;
+            if (currentDistance + segmentLength >= distance) {
+                // The target distance is within this segment
+                var ratio = (distance - currentDistance) / segmentLength;
+                return {
+                    x: segmentStart[0] + ratio * (segmentEnd[0] - segmentStart[0]),
+                    y: segmentStart[1] + ratio * (segmentEnd[1] - segmentStart[1]),
+                    segment: i,
+                };
             }
-            
-            // Return bearing of last segment
-            var lastIdx = coordinates.length - 1;
-            if (lastIdx > 0) {
-                var dx = coordinates[lastIdx][0] - coordinates[lastIdx - 1][0];
-                var dy = coordinates[lastIdx][1] - coordinates[lastIdx - 1][1];
+
+            currentDistance += segmentLength;
+        }
+
+        // Return last coordinate if distance exceeds line length
+        const lastCoord = coordinates[coordinates.length - 1];
+        return {
+            x: lastCoord[0],
+            y: lastCoord[1],
+            segment: NaN,
+        }
+    }
+
+    /**
+     * @return {{extent: {minX: number, minY: number, maxX: number, maxY: number}, remainingLineString: null|ol.geom.LineString}}
+     **/
+    static getMaximumExtent(
+        lineString,
+        width,
+        height,
+        paddingRatio,
+        overlapRatio,
+    ) {
+        const usableWidth = width * (1 - 2 * (paddingRatio ?? 0));
+        const usableHeight = height * (1 - 2 * (paddingRatio ?? 0));
+        const additionalOverlapRatio = Math.max(overlapRatio - paddingRatio, 0);
+        const advanceWidth = usableWidth - width * additionalOverlapRatio;
+        const advanceHeight = usableHeight - height * additionalOverlapRatio;
+
+        if (width <= 0 || height <= 0) {
+            throw new RangeError("Width and height must be positive.");
+        }
+
+        if (usableWidth <= 0 || usableHeight <= 0) {
+            throw new RangeError("Padding leaves no usable frame area.");
+        }
+
+        if (advanceWidth <= 0 || advanceHeight <= 0) {
+            throw new RangeError("Padding and overlap leave no frame advancement.");
+        }
+
+        const coordinates = lineString.getCoordinates();
+
+        if (coordinates.length < 2) {
+            throw new RangeError("The LineString must contain at least two coordinates.");
+        }
+
+        const frameBounds = this.expandBounds(null, coordinates[0]);
+        const advanceBounds = this.expandBounds(null, coordinates[0]);
+        let remainingStart = null;
+
+        for (let index = 0; index < coordinates.length - 1; index += 1) {
+            const segmentStart = coordinates[index];
+            const segmentEnd = coordinates[index + 1];
+
+            if (!remainingStart) {
+                const advanceFraction = this.getIncludedFraction(
+                    segmentStart,
+                    segmentEnd,
+                    advanceBounds,
+                    advanceWidth,
+                    advanceHeight,
+                );
+
+                const advanceCoordinate = this.interpolateCoordinate(
+                    segmentStart,
+                    segmentEnd,
+                    advanceFraction,
+                );
+
+                this.expandBounds(advanceBounds, advanceCoordinate);
+
+                if (advanceFraction < 1) {
+                    remainingStart = {
+                        coordinate: advanceCoordinate,
+                        segmentIndex: index,
+                    };
+                }
+            }
+
+            const includedFraction = this.getIncludedFraction(
+                segmentStart,
+                segmentEnd,
+                frameBounds,
+                usableWidth,
+                usableHeight,
+            );
+
+            const includedCoordinate = this.interpolateCoordinate(
+                segmentStart,
+                segmentEnd,
+                includedFraction,
+            );
+
+            this.expandBounds(frameBounds, includedCoordinate);
+
+            if (includedFraction < 1) {
+                return {
+                    extent: this.centerBounds(frameBounds, width, height),
+                    remainingLineString: this.createRemainingLineString(
+                        lineString,
+                        coordinates,
+                        remainingStart,
+                    ),
+                };
+            }
+        }
+
+        return {
+            extent: this.centerBounds(frameBounds, width, height),
+            remainingLineString: null,
+        };
+    }
+
+    static interpolateCoordinate(start, end, fraction) {
+        return [
+            start[0] + (end[0] - start[0]) * fraction,
+            start[1] + (end[1] - start[1]) * fraction,
+        ];
+    }
+
+    static createRemainingLineString(lineString, coordinates, remainingStart) {
+        if (!remainingStart) {
+            throw new Error("The frame cannot advance to the next LineString section.");
+        }
+
+        const remainingLineString = lineString.clone();
+
+        remainingLineString.setCoordinates([
+            remainingStart.coordinate,
+            ...coordinates.slice(remainingStart.segmentIndex + 1),
+        ]);
+
+        return remainingLineString;
+    }
+
+    static getIncludedFraction(start, end, bounds, width, height) {
+        const xFraction = this.getAxisFraction(
+            start[0],
+            end[0],
+            bounds.maxX - width,
+            bounds.minX + width,
+        );
+
+        const yFraction = this.getAxisFraction(
+            start[1],
+            end[1],
+            bounds.maxY - height,
+            bounds.minY + height,
+        );
+
+        return Math.min(xFraction, yFraction);
+    }
+
+    static getAxisFraction(start, end, minimum, maximum) {
+        if (end > maximum) {
+            return (maximum - start) / (end - start);
+        }
+
+        if (end < minimum) {
+            return (minimum - start) / (end - start);
+        }
+
+        return 1;
+    }
+
+    /**
+     * @return {{minX: number, minY: number, maxX: number, maxY: number}}
+     */
+    static expandBounds(bounds, [x, y]) {
+        if (!bounds) {
+            return {
+                minX: x,
+                minY: y,
+                maxX: x,
+                maxY: y,
+            };
+        }
+        bounds.minX = Math.min(bounds.minX, x);
+        bounds.minY = Math.min(bounds.minY, y);
+        bounds.maxX = Math.max(bounds.maxX, x);
+        bounds.maxY = Math.max(bounds.maxY, y);
+        return bounds;
+    }
+
+    /**
+     * Get bearing (direction in degrees) at a specific distance along a LineString
+     *
+     * @param {ol.geom.LineString} lineString - OpenLayers LineString geometry
+     * @param {number} distance - Distance along the line in map units
+     * @returns {number} Bearing in degrees from East (0° = East, 90° = North, -90° = South)
+     */
+    static getBearingAtDistance(lineString, distance) {
+        var coordinates = lineString.getCoordinates();
+        var currentDistance = 0;
+
+        for (var i = 0; i < coordinates.length - 1; i++) {
+            var segmentStart = coordinates[i];
+            var segmentEnd = coordinates[i + 1];
+            var segmentLength = Math.sqrt(
+                Math.pow(segmentEnd[0] - segmentStart[0], 2) +
+                Math.pow(segmentEnd[1] - segmentStart[1], 2)
+            );
+
+            if (currentDistance + segmentLength >= distance) {
+                // Calculate bearing for this segment
+                // atan2(dy, dx) gives angle from East (positive X-axis) in radians
+                var dx = segmentEnd[0] - segmentStart[0];
+                var dy = segmentEnd[1] - segmentStart[1];
                 var angleRadians = Math.atan2(dy, dx);
                 var angleDegrees = angleRadians * (180 / Math.PI);
                 return angleDegrees;
             }
-            
-            return 0;
-        }
-    };
 
-    return methods;
-}());
+            currentDistance += segmentLength;
+        }
+
+        // Return bearing of last segment
+        var lastIdx = coordinates.length - 1;
+        if (lastIdx > 0) {
+            var dx = coordinates[lastIdx][0] - coordinates[lastIdx - 1][0];
+            var dy = coordinates[lastIdx][1] - coordinates[lastIdx - 1][1];
+            var angleRadians = Math.atan2(dy, dx);
+            var angleDegrees = angleRadians * (180 / Math.PI);
+            return angleDegrees;
+        }
+
+        return 0;
+    }
+
+    static centerBounds(bounds, width, height) {
+        bounds.minX = (bounds.minX + bounds.maxX - width) / 2;
+        bounds.minY = (bounds.minY + bounds.maxY - height) / 2;
+        bounds.maxX = bounds.minX + width;
+        bounds.maxY = bounds.minY + height;
+        return bounds;
+    }
+}
+;

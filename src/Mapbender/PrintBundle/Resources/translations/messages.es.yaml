@@ -32,7 +32,6 @@ mb:
           choosefile: 'Seleccionar archivo'
           clear: 'Eliminar recorrido'
           placeframes: 'Colocar marcos a lo largo del recorrido'
-          adjustframes: 'Ajustar rotación de marcos'
           overlap: 'Superposición de marcos'
           selected: 'Seleccionado'
           loaded: 'Cargado'

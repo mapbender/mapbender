@@ -33,7 +33,6 @@ mb:
           choosefile: 'Selectează fișier'
           clear: 'Elimină traseu'
           placeframes: 'Plasează cadre de-a lungul traseului'
-          adjustframes: 'Ajustează rotația cadrelor'
           overlap: 'Suprapunere cadre'
           selected: 'Selectat'
           loaded: 'Încărcat'

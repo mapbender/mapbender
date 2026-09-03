@@ -1,23 +1,23 @@
 /**
  * GeofileHandler for BatchPrintClient
- * 
+ *
  * Manages geospatial file upload and processing including:
  * - File upload and validation (KML, GeoJSON, GPX, GML)
  * - Track rendering on map
  * - Frame placement along tracks with overlap calculation
  * - Track layer management
  */
-(function($) {
+(function ($) {
     'use strict';
 
     window.Mapbender = window.Mapbender || {};
-    
+
     // Constants
     const MIN_OVERLAP = 0;
     const MAX_OVERLAP = 50;  // Limited to 50% to prevent exponential performance degradation
     const MIN_FRAMES = 2;  // Minimum frames to cover start and end points
     const COVERAGE_BUFFER = 1;  // Extra frame to ensure no gaps at track end
-    
+
     /**
      * GeofileHandler for BatchPrintClient
      * Manages geospatial file upload and processing
@@ -45,12 +45,14 @@
             this.trackFitPadding = options.trackFitPadding || [100, 100, 100, 100];
             this.trackFitDuration = options.trackFitDuration || 500;
             this.trackFitMaxZoom = options.trackFitMaxZoom || 16;
-            this.onFramePlaced = typeof options.onFramePlaced === 'function' ? options.onFramePlaced : () => {};
-            
+            this.onFramePlaced = typeof options.onFramePlaced === 'function' ? options.onFramePlaced : () => {
+            };
+            this.defaultPadding = options.framePadding || 0.03;
+
             // Track layer and features
             this.geofileLayer = null;
             this.geofileFeatures = [];
-            
+
             // Setup event handlers
             this._setupEventHandlers();
         }
@@ -64,11 +66,11 @@
             $('.-fn-geofile-custom-button', this.$element).on('click', () => {
                 $('.-fn-geofile-file-input', this.$element).trigger('click');
             });
-            
+
             // File input change handler
             $('.-fn-geofile-file-input', this.$element).on('change', () => {
                 const file = $('.-fn-geofile-file-input', this.$element)[0].files && $('.-fn-geofile-file-input', this.$element)[0].files[0];
-                
+
                 if (file) {
                     this.loadFile();
                 } else {
@@ -76,12 +78,12 @@
                     this._hideButtons();
                 }
             });
-            
+
             // Clear file button handler
             $('.-fn-clear-geofile-button', this.$element).on('click', () => {
                 this.clear();
             });
-            
+
             // Place frames along track button handler
             $('.-fn-place-frames-button', this.$element).on('click', () => {
                 this.placeFramesAlongTrack();
@@ -92,23 +94,24 @@
          * Load and display geospatial file on map
          */
         loadFile() {
-        const $fileInput = $('.-fn-geofile-file-input', this.$element);
-        
-        if (!$fileInput.length || !$fileInput[0].files) {
-            console.error('File input element not found or not accessible');
-            Mapbender.warning(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
-            return;
-        }        const file = $fileInput[0].files[0];
-        
-        if (!file) {
-            Mapbender.info(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
-            return;
-        }            // Show spinner during file load
+            const $fileInput = $('.-fn-geofile-file-input', this.$element);
+
+            if (!$fileInput.length || !$fileInput[0].files) {
+                console.error('File input element not found or not accessible');
+                Mapbender.warning(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
+                return;
+            }
+            const file = $fileInput[0].files[0];
+
+            if (!file) {
+                Mapbender.info(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.selectfile'));
+                return;
+            }
             this._showSpinner();
-            
+
             const map = this.map.getModel().olMap;
             const featureProjection = map.getView().getProjection().getCode();
-            
+
             Mapbender.FileUtil.readGeospatialFile(file, {
                 dataProjection: 'EPSG:4326',
                 featureProjection: featureProjection,
@@ -141,33 +144,33 @@
          */
         _renderTrackFeatures(features, file) {
             const map = this.map.getModel().olMap;
-            
+
             if (!features || features.length === 0) {
                 throw new Error('No features found in file');
             }
-            
+
             if (features.length !== 1) {
                 throw new Error('File must contain exactly one feature (found ' + features.length + ')');
             }
-            
+
             if (!features[0].getGeometry) {
                 throw new Error('Invalid feature: missing getGeometry method');
             }
-            
+
             const geometry = features[0].getGeometry();
             if (!geometry || geometry.getType() !== 'LineString') {
                 const foundType = geometry ? geometry.getType() : 'no geometry';
                 throw new Error('File must contain a LineString (found ' + foundType + ')');
             }
-            
+
             // Clear existing layer
             this.clear();
-            
+
             // Create new vector layer
             const source = new ol.source.Vector({
                 features: features
             });
-            
+
             this.geofileLayer = new ol.layer.Vector({
                 source: source,
                 style: (feature) => {
@@ -180,18 +183,18 @@
                 },
                 zIndex: this.trackLayerZIndex
             });
-            
+
             // Mark as internal layer
             this.geofileLayer.set('batchPrintClientInternal', true);
-            
+
             // Add to map
             map.addLayer(this.geofileLayer);
             this.geofileFeatures = features;
-            
+
             // Update UI state
             this._hideUploadButton();
             this._updateStatus(file.name, 'success');
-            
+
             // Zoom to extent
             const extent = geometry.getExtent();
             if (!ol.extent.isEmpty(extent)) {
@@ -206,49 +209,61 @@
         /**
          * Place print frames along the track
          */
-    placeFramesAlongTrack() {
-        if (!this.geofileFeatures || this.geofileFeatures.length === 0) {
-            Mapbender.warning(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.loadfirst'));
-            return;
-        }        const lineString = this.geofileFeatures[0].getGeometry();
-        if (!lineString || lineString.getType() !== 'LineString') {
-            Mapbender.error(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.invalidgeometry'));
-            return;
-        }            // Show spinner during frame placement
+        placeFramesAlongTrack() {
+            if (!this.geofileFeatures || this.geofileFeatures.length === 0) {
+                Mapbender.warning(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.loadfirst'));
+                return;
+            }
+            const lineString = this.geofileFeatures[0].getGeometry();
+            if (!lineString || lineString.getType() !== 'LineString') {
+                Mapbender.error(Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.invalidgeometry'));
+                return;
+            }
+            // Show spinner during frame placement
             this._showSpinner();
             this._disablePlaceButton();
-            
+
             // Use setTimeout to allow UI to update before processing
             setTimeout(() => {
                 try {
                     // Get settings
-                    const adjustFrames = $('.-fn-adjust-frames-checkbox', this.$element).is(':checked');
                     const overlapPercent = this._getOverlapPercentage();
-                    
+
                     if (overlapPercent === null) {
                         return; // Validation failed
                     }
-                    
-                    // Calculate frame placement parameters
-                    const params = this._calculateFramePlacement(lineString, overlapPercent);
-                    
-                    // Place frames
-                    let previousRotation = null;
-                    for (let i = 0; i < params.numFrames; i++) {
-                        const distance = i * params.spacing;
-                        const coord = Mapbender.GeometryUtil.getCoordinateAtDistance(lineString, distance);
-                        
-                        if (!coord) break;
-                        
-                        const bearing = adjustFrames ? Mapbender.GeometryUtil.getBearingAtDistance(lineString, distance) : null;
-                        
-                        // Callback to widget to place frame
-                        previousRotation = this.onFramePlaced(coord, bearing, previousRotation);
+                    const overlapRatio = overlapPercent / 100;
+
+                    const templateWidth = this.widget.width;
+                    const templateHeight = this.widget.height;
+                    const scale = this.widget._getPrintScale();
+                    const unitsPerMeterAtFirstCoordinate = this.map.getModel().getUnitsPerMeterAt(lineString.getFirstCoordinate());
+
+                    // Calculate frame size in map units (use smaller dimension)
+                    const frameWidthMapUnits = templateWidth * scale * unitsPerMeterAtFirstCoordinate.h;
+                    const frameHeightMapUnits = templateHeight * scale * unitsPerMeterAtFirstCoordinate.h;
+
+                    let numFrames = 0;
+                    let remainingLineString = lineString;
+
+                    while (remainingLineString) {
+                        const frame = Mapbender.GeometryUtil.getMaximumExtent(
+                            remainingLineString,
+                            frameWidthMapUnits,
+                            frameHeightMapUnits,
+                            Math.min(overlapRatio, this.defaultPadding),
+                            overlapRatio,
+                        );
+
+                        this.onFramePlaced(frame.extent);
+                        numFrames++;
+
+                        remainingLineString = frame.remainingLineString;
                     }
-                    
+
                     this._updatePlacementStatus(
                         Mapbender.trans('mb.print.printclient.batchprint.geofile.placed', {
-                            count: params.numFrames
+                            count: numFrames
                         }),
                         'success'
                     );
@@ -266,11 +281,11 @@
          */
         _getOverlapPercentage() {
             let inputOverlap = parseFloat($('.-fn-frame-overlap-input', this.$element).val());
-            
+
             if (isNaN(inputOverlap)) {
                 inputOverlap = 10;
             }
-            
+
             if (inputOverlap < MIN_OVERLAP || inputOverlap > MAX_OVERLAP) {
                 const message = Mapbender.trans('mb.print.printclient.batchprint.overlap.outofbounds', {
                     value: inputOverlap,
@@ -281,41 +296,8 @@
                 Mapbender.error(message);
                 return null;
             }
-            
-            return inputOverlap;
-        }
 
-        /**
-         * Calculate frame placement parameters
-         * @param {ol.geom.LineString} lineString - Track geometry
-         * @param {number} overlapPercent - Overlap percentage
-         * @returns {Object} Parameters {numFrames, spacing}
-         * @private
-         */
-        _calculateFramePlacement(lineString, overlapPercent) {
-            const templateWidth = this.widget.width;
-            const templateHeight = this.widget.height;
-            const scale = this.widget._getPrintScale();
-            const unitsPerMeterAtFirstCoordinate = this.map.getModel().getUnitsPerMeterAt(lineString.getFirstCoordinate());
-            
-            // Calculate frame size in map units (use smaller dimension)
-            const frameSize = Math.min(templateWidth, templateHeight) * scale * unitsPerMeterAtFirstCoordinate.h;
-            
-            // Calculate spacing based on overlap
-            const totalLength = lineString.getLength();
-            const spacingFactor = 1 - (overlapPercent / 100);
-            const idealSpacing = frameSize * spacingFactor;
-            
-            // Calculate number of frames needed
-            const numFrames = Math.max(MIN_FRAMES, Math.ceil(totalLength / idealSpacing) + COVERAGE_BUFFER);
-            
-            // Recalculate actual spacing to evenly distribute frames
-            const actualSpacing = totalLength / (numFrames - 1);
-            
-            return {
-                numFrames: numFrames,
-                spacing: actualSpacing
-            };
+            return inputOverlap;
         }
 
         /**
@@ -328,7 +310,7 @@
                 this.geofileLayer = null;
                 this.geofileFeatures = [];
             }
-            
+
             // Reset UI
             $('.-fn-geofile-file-input', this.$element).val('');
             this._updateStatus('');
@@ -362,7 +344,7 @@
         _updateStatus(message, type) {
             const $status = $('.-fn-geofile-status', this.$element);
             $status.text(message);
-            
+
             if (type === 'success') {
                 $status.addClass('text-success').removeClass('text-danger');
             } else if (type === 'error') {
@@ -381,7 +363,7 @@
         _updatePlacementStatus(message, type) {
             const $status = $('.-fn-geofile-place-status', this.$element);
             $status.text(message);
-            
+
             if (type === 'success') {
                 $status.addClass('text-success').removeClass('text-danger');
             } else if (type === 'error') {
@@ -464,10 +446,10 @@
         _handleError(error, file) {
             const fileName = file ? file.name : 'unknown';
             console.error('Failed to load geospatial file:', fileName, error);
-            
+
             const errorMessage = Mapbender.trans('mb.print.printclient.batchprint.geofile.alert.error') + ': ' + error.message;
             Mapbender.error(errorMessage);
-            
+
             this._updateStatus(
                 Mapbender.trans('mb.print.printclient.batchprint.geofile.error') + ': ' + error.message,
                 'error'
@@ -480,7 +462,7 @@
          */
         destroy() {
             this.clear();
-            
+
             // Remove event handlers
             $('.-fn-geofile-file-input', this.$element).off('change');
             $('.-fn-clear-geofile-button', this.$element).off('click');

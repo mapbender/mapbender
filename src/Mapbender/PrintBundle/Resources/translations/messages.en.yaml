@@ -32,7 +32,6 @@ mb:
           choosefile: 'Choose File'
           clear: 'Remove Track'
           placeframes: 'Place Frames Along Track'
-          adjustframes: 'Adjust Frame Rotation'
           overlap: 'Frame Overlap'
           selected: 'Selected'
           loaded: 'Loaded'
