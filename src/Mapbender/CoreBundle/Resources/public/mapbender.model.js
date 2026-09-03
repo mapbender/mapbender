@@ -510,11 +510,11 @@ window.Mapbender.MapModelOl4 = (function() {
                 label: label
             });
         }
-        if (!style.getFill()) {
+        if (!styleRules.fillColor && !style.getFill()) {
             styleRules['fillColor'] = '#000000';
             styleRules['fillOpacity'] = 0;
         }
-        if (!style.getStroke()) {
+        if (!styleRules.strokeColor && !style.getStroke()) {
             styleRules['strokeColor'] = '#000000';
             styleRules['strokeOpacity'] = 0;
         }
@@ -752,12 +752,12 @@ window.Mapbender.MapModelOl4 = (function() {
             if (font) {
                 var fontParts = font.split(/\s+/);
                 // Digitizer custom styling quirk: support "normal" font-variant as an alias for "regular" font-weight
-                if (/^bold|regular|italic|normal$/.test(fontParts[0] || '')) {
+                if (/^bold|regular|italic|normal|([0-9]+)$/.test(fontParts[0] || '')) {
                     style['fontWeight'] = fontParts[0] !== 'normal' && fontParts[0] || 'regular';
                     fontParts.splice(0, 1);
                 }
                 var sizeRatio = (this.mbMap && this.mbMap.options.dpi || 96.) / (96. * (window.devicePixelRatio || 1));
-                if (/^\d+\w+$/.test(fontParts[0] || '')) {
+                if (/^\d+[a-zA-Z]+$/.test(fontParts[0] || '')) {
                     style['fontSize'] = [sizeRatio * parseFloat(fontParts[0]), 'px'].join('');
                     fontParts.splice(0, 1);
                 } else {
