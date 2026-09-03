@@ -142,12 +142,21 @@
 
         /**
          * Returns the source id. This is by default just the id given in the source definition,
-         * but can be overridden by subclasses if needed, e.g. for WMS shared instances. There,
-         * include the instance id also contains the assignment id.
+         * except for shared instances, where the <sourceId> of <assignmentId>_<sourceId> is returned
          * @return {string|null}
          */
         getSourceId() {
-            return this.id;
+            if (this.cachedSourceId) {
+                return this.cachedSourceId;
+            }
+            let sourceId = this.id;
+            // if source id matches pattern "<assignmentId>_<sourceId>", extract sourceId part
+            const match = (sourceId ?? '').match(/^[0-9]+_([0-9]+)$/);
+            if (match) {
+                sourceId = match[1];
+            }
+            this.cachedSourceId = sourceId;
+            return sourceId;
         }
 
         getSettings() {
