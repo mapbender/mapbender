@@ -1,6 +1,7 @@
 ## next bugfix release
 * Do not show loading spinner in layer tree indefinetely when disabling source while it's loading ([#PR1886](https://github.com/mapbender/mapbender/pull/1886))
 * Fix vector tiles with nested metadata could not be loaded ([#PR1924](https://github.com/mapbender/mapbender/pull/1924))
+* Fix sources other than WMS not working in BaseSourceSwitcher as free instances ([#PR1933](https://github.com/mapbender/mapbender/pull/1933))
 
 ## v4.2.6
 Features:
