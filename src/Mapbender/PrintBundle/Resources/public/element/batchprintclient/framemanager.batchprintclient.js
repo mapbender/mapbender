@@ -21,9 +21,9 @@
          * Creates a new FrameManager
          * @param {Object} options - Configuration options
          * @param {Object} options.styleConfig - Style configuration for frames
-         * @param {Function} options.onFrameAdded - Callback when frame is added
-         * @param {Function} options.onFrameRemoved - Callback when frame is removed
-         * @param {Function} options.onFramesCleared - Callback when all frames are cleared
+         * @param {Function} [options.onFrameAdded] - Callback when frame is added
+         * @param {Function} [options.onFrameRemoved] - Callback when frame is removed
+         * @param {Function} [options.onFramesCleared] - Callback when all frames are cleared
          */
         constructor(options = {}) {
             this.styleConfig = options.styleConfig;

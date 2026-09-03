@@ -57,6 +57,103 @@
             });
         }
 
+        createGeofileHandler() {
+            return new Mapbender.BatchPrintGeofileHandler(this.getGeofileHandlerOptions());
+        }
+
+        getGeofileHandlerOptions() {
+            const self = this;
+            return {
+                $element: this.$element,
+                widget: this,
+                map: this.map,
+                styleConfig: this.styleConfig,
+                trackLayerZIndex: this.TRACK_LAYER_ZINDEX,
+                trackFitPadding: this.trackFitPadding,
+                trackFitDuration: this.trackFitDuration,
+                trackFitMaxZoom: this.trackFitMaxZoom,
+                onFramePlaced: function (extent, bearing, previousRotation) {
+                    return self._placeFrameAtPosition(extent, bearing, previousRotation);
+                }
+            };
+        }
+
+        createBatchPrintStyleConfig() {
+            return new Mapbender.BatchPrintStyleConfig();
+        }
+
+
+        createBatchPrintFrameManager() {
+            return new Mapbender.BatchPrintFrameManager(this.getBatchPrintFrameManagerOptions());
+        }
+
+        createTableController() {
+            return new Mapbender.BatchPrintTableController(this.getTableControllerOptions());
+        }
+
+        getTableControllerOptions() {
+            const self = this;
+            return {
+                $element: this.$element,
+                widget: this,
+                styleConfig: this.styleConfig,
+                frameManager: this.frameManager,
+                rotationController: this.rotationController,
+                map: this.map,
+                pinnedFramesLayer: this.PINNED_FRAMES_LAYER,
+                hitToleranceFrame: this.hitToleranceFrame,
+                hitToleranceRotation: this.hitToleranceRotation,
+                getDefaultStyle: function () {
+                    return self._getDefaultStyle();
+                },
+                onDeleteFrame: function (frameId) {
+                    self._deleteFrame(frameId);
+                },
+                onFrameReorder: function (newOrder) {
+                    self.frameManager.reorder(newOrder);
+                }
+            };
+        }
+
+        createRotationController() {
+            return new Mapbender.BatchPrintRotationController(this.getRotationControllerOptions());
+        }
+
+        getRotationControllerOptions() {
+            const self = this;
+            return {
+                map: this.map.getModel().olMap,
+                widget: this,
+                styleConfig: this.styleConfig,
+                rotationZIndex: this.ROTATION_ZINDEX,
+                hitTolerance: this.hitToleranceRotation,
+                dragEndDelay: this.dragEndDelay,
+                getFrameById: function (frameId) {
+                    return self.frameManager.getFrame(frameId);
+                },
+                onRotationComplete: function (frameId) {
+                    self.tableController.updateTable();
+                }
+            };
+        }
+
+        getBatchPrintFrameManagerOptions() {
+            const self = this;
+            return {
+                styleConfig: this.styleConfig,
+                onFrameAdded: function (frameData) {
+                    self._addPinnedFeatureToMap(frameData.feature);
+                },
+                onFrameRemoved: function (frameData) {
+                    if (self.rotationController) {
+                        self.rotationController.removeHandle(frameData.id);
+                    }
+                    const layerBridge = Mapbender.vectorLayerPool.getElementLayer(self, self.PINNED_FRAMES_LAYER);
+                    layerBridge.removeNativeFeatures([frameData.feature]);
+                }
+            };
+        }
+
         /**
          * Override _setup to handle geofile section visibility
          * @private
@@ -80,64 +177,11 @@
         _setupBatchPrint(mbMap) {
             var self = this;
 
-            // Initialize style configuration
-            this.styleConfig = new Mapbender.BatchPrintStyleConfig();
-
-            // Initialize frame manager
-            this.frameManager = new Mapbender.BatchPrintFrameManager({
-                styleConfig: this.styleConfig,
-                onFrameAdded: function (frameData) {
-                    self._addPinnedFeatureToMap(frameData.feature);
-                },
-                onFrameRemoved: function (frameData) {
-                    if (self.rotationController) {
-                        self.rotationController.removeHandle(frameData.id);
-                    }
-                    var layerBridge = Mapbender.vectorLayerPool.getElementLayer(self, self.PINNED_FRAMES_LAYER);
-                    layerBridge.removeNativeFeatures([frameData.feature]);
-                }
-            });
-
-            // Initialize rotation controller
-            this.rotationController = new Mapbender.BatchPrintRotationController({
-                map: this.map.getModel().olMap,
-                widget: this,
-                styleConfig: this.styleConfig,
-                rotationZIndex: this.ROTATION_ZINDEX,
-                hitTolerance: this.hitToleranceRotation,
-                dragEndDelay: this.dragEndDelay,
-                getFrameById: function (frameId) {
-                    return self.frameManager.getFrame(frameId);
-                },
-                onRotationComplete: function (frameId) {
-                    self.tableController.updateTable();
-                }
-            });
-
-            // Initialize table controller
-            this.tableController = new Mapbender.BatchPrintTableController({
-                $element: this.$element,
-                widget: this,
-                styleConfig: this.styleConfig,
-                frameManager: this.frameManager,
-                rotationController: this.rotationController,
-                map: this.map,
-                pinnedFramesLayer: this.PINNED_FRAMES_LAYER,
-                hitToleranceFrame: this.hitToleranceFrame,
-                hitToleranceRotation: this.hitToleranceRotation,
-                getDefaultStyle: function () {
-                    return self._getDefaultStyle();
-                },
-                onDeleteFrame: function (frameId) {
-                    self._deleteFrame(frameId);
-                },
-                onFrameReorder: function (newOrder) {
-                    self.frameManager.reorder(newOrder);
-                }
-            });
-
-            // Setup property proxies for backward compatibility
-            this._setupPropertyProxies();
+            this.styleConfig = this.createBatchPrintStyleConfig();
+            this.frameManager = this.createBatchPrintFrameManager();
+            this.rotationController = this.createRotationController();
+            this.tableController = this.createTableController();
+            this.geofileHandler = this.createGeofileHandler();
 
             // Add unique class identifier
             this.$element.addClass('mb-element-batchprintclient');
@@ -146,19 +190,6 @@
             $('input[name="rotation"]', this.$element).parent().remove();
 
             // Initialize geofile handler
-            this.geofileHandler = new Mapbender.BatchPrintGeofileHandler({
-                $element: this.$element,
-                widget: this,
-                map: this.map,
-                styleConfig: this.styleConfig,
-                trackLayerZIndex: this.TRACK_LAYER_ZINDEX,
-                trackFitPadding: this.trackFitPadding,
-                trackFitDuration: this.trackFitDuration,
-                trackFitMaxZoom: this.trackFitMaxZoom,
-                onFramePlaced: function (extent, bearing, previousRotation) {
-                    return self._placeFrameAtPosition(extent, bearing, previousRotation);
-                }
-            });
 
             // Mark element layers as internal for print filtering
             var selectionLayer = Mapbender.vectorLayerPool.getElementLayer(this, 0);
@@ -200,31 +231,6 @@
                     self.feature.setStyle(null);  // Reset to default style
                     self._redrawSelectionFeatures();
                 }
-            });
-        }
-
-        /**
-         * Setup property proxies for backward compatibility
-         * @private
-         */
-        _setupPropertyProxies() {
-            var self = this;
-
-            Object.defineProperty(this, 'pinnedFeatures', {
-                get: function () {
-                    return self.frameManager.getFrames();
-                },
-                configurable: true
-            });
-
-            Object.defineProperty(this, 'featureCounter', {
-                get: function () {
-                    return self.frameManager.frameCounter;
-                },
-                set: function (value) {
-                    self.frameManager.frameCounter = value;
-                },
-                configurable: true
             });
         }
 
@@ -328,7 +334,7 @@
                 this.mapHoverHandler = null;
             }
 
-            this.featureCounter = 0;
+            this.frameManager.frameCounter = 0;
             if (this.tableController) {
                 this.tableController.updateTable();
             }
@@ -697,7 +703,7 @@
                 return false;
             }
 
-            if (this.pinnedFeatures.length === 0) {
+            if (this.frameManager.getFrames().length === 0) {
                 Mapbender.info(Mapbender.trans('mb.print.printclient.batchprint.alert.noframes'));
                 return false;
             }
@@ -723,8 +729,9 @@
                 throw new Error('Required form elements not found');
             }
 
-            for (var i = 0; i < this.pinnedFeatures.length; i++) {
-                var frameData = this.pinnedFeatures[i];
+            const frames = this.frameManager.getFrames();
+            for (var i = 0; i < frames.length; i++) {
+                var frameData = frames[i];
 
                 // Store original form values
                 var originalScale = $scaleSelect.val();
