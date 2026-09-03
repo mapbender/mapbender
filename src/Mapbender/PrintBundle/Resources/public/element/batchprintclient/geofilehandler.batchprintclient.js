@@ -232,26 +232,38 @@
                         return; // Validation failed
                     }
 
-                    // Calculate frame placement parameters
-                    const params = this._calculateFramePlacement(lineString, overlapPercent);
+                    const templateWidth = this.widget.width;
+                    const templateHeight = this.widget.height;
+                    const scale = this.widget._getPrintScale();
+                    const unitsPerMeterAtFirstCoordinate = this.map.getModel().getUnitsPerMeterAt(lineString.getFirstCoordinate());
 
-                    // Place frames
-                    let previousRotation = null;
-                    for (let i = 0; i < params.numFrames; i++) {
-                        const distance = i * params.spacing;
-                        const coord = Mapbender.GeometryUtil.getCoordinateAtDistance(lineString, distance);
+                    // Calculate frame size in map units (use smaller dimension)
+                    const frameWidthMapUnits = templateWidth * scale * unitsPerMeterAtFirstCoordinate.h;
+                    const frameHeightMapUnits = templateHeight * scale * unitsPerMeterAtFirstCoordinate.v;
 
-                        if (!coord) break;
+                    const totalLength = lineString.getLength();
+                    let currentDistance = 0;
+                    let numFrames = 0;
 
-                        const bearing = adjustFrames ? Mapbender.GeometryUtil.getBearingAtDistance(lineString, distance) : null;
+                    // const bearing = adjustFrames ? Mapbender.GeometryUtil.getBearingAtDistance(lineString, distance) : null;
+                    let remainingLineString = lineString;
 
-                        // Callback to widget to place frame
-                        previousRotation = this.onFramePlaced(coord, bearing, previousRotation);
+                    while (remainingLineString) {
+                        const frame = Mapbender.GeometryUtil.getMaximumExtent(
+                            remainingLineString,
+                            frameWidthMapUnits,
+                            frameHeightMapUnits,
+                        );
+
+                        this.onFramePlaced(frame.extent);
+                        numFrames++;
+
+                        remainingLineString = frame.remainingLineString;
                     }
 
                     this._updatePlacementStatus(
                         Mapbender.trans('mb.print.printclient.batchprint.geofile.placed', {
-                            count: params.numFrames
+                            count: numFrames
                         }),
                         'success'
                     );
@@ -286,39 +298,6 @@
             }
 
             return inputOverlap;
-        }
-
-        /**
-         * Calculate frame placement parameters
-         * @param {ol.geom.LineString} lineString - Track geometry
-         * @param {number} overlapPercent - Overlap percentage
-         * @returns {Object} Parameters {numFrames, spacing}
-         * @private
-         */
-        _calculateFramePlacement(lineString, overlapPercent) {
-            const templateWidth = this.widget.width;
-            const templateHeight = this.widget.height;
-            const scale = this.widget._getPrintScale();
-            const unitsPerMeterAtFirstCoordinate = this.map.getModel().getUnitsPerMeterAt(lineString.getFirstCoordinate());
-
-            // Calculate frame size in map units (use smaller dimension)
-            const frameSize = Math.min(templateWidth, templateHeight) * scale * unitsPerMeterAtFirstCoordinate.h;
-
-            // Calculate spacing based on overlap
-            const totalLength = lineString.getLength();
-            const spacingFactor = 1 - (overlapPercent / 100);
-            const idealSpacing = frameSize * spacingFactor;
-
-            // Calculate number of frames needed
-            const numFrames = Math.max(MIN_FRAMES, Math.ceil(totalLength / idealSpacing) + COVERAGE_BUFFER);
-
-            // Recalculate actual spacing to evenly distribute frames
-            const actualSpacing = totalLength / (numFrames - 1);
-
-            return {
-                numFrames: numFrames,
-                spacing: actualSpacing
-            };
         }
 
         /**

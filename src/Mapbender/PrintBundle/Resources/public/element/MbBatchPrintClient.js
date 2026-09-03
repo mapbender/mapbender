@@ -155,8 +155,8 @@
                 trackFitPadding: this.trackFitPadding,
                 trackFitDuration: this.trackFitDuration,
                 trackFitMaxZoom: this.trackFitMaxZoom,
-                onFramePlaced: function (coord, bearing, previousRotation) {
-                    return self._placeFrameAtPosition(coord, bearing, previousRotation);
+                onFramePlaced: function (extent, bearing, previousRotation) {
+                    return self._placeFrameAtPosition(extent, bearing, previousRotation);
                 }
             });
 
@@ -540,6 +540,7 @@
 
             // Clone the current feature geometry
             var geom = this.feature.getGeometry().clone();
+
             var pinnedFeature = new ol.Feature(geom);
 
             // Get current rotation from feature entry (in radians) and convert to degrees
@@ -818,18 +819,23 @@
 
         /**
          * Place a frame at a specific position (called by geofileHandler)
-         * @param {Array} coord - Coordinates [x, y]
+         * @param {{minX: number, minY: number, maxX: number, maxY: number}} extent - frame extent [xmin, ymin, xmax, ymax]
          * @param {number|null} bearing - Bearing in degrees (null if no rotation)
          * @param {number|null} previousRotation - Previous frame rotation for continuity
          * @returns {number|null} Current rotation in degrees
          * @private
          */
-        _placeFrameAtPosition(coord, bearing, previousRotation) {
-            // Move current feature to this position
-            this._moveFeatureToCoordinate(coord);
+        _placeFrameAtPosition(extent, bearing, previousRotation) {
+            this.feature.getGeometry().setCoordinates([[
+                [extent.minX, extent.minY],
+                [extent.minX, extent.maxY],
+                [extent.maxX, extent.maxY],
+                [extent.maxX, extent.minY],
+                [extent.minX, extent.minY],
+            ]]);
 
             // Rotate if bearing provided
-            if (bearing !== null) {
+            if (bearing !== null && bearing !== undefined) {
                 this._rotateCurrentFeature(bearing, previousRotation);
             }
 
@@ -837,7 +843,7 @@
             this._pinCurrentFrame();
 
             // Get and return current rotation for next frame
-            if (bearing !== null) {
+            if (bearing !== null && bearing !== undefined) {
                 var entry = this._getFeatureEntry(this.feature);
                 return entry ? (entry.rotationBias + entry.tempRotation) * (180 / Math.PI) : previousRotation;
             }
