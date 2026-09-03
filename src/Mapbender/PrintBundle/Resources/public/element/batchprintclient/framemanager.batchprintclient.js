@@ -1,17 +1,17 @@
 /**
  * FrameManager for BatchPrintClient
- * 
+ *
  * Manages frame data including:
  * - CRUD operations (Create, Read, Update, Delete)
  * - Frame validation and ordering
  * - Frame data storage with Map for O(1) lookups
  * - Frame counter management
  */
-(function() {
+(function () {
     'use strict';
 
     window.Mapbender = window.Mapbender || {};
-    
+
     /**
      * FrameManager for BatchPrintClient
      * Manages frame data including CRUD operations, validation, ordering, and storage
@@ -27,10 +27,13 @@
          */
         constructor(options = {}) {
             this.styleConfig = options.styleConfig;
-            this.onFrameAdded = typeof options.onFrameAdded === 'function' ? options.onFrameAdded : () => {};
-            this.onFrameRemoved = typeof options.onFrameRemoved === 'function' ? options.onFrameRemoved : () => {};
-            this.onFramesCleared = typeof options.onFramesCleared === 'function' ? options.onFramesCleared : () => {};
-            
+            this.onFrameAdded = typeof options.onFrameAdded === 'function' ? options.onFrameAdded : () => {
+            };
+            this.onFrameRemoved = typeof options.onFrameRemoved === 'function' ? options.onFrameRemoved : () => {
+            };
+            this.onFramesCleared = typeof options.onFramesCleared === 'function' ? options.onFramesCleared : () => {
+            };
+
             // Data storage
             this.frames = [];  // Ordered array for iteration and display
             this.framesMap = new Map();  // Map for O(1) lookups by ID
@@ -92,12 +95,12 @@
         addFrame(frameData) {
             this.frameCounter++;
             frameData.id = this.frameCounter;
-            
+
             this.frames.push(frameData);
             this.framesMap.set(frameData.id, frameData);
-            
+
             this.onFrameAdded(frameData);
-            
+
             return frameData;
         }
 
@@ -108,19 +111,19 @@
          */
         removeFrame(frameId) {
             const frameData = this.framesMap.get(frameId);
-            
+
             if (!frameData) {
                 return null;
             }
-            
+
             // Remove from array
             this.frames = this.frames.filter(f => f.id !== frameId);
-            
+
             // Remove from map
             this.framesMap.delete(frameId);
-            
+
             this.onFrameRemoved(frameData);
-            
+
             return frameData;
         }
 
@@ -129,11 +132,11 @@
          */
         clear() {
             const hadFrames = this.frames.length > 0;
-            
+
             this.frames = [];
             this.framesMap.clear();
             this.frameCounter = 0;
-            
+
             if (hadFrames) {
                 this.onFramesCleared();
             }
@@ -149,20 +152,20 @@
                 console.error('Reorder failed: ID count mismatch');
                 return false;
             }
-            
+
             const reorderedFrames = [];
             for (let i = 0; i < orderedIds.length; i++) {
                 const frameId = orderedIds[i];
                 const frameData = this.framesMap.get(frameId);
-                
+
                 if (!frameData) {
                     console.error('Reorder failed: Frame ID not found', frameId);
                     return false;
                 }
-                
+
                 reorderedFrames.push(frameData);
             }
-            
+
             this.frames = reorderedFrames;
             return true;
         }
@@ -175,18 +178,18 @@
          */
         updateFrame(frameId, updates) {
             const frameData = this.framesMap.get(frameId);
-            
+
             if (!frameData) {
                 return false;
             }
-            
+
             // Apply updates
             for (const key in updates) {
                 if (updates.hasOwnProperty(key)) {
                     frameData[key] = updates[key];
                 }
             }
-            
+
             return true;
         }
 
@@ -205,36 +208,36 @@
          */
         validateFrame(frameData) {
             const errors = [];
-            
+
             if (!frameData) {
                 errors.push('Frame data is null or undefined');
                 return {valid: false, errors: errors};
             }
-            
+
             if (!frameData.feature) {
                 errors.push('Missing feature');
             }
-            
+
             if (typeof frameData.rotation !== 'number') {
                 errors.push('Invalid rotation value');
             }
-            
+
             if (typeof frameData.scale !== 'number' || frameData.scale <= 0) {
                 errors.push('Invalid scale value');
             }
-            
+
             if (!Array.isArray(frameData.center) || frameData.center.length !== 2) {
                 errors.push('Invalid center coordinates');
             }
-            
+
             if (!frameData.template) {
                 errors.push('Missing template');
             }
-            
+
             if (!frameData.extent || typeof frameData.extent.width !== 'number' || typeof frameData.extent.height !== 'number') {
                 errors.push('Invalid extent');
             }
-            
+
             return {
                 valid: errors.length === 0,
                 errors: errors

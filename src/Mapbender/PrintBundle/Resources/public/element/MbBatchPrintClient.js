@@ -1,4 +1,4 @@
-(function() {
+(function () {
     /**
      * Batch Print Client Widget
      *
@@ -52,7 +52,7 @@
 
             // Defer initialization until parent setup is complete
             var self = this;
-            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function(mbMap) {
+            Mapbender.elementRegistry.waitReady('.mb-element-map').then(function (mbMap) {
                 self._setupBatchPrint(mbMap);
             });
         }
@@ -86,10 +86,10 @@
             // Initialize frame manager
             this.frameManager = new Mapbender.BatchPrintFrameManager({
                 styleConfig: this.styleConfig,
-                onFrameAdded: function(frameData) {
+                onFrameAdded: function (frameData) {
                     self._addPinnedFeatureToMap(frameData.feature);
                 },
-                onFrameRemoved: function(frameData) {
+                onFrameRemoved: function (frameData) {
                     if (self.rotationController) {
                         self.rotationController.removeHandle(frameData.id);
                     }
@@ -106,10 +106,10 @@
                 rotationZIndex: this.ROTATION_ZINDEX,
                 hitTolerance: this.hitToleranceRotation,
                 dragEndDelay: this.dragEndDelay,
-                getFrameById: function(frameId) {
+                getFrameById: function (frameId) {
                     return self.frameManager.getFrame(frameId);
                 },
-                onRotationComplete: function(frameId) {
+                onRotationComplete: function (frameId) {
                     self.tableController.updateTable();
                 }
             });
@@ -125,13 +125,13 @@
                 pinnedFramesLayer: this.PINNED_FRAMES_LAYER,
                 hitToleranceFrame: this.hitToleranceFrame,
                 hitToleranceRotation: this.hitToleranceRotation,
-                getDefaultStyle: function() {
+                getDefaultStyle: function () {
                     return self._getDefaultStyle();
                 },
-                onDeleteFrame: function(frameId) {
+                onDeleteFrame: function (frameId) {
                     self._deleteFrame(frameId);
                 },
-                onFrameReorder: function(newOrder) {
+                onFrameReorder: function (newOrder) {
                     self.frameManager.reorder(newOrder);
                 }
             });
@@ -155,7 +155,7 @@
                 trackFitPadding: this.trackFitPadding,
                 trackFitDuration: this.trackFitDuration,
                 trackFitMaxZoom: this.trackFitMaxZoom,
-                onFramePlaced: function(coord, bearing, previousRotation) {
+                onFramePlaced: function (coord, bearing, previousRotation) {
                     return self._placeFrameAtPosition(coord, bearing, previousRotation);
                 }
             });
@@ -175,12 +175,12 @@
             $('input[type="submit"]', this.$element).val(Mapbender.trans('mb.print.printclient.batchprint.btn.submit'));
 
             // Setup delete all frames button
-            $('.-fn-delete-all-frames', this.$element).on('click', function() {
+            $('.-fn-delete-all-frames', this.$element).on('click', function () {
                 self._deleteAllFrames();
             });
 
             // Stop mouse-follow when mouse enters widget
-            this.$element.on('mouseenter', function() {
+            this.$element.on('mouseenter', function () {
                 if (self.mouseFollowActive) {
                     self._stopMouseFollow();
                 }
@@ -191,7 +191,7 @@
             });
 
             // Restart mouse-follow when mouse leaves widget
-            this.$element.on('mouseleave', function() {
+            this.$element.on('mouseleave', function () {
                 if (self.selectionActive && !self.mouseFollowActive) {
                     self._startMouseFollow();
                 }
@@ -211,13 +211,19 @@
             var self = this;
 
             Object.defineProperty(this, 'pinnedFeatures', {
-                get: function() { return self.frameManager.getFrames(); },
+                get: function () {
+                    return self.frameManager.getFrames();
+                },
                 configurable: true
             });
 
             Object.defineProperty(this, 'featureCounter', {
-                get: function() { return self.frameManager.frameCounter; },
-                set: function(value) { self.frameManager.frameCounter = value; },
+                get: function () {
+                    return self.frameManager.frameCounter;
+                },
+                set: function (value) {
+                    self.frameManager.frameCounter = value;
+                },
                 configurable: true
             });
         }
@@ -276,7 +282,7 @@
             }
 
             var self = this;
-            this._getTemplateSize().then(function() {
+            this._getTemplateSize().then(function () {
                 self.selectionActive = true;
                 self._setScale();
 
@@ -344,7 +350,7 @@
             var $mapElement = $(map.getTargetElement());
 
             // Use OpenLayers click event - fires immediately on click
-            this.mouseClickHandler = function(evt) {
+            this.mouseClickHandler = function (evt) {
                 if (!self.mouseFollowActive || self.rotationController.isCurrentlyRotating()) {
                     return;
                 }
@@ -356,7 +362,7 @@
             map.on('click', this.mouseClickHandler);
 
             // Mouse move handler - update feature position
-            this.mouseMoveHandler = function(evt) {
+            this.mouseMoveHandler = function (evt) {
                 if (!self.mouseFollowActive || !self.feature) {
                     return;
                 }
@@ -365,7 +371,7 @@
                 var coordinate = map.getCoordinateFromPixel(pixel);
 
                 // Hide mouse-move-frame when hovering over any feature (excluding the selection frame itself)
-                var hasOtherFeature = map.forEachFeatureAtPixel(pixel, function(mapFeature) {
+                var hasOtherFeature = map.forEachFeatureAtPixel(pixel, function (mapFeature) {
                     return mapFeature !== self.feature;
                 });
 
@@ -384,13 +390,13 @@
             $mapElement.on('mousemove', this.mouseMoveHandler);
 
             // Hide feature when mouse leaves map and enters any widget
-            $mapElement.on('mouseleave', function() {
+            $mapElement.on('mouseleave', function () {
                 if (self.feature) {
                     self.feature.setStyle(self.styleConfig.createEmptyStyle());  // Make invisible
                 }
             });
 
-            $mapElement.on('mouseenter', function() {
+            $mapElement.on('mouseenter', function () {
                 if (self.feature && self.mouseFollowActive) {
                     self.feature.setStyle(null);  // Reset to default style
                     self._redrawSelectionFeatures();
@@ -804,7 +810,7 @@
             // Switch to results tab after short delay
             var $tabs = $('.tab-container', this.$element);
             if ($tabs.length) {
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     $tabs.tabs({active: 1});
                 }, this.tabSwitchDelay);
             }
