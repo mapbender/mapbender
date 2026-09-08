@@ -205,7 +205,7 @@
     // ---- BaseSourceSwitcher ----
     --basesourceswitcher-border-color: var(--panel-border-color);
     --basesourceswitcher-background-color: var(--background-color);
-    --basesourceswitcher-background-color-active: color-mix(in srgb, var(--basesourceswitcher-background-color), var(--text-color) 20%);
+    --basesourceswitcher-background-color-active: color-mix(in srgb, var(--basesourceswitcher-background-color), var(--text-color) 10%);
     --basesourceswitcher-text-color: var(--text-color);
     --basesourceswitcher-text-color-active: var(--text-color);
 
