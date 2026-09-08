@@ -119,7 +119,10 @@
     td.featureLimit,
     td.minMaxScale,
     td.checkboxColumn {
-        max-width: 10%;
+        max-width: 8%;
+    }
+    td.minMaxScale, td.featureLimit {
+        min-width: 90px;
     }
     td.titleColumn {
         min-width: 30%;
