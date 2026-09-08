@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Element;
 
-use OwsProxy3\CoreBundle\Component\Utils;
 use Mapbender\Component\Element\AbstractElementService;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\Component\Element\TemplateView;
@@ -11,6 +10,7 @@ use Mapbender\CoreBundle\Component\ElementBase\ConfigMigrationInterface;
 use Mapbender\CoreBundle\Component\ElementBase\FloatableElement;
 use Mapbender\CoreBundle\Element\Type\SimpleSearchAdminType;
 use Mapbender\CoreBundle\Entity\Element;
+use OwsProxy3\CoreBundle\Component\Utils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -23,7 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SimpleSearch extends AbstractElementService
     implements ConfigMigrationInterface, ElementHttpHandlerInterface, FloatableElement
 {
-    public function __construct(protected HttpTransportInterface $httpTransport, protected TranslatorInterface    $translator, protected $isDebug = false)
+    public function __construct(protected HttpTransportInterface $httpTransport, protected TranslatorInterface $translator, protected $isDebug = false)
     {
     }
 
@@ -93,7 +93,7 @@ class SimpleSearch extends AbstractElementService
         $view = new TemplateView('@MapbenderCore/Element/simple_search.html.twig');
         $view->attributes['class'] = 'mb-element-simplesearch';
         $configurations = $element->getConfiguration()['configurations'];
-        if (\preg_match('#toolbar|footer#i', (string) $element->getRegion())) {
+        if (\preg_match('#toolbar|footer#i', (string)$element->getRegion())) {
             $view->attributes['title'] = $element->getTitle();
         }
         if (count($configurations) > 1) {
@@ -148,8 +148,8 @@ class SimpleSearch extends AbstractElementService
         // Replace Whitespace if desired
         if (array_key_exists('query_ws_replace', $configuration)) {
             $pattern = $configuration['query_ws_replace'];
-            if ('' !== trim((string) $pattern)) {
-                $q = preg_replace('/\s+/', (string) $pattern, (string) $q);
+            if ('' !== trim((string)$pattern)) {
+                $q = preg_replace('/\s+/', (string)$pattern, (string)$q);
             }
         }
 
@@ -187,24 +187,6 @@ class SimpleSearch extends AbstractElementService
     public static function updateEntityConfig(Element $entity): void
     {
         $config = $entity->getConfiguration();
-        if (!empty($config['result']) && \is_array($config['result'])) {
-            if (isset($config['result']['icon_url'])) {
-                $config['result_icon_url'] = $config['result']['icon_url'];
-            }
-            if (isset($config['result']['icon_offset'])) {
-                $config['result_icon_offset'] = $config['result']['icon_offset'];
-            }
-            if (isset($config['result']['buffer'])) {
-                $config['result_buffer'] = $config['result']['buffer'];
-            }
-            if (isset($config['result']['minscale'])) {
-                $config['result_minscale'] = $config['result']['minscale'];
-            }
-            if (isset($config['result']['maxscale'])) {
-                $config['result_maxscale'] = $config['result']['maxscale'];
-            }
-        }
-        unset($config['result']);
 
         if (!empty($config['token_regex']) && \is_array($config['token_regex'])) {
             // Legacy example config quirk: documentation has historically suggested using an
@@ -217,17 +199,35 @@ class SimpleSearch extends AbstractElementService
         }
 
         if (!isset($config['configurations'])) {
-            $config['title'] = $entity->getTitle();
-            if (!$entity->getTitle()) {
-                $config['title'] = array_key_exists('placeholder', $config) ? $config['placeholder'] : "";
-            }
+            $config['title'] = $entity->getTitle() ?: ($config['placeholder'] ?? '');
             $oldConfig = $config;
             $config = ['configurations' => [$oldConfig]];
 
-            foreach(['anchor', 'target', 'openInline', 'screenType'] as $key) {
+            foreach (['anchor', 'target', 'openInline', 'screenType'] as $key) {
                 if (array_key_exists($key, $oldConfig)) {
                     $config[$key] = $oldConfig[$key];
                 }
+            }
+        }
+
+        foreach ($config['configurations'] as $key => $childConfig) {
+            if (!empty($childConfig['result']) && \is_array($childConfig['result'])) {
+                if (isset($childConfig['result']['icon_url'])) {
+                    $config['configurations'][$key]['result_icon_url'] = $childConfig['result']['icon_url'];
+                }
+                if (isset($childConfig['result']['icon_offset'])) {
+                    $config['configurations'][$key]['result_icon_offset'] = $childConfig['result']['icon_offset'];
+                }
+                if (isset($childConfig['result']['buffer'])) {
+                    $config['configurations'][$key]['result_buffer'] = $childConfig['result']['buffer'];
+                }
+                if (isset($childConfig['result']['minscale'])) {
+                    $config['configurations'][$key]['result_minscale'] = $childConfig['result']['minscale'];
+                }
+                if (isset($childConfig['result']['maxscale'])) {
+                    $config['configurations'][$key]['result_maxscale'] = $childConfig['result']['maxscale'];
+                }
+                unset($config['configurations'][$key]['result']);
             }
         }
 
