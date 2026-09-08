@@ -670,7 +670,7 @@ class LayerRendererGeoJson extends LayerRenderer
         $fontFamily = $this->fontGeojson ?? $this->defaultFont;
         $fontStyle = '';
         if (($style['fontWeight'] ?? null) === 'bold') $fontStyle .= 'bold';
-        if (($style['fontStyle'] ?? null) === 'italic') $fontStyle .= 'italic';
+        if (($style['fontWeight'] ?? null) === 'italic' || ($style['fontStyle'] ?? null) === 'italic') $fontStyle .= 'italic';
         if (!$fontStyle) $fontStyle = 'regular';
 
         if (isset($this->customFonts[$fontFamily])) {
