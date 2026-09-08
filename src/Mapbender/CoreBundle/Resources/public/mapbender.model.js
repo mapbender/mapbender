@@ -774,11 +774,13 @@ window.Mapbender.MapModelOl4 = (function () {
             // Default font size is 10px. Relative  units (em, rem, pt, etc.) are calculated on that basis
             let fontSize = 10;
             if (declaration.fontSize.endsWith('px')) {
-                fontSize = Number.parseFloat(declaration.fontSize);
-            } else if (declaration.fontSize.endsWith('em')) {
-                fontSize = Number.parseFloat(declaration.fontSize) * 10;
+                fontSize = parseFloat(declaration.fontSize);
+            } else if (declaration.fontSize.endsWith('pt')) {
+                fontSize = parseFloat(declaration.fontSize) * .75; // 1pt = 1/72in, 1px = 1/96in
+            } else if (declaration.fontSize.endsWith('em')) { // this also includes rem
+                fontSize = parseFloat(declaration.fontSize) * 10;
             } else if (declaration.fontSize.endsWith('%')) {
-                fontSize = Number.parseFloat(declaration.fontSize) * 0.1; // 100% = 1em = 10px
+                fontSize = parseFloat(declaration.fontSize) * 0.1; // 100% = 1em = 10px
             }
             const sizeRatio = (this.mbMap?.options?.dpi || 96.) / (96. * (window.devicePixelRatio || 1));
             style['fontSize'] = `${fontSize * sizeRatio}px`;
