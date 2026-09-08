@@ -4,7 +4,7 @@ Breaking changes (for details on migration process see [UPGRADING.md]):
 * Symfony updated to version 7.4 LTS
 * Doctrine DBAL updated to version 4.4
 * Doctrine ORM updated to version 3.6
-* Default print queue directory changed to var/prints
+* Default print queue directory changed to var/prints ([#PR1937](https://github.com/mapbender/mapbender/pull/1937))
 
 Security:
 * Allow custom permissions for source instances ([#PR1812](https://github.com/mapbender/mapbender/pull/1812), [#PR1825](https://github.com/mapbender/mapbender/pull/1825))
