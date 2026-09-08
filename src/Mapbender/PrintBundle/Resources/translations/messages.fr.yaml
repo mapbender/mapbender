@@ -30,7 +30,6 @@ mb:
           choosefile: 'Choisir un fichier'
           clear: 'Supprimer le parcours'
           placeframes: 'Placer des cadres le long du parcours'
-          adjustframes: 'Ajuster la rotation des cadres'
           overlap: 'Chevauchement des cadres'
           selected: 'Sélectionné'
           loaded: 'Chargé'

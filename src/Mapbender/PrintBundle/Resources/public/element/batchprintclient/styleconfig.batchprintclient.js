@@ -1,12 +1,12 @@
 /**
  * StyleConfig for BatchPrintClient
- * 
+ *
  * Centralizes all style configuration and creates OpenLayers style objects for:
  * - Frame styles (default, highlighted)
  * - Rotation control styles (box, handle)
  * - Track styles (line, points)
  */
-(function() {
+(function () {
     'use strict';
 
     window.Mapbender = window.Mapbender || {};
@@ -26,12 +26,12 @@
             this.frameStrokeColor = '#000000';      // Same as normal print frame
             this.frameFillColor = 'rgba(255, 255, 255, 0.5)';
             this.trackColor = '#FF0000';
-            
+
             // Opacities
             this.rotationControlOpacity = 0.6;
             this.highlightFillOpacity = 0.3;
             this.trackFillOpacity = 0.1;
-            
+
             // Stroke widths
             this.highlightStrokeWidthThin = 0.5;
             this.highlightStrokeWidthNormal = 2;
@@ -40,14 +40,14 @@
             this.rotationHandleStrokeWidth = 1;
             this.trackStrokeWidth = 3;
             this.trackPointStrokeWidth = 2;
-            
+
             // Radii
             this.rotationHandleRadius = 8;
             this.trackPointRadius = 6;
-            
+
             // Line patterns
             this.rotationBoxLineDash = [5, 5];
-            
+
             // Apply any overrides
             if (overrides) {
                 for (const key in overrides) {
@@ -93,14 +93,14 @@
             // Get the actual polygon coordinates from the rotated geometry
             const geometry = feature.getGeometry();
             const coordinates = geometry.getCoordinates()[0]; // Get exterior ring coordinates
-            
+
             // The polygon coordinates are ordered: [bottom-left, top-left, top-right, bottom-right, bottom-left]
             // Top edge is from index 1 (top-left) to index 2 (top-right)
             const topLineCoords = [
                 coordinates[1],  // top-left
                 coordinates[2]   // top-right
             ];
-            
+
             // Base highlight style with very thin border and fill
             const baseStyle = new ol.style.Style({
                 stroke: new ol.style.Stroke({
@@ -111,7 +111,7 @@
                     color: this._toRgba(this.highlightColor, this.highlightFillOpacity)
                 })
             });
-            
+
             // Additional style for normal top border
             const topBorderStyle = new ol.style.Style({
                 geometry: new ol.geom.LineString(topLineCoords),
@@ -120,7 +120,7 @@
                     width: this.highlightStrokeWidthNormal  // Normal border width for top edge
                 })
             });
-            
+
             // Apply both styles - the array creates a multi-style rendering
             return [baseStyle, topBorderStyle];
         }

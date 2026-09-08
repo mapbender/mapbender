@@ -3,7 +3,7 @@
 {# Override the form bottom to add batch print specific elements #}
 {% block printclient_form_bottom %}
     {{ parent() }}
-    
+
     {% if enableGeofileUpload %}
     {# Geospatial File Upload (KML, GeoJSON) #}
     <div class="form-group no-gutters geofile-upload -fn-geofile-upload">
@@ -13,8 +13,8 @@
                 <button type="button" class="btn btn-light btn-sm geofile-custom-button -fn-geofile-custom-button">
                     {{ 'mb.print.printclient.batchprint.geofile.choosefile' | trans }}
                 </button>
-                <input type="file" 
-                       name="geofile" 
+                <input type="file"
+                       name="geofile"
                        accept=".kml,.geojson,.json,.gpx,.gml,.xml,application/vnd.google-earth.kml+xml,application/geo+json,application/gpx+xml,application/gml+xml"
                        class="geofile-file-input -fn-geofile-file-input"
                        style="display: none;">
@@ -22,21 +22,15 @@
             <div class="geofile-controls -fn-geofile-controls">
                 <div class="geofile-status-wrapper">
                     <small class="geofile-status -fn-geofile-status"></small>
-                    <i class="fa far fa-trash-can clickable hover-highlight-effect -fn-clear-geofile-button" 
+                    <i class="fa far fa-trash-can clickable hover-highlight-effect -fn-clear-geofile-button"
                        title="{{ 'mb.print.printclient.batchprint.geofile.clear' | trans }}"></i>
-                </div>
-                <div class="form-check geofile-adjust-wrapper">
-                    <input type="checkbox" class="form-check-input -fn-adjust-frames-checkbox" id="adjust-frames-checkbox">
-                    <label class="form-check-label" for="adjust-frames-checkbox">
-                        {{ 'mb.print.printclient.batchprint.geofile.adjustframes' | trans }}
-                    </label>
                 </div>
                 <div class="geofile-overlap-section">
                     <label class="geofile-overlap-label">
                         {{ 'mb.print.printclient.batchprint.geofile.overlap' | trans }}
                     </label>
-                    <input type="number" 
-                           name="frame_overlap" 
+                    <input type="number"
+                           name="frame_overlap"
                            class="form-control geofile-overlap-input -fn-frame-overlap-input"
                            value="10"
                            min="0"
@@ -45,7 +39,7 @@
                     <span>%</span>
                 </div>
                 <div class="geofile-button-wrapper">
-                    <button type="button" 
+                    <button type="button"
                             class="btn btn-light btn-sm -fn-place-frames-button">
                         {{ 'mb.print.printclient.batchprint.geofile.placeframes' | trans }}
                     </button>
@@ -56,13 +50,13 @@
         </div>
     </div>
     {% endif %}
-    
+
     {# Frame tracking table #}
     <div class="form-group no-gutters frame-table -fn-frame-table">
         <div>
             <h4>{{ 'mb.print.printclient.batchprint.tracking.title' | trans }}</h4>
             <div class="frame-table-buttons">
-                <i class="fa far fa-trash-can clickable hover-highlight-effect -fn-delete-all-frames" 
+                <i class="fa far fa-trash-can clickable hover-highlight-effect -fn-delete-all-frames"
                    title="{{ 'mb.print.printclient.batchprint.tracking.deleteall' | trans }}"></i>
             </div>
         </div>

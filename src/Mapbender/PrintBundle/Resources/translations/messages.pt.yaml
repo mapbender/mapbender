@@ -34,7 +34,6 @@ mb:
           choosefile: 'Escolher arquivo'
           clear: 'Remover percurso'
           placeframes: 'Colocar molduras ao longo do percurso'
-          adjustframes: 'Ajustar rotação das molduras'
           overlap: 'Sobreposição de molduras'
           selected: 'Selecionado'
           loaded: 'Carregado'
