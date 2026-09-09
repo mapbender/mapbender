@@ -1,4 +1,4 @@
-## v5.0.0-RC2
+## v5.0.0
 Breaking changes (for details on migration process see [UPGRADING.md]):
 * PHP 8.2 is now the minimum supported PHP version
 * Symfony updated to version 7.4 LTS
