@@ -6,6 +6,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectRepository;
@@ -131,7 +132,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         }
 
         $criteria->orderBy([
-            'title' => Criteria::ASC,
+            'title' => Order::Ascending,
         ]);
         return $this->getRepository()->matching($criteria);
     }

@@ -2,13 +2,14 @@
 
 namespace Mapbender\CoreBundle\Entity;
 
-use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use FOM\UserBundle\Security\Permission\YamlDefinedPermissionEntity;
+use Mapbender\CoreBundle\Entity\Repository\ApplicationRepository;
 use Mapbender\CoreBundle\Validator\Constraints\Scss;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -537,7 +538,7 @@ class Application implements YamlDefinedPermissionEntity, \Stringable
             throw new \InvalidArgumentException("Region must not be empty");
         }
         $criteria = new Criteria(Criteria::expr()->eq('region', $region), [
-            'weight' => Criteria::ASC,
+            'weight' => Order::Ascending,
         ]);
         return $this->getElements()->matching($criteria)->getValues();
     }
