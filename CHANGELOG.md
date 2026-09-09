@@ -45,7 +45,7 @@ Other:
 * Default sort order of application list changed to db first, but made configurable ([PR#1898](https://github.com/mapbender/mapbender/pull/1898))
 
 
-## next bugfix release
+## v4.2.7
 Bugfixes:
 * Do not show loading spinner in layer tree indefinetely when disabling source while it's loading ([#PR1886](https://github.com/mapbender/mapbender/pull/1886))
 * Fix vector tiles with nested metadata could not be loaded ([#PR1924](https://github.com/mapbender/mapbender/pull/1924))
