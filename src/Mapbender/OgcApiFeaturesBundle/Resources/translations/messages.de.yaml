@@ -15,11 +15,11 @@ mb:
         min_scale: Minimaler Maßstab
         max_scale: Maximaler Maßstab
         allow_selected: Auswahl erlauben
-        selected: Ausgewählt
+        selected: Ausge­wählt
         info: Info
-        allow_info: Info erlauben
+        allow_info: Info er­lauben
         toggle: Aufgeklappt
-        allow_toggle: Aufklappen erlauben
+        allow_toggle: Auf­klap­pen er­lau­ben
       filter:
         label: Filter
         name_placeholder: "Name…"
