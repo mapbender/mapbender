@@ -34,9 +34,6 @@ Features:
 Bugfixes:
 * When duplicating applications, also duplicate element permissions ([#PR1812](https://github.com/mapbender/mapbender/pull/1812))
 * [ViewManager] Show date in native format ([#PR1850](https://github.com/mapbender/mapbender/pull/1850))
-* Do not show loading spinner in layer tree indefinetely when disabling source while it's loading ([#PR1886](https://github.com/mapbender/mapbender/pull/1886))
-* Fix vector tiles with nested metadata could not be loaded ([#PR1924](https://github.com/mapbender/mapbender/pull/1924))
-* Fix sources other than WMS not working in BaseSourceSwitcher as free instances ([#PR1933](https://github.com/mapbender/mapbender/pull/1933))
 
 Other:
 * Added romanian translation ([#PR1878](https://github.com/mapbender/mapbender/pull/1878)) 
@@ -46,6 +43,14 @@ Other:
 * In applications tab in source infos, use same symbology for public/not public as elsewhere in Mapbender ([#PR1812](https://github.com/mapbender/mapbender/pull/1812)) 
 * Changed default login-backdrop image ([PR#1845](https://github.com/mapbender/mapbender/pull/1845))
 * Default sort order of application list changed to db first, but made configurable ([PR#1898](https://github.com/mapbender/mapbender/pull/1898))
+
+
+## next bugfix release
+Bugfixes:
+* Do not show loading spinner in layer tree indefinetely when disabling source while it's loading ([#PR1886](https://github.com/mapbender/mapbender/pull/1886))
+* Fix vector tiles with nested metadata could not be loaded ([#PR1924](https://github.com/mapbender/mapbender/pull/1924))
+* Fix sources other than WMS not working in BaseSourceSwitcher as free instances ([#PR1933](https://github.com/mapbender/mapbender/pull/1933))
+* Fix database schema creation did not work for oracle databases ([#PR1939](https://github.com/mapbender/mapbender/pull/1939))
 
 ## v4.2.6
 Features:
