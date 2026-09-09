@@ -1,12 +1,12 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
-use Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Form\Type\OrderAwareMultipleChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Count;
 
 class LayersetAdminType extends AbstractType
 {
@@ -25,7 +25,7 @@ class LayersetAdminType extends AbstractType
     {
         $resolver->setDefaults([
             'application' => null,
-            'choices' => function(Options $options): array {
+            'choices' => function (Options $options): array {
                 /** @var Application $application */
                 $application = $options['application'];
                 $choices = [];
@@ -34,12 +34,6 @@ class LayersetAdminType extends AbstractType
                 }
                 return $choices;
             },
-            'constraints' => [
-                new Count(
-                    min: 1,
-                    minMessage: 'mb.core.map.admin.min_one_layerset',
-                ),
-            ],
         ]);
     }
 }
