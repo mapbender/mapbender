@@ -4,18 +4,17 @@
 namespace Mapbender\CoreBundle\Element;
 
 
-use Twig\Environment;
-use Mapbender\CoreBundle\Entity\Element;
-use Doctrine\Persistence\ObjectRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ObjectRepository;
 use FOM\UserBundle\Entity\User;
 use FOM\UserBundle\Security\Permission\ResourceDomainSourceInstance;
 use Mapbender\Component\Element\ElementHttpHandlerInterface;
 use Mapbender\CoreBundle\Entity;
 use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\ViewManagerState;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -30,11 +29,12 @@ use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Twig\Environment;
 
 class ViewManagerHttpHandler implements ElementHttpHandlerInterface
 {
     public function __construct(
-        protected Environment          $templating,
+        protected Environment               $templating,
         protected EntityManagerInterface    $em,
         protected TokenStorageInterface     $tokenStorage,
         protected CsrfTokenManagerInterface $csrfTokenManager,
@@ -292,7 +292,7 @@ class ViewManagerHttpHandler implements ElementHttpHandlerInterface
         // for shared instances, the actual source instance's id is saved in the viewManagerState, but we need the
         // assignment to check for access permissions
         foreach ($application->getSharedInstanceAssignments() as $assignment) {
-            $idMap[$assignment->getInstance()->getId()] = $assignment;
+            $idMap[$assignment->getId() . '_' . $assignment->getInstance()->getId()] = $assignment;
         }
         return $idMap;
     }
