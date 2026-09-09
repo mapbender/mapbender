@@ -558,15 +558,15 @@
                 // prevent submit without selection (sidepane mode has separate button to start selecting)
                 return false;
             }
-            const proceed = super._onSubmit(evt);
+            const preventDefault = super._onSubmit(evt);
             let $tabs = $('.tab-container', this.$element);
-            if (proceed && $tabs.length) {
+            if (!preventDefault && $tabs.length) {
                 // switch to queue display tab on successful submit
                 window.setTimeout(function() {
                     $tabs.tabs({active: 1});
                 }, 50);
             }
-            return proceed;
+            return preventDefault;
         }
 
         _onTemplateChange() {

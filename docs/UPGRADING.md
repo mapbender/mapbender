@@ -59,6 +59,10 @@ https://github.com/mapbender/mapbender/blob/develop/docs/elements/javascript_cla
 ### HTML & Copyright elements merged
 Configuration in general will still work unchanged for existing HTML and copyright elements. Only backwards-incompatible change: When no title was set for a copyright element, the title will change from "Copyright" to "HTML", as the default fallback is the element name. Modify the title for these instances. 
 
+### Default print queue directory changed to var/prints
+(only relevant when having `mapbender.print.queueable` set to true). Print queue prints were in the default setting saved to public/prints, which resulted them to be publicly accessible via the Webserver, circumventing all access restrictions.
+The new default print queue directory is application/var/prints, which is not publicly accessible. The files can still be accessed via the print queue tab, but with access control being checked. If you still want to maintain the prints publicly accessible, change the parameter `mapbender.print.queue.storage_dir` to `%kernel.project_dir%/public/prints` (or similar) in your parameters.yaml file.
+
 ## 4.2.5
 When using `MapbenderModel.getSourceById` or `Source.getLayerById`, be aware that both the source id and layer id now may contain
 a prefix, separated by an underscore. This change was introduced to fix issues with multiple instances of 
