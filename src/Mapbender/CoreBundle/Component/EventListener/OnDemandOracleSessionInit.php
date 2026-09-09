@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Component\EventListener;
 
 use Doctrine\DBAL\Driver;
-use Doctrine\DBAL\Driver\AbstractOracleDriver;
 use Doctrine\DBAL\Driver\Connection;
 use Doctrine\DBAL\Driver\Middleware;
 use Doctrine\DBAL\Driver\Middleware\AbstractDriverMiddleware;
@@ -22,16 +21,16 @@ class OnDemandOracleSessionInit implements Middleware
 {
     public function wrap(Driver $driver): Driver
     {
-        if (!($driver instanceof AbstractOracleDriver)) {
-            return $driver;
-        }
-
         return new class ($driver) extends AbstractDriverMiddleware {
             public function connect(
                 #[\SensitiveParameter]
                 array $params,
             ): Connection {
                 $connection = parent::connect($params);
+
+                if (!in_array($params['driver'] ?? null, ['oci8', 'pdo_oci'], true)) {
+                    return $connection;
+                }
 
                 $connection->exec(
                     'ALTER SESSION SET'
