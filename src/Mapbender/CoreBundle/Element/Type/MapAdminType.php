@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
 use Symfony\Component\Validator\Constraints\Type;
@@ -52,6 +53,12 @@ class MapAdminType extends AbstractType implements DataTransformerInterface
                 'attr' => [
                     'class' => 'input inputWrapper choiceExpandedSortable',
                 ],
+                'constraints' => [
+                    new Count(
+                        min: 1,
+                        minMessage: 'mb.core.map.admin.min_one_layerset',
+                    ),
+                ]
             ])
             ->add('tileSize', IntegerType::class, [
                 'required' => false,
