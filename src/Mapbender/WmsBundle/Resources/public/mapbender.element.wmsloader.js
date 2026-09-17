@@ -218,7 +218,10 @@
                 }
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
             }
-            $('.mb-element-layertree').data('mapbenderMbLayertree')._sortableInitialized = false;
+            const layertree = $('.mb-element-layertree').data('mapbenderMbLayertree');
+            if (layertree) {
+                layertree._sortableInitialized = false;
+            }
             return source || null;
         },
         /**

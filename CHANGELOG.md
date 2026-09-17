@@ -1,3 +1,7 @@
+## next bugfix release
+Bugfixes:
+* [WMSLoader] Fix error when loading a WMS while no layertree is present ([#PR1944](https://github.com/mapbender/mapbender/pull/1944))
+
 ## v4.2.7
 Bugfixes:
 * Do not show loading spinner in layer tree indefinitely when disabling source while it's loading ([#PR1886](https://github.com/mapbender/mapbender/pull/1886))
