@@ -2,6 +2,7 @@
 
 namespace Mapbender\OgcApiFeaturesBundle\Entity;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\SourceInstanceItem;
 
@@ -274,5 +275,22 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
     {
         $this->hoverStyle = $hoverStyle;
         return $this;
+    }
+
+    public function initFromInstanceAndLayer(EntityManagerInterface $entityManager, OgcApiFeaturesInstance $instance, OgcApiFeaturesLayerSource $layer)
+    {
+        $this->setTitle($layer->getTitle());
+        $this->setSourceInstance($instance);
+        $this->setSourceItem($layer);
+        $this->setSelected(true);
+        $this->setAllowSelected(true);
+        // Auto-assign matching style
+        $collectionId = $layer->getCollectionId();
+        $styleMap = $layer->getSource()->getStyleMap($entityManager);
+        if (isset($styleMap[$collectionId])) {
+            $this->setStyleId($styleMap[$collectionId]);
+            $this->setNativeStyleId($styleMap[$collectionId]);
+        }
+        $instance->addLayer($this);
     }
 }

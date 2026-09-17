@@ -2,10 +2,12 @@
 
 namespace Mapbender\OgcApiFeaturesBundle\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Entity\Style;
 use Mapbender\OgcApiFeaturesBundle\OgcApiFeaturesDataSource;
 
 #[ORM\Entity]
@@ -26,6 +28,9 @@ class OgcApiFeaturesSource extends Source
 
     #[ORM\Column(name: 'attribution', type: 'string', nullable: true)]
     private ?string $attribution = null;
+
+    protected bool $activateNewLayers = true;
+    protected bool $selectNewLayers = true;
 
     public function __construct()
     {
@@ -90,5 +95,48 @@ class OgcApiFeaturesSource extends Source
         $layer->setSource($this);
         $this->layers->add($layer);
     }
+
+    public function activateNewLayers(): bool
+    {
+        return $this->activateNewLayers;
+    }
+
+    public function selectNewLayers(): bool
+    {
+        return $this->selectNewLayers;
+    }
+
+
+    public function setActivateNewLayers(bool $activateNewLayers): self
+    {
+        $this->activateNewLayers = $activateNewLayers;
+        return $this;
+    }
+
+    public function setSelectNewLayers(bool $selectNewLayers): self
+    {
+        $this->selectNewLayers = $selectNewLayers;
+        return $this;
+    }
+
+    private ?array $styleMap = null;
+
+    public function getStyleMap(EntityManagerInterface $entityManager): array
+    {
+        if (!$this->styleMap) {
+            $styles = $entityManager->getRepository(Style::class)->findBy([
+                'sourceId' => $this->id,
+            ]);
+            $this->styleMap = [];
+            foreach ($styles as $style) {
+                $cid = $style->getCollectionId();
+                if ($cid && !isset($this->styleMap[$cid])) {
+                    $this->styleMap[$cid] = $style->getId();
+                }
+            }
+        }
+        return $this->styleMap;
+    }
+
 
 }
