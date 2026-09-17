@@ -157,6 +157,26 @@ class Dimension
     }
 
     /**
+     * Reconstruct a Dimension object from a plain array returned by a JSON column.
+     *
+     * @param array<string, mixed> $data
+     * @return static
+     */
+    public static function fromArray(array $data): static
+    {
+        $dimension = new static();
+        $dimension->name = $data['name'] ?? null;
+        $dimension->units = $data['units'] ?? null;
+        $dimension->unitSymbol = $data['unitSymbol'] ?? null;
+        $dimension->default = $data['default'] ?? null;
+        $dimension->multipleValues = (bool) ($data['multipleValues'] ?? false);
+        $dimension->nearestValue = (bool) ($data['nearestValue'] ?? false);
+        $dimension->current = (bool) ($data['current'] ?? false);
+        $dimension->extent = $data['extent'] ?? null;
+        return $dimension;
+    }
+
+    /**
      * Generates a GET parameter name for this dimension.
      * @return string
      */

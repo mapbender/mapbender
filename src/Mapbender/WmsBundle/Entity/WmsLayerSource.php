@@ -721,7 +721,14 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function getDimension()
     {
-        return $this->dimension;
+        $dimensions = [];
+        foreach ($this->dimension ?? [] as $dimension) {
+            if (is_array($dimension)) {
+                $dimension = Dimension::fromArray($dimension);
+            }
+            $dimensions[] = $dimension;
+        }
+        return $dimensions;
     }
 
     /**

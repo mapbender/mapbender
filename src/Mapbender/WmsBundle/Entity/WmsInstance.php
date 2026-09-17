@@ -117,7 +117,14 @@ class WmsInstance extends SourceInstance implements SupportsOpacity, SupportsPro
      */
     public function getDimensions()
     {
-        return $this->dimensions ? : [];
+        $dimensions = [];
+        foreach ($this->dimensions ?: [] as $dimension) {
+            if (is_array($dimension)) {
+                $dimension = DimensionInst::fromArray($dimension);
+            }
+            $dimensions[] = $dimension;
+        }
+        return $dimensions;
     }
 
     /**
