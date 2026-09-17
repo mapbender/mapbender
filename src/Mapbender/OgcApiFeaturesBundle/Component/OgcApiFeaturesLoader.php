@@ -102,6 +102,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
                     $instanceLayer->initFromInstanceAndLayer($this->em,$instance, $layer);
                     $instanceLayer->setSelected($source->selectNewLayers());
                     $instanceLayer->setActive($source->activateNewLayers());
+                    $this->em->persist($instance);
                 }
 
 

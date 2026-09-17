@@ -123,7 +123,7 @@ class OgcApiFeaturesSource extends Source
 
     public function getStyleMap(EntityManagerInterface $entityManager): array
     {
-        if (!$this->styleMap) {
+        if ($this->styleMap === null) {
             $styles = $entityManager->getRepository(Style::class)->findBy([
                 'sourceId' => $this->id,
             ]);
