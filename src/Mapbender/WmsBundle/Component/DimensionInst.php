@@ -23,6 +23,21 @@ class DimensionInst extends Dimension
         }
     }
 
+    /**
+     * Reconstruct a DimensionInst from a plain array returned by a JSON column.
+     *
+     * @param array<string, mixed> $data
+     * @return static
+     */
+    public static function fromArray(array $data): static
+    {
+        $dimension = parent::fromArray($data);
+        $dimension->active = $data['active'] ?? null;
+        $dimension->type = $data['type'] ?? null;
+        $dimension->id = $data['id'] ?? null;
+        return $dimension;
+    }
+
     public function getActive()
     {
         return $this->active;
