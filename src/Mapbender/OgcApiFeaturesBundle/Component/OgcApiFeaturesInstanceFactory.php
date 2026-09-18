@@ -32,24 +32,10 @@ class OgcApiFeaturesInstanceFactory extends SourceInstanceFactory
         $instance = new OgcApiFeaturesInstance();
         $instance->setSource($source);
 
-        // Pre-load styles for this source for auto-assignment
-        $styleMap = $this->getStyleMapForSource($source->getId());
-
         foreach ($source->getLayers() as $layer) {
             /** @var OgcApiFeaturesLayerSource $layer */
             $instanceLayer = new OgcApiFeaturesInstanceLayer();
-            $instanceLayer->setTitle($layer->getTitle());
-            $instanceLayer->setSourceInstance($instance);
-            $instanceLayer->setSourceItem($layer);
-            $instanceLayer->setSelected(true);
-            $instanceLayer->setAllowSelected(true);
-            // Auto-assign matching style
-            $collectionId = $layer->getCollectionId();
-            if (isset($styleMap[$collectionId])) {
-                $instanceLayer->setStyleId($styleMap[$collectionId]);
-                $instanceLayer->setNativeStyleId($styleMap[$collectionId]);
-            }
-            $instance->addLayer($instanceLayer);
+            $instanceLayer->initFromInstanceAndLayer($this->entityManager, $instance, $layer);
         };
 
         $instance->setTitle($source->getTitle());

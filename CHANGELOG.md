@@ -1,3 +1,7 @@
+## next bugfix release
+Bugfixes:
+* [OGC API Features] Fix new instance layers not added to existing ogc api features instances ([#PR1945](https://github.com/mapbender/mapbender/pull/1945))
+
 ## v5.0.0
 Breaking changes (for details on migration process see [UPGRADING.md]):
 * PHP 8.2 is now the minimum supported PHP version

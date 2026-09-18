@@ -3,22 +3,24 @@
 namespace Mapbender\OgcApiFeaturesBundle\Component;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Mapbender\Exception\Loader\ServerResponseErrorException;
 use Mapbender\Component\Transport\HttpTransportInterface;
 use Mapbender\CoreBundle\Component\Source\SourceLoader;
 use Mapbender\CoreBundle\Component\Source\StyleableSourceLoaderInterface;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Style;
-use Mapbender\OgcApiFeaturesBundle\Form\Type\OgcApiFeaturesSourceType;
-use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
+use Mapbender\Exception\Loader\ServerResponseErrorException;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstance;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesInstanceLayer;
 use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesLayerSource;
+use Mapbender\OgcApiFeaturesBundle\Entity\OgcApiFeaturesSource;
+use Mapbender\OgcApiFeaturesBundle\Form\Type\OgcApiFeaturesSourceType;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoaderInterface
 {
     public function __construct(
         protected HttpTransportInterface $httpTransport,
-        protected TranslatorInterface $translator,
+        protected TranslatorInterface    $translator,
         protected EntityManagerInterface $em,
     )
     {
@@ -36,7 +38,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
         /** @var OgcApiFeaturesSource $source */
         /** @var OgcApiFeaturesSource|array $formData */
         $url = is_array($formData) ? $formData['jsonUrl'] : $formData->getJsonUrl();
-        $url = rtrim((string) $url, '/');
+        $url = rtrim((string)$url, '/');
 
         if (!str_ends_with($url, '/collections')) {
             $url = $url . '/collections';
@@ -92,6 +94,18 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
                 $layer->setBbox($bbox);
                 $layer->setProperties($properties);
                 $source->addLayer($layer);
+
+                // update existing OGC API features instances
+                foreach ($source->getInstances() as $instance) {
+                    /** @var OgcApiFeaturesInstance $instance */
+                    $instanceLayer = new OgcApiFeaturesInstanceLayer();
+                    $instanceLayer->initFromInstanceAndLayer($this->em,$instance, $layer);
+                    $instanceLayer->setSelected($source->selectNewLayers());
+                    $instanceLayer->setActive($source->activateNewLayers());
+                    $this->em->persist($instance);
+                }
+
+
             }
         }
 
@@ -101,6 +115,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
             if (!isset($activeSet[$layer->getCollectionId()])) {
                 $source->getLayers()->removeElement($layer);
                 $this->em->remove($layer);
+                // deletion must not be done per individual SourceInstance, they are deleted by DB cascade deletion
             }
         }
     }
@@ -151,7 +166,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
                 return null;
             }
             $keys = array_keys($features[0]['properties']);
-            $keys = array_values(array_filter($keys, fn (int|string $k): bool => $k !== 'geometry'));
+            $keys = array_values(array_filter($keys, fn(int|string $k): bool => $k !== 'geometry'));
         } catch (\Throwable) {
             return null;
         }
@@ -245,7 +260,8 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
                 ->setParameter('sourceId', $source->getId())
                 ->setParameter('collectionIds', $activeCollectionIds)
                 ->getQuery()
-                ->getResult();
+                ->getResult()
+            ;
         }
         foreach ($orphans as $orphan) {
             $this->em->remove($orphan);
@@ -258,7 +274,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
             foreach ($styleInfo['links'] as $link) {
                 $type = $link['type'] ?? '';
                 if ($type === 'application/vnd.mapbox.style+json'
-                    || str_contains((string) $type, 'mapbox')
+                    || str_contains((string)$type, 'mapbox')
                     || (isset($link['href']) && str_contains($link['href'], 'f=mbs'))) {
                     return $link['href'];
                 }
@@ -277,7 +293,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
         if ($styleId) {
             return $baseUrl
                 . '/collections/' . urlencode($collectionId)
-                . '/styles/' . urlencode((string) $styleId)
+                . '/styles/' . urlencode((string)$styleId)
                 . '?f=mbs';
         }
 
@@ -294,10 +310,11 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
 
     private function fetchAndSaveStyle(
         OgcApiFeaturesSource $source,
-        string $collectionId,
-        array $styleInfo,
-        string $mbsUrl,
-    ): void {
+        string               $collectionId,
+        array                $styleInfo,
+        string               $mbsUrl,
+    ): void
+    {
         try {
             $response = $this->httpTransport->getUrl($mbsUrl);
             if (!$response->isOk()) {
@@ -309,7 +326,7 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
                 return;
             }
 
-            $sourceTitle = $source->getTitle() ?: (string) $source->getId();
+            $sourceTitle = $source->getTitle() ?: (string)$source->getId();
             // Find the layer title for the collection
             $layerTitle = $collectionId;
             foreach ($source->getLayers() as $layer) {
