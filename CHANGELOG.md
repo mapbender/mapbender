@@ -1,6 +1,8 @@
 ## next bugfix release
 Bugfixes:
 * [OGC API Features] Fix new instance layers not added to existing ogc api features instances ([#PR1945](https://github.com/mapbender/mapbender/pull/1945))
+* [WMSLoader] Fix error when loading a WMS while no layertree is present ([#PR1944](https://github.com/mapbender/mapbender/pull/1944))
+
 
 ## v5.0.0
 Breaking changes (for details on migration process see [UPGRADING.md]):

@@ -208,7 +208,10 @@
                 }
                 source = source || this.mbMap.model.addSourceFromConfig(sourceDef);
             }
-            $('.mb-element-layertree').data('MbLayertree')._sortableInitialized = false;
+            const layertree = $('.mb-element-layertree').data('MbLayertree');
+            if (layertree) {
+                layertree._sortableInitialized = false;
+            }
             return source || null;
         }
 
