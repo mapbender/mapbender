@@ -89,6 +89,24 @@ class PrintService extends ImageExportService implements PrintServiceInterface
 
         $pdf = $this->buildPdf($mapImageName, $templateData, $jobData);
 
+
+        /** @var TemplateRegion $mapRegion */
+        try {
+            $mapRegion = $templateData['map'];
+            if ($this->pdf instanceof GeoSpatialFPDF) {
+                $this->pdf->SetGeoViewport(
+                    x: $mapRegion->getOffsetX(),
+                    y: $mapRegion->getOffsetY(),
+                    width: $mapRegion->getWidth(),
+                    height: $mapRegion->getHeight(),
+                    extent: $jobData['extent_feature'],
+                    epsg: $jobData['mapSrs'],
+                );
+            }
+        } catch (\Exception $e) {
+            $this->logger->warning("Could not set GeoViewport: " . $e->getMessage());
+        }
+
         return $this->dumpPdf($pdf);
     }
 
@@ -201,7 +219,7 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected function makeBlankPdf($templateData, $templateName)
     {
         /** @var PDF_Extensions|\FPDF $pdf */
-        $pdf = new PDF_Extensions(resourceDir: $this->resourceDir, customFonts: $this->customFonts);
+        $pdf = new GeoSpatialFPDF(resourceDir: $this->resourceDir, customFonts: $this->customFonts);
         $pdfPath = $this->templateParser->getTemplateFilePath($templateName, 'pdf');
         $pdf->setSourceFile($pdfPath);
         $pdf->SetAutoPageBreak(false);
@@ -225,7 +243,6 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function buildPdf($mapImageName, $templateData, array $jobData)
     {
-        // @todo: eliminate instance variable $this->pdf
         $this->pdf = $pdf = $this->makeBlankPdf($templateData, $jobData['template']);
         // PDF_Extensions extends Fpdi, which provides importPage() and useTemplate()
         /** @var Fpdi $pdf */
@@ -266,9 +283,13 @@ class PrintService extends ImageExportService implements PrintServiceInterface
     protected function addMapImage(PDF_Extensions|\FPDF $pdf, $mapImageName, $templateData)
     {
         $region = $templateData['map'];
+        $pdf->AddLayer('map', 'The map');
+        $pdf->BeginLayer('map');
+
         $this->addImageToPdfRegion($pdf, $mapImageName, $region);
         // add map border (default is black)
         $pdf->Rect($region['x'], $region['y'], $region['width'], $region['height']);
+        $pdf->EndLayer();
     }
 
     /**
@@ -308,12 +329,17 @@ class PrintService extends ImageExportService implements PrintServiceInterface
      */
     protected function afterMainMap($pdf, $template, $jobData)
     {
+        $pdf->AddLayer('stuff', 'Other stuff');
+        $pdf->BeginLayer('stuff');
+
         $this->processTemplateRegionsAndFields($pdf, $template, $jobData);
 
         $legends = $this->legendHandler->collectLegends($jobData);
         $this->handleMainPageLegends($pdf, $template, $jobData, $legends);
         $this->finishMainPage($pdf, $template, $jobData);
         $this->handleRemainingLegends($pdf, $template, $jobData, $legends);
+        $pdf->EndLayer();
+
     }
 
     /**
