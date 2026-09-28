@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\EventHandler\InitDb;
 
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Mapbender\Component\Event\AbstractInitDbHandler;
 use Mapbender\Component\Event\InitDbEvent;
@@ -31,7 +32,7 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
         $affected = $this->scanApplications();
         if ($affected) {
             $this->em->clear();
-            $event->getOutput()->writeln("Element weights need fixing in " . count($affected) . " Applications" , OutputInterface::VERBOSITY_VERBOSE);
+            $event->getOutput()->writeln("Element weights need fixing in " . count($affected) . " Applications", OutputInterface::VERBOSITY_VERBOSE);
             foreach ($affected as $appInfo) {
                 /** @var Application|null $application */
                 $application = $this->em->getRepository(Application::class)->find($appInfo['id']);
@@ -42,7 +43,7 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
                 $this->em->flush();
             }
         } else {
-            $event->getOutput()->writeln("All application Element weights ok" , OutputInterface::VERBOSITY_VERBOSE);
+            $event->getOutput()->writeln("All application Element weights ok", OutputInterface::VERBOSITY_VERBOSE);
         }
     }
 
@@ -55,12 +56,12 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
     {
         $output->writeln("Fixing element weights in Application {$application->getSlug()}", OutputInterface::VERBOSITY_NORMAL);
         $allElements = $application->getElements()->matching(Criteria::create()->orderBy([
-            'region' => Criteria::ASC,
-            'weight' => Criteria::ASC,
-            'id' => Criteria::ASC,  // If all else fails...
+            'region' => Order::Ascending,
+            'weight' => Order::Ascending,
+            'id' => Order::Ascending,  // If all else fails...
         ]));
         foreach ($regionNames as $regionName) {
-            $partitions = $allElements->partition(function($_, $element) use ($regionName): bool {
+            $partitions = $allElements->partition(function ($_, $element) use ($regionName): bool {
                 /** @var Element $element */
                 return $element->getRegion() === $regionName;
             });
@@ -77,11 +78,10 @@ class FixElementWeightsHandler extends AbstractInitDbHandler
         $connection = $this->em->getConnection();
         $tn = $this->em->getClassMetadata(Element::class)->getTableName();
         $scanSql = 'SELECT application_id, region'
-                 . ', COUNT(DISTINCT weight) AS c0, COUNT(*) AS c1'
-                 . ', MIN(weight) AS weight0, MAX(weight) AS weight1'
-                 . ' FROM ' . $connection->quoteIdentifier($tn)
-                 . ' GROUP BY application_id, region'
-        ;
+            . ', COUNT(DISTINCT weight) AS c0, COUNT(*) AS c1'
+            . ', MIN(weight) AS weight0, MAX(weight) AS weight1'
+            . ' FROM ' . $connection->quoteIdentifier($tn)
+            . ' GROUP BY application_id, region';
         $results = $connection->fetchAllAssociative($scanSql);
         $applicationMap = [];
         foreach ($results as $row) {
