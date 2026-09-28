@@ -1,6 +1,8 @@
 ## next bugfix release
 Bugfixes:
+* Fix wms services with dimensions could not be loaded ([#PR1943](https://github.com/mapbender/mapbender/pull/1943))
 * [OGC API Features] Fix new instance layers not added to existing ogc api features instances ([#PR1945](https://github.com/mapbender/mapbender/pull/1945))
+* [OGC API Features] Feature Limit for individual collections could not be reset to unrestricted once set ([#PR1946](https://github.com/mapbender/mapbender/pull/1946))
 * [WMSLoader] Fix error when loading a WMS while no layertree is present ([#PR1944](https://github.com/mapbender/mapbender/pull/1944))
 
 

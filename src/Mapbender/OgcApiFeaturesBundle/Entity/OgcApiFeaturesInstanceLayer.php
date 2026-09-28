@@ -93,7 +93,7 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
         return $this->maxScale;
     }
 
-    public function setFeatureLimit(int $featureLimit): static
+    public function setFeatureLimit(?int $featureLimit): static
     {
         $this->featureLimit = $featureLimit;
         return $this;
