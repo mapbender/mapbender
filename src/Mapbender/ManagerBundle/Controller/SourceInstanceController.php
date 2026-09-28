@@ -4,8 +4,9 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 
-use Doctrine\Common\Collections\Order;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use FOM\ManagerBundle\Configuration\Route;
 use FOM\UserBundle\Security\Permission\PermissionManager;
 use FOM\UserBundle\Security\Permission\ResourceDomainApplication;
@@ -428,8 +429,8 @@ class SourceInstanceController extends ApplicationControllerBase
     protected function getApplicationRelationViewData(SourceInstance $instance): array
     {
         $applicationOrder = [
-            'title' => Order::Ascending,
-            'slug' => Order::Ascending,
+            'title' => Criteria::ASC,
+            'slug' => Criteria::ASC,
         ];
         $viewData = [
             'layerset_groups' => [],
