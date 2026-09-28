@@ -293,4 +293,19 @@ class OgcApiFeaturesInstanceLayer extends SourceInstanceItem implements \Stringa
         }
         $instance->addLayer($this);
     }
+
+    public function syncProperties(?array $propertyKeys): void
+    {
+        if ($propertyKeys === null) {
+            $this->setFeatureInfoPropertyMap(null);
+            $this->setTooltipPropertyMap(null);
+            return;
+        }
+        if ($this->featureInfoPropertyMap) {
+            $this->setFeatureInfoPropertyMap(array_values(array_intersect($this->getFeatureInfoPropertyMap(), $propertyKeys)));
+        }
+        if ($this->tooltipPropertyMap) {
+            $this->setTooltipPropertyMap(array_values(array_intersect($this->getTooltipPropertyMap(), $propertyKeys)));
+        }
+    }
 }

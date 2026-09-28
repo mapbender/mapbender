@@ -2,9 +2,10 @@
 Bugfixes:
 * Ensure compatibility with doctrine/collections 3 ([#PR1948](https://github.com/mapbender/mapbender/pull/1948))
 * Fix wms services with dimensions could not be loaded ([#PR1943](https://github.com/mapbender/mapbender/pull/1943))
+* [WMSLoader] Fix error when loading a WMS while no layertree is present ([#PR1944](https://github.com/mapbender/mapbender/pull/1944))
 * [OGC API Features] Fix new instance layers not added to existing ogc api features instances ([#PR1945](https://github.com/mapbender/mapbender/pull/1945))
 * [OGC API Features] Feature Limit for individual collections could not be reset to unrestricted once set ([#PR1946](https://github.com/mapbender/mapbender/pull/1946))
-* [WMSLoader] Fix error when loading a WMS while no layertree is present ([#PR1944](https://github.com/mapbender/mapbender/pull/1944))
+* [OGC API Features] Remove references to removed properties in featureinfo and tooltip maps when updating source ([#PR1949](https://github.com/mapbender/mapbender/pull/1949))
 
 
 ## v5.0.0
