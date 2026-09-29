@@ -83,10 +83,16 @@ class OgcApiFeaturesLoader extends SourceLoader implements StyleableSourceLoader
             $properties = $this->discoverCollectionProperties($baseUrl, $collectionId);
 
             if (isset($existingByCollectionId[$collectionId])) {
+                /** @var OgcApiFeaturesLayerSource $layer */
                 $layer = $existingByCollectionId[$collectionId];
                 $layer->setTitle($collection['title'] ?? '');
                 $layer->setBbox($bbox);
                 $layer->setProperties($properties);
+
+                foreach ($layer->getInstanceLayers() as $instanceLayer) {
+                    /** @var OgcApiFeaturesInstanceLayer $instanceLayer */
+                    $instanceLayer->syncProperties($layer->getPropertyKeys());
+                }
             } else {
                 $layer = new OgcApiFeaturesLayerSource();
                 $layer->setCollectionId($collectionId);
