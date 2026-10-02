@@ -43,7 +43,7 @@ class PrintQueueNextCommand extends AbstractPrintQueueExecutionCommand
             if ($processed) {
                 $jobsProcessed += 1;
             } else {
-                $sleepSeconds = $pollInterval - max(0.0, $tNow - $t0poll);
+                $sleepSeconds = max(0.0, $pollInterval - max(0.0, $tNow - $t0poll));
                 $output->writeln("Waiting {$sleepSeconds} seconds for next job", OutputInterface::VERBOSITY_VERY_VERBOSE);
                 usleep(intval(1000000 * $sleepSeconds));
                 $tNow = microtime(true);
