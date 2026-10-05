@@ -17,6 +17,18 @@ class Authority implements MutableUrlTarget
     /** @var string|null */
     public $name;
 
+    public static function create(array $parameters): Authority
+    {
+        $authority = new Authority();
+        if (isset($parameters['url'])) {
+            $authority->setUrl($parameters['url']);
+        }
+        if (isset($parameters['name'])) {
+            $authority->setName($parameters['name']);
+        }
+        return $authority;
+    }
+
     /**
      * Get url
      *
