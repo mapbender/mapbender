@@ -630,10 +630,10 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
     /**
      * Set authority
      *
-     * @param array $authority
+     * @param Authority[] $authority
      * @return $this
      */
-    public function setAuthority($authority): static
+    public function setAuthority(array $authority): static
     {
         $this->authority = $authority ?: [];
         return $this;
@@ -647,11 +647,13 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword, MutableUrl
      */
     public function getAuthority($inherit = false)
     {
-        if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) {
+        $this->authority = array_map(
+            fn($authority) => $authority instanceof Authority ? $authority : Authority::create($authority)
+            , $this->authority);
+        if ($inherit && $this->getParent() !== null && !empty($this->getParent()->getAuthority())) {
             return array_merge($this->getParent()->getAuthority(), $this->authority);
-        } else {
-            return $this->authority;
         }
+        return $this->authority;
     }
 
     /**

@@ -1,3 +1,8 @@
+## next bugfix release
+Bugfixes:
+* Fix mapbender:source:rewrite:host command ([#PR1951](https://github.com/mapbender/mapbender/pull/1951))
+* Ignore slashes in mapbender:source:rewrite:host command ([#PR1951](https://github.com/mapbender/mapbender/pull/1951))
+
 ## v5.0.1
 Bugfixes:
 * Ensure compatibility with doctrine/collections 3 ([#PR1948](https://github.com/mapbender/mapbender/pull/1948))
