@@ -1,7 +1,8 @@
 ## next bugfix release
 Bugfixes:
-* Fix mapbender:source:rewrite:host command ([#PR1951](https://github.com/mapbender/mapbender/pull/1951))
-* Ignore slashes in mapbender:source:rewrite:host command ([#PR1951](https://github.com/mapbender/mapbender/pull/1951))
+* [PrintQueue] Fix error when a print job takes longer than the configured poll interval ([#PR1951](https://github.com/mapbender/mapbender/pull/1951))
+* Fix mapbender:source:rewrite:host command ([#PR1952](https://github.com/mapbender/mapbender/pull/1952))
+* Ignore slashes in mapbender:source:rewrite:host command ([#PR1952](https://github.com/mapbender/mapbender/pull/1952))
 
 ## v5.0.1
 Bugfixes:
