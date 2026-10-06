@@ -22,6 +22,8 @@ class BaseUrlTransformer implements OneWayTransformer
      */
     public function __construct($from, $to, $caseSensitive = true)
     {
+        $from = rtrim($from, '/');
+        $to = rtrim($to, '/');
         $replacements = array(
             $from => $to,
         );

@@ -1,5 +1,6 @@
 ## next bugfix release
 Bugfixes:
+* Ignore slashes in mapbender:source:rewrite:host command ([#PR1951](https://github.com/mapbender/mapbender/pull/1951))
 * [WMSLoader] Fix error when loading a WMS while no layertree is present ([#PR1944](https://github.com/mapbender/mapbender/pull/1944))
 
 ## v4.2.7
