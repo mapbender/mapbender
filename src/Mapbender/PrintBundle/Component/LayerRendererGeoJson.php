@@ -60,9 +60,16 @@ class LayerRendererGeoJson extends LayerRenderer
             // legacy format support: rename non-conformant 'geometries' to conformant 'features'
             $layerDef['features'] = $layerDef['geometries'];
         }
+        // sort features by layerZIndex, then zIndex, to respect feature order in the original map
         usort($layerDef['features'], function ($a, $b) {
-            return ($a['style']['zIndex'] ?? 0) <=> ($b['style']['zIndex'] ?? 0);
+            $layerOrder = ($a['style']['layerZIndex'] ?? 0)
+                <=> ($b['style']['layerZIndex'] ?? 0);
+
+            return $layerOrder !== 0
+                ? $layerOrder
+                : (($a['style']['zIndex'] ?? 0) <=> ($b['style']['zIndex'] ?? 0));
         });
+
         foreach ($layerDef['features'] as $feature) {
             $this->drawFeature($canvas, $feature);
         }

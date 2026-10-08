@@ -235,7 +235,7 @@
                     // Legacy data format quirks (not actually GeoJson):
                     // 1) Strip "type: 'Feature'" outer container object
                     // 2) move style into geometry object
-                    gjFeature.style.zIndex = gjFeature.style.zIndex ?? layer.getZIndex();
+                    gjFeature.style.layerZIndex = layer.getZIndex();
                     return Object.assign({}, gjFeature.geometry, {
                         style: gjFeature.style
                     });
