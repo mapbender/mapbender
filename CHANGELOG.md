@@ -1,4 +1,4 @@
-## next bugfix release
+## v4.2.8
 Bugfixes:
 * [Print/ImageExport] Respect zIndex when exporting geojson features ([#PR1953](https://github.com/mapbender/mapbender/pull/1953))
 * [PrintQueue] Fix error when a print job takes longer than the configured poll interval ([#PR1951](https://github.com/mapbender/mapbender/pull/1951))
