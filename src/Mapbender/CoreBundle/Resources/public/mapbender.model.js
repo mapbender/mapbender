@@ -419,6 +419,7 @@ window.Mapbender.MapModelOl4 = (function () {
                     // Legacy data format quirks (not actually GeoJson):
                     // 1) Strip "type: 'Feature'" outer container object
                     // 2) move style into geometry object
+                    gjFeature.style.layerZIndex = layer.getZIndex();
                     return Object.assign({}, gjFeature.geometry, {
                         style: gjFeature.style
                     });
@@ -708,7 +709,9 @@ window.Mapbender.MapModelOl4 = (function () {
          * @private
          */
         _extractSvgGeometryStyle: function (olStyle) {
-            var style = {};
+            var style = {
+                zIndex: olStyle.getZIndex(),
+            };
             var image = olStyle.getImage();
             var circleImage = image && (image instanceof ol.style.Circle) && image;
             var fill = olStyle.getFill() || (circleImage && circleImage.getFill());
