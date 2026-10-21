@@ -1,5 +1,6 @@
 ## next bugfix release
 Bugfixes:
+* [Print/ImageExport] Respect zIndex when exporting geojson features ([#PR1953](https://github.com/mapbender/mapbender/pull/1953))
 * [PrintQueue] Fix error when a print job takes longer than the configured poll interval ([#PR1951](https://github.com/mapbender/mapbender/pull/1951))
 * Ignore slashes in mapbender:source:rewrite:host command ([#PR1952](https://github.com/mapbender/mapbender/pull/1952))
 * [WMSLoader] Fix error when loading a WMS while no layertree is present ([#PR1944](https://github.com/mapbender/mapbender/pull/1944))

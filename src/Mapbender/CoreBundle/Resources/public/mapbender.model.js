@@ -671,7 +671,9 @@ window.Mapbender.MapModelOl4 = (function() {
          * @private
          */
         _extractSvgGeometryStyle: function(olStyle) {
-            var style = {};
+            var style = {
+                zIndex: olStyle.getZIndex(),
+            };
             var image = olStyle.getImage();
             var circleImage = image && (image instanceof ol.style.Circle) && image;
             var fill = olStyle.getFill() || (circleImage && circleImage.getFill());
