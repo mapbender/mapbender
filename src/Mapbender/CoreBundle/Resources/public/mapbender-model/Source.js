@@ -379,9 +379,10 @@
         /**
          * Custom toJSON for mbMap.getMapState()
          * Drops nativeLayers to avoid circular references
+         * @param {string} mode usually 'ol', but can be '3d' when using the mapbender 3D extension, @see Mapbender.Source.supportsMode
          * @returns {{children: Array, options: Object, id: (string|null), title, type: string}}
          */
-        toJSON() {
+        toJSON(mode) {
             return {
                 id: this.id,
                 title: this.title,
@@ -409,6 +410,16 @@
          */
         loadFeatureInfo(mapModel, x, y, options, elementId) {
             return [null, Promise.reject()];
+        }
+
+        /**
+         * Returns whether this source supports the given mode. In core mapbender, this is always 'ol'.
+         * Using the mapbender 3D extension, this can be '3d' as well.
+         * @param {string} mode
+         * @return {boolean}
+         */
+        supportsMode(mode) {
+            return mode === 'ol';
         }
     }
 
