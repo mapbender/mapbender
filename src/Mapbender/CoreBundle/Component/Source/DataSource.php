@@ -2,7 +2,6 @@
 
 namespace Mapbender\CoreBundle\Component\Source;
 
-use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\PrintBundle\Component\LayerRenderer;
 
@@ -101,15 +100,6 @@ abstract class DataSource
     public function areServiceUrlsInternal(SourceInstance $instance): bool
     {
         return false;
-    }
-
-    /**
-     * @return Source|null Returns the default source model for this data source type that will be used in the form
-     * type when creating a new source.
-     */
-    public function getDefaultModel(): ?Source
-    {
-        return null;
     }
 
 }

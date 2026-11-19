@@ -35,6 +35,35 @@ abstract class SourceLoader
     }
 
     /**
+     * @return Source|null Returns the default source model for this data source type that will be used in the form
+     * type when creating a new source. May be null if no fields should have default values
+     */
+    public function getDefaultModel(): ?Source
+    {
+        return null;
+    }
+
+    /**
+     * Returns the twig template for creating/refreshing a Source in the manager.
+     * Should extend @MapbenderManager/layouts/single_form.html.twig
+     * @param bool $forReload True if the form is for refreshing an existing source, false if creating a new source
+     */
+    public function getFormTemplate(bool $forReload, ?Source $source): string
+    {
+        return $forReload
+            ? '@MapbenderManager/Source/reload.html.twig'
+            : '@MapbenderManager/Source/add.html.twig';
+    }
+
+    /**
+     * Provides additional variables to feed into @see self::getFormTemplate()
+     */
+    public function getFormTemplateVariables(bool $forReload, ?Source $source): array
+    {
+        return [];
+    }
+
+    /**
      * Gets the model data that will be passed to the refresh form. This may or may not be the source itself.
      * The return type should match the data type of the form type's `data_class` option.
      */

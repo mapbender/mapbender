@@ -77,7 +77,8 @@ class RepositoryController extends ApplicationControllerBase
 
         $dataSource = $this->typeDirectory->getSource($sourceType);
 
-        $form = $this->createForm($dataSource->getLoader()->getFormType(), $dataSource->getDefaultModel());
+        $defaultModel = $dataSource->getLoader()->getDefaultModel();
+        $form = $this->createForm($dataSource->getLoader()->getFormType(), $defaultModel);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -121,13 +122,12 @@ class RepositoryController extends ApplicationControllerBase
                 $form->addError(new FormError($e->getMessage()));
             }
         }
-
-        return $this->render('@MapbenderManager/Source/add.html.twig', [
+        return $this->render($dataSource->getLoader()->getFormTemplate(false, $defaultModel), array_merge([
             'form' => $form->createView(),
             'submit_text' => 'mb.manager.source.load',
             'source_label' => $dataSource->getLabel(false),
             'return_path' => 'mapbender_manager_repository_index',
-        ]);
+        ], $dataSource->getLoader()->getFormTemplateVariables(false, $defaultModel)));
     }
 
     /**
@@ -285,12 +285,12 @@ class RepositoryController extends ApplicationControllerBase
             }
         }
 
-        return $this->render('@MapbenderManager/Source/reload.html.twig', [
+        return $this->render($dataSource->getLoader()->getFormTemplate(true, $source), array_merge([
             'form' => $form->createView(),
             'type_label' => $dataSource->getLabel(false),
             'submit_text' => 'mb.manager.source.load',
             'return_path' => 'mapbender_manager_repository_index',
-        ]);
+        ], $dataSource->getLoader()->getFormTemplateVariables(true, $source)));
     }
 
     protected function setAliasForDuplicate(Source $source)
