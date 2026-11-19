@@ -77,7 +77,7 @@ class RepositoryController extends ApplicationControllerBase
 
         $dataSource = $this->typeDirectory->getSource($sourceType);
 
-        $form = $this->createForm($dataSource->getLoader()->getFormType());
+        $form = $this->createForm($dataSource->getLoader()->getFormType(), $dataSource->getDefaultModel());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
