@@ -24,7 +24,7 @@
   padding: 5px;
 }
 
-.input, input, select, .select {
+.input, input, select, .select, input.form-control, select.form-control {
     &[disabled], &[readonly] {
         color: var(--input-disabled-fg);
         background-color: var(--bs-secondary-bg);

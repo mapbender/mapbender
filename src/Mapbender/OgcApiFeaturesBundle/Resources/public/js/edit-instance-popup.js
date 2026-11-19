@@ -154,8 +154,6 @@ class OgcApiFeaturesEditInstancePopup {
         this.$container.on('change', '.secondary-style-select', (e) => {
             this._updateSecondaryCount(e.target);
         });
-
-        this.$container.find('.-js-init-colorpicker').colorpicker({format: 'rgba'});
     }
 
     _dismissPopover($trigger) {
