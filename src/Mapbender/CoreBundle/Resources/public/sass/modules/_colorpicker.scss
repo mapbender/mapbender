@@ -1,0 +1,16 @@
+.color-picker-container {
+    position: relative;
+
+    &:after {
+        content: '';
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: calc(24px + 2*var(--bs-border-width));
+        height: calc(100% - 12px);
+        border-radius: 8px;
+        pointer-events: none;
+        background-color: var(--chosen-color, transparent);
+        border: var(--bs-border-width) solid var(--bs-border-color);
+    }
+}

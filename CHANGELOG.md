@@ -1,3 +1,7 @@
+## next feature release
+Features:
+* [Manager] Show color preview for color picker fields ([#PR1955](https://github.com/mapbender/mapbender/pull/1955))
+
 ## v5.0.2
 Bugfixes:
 * [Print/ImageExport] Respect zIndex when exporting geojson features ([#PR1953](https://github.com/mapbender/mapbender/pull/1953))

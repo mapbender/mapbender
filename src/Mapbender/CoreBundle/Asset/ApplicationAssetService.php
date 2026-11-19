@@ -147,6 +147,7 @@ class ApplicationAssetService
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                 '/bundles/mapbendercore/regional/vendor/notify.0.3.2.min.js',
                 '@MapbenderCoreBundle/Resources/public/widgets/dropdown.js',
+                '@MapbenderCoreBundle/Resources/public/widgets/bootstrap-colorpicker.js',
             ],
             'trans' => [
                 'mb.actions.*',
