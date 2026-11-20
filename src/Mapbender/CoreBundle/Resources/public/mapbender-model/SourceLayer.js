@@ -19,6 +19,7 @@
                 outOfScale: false,
                 visibility: true,
                 unsupportedProjection: false,
+                unsupportedMode: false,
             };
 
             this.source = source;

@@ -30,13 +30,15 @@ Mapbender.Geo.SourceHandler = {
         var extent_ = Mapbender.mapEngine.toExtent(extent || Mapbender.Model.getCurrentExtent());
 
         var order = 0;
+
         Mapbender.Util.SourceTree.iterateSourceLeaves(source, false, function(layer, offset, parents) {
             const layerId = layer.options.id;
             const outOfScale = !layer.isInScale(scale);
             const outOfBounds = !layer.intersectsExtent(extent_, srsName_);
             const unsupportedProjection = !layer.supportsProjection(srsName_);
+            const unsupportedMode = !source.supportsMode(Mapbender.Model?.currentDisplayMode || 'ol');
             const enabled = layer.getActive();
-            const visibility = enabled && !(outOfScale || outOfBounds || unsupportedProjection);
+            const visibility = enabled && !(outOfScale || outOfBounds || unsupportedProjection || unsupportedMode);
             // no feature info if layer turned off or out of scale
             const featureInfo = visibility && layer.options.treeOptions.info;
             infoMap[layerId] = {
@@ -46,6 +48,7 @@ Mapbender.Geo.SourceHandler = {
                     outOfBounds: outOfBounds,
                     visibility: visibility,
                     unsupportedProjection: unsupportedProjection,
+                    unsupportedMode: unsupportedMode,
                     info: featureInfo
                 },
                 order: order,
@@ -71,7 +74,7 @@ Mapbender.Geo.SourceHandler = {
             stateMap[key] = item.state;
         }
 
-        const stateNames = ['outOfScale', 'outOfBounds', 'unsupportedProjection', 'visibility', 'info'];
+        const stateNames = ['outOfScale', 'outOfBounds', 'unsupportedProjection', 'unsupportedMode', 'visibility', 'info'];
         let stateChanged = false;
 
         Mapbender.Util.SourceTree.iterateLayers(source, false, function(layer, offset, parents) {

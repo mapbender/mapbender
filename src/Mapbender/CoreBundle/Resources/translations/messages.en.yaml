@@ -255,6 +255,7 @@ mb:
         outofscale: 'Layer out of scale'
         outofbounds: 'Layer out of bounds'
         unsupportedprojection: 'Current projection is not supported by this layer'
+        unsupportedmode: 'This layer does not support the current display mode (2D/3D)'
         parentinvisible: 'Parent layer invisible'
       tooltip:
         sublayers_openclose: 'Sublayers open/close'

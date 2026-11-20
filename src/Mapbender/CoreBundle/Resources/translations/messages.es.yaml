@@ -252,6 +252,7 @@ mb:
         outofscale: 'Capa fuera de la escala'
         outofbounds: 'Capa fuera de límites'
         unsupportedprojection: 'La proyección actual no es compatible con esta capa'
+        unsupportedmode: 'La capa no admite el modo de visualización actual (2D/3D)'
         parentinvisible: 'Capa de origen invisible'
       tooltip:
         sublayers_openclose: 'Abrir/Cerrar subcapas'

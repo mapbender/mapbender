@@ -255,6 +255,7 @@ mb:
         outofscale: 'Strat în afara scării'
         outofbounds: 'Strat în afara limitelor'
         unsupportedprojection: 'Stratul nu acceptă proiecția curentă'
+        unsupportedmode: 'Stratul nu acceptă modul curent de afișare (2D/3D)'
         parentinvisible: 'Stratul părinte nu este vizibil'
       tooltip:
         sublayers_openclose: deschide/închide

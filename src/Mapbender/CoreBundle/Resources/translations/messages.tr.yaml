@@ -156,6 +156,7 @@ mb:
         outofscale: Ölçeksiz bakış
         outofbounds: Sınırın dışından bakış
         unsupportedprojection: 'Geçerli projeksiyon bu katman tarafından desteklenmiyor'
+        unsupportedmode: 'Katman mevcut görüntüleme modunu (2D/3D) desteklemiyor'
         parentinvisible: Üst katmanı gizle
       tooltip:
         sublayers_openclose: Alt katmanları aç/kapa

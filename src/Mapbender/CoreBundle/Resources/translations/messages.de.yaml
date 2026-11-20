@@ -255,6 +255,7 @@ mb:
         outofscale: 'Ebene außerhalb des Maßstabs'
         outofbounds: 'Ebene außerhalb der BoundingBox'
         unsupportedprojection: 'Ebene unterstützt aktuelle Projektion nicht'
+        unsupportedmode: 'Ebene unterstützt aktuellen Darstellungsmodus (2D/3D) nicht'
         parentinvisible: 'Eltern Ebene nicht sichtbar'
       tooltip:
         sublayers_openclose: öffnen/schließen

@@ -85,6 +85,7 @@ window.Mapbender.MapModelBase = (function() {
         mbMap: null,
         sourceTree: [],
         mapMaxExtent: null,
+        currentDisplayMode: "2d",
         /** Backend-configured initial projection, used for start / max extents */
         _configProj: null,
         /**
@@ -516,6 +517,19 @@ window.Mapbender.MapModelBase = (function() {
                 }
             });
             return sourceAndLayerId;
+        },
+        updateDisplayMode: function(newMode) {
+            if (newMode !== this.currentDisplayMode) {
+                this.currentDisplayMode = newMode;
+                this.mbMap.element.trigger('mbmapdisplaymodechanged', {
+                    mbMap: this.mbMap,
+                    displayMode: newMode
+                });
+
+                this.sourceTree.map((source) => {
+                    this._checkSource(source, true);
+                });
+            }
         }
     };
 

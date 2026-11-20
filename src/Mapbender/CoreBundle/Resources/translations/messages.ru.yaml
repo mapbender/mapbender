@@ -253,6 +253,7 @@ mb:
         outofscale: 'Слой вне масштаба'
         outofbounds: 'Слой за пределами поля'
         unsupportedprojection: 'Текущая проекция не поддерживается этим слоем'
+        unsupportedmode: 'Слой не поддерживает текущий режим отображения (2D/3D)'
         parentinvisible: 'Родительский слой невидим'
       tooltip:
         sublayers_openclose: 'Подслои открыть/закрыть'

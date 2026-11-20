@@ -280,6 +280,7 @@
                 li.classList.toggle('state-outofscale', !!layer.state.outOfScale);
                 li.classList.toggle('state-outofbounds', !!layer.state.outOfBounds);
                 li.classList.toggle('state-unsupportedprojection', !!layer.state.unsupportedProjection);
+                li.classList.toggle('state-unsupportedmode', !!layer.state.unsupportedMode);
                 li.classList.toggle('state-deselected', !layer.getSelected());
             }
 
@@ -292,6 +293,9 @@
             }
             if (layer.state.unsupportedProjection) {
                 tooltipParts.push(Mapbender.trans("mb.core.layertree.const.unsupportedprojection"));
+            }
+            if (layer.state.unsupportedMode) {
+                tooltipParts.push(Mapbender.trans("mb.core.layertree.const.unsupportedmode"));
             }
             $title.text(layer.options.title);
             $title.attr('title', tooltipParts.join("\n"));

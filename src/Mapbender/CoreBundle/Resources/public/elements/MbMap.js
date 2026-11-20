@@ -2,6 +2,7 @@
     class MbMap extends MapbenderElement {
 
         elementUrl = false;
+        /** @type {Mapbender.Model.MapModelBase} */
         model = null;
         map = null;
 
@@ -47,7 +48,7 @@
             // HACK: place the model instance globally at Mapbender.Model
             if (window.Mapbender.Model) {
                 console.error("Mapbender.Model already set", window.Mapbender.Model);
-                throw new Error("Can't globally reassing window.Mapbender.Model");
+                throw new Error("Can't globally reassign window.Mapbender.Model");
             }
             window.Mapbender.Model = this.model;
             this.map = this.model.map;

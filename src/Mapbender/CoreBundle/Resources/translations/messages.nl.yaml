@@ -156,6 +156,7 @@ mb:
         outofscale: Laag buiten geldige schaal
         outofbounds: Laag buiten geldig gebied
         unsupportedprojection: 'De huidige projectie wordt niet ondersteund door deze laag'
+        unsupportedmode: 'Deze laag ondersteunt de huidige weergavemodus (2D/3D) niet'
         parentinvisible: Onderliggende laag niet zichtbaar
       tooltip:
         sublayers_openclose: Sub-lagen openen/sluiten
