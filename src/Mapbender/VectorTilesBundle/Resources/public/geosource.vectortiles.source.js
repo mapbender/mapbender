@@ -155,6 +155,25 @@ class VectorTilesSource extends Mapbender.Source {
     setLayerOrder(newLayerIdOrder) {
         // do nothing, there are no sublayers for vector tile sources
     }
+
+    supportsMode(mode) {
+        return true;
+    }
+
+    toJSON(mode) {
+        if (mode !== '3d') {
+            return super.toJSON(mode);
+        }
+        //console.log(this);
+        const json = {
+            id: this.id,
+            type: 'vector_tiles',
+            name: this.options.title,
+            url: this.options.jsonUrl,
+            opacity: this.options.opacity,
+        };
+        return json;
+    }
 }
 
 window.Mapbender = Mapbender || {};

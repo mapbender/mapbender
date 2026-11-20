@@ -190,10 +190,31 @@ window.Mapbender = Mapbender || {};
             this.addParams(mapOfNamesToRemove);
         }
 
-        toJSON() {
-            var s = super.toJSON(arguments);
-            s.customParams = this.customParams;
-            return s;
+        toJSON(mode) {
+            if (mode === 'ol') {
+                var s = super.toJSON(arguments);
+                s.customParams = this.customParams;
+                return s;
+            } else if (mode === '3d') {
+                const params = this.getNativeLayer(0).getSource().getParams();
+                const url = new URL(this.options.url, window.location.href);
+                Object.entries(params).forEach(([key, value]) =>
+                    url.searchParams.set(key, Array.isArray(value) ? value.join(',') : value));
+
+                return {
+                    id: this.id,
+                    type: 'wms',
+                    name: this.getTitle(),
+                    url: url.href,
+                    opacity: this.options.opacity,
+                };
+            }
+            return super.toJSON(mode);
+        }
+
+        supportsMode(mode) {
+            // TODO: make this configurable in the backend
+            return true;
         }
 
         updateEngine() {
