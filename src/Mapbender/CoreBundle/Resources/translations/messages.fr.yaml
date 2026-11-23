@@ -211,6 +211,14 @@ mb:
         description: Bouton
       tag:
         button: button
+    linkbutton:
+      admin:
+        target:
+          title: Cible du lien
+          blank: Nouvel onglet / nouvelle fenêtre
+          self: Onglet actuel
+          parent: Fenêtre parente (uniquement pertinent si intégrée dans une iframe)
+          top: Fenêtre entière (uniquement pertinent si intégrée dans une iframe)
     coordinatesdisplay:
       class:
         title: Afficheur de coordonnées

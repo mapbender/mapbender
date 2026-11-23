@@ -345,6 +345,12 @@ mb:
         description: 'Link to external URL'
       admin:
         click: 'Target URL'
+        target:
+          title: Link target
+          blank: New tab / new window
+          self: Current tab
+          parent: Parent window (only relevant when embedded as an iframe)
+          top: Entire window (only relevant when embedded as an iframe)
     coordinatesdisplay:
       class:
         title: 'Coordinates display'

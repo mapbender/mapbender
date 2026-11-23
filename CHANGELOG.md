@@ -1,6 +1,7 @@
 ## next feature release
 Features:
 * [Manager] Show color preview for color picker fields ([#PR1955](https://github.com/mapbender/mapbender/pull/1955))
+* Add target option to LinkButton element ([#PR1956](https://github.com/mapbender/mapbender/pull/1956))
 
 ## v5.0.2
 Bugfixes:

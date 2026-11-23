@@ -31,6 +31,7 @@ class LinkButton extends ButtonLike
     {
         return array_replace(parent::getDefaultConfiguration(), [
             'click' => null,
+            'linktarget' => '_blank',
         ]);
     }
 
@@ -46,7 +47,9 @@ class LinkButton extends ButtonLike
     {
         $view = new TemplateView('@MapbenderCore/Element/link_button.html.twig');
         $this->initializeView($view, $element);
-        $view->variables['link_target'] = $element->getConfiguration()['click'];
+        $configuration = $element->getConfiguration();
+        $view->variables['link_href'] = $configuration['click'];
+        $view->variables['link_target'] = $configuration['linktarget'] ?? '_blank';
         return $view;
     }
 }

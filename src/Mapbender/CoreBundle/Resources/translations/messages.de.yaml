@@ -345,6 +345,12 @@ mb:
         description: 'Link zu externer URL'
       admin:
         click: Ziel-URL
+        target:
+          title: Link-Ziel
+          blank: Neuer Tab / neues Fenster
+          self: Aktueller Tab
+          parent: Übergeordnetes Fenster (nur relevant wenn als iFrame eingebunden)
+          top: Ganzes Fenster (nur relevant wenn als iFrame eingebunden)
     coordinatesdisplay:
       class:
         title: Koor­di­naten­anzeige

@@ -345,6 +345,12 @@ mb:
         description: 'Link către o adresă URL externă'
       admin:
         click: 'URL țintă'
+        target:
+          title: Ținta linkului
+          blank: Filă nouă / fereastră nouă
+          self: Fila curentă
+          parent: Fereastra părinte (relevantă doar dacă este încorporată ca iframe)
+          top: Întreaga fereastră (relevantă doar dacă este încorporată ca iframe)
     coordinatesdisplay:
       class:
         title: 'Afișare coordonate'

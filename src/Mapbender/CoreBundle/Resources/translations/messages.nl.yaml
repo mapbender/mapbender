@@ -211,6 +211,14 @@ mb:
         description: Knop
       tag:
         button: Knop
+    linkbutton:
+      admin:
+        target:
+          title: Linkdoel
+          blank: Nieuw tabblad / nieuw venster
+          self: Huidig tabblad
+          parent: Bovenliggend venster (alleen relevant wanneer ingesloten als iframe)
+          top: Volledig venster (alleen relevant wanneer ingesloten als iframe)
     coordinatesdisplay:
       class:
         title: Coordinaten scherm
