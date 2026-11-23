@@ -24,7 +24,7 @@ class LinkButtonAdminType extends AbstractType
                 'required' => true,
                 'label' => 'mb.core.linkbutton.admin.click',
             ])
-            ->add('target', ChoiceType::class, [
+            ->add('linktarget', ChoiceType::class, [
                 'required' => true,
                 'label' => 'mb.core.linkbutton.admin.target.title',
                 'choices' => [

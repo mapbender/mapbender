@@ -31,7 +31,7 @@ class LinkButton extends ButtonLike
     {
         return array_replace(parent::getDefaultConfiguration(), [
             'click' => null,
-            'target' => '_blank',
+            'linktarget' => '_blank',
         ]);
     }
 
@@ -49,7 +49,7 @@ class LinkButton extends ButtonLike
         $this->initializeView($view, $element);
         $configuration = $element->getConfiguration();
         $view->variables['link_href'] = $configuration['click'];
-        $view->variables['link_target'] = $configuration['target'] ?? '_blank';
+        $view->variables['link_target'] = $configuration['linktarget'] ?? '_blank';
         return $view;
     }
 }
