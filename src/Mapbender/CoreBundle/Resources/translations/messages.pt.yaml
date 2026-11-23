@@ -342,6 +342,12 @@ mb:
         description: 'Link para URL externa'
       admin:
         click: URL de destino
+        target:
+          title: Destino do link
+          blank: Nova aba / nova janela
+          self: Aba atual
+          parent: Janela superior (relevante apenas quando incorporado como iframe)
+          top: Janela inteira (relevante apenas quando incorporado como iframe)
     coordinatesdisplay:
       class:
         title: Exibição de coordenadas

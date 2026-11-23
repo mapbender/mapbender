@@ -211,6 +211,14 @@ mb:
         description: Buton
       tag:
         button: Buton
+    linkbutton:
+      admin:
+        target:
+          title: Bağlantı hedefi
+          blank: Yeni sekme / yeni pencere
+          self: Geçerli sekme
+          parent: Üst pencere (yalnızca iframe olarak gömüldüğünde geçerlidir)
+          top: Tüm pencere (yalnızca iframe olarak gömüldüğünde geçerlidir)
     coordinatesdisplay:
       class:
         title: Koordinatları göster
