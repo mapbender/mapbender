@@ -208,7 +208,7 @@
         </service>
 
         <service id="mapbender.source.metadata_listener" class="Mapbender\CoreBundle\Component\Source\SourceMetadataListener">
-            <argument type="service" id="mapbender.source.typedirectory.service" />
+            <argument type="service_closure" id="mapbender.source.typedirectory.service" />
             <tag name="doctrine.event_listener" event="loadClassMetadata" />
         </service>
 

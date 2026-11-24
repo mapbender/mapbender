@@ -1,3 +1,7 @@
+## next bugfix release
+Bugfixes:
+* Fix potential recursion error when adding a custom data source ([#PR1957](https://github.com/mapbender/mapbender/pull/1957))
+
 ## v5.0.2
 Bugfixes:
 * [Print/ImageExport] Respect zIndex when exporting geojson features ([#PR1953](https://github.com/mapbender/mapbender/pull/1953))
