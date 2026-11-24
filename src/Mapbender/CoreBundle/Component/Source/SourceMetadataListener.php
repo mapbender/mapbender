@@ -15,7 +15,12 @@ use Mapbender\CoreBundle\Entity\Source;
 class SourceMetadataListener
 {
 
-    public function __construct(private readonly TypeDirectoryService $typeDirectoryService)
+    /**
+     * The type directory is resolved lazily: its source services may depend on services (e.g. twig) that
+     * query doctrine during construction, which would re-enter metadata loading while listeners are initialised.
+     * @param \Closure(): TypeDirectoryService $typeDirectoryServiceFactory
+     */
+    public function __construct(private readonly \Closure $typeDirectoryServiceFactory)
     {
     }
 
@@ -24,7 +29,7 @@ class SourceMetadataListener
         $class = $args->getClassMetadata();
         // Dynamically add new subclasses to the discriminator map of the Node class.
         if ($class->name === Source::class) {
-            foreach ($this->typeDirectoryService->getSources() as $source) {
+            foreach (($this->typeDirectoryServiceFactory)()->getSources() as $source) {
                 $entityClass = $source->getSourceEntityClass();
                 if (!$entityClass) continue;
                 $class->discriminatorMap[$source->getEntityTypeDiscriminator()] = $entityClass;
