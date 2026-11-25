@@ -27,7 +27,7 @@ const mbInitColorPickers = function($pickers) {
 
 $(function() {
     mbInitColorPickers($('.-js-init-colorpicker'));
-    $(document).on('shown.bs.modal', (evt) => {
+    $(document).on('shown.bs.modal collectionlengthchange', (evt) => {
         mbInitColorPickers($('.-js-init-colorpicker', evt.target));
     });
 });

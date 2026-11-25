@@ -164,15 +164,13 @@ class VectorTilesSource extends Mapbender.Source {
         if (mode !== '3d') {
             return super.toJSON(mode);
         }
-        //console.log(this);
-        const json = {
+        return {
             id: this.id,
             type: 'vector_tiles',
             name: this.options.title,
             url: this.options.jsonUrl,
             opacity: this.options.opacity,
         };
-        return json;
     }
 }
 
