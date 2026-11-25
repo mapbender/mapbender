@@ -75,6 +75,8 @@
                 sender: this,
                 active: true
             });
+
+            $(document).trigger('mapbender.activate-feature-info', {callback: (x, y) => this._triggerFeatureInfo(x, y)});
         }
 
         deactivate() {
@@ -94,6 +96,8 @@
                 sender: this,
                 active: false
             });
+
+            $(document).trigger('mapbender.deactivate-feature-info');
         }
 
         _triggerFeatureInfo(x, y) {
