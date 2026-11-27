@@ -117,9 +117,29 @@
                 const [url, fiPromise] = source.loadFeatureInfo(this.mbMap.getModel(), x, y, options, this.$element.attr('id'));
                 fiPromise.then((result) => {
                     if (result) {
+                        let hasEmptyBody = false;
+                        try {
+                            hasEmptyBody = (result[0].srcdoc.indexOf('<body></body>') !== -1);
+
+                            if (!hasEmptyBody) {
+                                // check if body only contains symfony-toolbar:
+                                hasEmptyBody = (result[0].srcdoc.indexOf('<body>\n</body>') !== -1);
+                            }
+                            if (!hasEmptyBody) {
+                                // check if body only contains symfony-toolbar:
+                                hasEmptyBody = (result[0].srcdoc.indexOf('<body>\n<div class="sf-toolbar ') !== -1);
+                            }
+                        } catch (e) {
+                            hasEmptyBody = false;
+                        }
+
+                        if (!hasEmptyBody && result.length) {
                         this.showingSources.push(source);
                         this.showResponseContent_(source, result);
                         this.activateOnResult();
+                        } else {
+                            this._removeContent(source);
+                        }   
                     } else {
                         this._removeContent(source);
                     }
